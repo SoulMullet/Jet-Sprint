@@ -3,7 +3,7 @@ export function mountSettings(store,apply){
  const root=document.getElementById('debug'),status=document.createElement('p');status.id='settingsStatus';status.setAttribute('role','status');
  const message=text=>status.textContent=text;
  const section=name=>{const d=document.createElement('details'),s=document.createElement('summary');s.textContent=name;d.append(s);d.className='settings-section';root.append(d);return d;};
- const groups=Object.fromEntries(['Boat Handling','Water Physics','Spray Effects','Graphics','Audio','Race Start','Saved Presets'].map(name=>[name,section(name)]));
+ const groups=Object.fromEntries(['Boat Handling','Water Physics','Spray Effects','Graphics','Audio','Race Start','Debug Tools','Saved Presets'].map(name=>[name,section(name)]));
  groups['Boat Handling'].open=true;
  for(const [id,s] of Object.entries(registry)){
   let el=document.getElementById(id),label=el?.closest('label');
@@ -39,5 +39,5 @@ export function mountSettings(store,apply){
  button('Import JSON','importSettings',()=>{const notes=store.importText(text.value);message(`Preset imported. ${notes.join(' ')}`);},portable);
  const file=document.createElement('input');file.type='file';file.accept='.json,application/json';file.id='importSettingsFile';file.setAttribute('aria-label','Open a JSON preset file');file.onchange=async()=>{try{const f=file.files[0];if(!f)return;if(f.size>200000)throw Error('Preset file exceeds 200 KB.');text.value=await f.text();const notes=store.importText(text.value);message(`File imported. ${notes.join(' ')}`);}catch(e){message(e.message);}finally{file.value='';}};portable.append(file);
  if(named.warning)message(`Saved preset warning: ${named.warning}`);
- return {message};
+ return {message,groups};
 }

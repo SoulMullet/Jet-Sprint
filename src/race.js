@@ -4,16 +4,24 @@ export const modified=s=>Object.entries(defaults).some(([k,v])=>(s[k]??v)!==v);
 export const format=t=>{const ms=Math.round(t*1000);return `${String(Math.floor(ms/60000)).padStart(2,'0')}:${(Math.floor(ms/1000)%60).toString().padStart(2,'0')}.${(ms%1000).toString().padStart(3,'0')}`;};
 export class Race {
  constructor(gates,width){this.gates=gates;this.width=width;this.reset();}
- reset(){this.total=0;this.laps=[];this.lapStart=0;this.next=1;this.done=false;this.modified=false;}
+ reset(){this.total=0;this.laps=[];this.lapStart=0;this.next=1;this.done=false;this.modified=false;this.check={code:'approaching',gate:1,signed:0,lateral:0};this.lastCrossing=null;}
  step(before,after,dt,settings,totalTime=null){
   if(this.done)return false;this.modified||=modified(settings);this.total=totalTime===null?this.total+dt:Math.max(this.total,totalTime);
-  const g=this.gates[this.next],a=(before.x-g.x)*g.tx+(before.z-g.z)*g.tz,b=(after.x-g.x)*g.tx+(after.z-g.z)*g.tz;
-  if(a<0&&b>=0){const t=-a/(b-a),x=before.x+(after.x-before.x)*t,z=before.z+(after.z-before.z)*t;
-   if(Math.abs(-(x-g.x)*g.tz+(z-g.z)*g.tx)<=this.width){
-    if(this.next===0){this.laps.push(this.total-this.lapStart);this.lapStart=this.total;this.done=this.laps.length===5;this.next=1;return true;}
-    this.next=(this.next+1)%this.gates.length;
+  const index=this.next,g=this.gates[index],width=g.halfWidth??this.width;
+  const a=(before.x-g.x)*g.tx+(before.z-g.z)*g.tz,b=(after.x-g.x)*g.tx+(after.z-g.z)*g.tz;
+  Object.assign(this.check,{code:b<0?'approaching':'beyond-plane',gate:index,signed:b,lateral:-(after.x-g.x)*g.tz+(after.z-g.z)*g.tx});
+  // Include a start exactly on the plane, but never a stationary or reverse pass.
+  if(a<=0&&b>0){
+   const t=-a/(b-a),x=before.x+(after.x-before.x)*t,z=before.z+(after.z-before.z)*t;
+   const lateral=-(x-g.x)*g.tz+(z-g.z)*g.tx;
+   const code=Math.abs(lateral)>width?'outside-width':g.accept&&!g.accept(x,z)?'adjacent-channel':'accepted';
+   this.lastCrossing={gate:index,code,time:this.total,lateral};this.check.code=code;
+   if(code==='accepted'){
+    if(index===0){this.laps.push(this.total-this.lapStart);this.lapStart=this.total;this.done=this.laps.length===5;this.next=1;return true;}
+    this.next=(index+1)%this.gates.length;
    }
-  }return false;
+  }else if(a>=0&&b<0){this.check.code='wrong-direction';this.lastCrossing={gate:index,code:'wrong-direction',time:this.total,lateral:this.check.lateral};}
+  return false;
  }
 }
 export const scoreKey='jet-sprint-races-v1';

@@ -13,6 +13,7 @@ import {mountSettings} from './settings-panel.js';
 import {RaceStart} from './race-start.js';
 import {createRaceSignal} from './race-signal.js';
 import {createCourse,courseId,routeId,gameplayVersion} from './course.js';
+import {NavigationView,BigfootView} from './debug-views.js';
 import {RouteNavigator,mountNavigator} from './navigation.js';
 import {bindControls} from './controls.js';
 const preferences=new SettingsStore({getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)});
@@ -72,6 +73,7 @@ const startSequence=new RaceStart(),trackSignal=createRaceSignal(scene,start,sta
 const doubleTap=createDoubleTap(()=>{if(startSequence.state==='RACING')bigfoot.provoke(b,()=>engine.vocal(true));});
 const race=new Race(venue.gates,channel.hullLimit);
 const navigator=new RouteNavigator(venue,channel.hullLimit),navigatorHUD=mountNavigator($('navigator'));
+const navigationView=new NavigationView(scene,venue),bigfootView=new BigfootView(scene,bigfoot);
 let result=null;
 const scoreStorage={getItem(key){try{return localStorage.getItem(key);}catch{return null;}},setItem(key,value){localStorage.setItem(key,value);}};
 function board(){const records=readScores(scoreStorage).filter(r=>r.course===`${courseId}/${routeId}`&&r.version===gameplayVersion&&r.modified===result.modified).sort((a,b)=>a.total-b.total);
@@ -107,9 +109,12 @@ function applyPreferences(ids){const v=preferences.values;
  if(ids.includes('fluidDebug'))fluid.setDebug(v.fluidDebug);
  if(ids.includes('waveScale'))fluid.setWaveScale(v.waveScale);
  if(ids.includes('repeatWaves'))fluid.repeatWaves=v.repeatWaves;
+ if(ids.includes('navigationDebug'))navigationView.setDebug(v.navigationDebug);
+ if(ids.includes('bigfootDebug'))bigfootView.setDebug(v.bigfootDebug);
  if(ids.includes('mute')||ids.includes('masterVolume'))engine.setPreferences(v.mute,v.masterVolume);
 }
-mountSettings(preferences,applyPreferences);
+const settingsUI=mountSettings(preferences,applyPreferences);
+bigfootView.mount(settingsUI.groups['Debug Tools'],()=>b,camera);
 let b,elapsed=0,lap=1,best=null;
 function restart(){const now=performance.now();if(playing)gameClock+=Math.max(0,(now-last)/1000);last=now;startSequence.reset();playing=document.body.classList.contains('racing');if(playing)startSequence.begin(gameClock,preferences.values.countdownDuration);fluid?.reset();fluid?.disturb();race.reset();navigator.reset();race.modified=modified(settings);doubleTap.reset();$('results').hidden=true;result=null;release();engine.reset();b={x:start.x,z:start.z,angle:Math.atan2(startT.z,startT.x),vx:0,vz:0,pump:0,nozzle:0,yawRate:0};elapsed=0;lap=1;life.fill(0);alpha.fill(0);emit=0;positions.fill(-1000);for(const w of wakes)w.age=10;$('notice').textContent='Follow your navigator. Apply throttle to steer.';}
 restart();$('restart').onclick=()=>{if(document.body.classList.contains('racing'))playing=true;restart();if(playing)engine.start();};$('start').onclick=()=>{playing=true;document.body.classList.add('racing');engine.start();restart();};
@@ -157,7 +162,10 @@ function frame(now){requestAnimationFrame(frame);const rawDt=Math.max(0,(now-las
   fluid.focus.x=b.x+Math.cos(b.angle)*7;fluid.focus.z=b.z+Math.sin(b.angle)*7;fluid.update(dt);
  }
  const navigating=playing&&!document.hidden&&startSequence.state==='RACING';
- if(navigating){const cue=navigator.update(b,race,dt,input);navigatorHUD.update(cue,!$('debug').open);const notice=cue.notice||'Follow the arrows · Five laps';if($('notice').textContent!==notice)$('notice').textContent=notice;}else navigatorHUD.update(null,false);
+ if(!navigating&&preferences.values.bigfootDebug&&!document.hidden)bigfoot.update(dt,b,camera);
+ let navigationCue=null;
+ if(navigating){const cue=navigationCue=navigator.update(b,race,dt,input);navigatorHUD.update(cue,!$('debug').open&&(!preferences.values.startHud||gameClock>=startSequence.startAt+2));const notice=cue.notice||'Follow the arrows · Five laps';if($('notice').textContent!==notice)$('notice').textContent=notice;}else navigatorHUD.update(null,false);
+ navigationView.update(b,race,navigationCue,navigating,dt);bigfootView.update(b,dt);
  const lamps=startSequence.lamps(gameClock);trackSignal.update(lamps);
  const signalHUD=$('startSignal'),show=startSequence.active&&preferences.values.startHud&&(startSequence.state!=='RACING'||gameClock<startSequence.startAt+2);
  signalHUD.hidden=!show;signalHUD.style.opacity=startSequence.state==='RACING'?String(Math.min(1,Math.max(0,startSequence.startAt+2-gameClock))):'1';

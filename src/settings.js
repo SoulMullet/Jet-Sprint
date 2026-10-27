@@ -1,6 +1,6 @@
 import {handlingDefaults} from './handling.js';
 export const SETTINGS_SCHEMA=2;
-export const GAME_VERSION='0.7.0';
+export const GAME_VERSION='0.7.1';
 export const settingsKey='jet-sprint-settings';
 export const presetsKey='jet-sprint-presets';
 const number=(category,label,defaultValue,min,max,step=1,unit='')=>({category,label,type:'number',default:defaultValue,min,max,step,unit});
@@ -11,6 +11,7 @@ export const registry={
  nozzleAuthority:number('Boat Handling','Nozzle authority',handlingDefaults.nozzleAuthority,10,45,1,'°'),pumpResponse:number('Boat Handling','Pump response',handlingDefaults.pumpResponse,.03,.5,.01,' s'),pumpDecay:number('Boat Handling','Pump decay',handlingDefaults.pumpDecay,.03,.6,.01,' s'),lateralResistance:number('Boat Handling','Lateral resistance',handlingDefaults.lateralResistance,1,15,.5),yawDamping:number('Boat Handling','Yaw damping',handlingDefaults.yawDamping,1.5,10,.1),
  waterMode:choice('Water Physics','Water mode','simulated',['simulated','legacy']),fluidResolution:choice('Water Physics','Simulation grid','auto',['auto','64','96','128','192']),fluidDebug:choice('Water Physics','Water debug','0',['0','1','2','3']),waveScale:number('Water Physics','Visual wave height',240,0,300,1,'%'),repeatWaves:bool('Water Physics','Repeat diagnostic waves',true),
  graphics:choice('Graphics','Graphics quality','auto',['auto','low','medium','high']),mute:bool('Audio','Mute all sound',false),masterVolume:number('Audio','Master volume',100,0,100,1,'%'),
+ navigationDebug:bool('Debug Tools','Navigation Debug',false),bigfootDebug:bool('Debug Tools','Bigfoot Debug',false),
  countdownDuration:number('Race Start','Countdown seconds (next start)',5,2,15,.5,' s'),countdownAudio:bool('Race Start','Countdown audio',true),startHud:bool('Race Start','Starting light HUD',true),prestartRevving:bool('Race Start','Pre-start engine revving',true)
 };
 export const defaultSettings=()=>Object.fromEntries(Object.entries(registry).map(([id,s])=>[id,s.default]));

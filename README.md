@@ -1,4 +1,4 @@
-# JET SPRINT v0.7.0
+# JET SPRINT v0.7.1
 
 A mobile-first, single-player 3D jet sprint prototype built with JavaScript, Vite, Three.js and Web Audio. All geometry and sound are procedural; no assets, account, API keys or backend required.
 
@@ -17,7 +17,7 @@ Press **HIT THE WATER** to unlock audio and begin. Hold throttle and either stee
 
 A READY stage and five-second lamp countdown hold the boat at the stripe while allowing engine revving. Green releases the boat and starts the timer together. Follow the navigator through the interconnected Emerald Crosswater channels; all ordered gates are required for each of five laps. Wrong turns require recovering the missed gate while the timer continues. Finish results and local leaderboards remain available. There is no reverse throttle, opponent AI, ghost, progression or network play.
 
-See [v0.7.0 build notes](docs/v0.7.0.md) for recommended handling values, settings migrations, changed files, validation and the physical iPhone checklist. Older release sections below describe their historical behavior.
+See [v0.7.1 navigation and Bigfoot notes](docs/v0.7.1.md) for the checkpoint fix, both debug systems and validation. See [v0.7.0 build notes](docs/v0.7.0.md) for recommended handling values, settings migrations, changed files, validation and the physical iPhone checklist. Older release sections below describe their historical behavior.
 
 ## Checks
 
@@ -38,7 +38,8 @@ Push this repository to GitHub, then select **Settings → Pages → Build and d
 - `src/main.js`: course/boat rendering, pooled spray and wake, camera, controls, lap checkpoints and HUD.
 - `src/physics.js` / `src/handling.js`: fixed-step waterjet dynamics and shared handling defaults.
 - `src/course.js` / `src/track.js`: independent waterway graph, prescribed route, directional gates and shared clipped channel geometry.
-- `src/navigation.js`: stable turn instructions, route recovery and HUD.
+- `src/navigation.js` / `src/route-math.js`: turn instructions, scoped route projection, recovery and HUD.
+- `src/debug-views.js`: optional numbered gates/route diagnostics, Bigfoot marker/path/status and trigger/reset controls.
 - `src/audio.js`: interaction-unlocked harmonic V8 synthesis (an approximation, not a recording).
 - `src/style.css`: responsive overlays and touch controls.
 

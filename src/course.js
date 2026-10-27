@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {course} from './physics.js';
 import {nearestOnTrack} from './track.js';
+import {projectRoute} from './route-math.js';
 
 export const courseId='emerald-network';
 export const routeId='crosswater-1';
@@ -45,9 +46,35 @@ export function createCourse(route=prescribedRoute){
  // Preserve a route index for the existing camera's unchanged lookahead formula.
  for(const e of edges){e.points.id=e.id;for(const p of e.points)p.routeIndex=nearestOnTrack(points,p.x,p.z).index;}
  const network={paths:edges.map(e=>e.points)};
- // Dense finite-width directional gates leave no unvalidated shortcut between
- // intersections. Race alone owns progression; navigation never awards gates.
- const count=Math.ceil(length/5),gates=Array.from({length:count},(_,i)=>sample(length*i/count));
+ // Validate channel commitments, not five-metre waypoints at hairpin apices.
+ // Entry/exit gates sit outside each shared junction; intermediate cross-sections
+ // retain route integrity on long edges. Favour low-curvature sections so an
+ // ordinary rounded racing line does not pass around the end of a gate plane.
+ const gateDistances=[0];
+ for(const j of junctions){
+  const first=j.startDistance+12,last=j.distance-12,own={paths:[lookup.get(j.edgeId).points]},candidates=[];
+  for(let d=first;d<=last;d+=.5){
+   const g=sample(d),clear=[-7.1,-4,0,4,7.1].every(offset=>{
+    const x=g.x-g.tz*offset,z=g.z+g.tx*offset,p=nearestOnTrack(own,x,z),n=nearestOnTrack(network,x,z),a=Math.hypot(x-p.x,z-p.z),b=Math.hypot(x-n.x,z-n.z);
+    return n.segmentId===g.edgeId||a<=b+.6;
+   });
+   if(clear){const a=sample(d-4),b=sample(d+4),curvature=Math.acos(Math.max(-1,Math.min(1,a.tx*b.tx+a.tz*b.tz)));candidates.push({distance:d,curvature});}
+  }
+  if(!candidates.length)throw Error(`No unambiguous gate cross-section for ${j.edgeId}`);
+  const intervals=Math.max(1,Math.ceil((last-first)/25)),selected=[];
+  for(let i=0;i<=intervals;i++){
+   const desired=first+(last-first)*i/intervals;
+   const candidate=candidates.reduce((a,b)=>b.curvature*8+Math.abs(b.distance-desired)*.2<a.curvature*8+Math.abs(a.distance-desired)*.2?b:a);
+   if(selected.every(d=>Math.abs(candidate.distance-d)>9))selected.push(candidate.distance);
+  }
+  gateDistances.push(...selected.sort((a,b)=>a-b));
+ }
+ const gates=gateDistances.map(distance=>{
+  const g={...sample(distance),halfWidth:7.1};
+  const edge=lookup.get(g.edgeId),own={paths:[edge.points]};
+  g.accept=(x,z)=>{const p=nearestOnTrack(own,x,z),n=nearestOnTrack(network,x,z),d=Math.hypot(x-p.x,z-p.z),other=Math.hypot(x-n.x,z-n.z);return d<=7.3&&(n.segmentId===g.edgeId||d<=other+.6);};
+  return g;
+ });
  const cues=junctions.map((j,i)=>{
   const incoming=sample(j.distance-2),outgoing=sample(j.distance+2);
   const angle=Math.atan2(incoming.tx*outgoing.tz-incoming.tz*outgoing.tx,incoming.tx*outgoing.tx+incoming.tz*outgoing.tz);
@@ -65,5 +92,5 @@ export function createCourse(route=prescribedRoute){
   const direction=bend.angle>0?'right':'left';if(previous?.kind.includes(direction))continue;
   cues.push({id:`bend-${bend.distance}`,node:null,distance:bend.distance,releaseAt:bend.distance+2,angle:bend.angle,kind:`${Math.abs(bend.angle)>1.45?'sharp-':''}${direction}`});}
  cues.sort((a,b)=>a.distance-b.distance);
- return {id:courseId,routeId,network,nodes,edges,legs,points,gates,cues,length,sample};
+ return {id:courseId,routeId,network,nodes,edges,legs,points,gates,cues,length,sample,line,junctions,project:(point,min,max,out)=>projectRoute(line,length,point,min,max,out)};
 }
