@@ -13,6 +13,7 @@ export function exhaustWave(context,bank=0){
  }
  return context.createPeriodicWave(real,imag);
 }
+export const audioTuning={reflection:.09,delay:.085,chorusDepth:.0015,chorusRate:.65,bass:.3};
 export class Engine {
  constructor(){this.reset();}
  reset(){this.rpm=900;this.throttle=0;this.burble=0;}
@@ -22,6 +23,8 @@ export class Engine {
   const c=this.ctx=new C();
   this.master=c.createGain();this.master.gain.value=0;
   const limiter=c.createDynamicsCompressor();limiter.threshold.value=-10;limiter.knee.value=12;limiter.ratio.value=8;limiter.attack.value=.004;limiter.release.value=.15;
+  const echo=c.createDelay(.2),wet=c.createGain();echo.delayTime.value=audioTuning.delay;wet.gain.value=audioTuning.reflection;this.master.connect(echo);echo.connect(wet);wet.connect(limiter);
+  const chorus=c.createDelay(.05),chorusGain=c.createGain(),lfo=c.createOscillator(),depth=c.createGain();chorus.delayTime.value=.018;chorusGain.gain.value=.055;lfo.frequency.value=audioTuning.chorusRate;depth.gain.value=audioTuning.chorusDepth;lfo.connect(depth);depth.connect(chorus.delayTime);lfo.start();this.master.connect(chorus);chorus.connect(chorusGain);chorusGain.connect(limiter);
   this.master.connect(limiter);const ceiling=c.createWaveShaper();const curve=new Float32Array(1024);for(let i=0;i<curve.length;i++)curve[i]=.88*Math.tanh((i/(curve.length-1)*2-1)/.88);ceiling.curve=curve;limiter.connect(ceiling);ceiling.connect(c.destination);
   this.filter=c.createBiquadFilter();this.filter.type='lowpass';this.filter.frequency.value=700;this.filter.Q.value=.65;
   const highpass=c.createBiquadFilter();highpass.type='highpass';highpass.frequency.value=28;
@@ -33,7 +36,7 @@ export class Engine {
    const o=c.createOscillator(),g=c.createGain();o.setPeriodicWave(exhaustWave(c,bank));o.frequency.value=900/120;g.gain.value=.58;
    o.connect(g);g.connect(this.filter);o.start();return o;
   });
-  const bass=c.createOscillator(),bassGain=c.createGain();bass.type='sine';bass.frequency.value=30;bassGain.gain.value=.24;bass.connect(bassGain);bassGain.connect(this.master);bass.start();this.bass=bass;
+  const bass=c.createOscillator(),bassGain=c.createGain();bass.type='sine';bass.frequency.value=30;bassGain.gain.value=audioTuning.bass;bass.connect(bassGain);bassGain.connect(this.master);bass.start();this.bass=bass;
   const buffer=c.createBuffer(1,c.sampleRate*3,c.sampleRate),data=buffer.getChannelData(0);
   for(let i=0;i<data.length;i++)data[i]=Math.random()*2-1;
   const noise=c.createBufferSource();noise.buffer=buffer;noise.loop=true;
@@ -41,6 +44,7 @@ export class Engine {
   this.intake=layer('bandpass',420);this.jet=layer('lowpass',1800);noise.start();
   c.resume().catch(()=>{});
  }
+ vocal(angry){if(!this.ctx||this.ctx.state!=='running')return;const c=this.ctx,t=c.currentTime,o=c.createOscillator(),g=c.createGain(),f=c.createBiquadFilter();o.type='sawtooth';o.frequency.setValueAtTime(angry?95:150,t);o.frequency.exponentialRampToValueAtTime(55,t+.4);f.type='lowpass';f.frequency.value=420;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.2,t+.03);g.gain.exponentialRampToValueAtTime(.001,t+.45);o.connect(f);f.connect(g);g.connect(this.master);o.start();o.stop(t+.5);o.onended=()=>{o.disconnect();f.disconnect();g.disconnect();};}
  pause(){if(this.ctx)this.ctx.suspend().catch(()=>{});}
  update(speed,pressed,dt=1/60,maxSpeed=85/3.6){
   if(!this.ctx||this.ctx.state!=='running')return;

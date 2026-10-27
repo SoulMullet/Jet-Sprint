@@ -18,3 +18,5 @@ test('independent fingers, repeated presses, cancellation and release never latc
  release();assert.deepEqual(input,{left:false,right:false,throttle:false});
  for(let i=0;i<20;i++){assert.equal(elements.left.send('pointerdown',i).defaultPrevented,true);elements.left.send('pointerup',i);assert.equal(input.left,false);}
 });
+
+test('holding or adding a finger cannot provoke a double press',()=>{const elements=Object.fromEntries(['left','right','throttle'].map(k=>[k,new Button()]));let presses=0;bindControls(elements,()=>presses++);elements.throttle.send('pointerdown',1);elements.throttle.send('pointerdown',2);assert.equal(presses,1);elements.throttle.send('pointerup',1);elements.throttle.send('pointerup',2);elements.throttle.send('pointerdown',3);assert.equal(presses,2);});

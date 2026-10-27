@@ -12,9 +12,10 @@ export function bindControls(elements,onPress=()=>{}) {
   el.addEventListener('pointerdown',e=>{
    if(e.pointerType==='mouse'&&e.button!==0)return;
    e.preventDefault();
+   const wasHeld=input[name];
    setInput(name,e.pointerId,true);
    el.setPointerCapture(e.pointerId);
-   onPress();
+   if(!wasHeld)onPress(name);
   });
   for(const event of ['pointerup','pointercancel','lostpointercapture'])el.addEventListener(event,e=>{
    e.preventDefault();setInput(name,e.pointerId,false);

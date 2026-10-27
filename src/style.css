@@ -19,3 +19,5 @@
 .controls>div{gap:14px}#left,#right{min-width:99px;height:99px}
 @media(max-width:600px){#left,#right{min-width:83px;height:94px}.controls{left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right))}#throttle{padding:0 10px}}
 @media(orientation:landscape) and (max-height:500px){#left,#right{min-width:86px;height:81px}}
+
+#debug{max-height:55dvh;overflow:auto;overscroll-behavior:contain}#results{position:fixed;inset:0;z-index:20;background:#102d36ed;overflow:auto;padding:max(20px,env(safe-area-inset-top)) 18px}#results[hidden]{display:none}.result-card{max-width:560px;margin:auto;padding:20px;background:#163b41;border-radius:18px}.result-card button{padding:16px;background:#d9ff62;color:#183b34;border-radius:8px;margin:12px 8px 8px 0}.result-card input{padding:12px;color:#183b34;font-size:16px}.result-card table{width:100%;font-size:12px;border-collapse:collapse}.result-card td,.result-card th{padding:8px 3px;text-align:left;border-bottom:1px solid #ffffff22}.result-card ol{line-height:1.8}.result-card p{line-height:1.5}

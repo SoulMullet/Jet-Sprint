@@ -1,0 +1,27 @@
+export const defaults={top:85,drift:65,steer:85,acceleration:21};
+export const modified=s=>Object.entries(defaults).some(([k,v])=>s[k]!==v);
+export const format=t=>{const ms=Math.round(t*1000);return `${Math.floor(ms/60000)}:${(Math.floor(ms/1000)%60).toString().padStart(2,'0')}.${(ms%1000).toString().padStart(3,'0')}`;};
+export class Race {
+ constructor(gates,width){this.gates=gates;this.width=width;this.reset();}
+ reset(){this.total=0;this.laps=[];this.lapStart=0;this.next=1;this.done=false;this.modified=false;}
+ step(before,after,dt,settings){
+  if(this.done)return false;this.modified||=modified(settings);this.total+=dt;
+  const g=this.gates[this.next],a=(before.x-g.x)*g.tx+(before.z-g.z)*g.tz,b=(after.x-g.x)*g.tx+(after.z-g.z)*g.tz;
+  if(a<0&&b>=0){const t=-a/(b-a),x=before.x+(after.x-before.x)*t,z=before.z+(after.z-before.z)*t;
+   if(Math.abs(-(x-g.x)*g.tz+(z-g.z)*g.tx)<=this.width){
+    if(this.next===0){this.laps.push(this.total-this.lapStart);this.lapStart=this.total;this.done=this.laps.length===5;this.next=1;return true;}
+    this.next=(this.next+1)%this.gates.length;
+   }
+  }return false;
+ }
+}
+export const scoreKey='jet-sprint-races-v1';
+export function readScores(storage){try{const data=JSON.parse(storage.getItem(scoreKey));return data?.schema===1&&Array.isArray(data.records)?data.records.filter(r=>r&&typeof r.id==='string'&&typeof r.name==='string'&&Number.isFinite(r.total)&&r.total>0&&Array.isArray(r.laps)&&r.laps.length===5&&r.laps.every(t=>Number.isFinite(t)&&t>0)&&Math.abs(r.total-r.laps.reduce((a,b)=>a+b,0))<.01):[];}catch{return [];}}
+export function saveScore(storage,result,name){
+ const all=readScores(storage);if(all.some(r=>r.id===result.id))return all;
+ const record={...result,name:name.trim().slice(0,16)||'Racer'};
+ all.push(record);const other=all.filter(r=>r.course!==record.course||r.version!==record.version||r.modified!==record.modified);
+ const group=all.filter(r=>!other.includes(r)).sort((a,b)=>a.total-b.total).slice(0,10);
+ const records=[...other,...group];storage.setItem(scoreKey,JSON.stringify({schema:1,records}));return records;
+}
+export function createDoubleTap(action){let last=-Infinity,armed=false;return {press(now){if(armed&&now-last<=300){armed=false;action();}else{last=now;armed=true;}},reset(){last=-Infinity;armed=false;}};}
