@@ -3,12 +3,13 @@ import polygonClipping from 'polygon-clipping';
 // Union capsule segments before triangulating. Offset ribbons fold over themselves
 // when the inside radius is smaller than channel width, flipping lit normals.
 function channelPolygons(points,width){
- const capsules=points.map((p,i)=>{
-  const q=points[(i+1)%points.length],a=Math.atan2(q.z-p.z,q.x-p.x),ring=[];
-  for(let j=0;j<=8;j++){const t=a-Math.PI/2+j*Math.PI/8;ring.push([q.x+width*Math.cos(t),q.z+width*Math.sin(t)]);}
-  for(let j=0;j<=8;j++){const t=a+Math.PI/2+j*Math.PI/8;ring.push([p.x+width*Math.cos(t),p.z+width*Math.sin(t)]);}
+ const paths=points.paths||[points];
+ const capsules=paths.flatMap(path=>path.slice(0,points.paths?-1:undefined).map((p,i)=>{
+  const q=path[(i+1)%path.length],a=Math.atan2(q.z-p.z,q.x-p.x),ring=[];
+  for(let j=0;j<=16;j++){const t=a-Math.PI/2+j*Math.PI/16;ring.push([q.x+width*Math.cos(t),q.z+width*Math.sin(t)]);}
+  for(let j=0;j<=16;j++){const t=a+Math.PI/2+j*Math.PI/16;ring.push([p.x+width*Math.cos(t),p.z+width*Math.sin(t)]);}
   ring.push(ring[0]);return [ring];
- });
+ }));
  return polygonClipping.union(...capsules);
 }
 function geometryFromPolygons(polygons){
@@ -22,12 +23,13 @@ function geometryFromPolygons(polygons){
 export function channelGeometry(points,width){return geometryFromPolygons(channelPolygons(points,width));}
 export function channelBankGeometry(points,outer,inner){return geometryFromPolygons(polygonClipping.difference(channelPolygons(points,outer),channelPolygons(points,inner)));}
 export function nearestOnTrack(points,x,z){
- let best=Infinity,px=0,pz=0,index=0;
- for(let i=0;i<points.length;i++){
-  const a=points[i],b=points[(i+1)%points.length],dx=b.x-a.x,dz=b.z-a.z;
-  const t=Math.max(0,Math.min(1,((x-a.x)*dx+(z-a.z)*dz)/(dx*dx+dz*dz)));
+ let best=Infinity,px=0,pz=0,index=0,segmentId=null,along=0;
+ const paths=points.paths||[points];
+ for(const path of paths)for(let i=0,n=path.length-(points.paths?1:0);i<n;i++){
+  const a=path[i],b=path[(i+1)%path.length],dx=b.x-a.x,dz=b.z-a.z;
+  const t=Math.max(0,Math.min(1,((x-a.x)*dx+(z-a.z)*dz)/(dx*dx+dz*dz||1)));
   const qx=a.x+t*dx,qz=a.z+t*dz,d=(x-qx)**2+(z-qz)**2;
-  if(d<best){best=d;px=qx;pz=qz;index=i;}
+  if(d<best){best=d;px=qx;pz=qz;index=a.routeIndex??i;segmentId=path.id||null;along=t;}
  }
- return {x:px,z:pz,index};
+ return {x:px,z:pz,index,segmentId,t:along};
 }

@@ -1,4 +1,4 @@
-# JET SPRINT v0.2
+# JET SPRINT v0.7.0
 
 A mobile-first, single-player 3D jet sprint prototype built with JavaScript, Vite, Three.js and Web Audio. All geometry and sound are procedural; no assets, account, API keys or backend required.
 
@@ -13,9 +13,11 @@ npm run dev
 
 Open the address Vite prints. On a phone on the same network, use the computer's LAN address and port 5173. Allow access through your local firewall. Rotate the device to landscape for the widest course view; both orientations use a closer fixed-angle follow camera with velocity and course lookahead.
 
-Press **HIT THE WATER** to unlock audio and begin. Hold throttle and either steering button simultaneously. On desktop use **W / up arrow / space** for throttle, **A/D / left/right arrows** for steering, and **R** to restart. Release throttle to coast and tighten turns. Slide through bends and carry momentum. Bank contact slows and redirects the boat without ending the run. The setup panel adjusts top speed, drift retention and steering response; defaults are 85 km/h, 65%, and 85%.
+Press **HIT THE WATER** to unlock audio and begin. Hold throttle and either steering button simultaneously. On desktop use **W / up arrow / space** for throttle, **A/D / left/right arrows** for steering, and **R** to restart. Release throttle to coast; reapply throttle to steer and recover a slide. Slide through bends and carry momentum. Bank contact slows and redirects the boat without ending the run. The setup panel adjusts top speed, drift retention and steering response; new-install defaults are 85 km/h, 65%, and 75%. Existing saved values are preserved.
 
-The timer begins at launch, on the start stripe. Follow the initial boat heading, pass the three ordered course sectors, then cross the stripe to record a lap. Best time is kept for the current page session; restart resets the current race and retains best. There is no reverse throttle, AI, ghost, progression or network play.
+A READY stage and five-second lamp countdown hold the boat at the stripe while allowing engine revving. Green releases the boat and starts the timer together. Follow the navigator through the interconnected Emerald Crosswater channels; all ordered gates are required for each of five laps. Wrong turns require recovering the missed gate while the timer continues. Finish results and local leaderboards remain available. There is no reverse throttle, opponent AI, ghost, progression or network play.
+
+See [v0.7.0 build notes](docs/v0.7.0.md) for recommended handling values, settings migrations, changed files, validation and the physical iPhone checklist. Older release sections below describe their historical behavior.
 
 ## Checks
 
@@ -25,7 +27,7 @@ npm run build
 npm run preview
 ```
 
-Node tests cover speed convergence, steering, drag, bank recovery and drift settings. Build output is in `dist/`. Vite may warn about the Three.js bundle size (~134 KB compressed). Browser checks should cover: launch/audio unlock, simultaneous throttle and steering, pointer cancellation, left/right drift recovery, full valid laps, restart, background/resume, portrait and landscape. Test on an actual iPhone in Safari before claiming iPhone compatibility or performance. Audio can depend on device mute and volume settings.
+Node tests cover speed convergence, steering, drag, bank recovery and drift settings. Build output is in `dist/`. Vite may warn about the Three.js bundle size (~176 KB compressed). Browser checks should cover: launch/audio unlock, simultaneous throttle and steering, pointer cancellation, left/right drift recovery, full valid laps, restart, background/resume, portrait and landscape. Test on an actual iPhone in Safari before claiming iPhone compatibility or performance. Audio can depend on device mute and volume settings.
 
 ## GitHub Pages
 
@@ -34,7 +36,9 @@ Push this repository to GitHub, then select **Settings → Pages → Build and d
 ## Code map
 
 - `src/main.js`: course/boat rendering, pooled spray and wake, camera, controls, lap checkpoints and HUD.
-- `src/physics.js`: fixed-step arcade dynamics and configurable tuning.
+- `src/physics.js` / `src/handling.js`: fixed-step waterjet dynamics and shared handling defaults.
+- `src/course.js` / `src/track.js`: independent waterway graph, prescribed route, directional gates and shared clipped channel geometry.
+- `src/navigation.js`: stable turn instructions, route recovery and HUD.
 - `src/audio.js`: interaction-unlocked harmonic V8 synthesis (an approximation, not a recording).
 - `src/style.css`: responsive overlays and touch controls.
 

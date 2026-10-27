@@ -1,5 +1,6 @@
-export const defaults={top:85,drift:65,steer:85,acceleration:21};
-export const modified=s=>Object.entries(defaults).some(([k,v])=>s[k]!==v);
+import {handlingDefaults} from './handling.js';
+export const defaults=handlingDefaults;
+export const modified=s=>Object.entries(defaults).some(([k,v])=>(s[k]??v)!==v);
 export const format=t=>{const ms=Math.round(t*1000);return `${String(Math.floor(ms/60000)).padStart(2,'0')}:${(Math.floor(ms/1000)%60).toString().padStart(2,'0')}.${(ms%1000).toString().padStart(3,'0')}`;};
 export class Race {
  constructor(gates,width){this.gates=gates;this.width=width;this.reset();}

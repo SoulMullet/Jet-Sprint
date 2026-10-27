@@ -1,6 +1,7 @@
 <!doctype html><meta charset="utf-8"><title>JET SPRINT fluid GPU validation</title><body><pre id="report">Running explicit GPU validation…</pre><script type="module">
 import * as THREE from 'three';
 import {ShallowWaterSolver} from '../src/fluid/solver.js';
+import {createCourse} from '../src/course.js';
 import {course,channel} from '../src/physics.js';
 import {nearestOnTrack} from '../src/track.js';
 import {referenceStep} from '../src/fluid/numerics.js';
@@ -28,6 +29,8 @@ try{
  for(const resolution of [64,128]){
   const s=new ShallowWaterSolver(renderer,{nearest:(x,z)=>nearestOnTrack(points,x,z),width:channel.water,resolution});assert(s.available,s.support.reason);const baseline=stats(read(s));s.injectForce({x:7,z:-49,radius:2.5,radial:.65});for(let k=0;k<600;k++)s.step();const after=stats(read(s)),massError=Math.abs(after.volume-baseline.volume)/baseline.volume;assert(massError<1e-5,'Actual course mass drift');assert(after.min>=0&&after.max<=4.001,'Actual course bounds');results.push({type:'actual-course',resolution,seconds:600*s.dt,massError,...after});s.dispose();
  }
+ const network=createCourse().network;
+ for(const resolution of [64,128]){const s=new ShallowWaterSolver(renderer,{nearest:(x,z)=>nearestOnTrack(network,x,z),width:channel.water,resolution});assert(s.available,s.support.reason);const baseline=stats(read(s));s.injectForce({x:0,z:0,radius:3.5,radial:.5,impulseX:.9});for(let k=0;k<600;k++)s.step();const after=stats(read(s)),massError=Math.abs(after.volume-baseline.volume)/baseline.volume;assert(massError<1e-5,'Network volume drift');assert(after.min>=0&&after.max<=4.001&&after.speed<=6.01,'Network stability');results.push({type:'network-course',resolution,seconds:600*s.dt,massError,...after});s.dispose();}
  window.fluidResults={ok:true,results};
 }catch(error){window.fluidResults={ok:false,error:error.stack,results};}
 document.querySelector('#report').textContent=JSON.stringify(window.fluidResults,null,2);renderer.dispose();

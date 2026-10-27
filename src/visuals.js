@@ -11,7 +11,7 @@ export function lighting(scene,renderer){
  return sun;
 }
 export function waterMaterial(points,width,time,boat,strength){
- const depth=texture((ctx,n)=>{ctx.fillStyle='#000';ctx.fillRect(0,0,n,n);ctx.lineJoin='round';ctx.lineCap='round';for(let i=0;i<24;i++){const f=i/24;ctx.strokeStyle=`rgb(${Math.round(30+f*225)},${Math.round(30+f*225)},${Math.round(30+f*225)})`;ctx.lineWidth=width*2*(1-f)*n/250;ctx.beginPath();for(let j=0;j<=points.length;j++){const p=points[j%points.length];j?ctx.lineTo((p.x+125)*n/250,(p.z+125)*n/250):ctx.moveTo((p.x+125)*n/250,(p.z+125)*n/250);}ctx.stroke();}},512);depth.colorSpace=THREE.NoColorSpace;depth.flipY=false;
+ const depth=texture((ctx,n)=>{ctx.fillStyle='#000';ctx.fillRect(0,0,n,n);ctx.lineJoin='round';ctx.lineCap='round';for(let i=0;i<24;i++){const f=i/24;ctx.strokeStyle=`rgb(${Math.round(30+f*225)},${Math.round(30+f*225)},${Math.round(30+f*225)})`;ctx.lineWidth=width*2*(1-f)*n/250;ctx.beginPath();for(const path of points.paths||[points])for(let j=0;j<path.length+(points.paths?0:1);j++){const p=path[j%path.length];j?ctx.lineTo((p.x+125)*n/250,(p.z+125)*n/250):ctx.moveTo((p.x+125)*n/250,(p.z+125)*n/250);}ctx.stroke();}},512);depth.colorSpace=THREE.NoColorSpace;depth.flipY=false;
  const quality={value:1},m=make('#367d7b',.32,.12);m.envMapIntensity=.75;
  m.onBeforeCompile=shader=>{
  Object.assign(shader.uniforms,{waterTime:time,waterBoat:boat,waterStrength:strength,channelDepth:{value:depth},waterQuality:quality});
@@ -69,10 +69,34 @@ export function racingBoat(scene){
  add(boat,new THREE.BoxGeometry(2.25,.1,1.35),rubber,-.35,.7);add(boat,new THREE.BoxGeometry(1.15,.18,1.3),paint,1,.75);
  for(const side of [-1,1]){add(boat,new THREE.BoxGeometry(3.3,.09,.06),rubber,-.25,.65,side*.9);add(boat,new THREE.BoxGeometry(.6,.12,.48),seat,.15,.85,side*.35);const back=add(boat,new THREE.BoxGeometry(.12,.62,.5),seat,-.16,1.1,side*.35);back.rotation.z=-.15;}
  add(boat,new THREE.BoxGeometry(.9,.5,.7),metal,-1.1,1.03);for(const side of [-1,1]){const cover=add(boat,new THREE.BoxGeometry(.9,.22,.25),red,-1.08,1.36,side*.32);cover.rotation.x=side*.35;for(let i=0;i<4;i++){const pipe=add(boat,new THREE.TorusGeometry(.13,.045,5,8,Math.PI),metal,-1.45+i*.23,1.12,side*.56);pipe.rotation.y=Math.PI/2;}}
- add(boat,new THREE.CylinderGeometry(.25,.28,.18,12),metal,-1.05,1.57);add(boat,new THREE.SphereGeometry(.23,10,8),red,.25,1.35,-.35);
+ add(boat,new THREE.CylinderGeometry(.25,.28,.18,12),metal,-1.05,1.57);
  const jet=add(boat,new THREE.CylinderGeometry(.23,.29,.4,12,true),metal,-2.05,.34);jet.rotation.z=Math.PI/2;const nozzle=add(boat,new THREE.CircleGeometry(.19,12),rubber,-2.26,.34);nozzle.rotation.y=-Math.PI/2;
  function tube(a,b){const d=new THREE.Vector3().subVectors(b,a),m=add(boat,new THREE.CylinderGeometry(.05,.05,d.length(),8),metal);m.position.copy(a).add(b).multiplyScalar(.5);m.quaternion.setFromUnitVectors(THREE.Object3D.DEFAULT_UP,d.normalize());}
  for(const z of [-.65,.65]){tube(new THREE.Vector3(-.55,.7,z),new THREE.Vector3(-.4,1.8,z));tube(new THREE.Vector3(-.4,1.8,z),new THREE.Vector3(.75,1.7,z));tube(new THREE.Vector3(.75,1.7,z),new THREE.Vector3(1,.7,z));}tube(new THREE.Vector3(-.4,1.8,-.65),new THREE.Vector3(-.4,1.8,.65));
+ // Both crew members face local +X and share the hull's bank/heading transform.
+ const navigatorHelmet=make('#f0e9d3',.32,.1);
+ const crew=[];
+ for(const [role,z,helmet,jacket] of [['driver',-.35,red,paint],['navigator',.35,navigatorHelmet,red]]){
+  const x=.15;crew.push({role,x,z,helmetY:1.57});
+  add(boat,new THREE.BoxGeometry(.27,.36,.28),rubber,x,1.18,z);
+  add(boat,new THREE.BoxGeometry(.12,.3,.31),jacket,x+.12,1.2,z);
+  add(boat,new THREE.BoxGeometry(.08,.32,.08),jacket,x-.04,1.22,z-.14);
+  add(boat,new THREE.BoxGeometry(.08,.32,.08),jacket,x-.04,1.22,z+.14);
+  add(boat,new THREE.CylinderGeometry(.07,.07,.1,7),rubber,x,1.41,z);
+  add(boat,new THREE.SphereGeometry(.18,12,9),helmet,x,1.57,z);
+  const visor=add(boat,new THREE.SphereGeometry(.15,10,7),rubber,x+.095,1.58,z);visor.scale.set(.7,.43,.98);
+  for(const side of [-1,1]){
+   // Seated thighs, bent knees, and boots below the dashboard.
+   add(boat,new THREE.BoxGeometry(.32,.12,.1),rubber,x+.13,.94,z+side*.09);
+   add(boat,new THREE.BoxGeometry(.12,.22,.1),rubber,x+.33,.87,z+side*.09);
+   add(boat,new THREE.BoxGeometry(.19,.09,.12),rubber,x+.38,.77,z+side*.09);
+   const shoulder=new THREE.Vector3(x+.03,1.32,z+side*.17),elbow=new THREE.Vector3(x+.23,1.12,z+side*.2),hand=new THREE.Vector3(x+.43,1.17,z+side*.12);
+   for(const [a,b] of [[shoulder,elbow],[elbow,hand]]){const d=new THREE.Vector3().subVectors(b,a),arm=add(boat,new THREE.CylinderGeometry(.045,.05,d.length(),6),rubber);arm.position.copy(a).add(b).multiplyScalar(.5);arm.quaternion.setFromUnitVectors(THREE.Object3D.DEFAULT_UP,d.normalize());}
+   add(boat,new THREE.SphereGeometry(.06,7,5),helmet,hand.x,hand.y,hand.z);
+  }
+ }
+ const wheel=add(boat,new THREE.TorusGeometry(.16,.026,6,12),metal,.62,1.17,-.35);wheel.rotation.y=Math.PI/2;
+ boat.userData.crew=crew;
  // Static boat parts share a handful of draw calls; physics animates the group.
  const batches=new Map();boat.updateMatrixWorld(true);
  for(const child of boat.children){if(!batches.has(child.material))batches.set(child.material,[]);batches.get(child.material).push((child.geometry.index?child.geometry.toNonIndexed():child.geometry.clone()).applyMatrix4(child.matrix));}
