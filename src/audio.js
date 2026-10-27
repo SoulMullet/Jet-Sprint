@@ -1,0 +1,4 @@
+export class Engine {
+ start(){if(this.ctx){this.ctx.resume();return;}const C=window.AudioContext||window.webkitAudioContext;if(!C)return;this.ctx=new C();const c=this.ctx;this.gain=c.createGain();this.gain.gain.value=0;const filter=c.createBiquadFilter();filter.type='lowpass';filter.frequency.value=650;this.filter=filter;filter.connect(this.gain);this.gain.connect(c.destination);this.oscs=[1,2,4].map((n)=>{const o=c.createOscillator(),g=c.createGain();o.type=n===1?'sawtooth':'triangle';o.frequency.value=32*n;g.gain.value=.16/n;o.connect(g);g.connect(filter);o.start();return o;});c.resume();}
+ update(speed,throttle){if(!this.ctx)return;const t=this.ctx.currentTime,rpm=1000+speed/24*5800;this.oscs.forEach((o,i)=>o.frequency.setTargetAtTime(rpm/60*2*[1,2,4][i],t,.08));this.filter.frequency.setTargetAtTime(300+rpm*.13+(throttle?500:0),t,.1);this.gain.gain.setTargetAtTime(document.hidden?0:(throttle?.55:.22),t,.1);}
+}
