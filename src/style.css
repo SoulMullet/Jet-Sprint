@@ -14,3 +14,8 @@
  .course-name{bottom:95px}#notice{bottom:7px}#debug{top:64px;right:18px;width:150px}
  .intro-card{max-width:520px}h1{font-size:64px;margin:14px 0}.intro-card p{font-size:13px;line-height:1.4;margin:8px 0}.intro-card button{padding:12px;margin:8px 0}footer{font-size:9px}
 }
+
+/* 30% larger steering targets, including compact landscape layouts. */
+.controls>div{gap:14px}#left,#right{min-width:99px;height:99px}
+@media(max-width:600px){#left,#right{min-width:83px;height:94px}.controls{left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right))}#throttle{padding:0 10px}}
+@media(orientation:landscape) and (max-height:500px){#left,#right{min-width:86px;height:81px}}
