@@ -1,0 +1,34 @@
+<!doctype html><meta charset="utf-8"><title>JET SPRINT fluid GPU validation</title><body><pre id="report">Running explicit GPU validation…</pre><script type="module">
+import * as THREE from 'three';
+import {ShallowWaterSolver} from '../src/fluid/solver.js';
+import {course,channel} from '../src/physics.js';
+import {nearestOnTrack} from '../src/track.js';
+import {referenceStep} from '../src/fluid/numerics.js';
+import {fluidFixture,unpack,stats} from './fluid-fixtures.js';
+const results=[];const assert=(condition,message)=>{if(!condition)throw Error(message);};
+const renderer=new THREE.WebGLRenderer({antialias:false});renderer.setSize(64,64);document.body.append(renderer.domElement);
+renderer.debug.onShaderError=(gl,program,vs,fs)=>{throw Error(gl.getProgramInfoLog(program)+' '+gl.getShaderInfoLog(fs));};
+function read(s){const buffer=s.type===THREE.FloatType?new Float32Array(s.n*s.n*4):new Uint16Array(s.n*s.n*4);renderer.readRenderTargetPixels(s.front,0,0,s.n,s.n,buffer);assert(renderer.getContext().getError()===0,'GPU readback failed');return unpack(s.type===THREE.FloatType?buffer:Float32Array.from(buffer,THREE.DataUtils.fromHalfFloat));}
+try{
+ for(const type of [THREE.FloatType,THREE.HalfFloatType]){
+  for(const kind of ['lake','wave','dry','obstacle','shock']){
+   const fixture=fluidFixture(16,kind),s=new ShallowWaterSolver(renderer,{domain:fixture,resolution:64,type});assert(s.available,s.support.reason);const initial=read(s),baseline=stats(initial);let cpu=initial;
+   for(let k=0;k<20;k++){s.step();cpu=referenceStep(cpu,fixture.bed,fixture.mask,16,fixture.dx,s.dt);}const actual=read(s);let maxError=0;for(let i=0;i<cpu.length;i++)maxError=Math.max(maxError,Math.abs(cpu[i]-actual[i]));
+   assert(maxError<(kind==='shock'?(type===THREE.FloatType?1e-4:.08):(type===THREE.FloatType?2e-5:.001)),'GPU/reference mismatch '+kind+' '+maxError);
+   const steps=kind==='wave'?7200:1200;for(let k=20;k<steps;k++)s.step();const end=read(s),after=stats(end),massError=Math.abs(after.volume-baseline.volume)/baseline.volume;
+   assert(after.min>=0&&after.max<=4.001&&after.speed<=6.01,'Positivity/speed bound');assert(massError<(type===THREE.FloatType?1e-5:2e-5),'Mass drift '+massError);
+   if(kind==='lake'){let restError=0;for(let i=0;i<end.length;i++)restError=Math.max(restError,Math.abs(end[i]-initial[i]));assert(restError<(type===THREE.FloatType?2e-5:.01),'Lake equilibrium drift '+restError);}
+   if(kind==='obstacle')for(let i=0;i<fixture.mask.length;i++)if(!fixture.mask[i])assert(end[i*3]===0,'Solid shoreline leaked');
+   s.reset();const reset=read(s);assert(reset.every((v,i)=>v===initial[i]),'Reset mismatch');s.injectForce({x:0,z:0,radial:.6});s.step();assert(read(s).some((v,i)=>Math.abs(v-initial[i])>1e-4),'Injection missing');
+   assert(s.samplePoints([{x:0,z:0}])?.[0]?.depth>=0,'Sparse sampling missing');
+   results.push({type:type===THREE.FloatType?'float32':'float16',kind,steps,seconds:s.dt*steps,maxError,massError,...after});s.dispose();
+  }
+ }
+ const curve=new THREE.CatmullRomCurve3(course.map(([x,z])=>new THREE.Vector3(x,0,z)),true,'centripetal'),points=Array.from({length:600},(_,i)=>curve.getPointAt(i/600));
+ for(const resolution of [64,128]){
+  const s=new ShallowWaterSolver(renderer,{nearest:(x,z)=>nearestOnTrack(points,x,z),width:channel.water,resolution});assert(s.available,s.support.reason);const baseline=stats(read(s));s.injectForce({x:7,z:-49,radius:2.5,radial:.65});for(let k=0;k<600;k++)s.step();const after=stats(read(s)),massError=Math.abs(after.volume-baseline.volume)/baseline.volume;assert(massError<1e-5,'Actual course mass drift');assert(after.min>=0&&after.max<=4.001,'Actual course bounds');results.push({type:'actual-course',resolution,seconds:600*s.dt,massError,...after});s.dispose();
+ }
+ window.fluidResults={ok:true,results};
+}catch(error){window.fluidResults={ok:false,error:error.stack,results};}
+document.querySelector('#report').textContent=JSON.stringify(window.fluidResults,null,2);renderer.dispose();
+</script>
