@@ -2,9 +2,11 @@ import * as THREE from 'three';
 import {sprayReaches} from './spray.js';
 export function createBigfoot(scene,trees,nearest){
  const figure=new THREE.Group();scene.add(figure);figure.visible=false;figure.scale.setScalar(1.4);
- const fur=new THREE.MeshStandardMaterial({color:0x392b23,roughness:1});
- function part(w,h,d,x,y,z,parent=figure){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),fur);m.position.set(x,y,z);parent.add(m);return m;}
- part(1.5,2,.85,0,2.6,0);part(1.8,.65,.9,0,3.4,0);part(.85,.9,.8,0,4,.25);
+ const fur=new THREE.MeshStandardMaterial({color:0x392b23,roughness:.95});
+ const bodyGeo=new THREE.SphereGeometry(.5,10,8);
+ function part(w,h,d,x,y,z,parent=figure){const m=new THREE.Mesh(bodyGeo,fur);m.position.set(x,y,z);m.scale.set(w,h,d);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;}
+ part(1.5,2,.85,0,2.6,0);part(1.8,.65,.9,0,3.4,0);part(.85,.9,.8,0,4,.25);part(.6,.35,.38,0,3.95,.65);
+ const tufts=new THREE.InstancedMesh(new THREE.ConeGeometry(.13,.5,5),fur,44);const matrix=new THREE.Matrix4(),rotation=new THREE.Quaternion(),position=new THREE.Vector3(),scale=new THREE.Vector3(1,1,1);for(let i=0;i<44;i++){const a=i*2.4,y=1.9+(i%11)*.15;position.set(Math.cos(a)*.75,y,Math.sin(a)*.43);rotation.setFromAxisAngle(new THREE.Vector3(1,0,0),Math.PI);matrix.compose(position,rotation,scale);tufts.setMatrixAt(i,matrix);}tufts.castShadow=true;figure.add(tufts);
  const arms=[-1,1].map(side=>{const pivot=new THREE.Group();pivot.position.set(side*.95,3.5,0);figure.add(pivot);part(.46,2.4,.5,0,-1.05,.1,pivot);return pivot;});
  const legs=[-1,1].map(side=>{const pivot=new THREE.Group();pivot.position.set(side*.43,1.7,0);figure.add(pivot);part(.58,1.65,.6,0,-.8,0,pivot);part(.65,.3,1,0,-1.55,.25,pivot);return pivot;});
  // Deliberate oversized trunks conceal both endpoints; no collision objects added.

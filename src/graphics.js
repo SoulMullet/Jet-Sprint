@@ -1,0 +1,6 @@
+export const presets={low:{dpr:1,particles:.45,shadow:0,detail:.45,water:0},medium:{dpr:1.35,particles:.7,shadow:512,detail:.7,water:1},high:{dpr:1.7,particles:1,shadow:1024,detail:1,water:2}};
+export class Graphics {
+ constructor(apply,storage){this.apply=apply;this.storage=storage;this.elapsed=0;this.frames=0;this.windows=0;this.current='medium';let saved;try{saved=storage.getItem('jet-sprint-graphics');}catch{}this.select(['auto',...Object.keys(presets)].includes(saved)?saved:'auto');}
+ select(value){this.selected=value;this.elapsed=0;this.frames=0;this.windows=0;this.current=value==='auto'?'medium':value;this.apply(presets[this.current],this.current);try{this.storage.setItem('jet-sprint-graphics',value);}catch{}}
+ sample(dt){if(this.selected!=='auto'||dt<=0||dt>2)return;this.elapsed+=Math.min(dt,.2);this.frames++;if(this.elapsed<6)return;const fps=this.frames/this.elapsed;this.windows++;let next=this.current;if(fps<45)next=this.current==='high'?'medium':'low';else if(fps>57&&this.windows>=3)next=this.current==='low'?'medium':'high';this.elapsed=0;this.frames=0;if(next!==this.current){this.current=next;this.windows=0;this.apply(presets[next],next);}}
+}
