@@ -36,7 +36,7 @@ export function waterMaterial(points,width,time,boat,strength){
 export function terrain(scene,points,nearest,random){
  const tex=texture((ctx,n)=>{ctx.fillStyle='#687452';ctx.fillRect(0,0,n,n);for(let i=0;i<18000;i++){ctx.fillStyle=i%3?'#53604455':'#a2987555';ctx.fillRect(random()*n,random()*n,1+random()*4,1+random()*3);}});tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(16,14);
  const ground=make('#b2b293');ground.map=tex;const geo=new THREE.PlaneGeometry(250,220,90,80);geo.rotateX(-Math.PI/2);const pos=geo.attributes.position;
- for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i),p=nearest(x,z),d=Math.hypot(x-p.x,z-p.z);pos.setY(i,-.21+Math.max(0,Math.min(1,(d-10)/12))*(.5+Math.sin(x*.1)*Math.cos(z*.13)*1.4));}geo.computeVertexNormals();add(scene,geo,ground);
+ for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i),p=nearest(x,z),d=Math.hypot(x-p.x,z-p.z);pos.setY(i,-.21-1.3*Math.max(0,1-(d/7.3)**2)+Math.max(0,Math.min(1,(d-10)/12))*(.5+Math.sin(x*.1)*Math.cos(z*.13)*1.4));}geo.computeVertexNormals();add(scene,geo,ground);
  const bark=make('#534a3b'),leaf=make('#304d3c'),rock=make('#75776c'),shrub=make('#647447');
  const trees=[],details=[],matrix=new THREE.Matrix4(),q=new THREE.Quaternion(),scale=new THREE.Vector3(),v=new THREE.Vector3();
  for(let i=0;i<280;i++){const x=(random()-.5)*190,z=(random()-.5)*160,p=nearest(x,z);if(Math.hypot(x-p.x,z-p.z)>13)trees.push({x,z,size:1+random()*1.4,type:i%3,rotation:random()*6.28});}

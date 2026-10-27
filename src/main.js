@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import './style.css';
 import {course,channel,settings,stepBoat} from './physics.js';
 import {Engine} from './audio.js';
-import {channelGeometry,nearestOnTrack} from './track.js';
+import {channelGeometry,channelBankGeometry,nearestOnTrack} from './track.js';
 import {createBigfoot} from './bigfoot.js';
 import {Race,format,modified,readScores,saveScore,createDoubleTap} from './race.js';
 import {lighting,waterMaterial,terrain,racingBoat} from './visuals.js';
@@ -24,7 +24,7 @@ const N=600,points=Array.from({length:N},(_,i)=>curve.getPointAt(i/N));
 const tangents=Array.from({length:N},(_,i)=>curve.getTangentAt(i/N));
 // Shared capsule-union shape for visible water and continuous segment collision.
 const outline=Array.from({length:240},(_,i)=>curve.getPointAt(i/240));
-const shore=mesh(channelGeometry(outline,channel.bank),bank,0,-.13,0);shore.receiveShadow=true;
+const shore=mesh(channelBankGeometry(outline,channel.bank,channel.water),bank,0,-.13,0);shore.receiveShadow=true;
 const waterLook=waterMaterial(points,channel.water,waterTime,waterBoat,waterStrength);
 const waterMesh=mesh(channelGeometry(outline,channel.water),waterLook.material);waterMesh.receiveShadow=true;
 function nearest(x,z){return nearestOnTrack(points,x,z);}
@@ -56,6 +56,8 @@ $('fluidResolution').onchange=e=>fluid.setResolution(e.target.value);
 $('fluidDebug').onchange=e=>fluid.setDebug(e.target.value);
 $('testWave').onclick=()=>fluid.disturb(b.x+Math.cos(b.angle)*6,b.z+Math.sin(b.angle)*6);
 $('resetWater').onclick=()=>fluid.reset();
+$('waveScale').oninput=e=>{fluid.setWaveScale(Number(e.target.value));$('waveScaleOut').textContent=e.target.value+'%';};
+$('repeatWaves').onchange=e=>fluid.repeatWaves=e.target.checked;
 const engine=new Engine();let playing=false;
 const doubleTap=createDoubleTap(()=>bigfoot.provoke(b,()=>engine.vocal(true)));
 const race=new Race([0,150,300,450].map(i=>({x:points[i].x,z:points[i].z,tx:tangents[i].x,tz:tangents[i].z})),channel.water);
@@ -118,7 +120,7 @@ const beforeStep={x:0,z:0};
 const cameraTarget=new THREE.Vector3(start.x,0,start.z),desiredTarget=new THREE.Vector3();
 let cameraReady=false,vegetationClock=0;
 function frame(now){requestAnimationFrame(frame);const rawDt=(now-last)/1000,dt=Math.min(rawDt,.05);last=now;if(playing&&!document.hidden)graphics.sample(rawDt);waterTime.value=now*.001;let speed=Math.hypot(b.vx,b.vz);
- if(playing&&!document.hidden){accumulator+=dt;while(accumulator>=1/120){beforeStep.x=b.x;beforeStep.z=b.z;stepBoat(b,input,1/120,nearest);const completed=race.step(beforeStep,b,1/120,settings);elapsed=race.total-race.lapStart;lap=Math.min(5,race.laps.length+1);best=race.laps.length?Math.min(...race.laps):null;if(completed&&race.done){finish();accumulator=0;break;}accumulator-=1/120;}speed=Math.hypot(b.vx,b.vz);fluid.update(dt);effects(dt,speed);bigfoot.update(dt,b,camera,{speed,distance:settings.sprayDistance/100,volume:settings.waterVolume/100,throttle:input.throttle},()=>engine.vocal(false));engine.update(speed,input.throttle,dt,settings.top/3.6);}
+ if(playing&&!document.hidden){accumulator+=dt;while(accumulator>=1/120){beforeStep.x=b.x;beforeStep.z=b.z;stepBoat(b,input,1/120,nearest);const completed=race.step(beforeStep,b,1/120,settings);elapsed=race.total-race.lapStart;lap=Math.min(5,race.laps.length+1);best=race.laps.length?Math.min(...race.laps):null;if(completed&&race.done){finish();accumulator=0;break;}accumulator-=1/120;}speed=Math.hypot(b.vx,b.vz);fluid.focus.x=b.x+Math.cos(b.angle)*7;fluid.focus.z=b.z+Math.sin(b.angle)*7;fluid.update(dt);effects(dt,speed);bigfoot.update(dt,b,camera,{speed,distance:settings.sprayDistance/100,volume:settings.waterVolume/100,throttle:input.throttle},()=>engine.vocal(false));engine.update(speed,input.throttle,dt,settings.top/3.6);}
  boat.position.set(b.x,.1+Math.sin(now*.008)*.025*speed/20,b.z);boat.rotation.set(0,-b.angle,(Number(input.left)-Number(input.right))*.055*speed/20);
  // Fixed isometric angle, with velocity and course lookahead for the next bend.
  waterBoat.value.set(b.x,0,b.z);waterStrength.value=Math.min(1,speed/20);

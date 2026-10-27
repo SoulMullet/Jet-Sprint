@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import {ShallowWaterSolver} from './solver.js';
+import {renderGeometry} from './render-geometry.js';
 import {FluidSurface} from './surface.js';
 
 const automaticResolution={low:64,medium:96,high:128};
@@ -11,7 +12,7 @@ export class WaterSystem {
   this.options={nearest,width};
   this.mode='simulated';
   this.resolution='auto';
-  this.debug=0;
+  this.debug=0;this.waveScale=2.4;this.repeatWaves=true;this.nextWave=1.25;this.focus={...start};
   this.solver=null;
   this.surface=null;
   this.failure='';
@@ -40,7 +41,8 @@ export class WaterSystem {
      if(candidate!==64&&this.failure.startsWith('Fluid initialization failed'))continue;
      break;
     }
-    this.surface=new FluidSurface(this.solver,this.legacy.material);
+    this.renderGeometry??=renderGeometry(this.legacy.geometry,this.options.nearest,this.options.width);
+    this.surface=new FluidSurface(this.solver,this.legacy.material,this.legacy.geometry,this.options.nearest,this.options.width,this.renderGeometry);
     this.compileSurface();
     this.scene.add(this.surface.mesh);
     this.surface.sync();
@@ -59,13 +61,14 @@ export class WaterSystem {
   this.legacy.visible=!active;
   if(this.surface){
    this.surface.mesh.visible=active;
-   this.surface.uniforms.fluidDebug.value=this.debug;
-   this.surface.material.depthTest=this.debug!==3;
-   this.surface.mesh.renderOrder=this.debug===3?5:0;
+   this.surface.uniforms.fluidDebug.value=this.debug;this.surface.uniforms.waveScale.value=this.waveScale;
+   this.surface.material.depthTest=true;
+   this.surface.mesh.renderOrder=0;
   }
   const status=active?`${this.solver.n}² GPU ${this.solver.support.precision}${this.failure?' · '+this.failure:''}`:this.failure||'Legacy water';
   this.onStatus(status);
  }
+ setWaveScale(percent){this.waveScale=Math.max(0,Math.min(300,percent))/100;this.show();}
  setMode(mode){this.mode=mode;this.show();}
  setResolution(value){
   this.resolution=value;
@@ -76,9 +79,12 @@ export class WaterSystem {
  setDebug(value){this.debug=Number(value);this.show();}
  disturb(x=this.start.x,z=this.start.z){
   const p=this.options.nearest(x,z);
-  return this.solver?.injectForce({x:p.x,z:p.z,radius:2.5,radial:.65});
+  const px=this.options.nearest(p.x+1,p.z),pz=this.options.nearest(p.x,p.z+1);
+  const a=Math.hypot(px.x-p.x,px.z-p.z)>Math.hypot(pz.x-p.x,pz.z-p.z)?px:pz;
+  const length=Math.hypot(a.x-p.x,a.z-p.z)||1;
+  return this.solver?.injectForce({x:p.x,z:p.z,radius:3.5,radial:.5,impulseX:.9*(a.x-p.x)/length,impulseZ:.9*(a.z-p.z)/length});
  }
- reset(){this.solver?.reset();this.surface?.sync();}
+ reset(){this.nextWave=1.25;this.solver?.reset();this.surface?.sync();}
  update(dt){
   if(this.mode!=='simulated'||!this.surface||!this.solver?.available)return;
   if(this.renderer.getContext().isContextLost()){
@@ -87,6 +93,7 @@ export class WaterSystem {
    this.show();
    return;
   }
+  if(this.repeatWaves&&this.solver.time>=this.nextWave){this.disturb(this.focus.x,this.focus.z);this.nextWave=this.solver.time+1.25;}
   this.solver.update(dt);
   this.surface.sync();
  }

@@ -24,3 +24,4 @@
 
 #graphics{width:100%;font:inherit;font-size:16px;color:#edf0db;background:#243e3f;border:1px solid #849383;border-radius:6px;padding:8px;margin-top:8px}
 #debug select{width:100%;font:inherit;font-size:16px;color:#edf0db;background:#243e3f;border:1px solid #849383;border-radius:6px;padding:8px;margin-top:8px}#waterStatus{font-size:10px;line-height:1.5;color:#d4e6d7}#testWave,#resetWater{padding:10px;margin:4px 5px 4px 0;background:#d9ff62;color:#183b34;border-radius:5px}
+#repeatWaves{width:auto;margin-right:8px;vertical-align:middle}
