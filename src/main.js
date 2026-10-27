@@ -8,7 +8,13 @@ import {Race,format,modified,readScores,saveScore,createDoubleTap} from './race.
 import {lighting,waterMaterial,terrain,racingBoat} from './visuals.js';
 import {Graphics} from './graphics.js';
 import {WaterSystem} from './fluid/system.js';
+import {SettingsStore} from './settings.js';
+import {mountSettings} from './settings-panel.js';
+import {RaceStart} from './race-start.js';
+import {createRaceSignal} from './race-signal.js';
 import {bindControls} from './controls.js';
+const preferences=new SettingsStore({getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)});
+for(const id of Object.keys(settings))if(Object.hasOwn(preferences.values,id))settings[id]=preferences.values[id];
 const $=id=>document.getElementById(id);
 const scene=new THREE.Scene();scene.background=new THREE.Color('#a6d4cb');scene.fog=new THREE.Fog('#a6d4cb',150,260);
 const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.outputColorSpace=THREE.SRGBColorSpace;$('game').appendChild(renderer.domElement);
@@ -46,20 +52,20 @@ const spray=new THREE.Points(particleGeo,new THREE.ShaderMaterial({transparent:t
 const wakes=Array.from({length:90},()=>{const m=mesh(new THREE.RingGeometry(.75,1,12),new THREE.MeshBasicMaterial({color:'#b4ede3',transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false}));m.rotation.x=-Math.PI/2;m.visible=false;return {m,age:10};});let wakeCursor=0,wakeClock=0;
 let fluid=null;
 let quality={particles:.7,detail:.7,water:1};
-const graphics=new Graphics((preset,name)=>{quality=preset;renderer.setPixelRatio(Math.min(devicePixelRatio,preset.dpr));renderer.setSize(innerWidth,innerHeight);spray.material.uniforms.pixelRatio.value=renderer.getPixelRatio();sun.castShadow=!!preset.shadow;renderer.shadowMap.enabled=!!preset.shadow;if(preset.shadow){sun.shadow.mapSize.set(preset.shadow,preset.shadow);sun.shadow.map?.dispose();sun.shadow.map=null;}waterLook.quality.value=preset.water;environment.update(camera,preset.detail);$('graphicsStatus').textContent=name;fluid?.setQuality(name);}, {getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)});
-$('graphics').value=graphics.selected;$('graphics').onchange=e=>graphics.select(e.target.value);
+const graphics=new Graphics((preset,name)=>{quality=preset;renderer.setPixelRatio(Math.min(devicePixelRatio,preset.dpr));renderer.setSize(innerWidth,innerHeight);spray.material.uniforms.pixelRatio.value=renderer.getPixelRatio();sun.castShadow=!!preset.shadow;renderer.shadowMap.enabled=!!preset.shadow;if(preset.shadow){sun.shadow.mapSize.set(preset.shadow,preset.shadow);sun.shadow.map?.dispose();sun.shadow.map=null;}waterLook.quality.value=preset.water;environment.update(camera,preset.detail);$('graphicsStatus').textContent=name;fluid?.setQuality(name);}, {getItem:()=>preferences.values.graphics,setItem(){}});
 fluid=new WaterSystem(renderer,scene,waterMesh,{nearest,width:channel.water,start:{x:start.x+startT.x*7,z:start.z+startT.z*7},quality:graphics.current,onStatus:message=>$('waterStatus').textContent=message});
 fluid.setQuality(graphics.current);
 if(!fluid.solver?.available){$('waterMode').value='legacy';$('waterMode').querySelector('[value=simulated]').disabled=true;fluid.setMode('legacy');}
-$('waterMode').onchange=e=>fluid.setMode(e.target.value);
-$('fluidResolution').onchange=e=>fluid.setResolution(e.target.value);
-$('fluidDebug').onchange=e=>fluid.setDebug(e.target.value);
+
+
+
 $('testWave').onclick=()=>fluid.disturb(b.x+Math.cos(b.angle)*6,b.z+Math.sin(b.angle)*6);
 $('resetWater').onclick=()=>fluid.reset();
-$('waveScale').oninput=e=>{fluid.setWaveScale(Number(e.target.value));$('waveScaleOut').textContent=e.target.value+'%';};
-$('repeatWaves').onchange=e=>fluid.repeatWaves=e.target.checked;
-const engine=new Engine();let playing=false;
-const doubleTap=createDoubleTap(()=>bigfoot.provoke(b,()=>engine.vocal(true)));
+
+
+const engine=new Engine();let playing=false,gameClock=0,last=performance.now();
+const startSequence=new RaceStart(),trackSignal=createRaceSignal(scene,start,startT);
+const doubleTap=createDoubleTap(()=>{if(startSequence.state==='RACING')bigfoot.provoke(b,()=>engine.vocal(true));});
 const race=new Race([0,150,300,450].map(i=>({x:points[i].x,z:points[i].z,tx:tangents[i].x,tz:tangents[i].z})),channel.water);
 let result=null;
 const scoreStorage={getItem(key){try{return localStorage.getItem(key);}catch{return null;}},setItem(key,value){localStorage.setItem(key,value);}};
@@ -68,7 +74,7 @@ function board(){const records=readScores(scoreStorage).filter(r=>r.course==='em
  for(const [i,r] of records.entries()){const row=document.createElement('p');row.textContent=`${i+1}. ${r.name} · ${format(r.total)} · best ${format(Math.min(...r.laps))} · ${new Date(r.date).toLocaleDateString()}`;$('scores').append(row);}
  return records.findIndex(r=>r.id===result.id)+1;
 }
-function finish(){playing=false;release();engine.pause();b.vx=b.vz=0;
+function finish(){startSequence.finish();playing=false;release();engine.pause();b.vx=b.vz=0;
  result={id:globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random()}`,course:'emerald-loop',version:'0.4',modified:race.modified,total:race.total,laps:[...race.laps],date:new Date().toISOString()};
  $('resultStats').replaceChildren();const summary=document.createElement('p');summary.textContent=`Total ${format(result.total)} · Best ${format(Math.min(...result.laps))} · Average ${format(result.total/5)} · ${result.modified?'Modified':'Standard'}`;$('resultStats').append(summary);
  const list=document.createElement('ol');for(const t of result.laps){const item=document.createElement('li');item.textContent=format(t);list.append(item);}$('resultStats').append(list);
@@ -83,13 +89,24 @@ for(const el of [$('game'),document.querySelector('.controls')]){
  for(const event of ['touchstart','touchmove','touchend','gesturestart','gesturechange','contextmenu'])el.addEventListener(event,e=>e.preventDefault(),{passive:false});
 }
 const keyMap={ArrowLeft:'left',a:'left',ArrowRight:'right',d:'right',ArrowUp:'throttle',w:'throttle',' ':'throttle'};
-window.addEventListener('keydown',e=>{if(e.target instanceof HTMLInputElement||e.target instanceof HTMLSelectElement||e.target.isContentEditable)return;const k=e.key.length===1?e.key.toLowerCase():e.key;if(keyMap[k]&&playing){e.preventDefault();engine.start();setInput(keyMap[k],k,true);}if(k==='r')restart();});window.addEventListener('keyup',e=>{const k=e.key.length===1?e.key.toLowerCase():e.key;if(keyMap[k])setInput(keyMap[k],k,false);});
+window.addEventListener('keydown',e=>{if(e.target instanceof HTMLInputElement||e.target instanceof HTMLSelectElement||e.target instanceof HTMLTextAreaElement||e.target.closest?.('#debug')||e.target.isContentEditable)return;const k=e.key.length===1?e.key.toLowerCase():e.key;if(keyMap[k]&&playing){e.preventDefault();engine.start();setInput(keyMap[k],k,true);}if(k==='r'&&!e.repeat)restart();});window.addEventListener('keyup',e=>{const k=e.key.length===1?e.key.toLowerCase():e.key;if(keyMap[k])setInput(keyMap[k],k,false);});
 window.addEventListener('blur',()=>{if(fluid?.solver)fluid.solver.accumulator=0;doubleTap.reset();release();engine.pause();});
-document.addEventListener('visibilitychange',()=>{doubleTap.reset();release();if(document.hidden)engine.pause();});
-for(const name of ['top','drift','steer','acceleration','cameraResponse','effects','sprayDistance','waterVolume'])$(name).addEventListener('input',e=>{settings[name]=Number(e.target.value);if(playing)race.modified||=modified(settings);if(['sprayDistance','waterVolume'].includes(name)){try{localStorage.setItem('jet-sprint-water',JSON.stringify({sprayDistance:settings.sprayDistance,waterVolume:settings.waterVolume}));}catch{}}$(name+'Out').textContent=e.target.value+(name==='top'?' km/h':['drift','steer','sprayDistance','waterVolume'].includes(name)?'%':'');});
-try{const saved=JSON.parse(localStorage.getItem('jet-sprint-water'));for(const name of ['sprayDistance','waterVolume'])if(Number.isFinite(saved?.[name])){settings[name]=Math.max(0,Math.min(200,saved[name]));$(name).value=settings[name];$(name+'Out').textContent=settings[name]+'%';}}catch{}
+document.addEventListener('visibilitychange',()=>{doubleTap.reset();release();preferences.flush();if(document.hidden)engine.pause();else last=performance.now();});
+window.addEventListener('pagehide',()=>preferences.flush());
+function applyPreferences(ids){const v=preferences.values;
+ for(const id of ids)if(Object.hasOwn(settings,id))settings[id]=v[id];
+ if(playing)race.modified||=modified(settings);
+ if(ids.includes('graphics')&&graphics.selected!==v.graphics)graphics.select(v.graphics);
+ if(ids.includes('fluidResolution'))fluid.setResolution(v.fluidResolution);
+ if(ids.includes('waterMode'))fluid.setMode(v.waterMode);
+ if(ids.includes('fluidDebug'))fluid.setDebug(v.fluidDebug);
+ if(ids.includes('waveScale'))fluid.setWaveScale(v.waveScale);
+ if(ids.includes('repeatWaves'))fluid.repeatWaves=v.repeatWaves;
+ if(ids.includes('mute')||ids.includes('masterVolume'))engine.setPreferences(v.mute,v.masterVolume);
+}
+mountSettings(preferences,applyPreferences);
 let b,elapsed=0,lap=1,best=null;
-function restart(){fluid?.reset();fluid?.disturb();race.reset();race.modified=modified(settings);doubleTap.reset();$('results').hidden=true;result=null;release();engine.reset();b={x:start.x,z:start.z,angle:Math.atan2(startT.z,startT.x),vx:0,vz:0};elapsed=0;lap=1;life.fill(0);alpha.fill(0);emit=0;positions.fill(-1000);for(const w of wakes)w.age=10;$('notice').textContent='Cross the stripe. Find your flow.';}
+function restart(){const now=performance.now();if(playing)gameClock+=Math.max(0,(now-last)/1000);last=now;startSequence.reset();playing=document.body.classList.contains('racing');if(playing)startSequence.begin(gameClock,preferences.values.countdownDuration);fluid?.reset();fluid?.disturb();race.reset();race.modified=modified(settings);doubleTap.reset();$('results').hidden=true;result=null;release();engine.reset();b={x:start.x,z:start.z,angle:Math.atan2(startT.z,startT.x),vx:0,vz:0};elapsed=0;lap=1;life.fill(0);alpha.fill(0);emit=0;positions.fill(-1000);for(const w of wakes)w.age=10;$('notice').textContent='Cross the stripe. Find your flow.';}
 restart();$('restart').onclick=()=>{if(document.body.classList.contains('racing'))playing=true;restart();if(playing)engine.start();};$('start').onclick=()=>{playing=true;document.body.classList.add('racing');engine.start();restart();};
 let previousSpeed=0;
 function effects(dt,speed){
@@ -115,12 +132,31 @@ function effects(dt,speed){
  wakeClock+=dt;if(wakeClock>.09&&speed>1){wakeClock=0;const w=wakes[wakeCursor++%wakes.length];w.age=0;w.m.position.set(b.x-Math.cos(b.angle)*1.6,.025,b.z-Math.sin(b.angle)*1.6);}
  for(const w of wakes){w.age+=dt;w.m.visible=w.age<2;w.m.scale.setScalar(1+w.age*2);w.m.material.opacity=Math.max(0,.26*(1-w.age/2))*Math.min(1.6,settings.waterVolume/100);}}
 function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();}window.addEventListener('resize',resize);resize();
-let last=performance.now(),accumulator=0;
 const beforeStep={x:0,z:0};
 const cameraTarget=new THREE.Vector3(start.x,0,start.z),desiredTarget=new THREE.Vector3();
 let cameraReady=false,vegetationClock=0;
-function frame(now){requestAnimationFrame(frame);const rawDt=(now-last)/1000,dt=Math.min(rawDt,.05);last=now;if(playing&&!document.hidden)graphics.sample(rawDt);waterTime.value=now*.001;let speed=Math.hypot(b.vx,b.vz);
- if(playing&&!document.hidden){accumulator+=dt;while(accumulator>=1/120){beforeStep.x=b.x;beforeStep.z=b.z;stepBoat(b,input,1/120,nearest);const completed=race.step(beforeStep,b,1/120,settings);elapsed=race.total-race.lapStart;lap=Math.min(5,race.laps.length+1);best=race.laps.length?Math.min(...race.laps):null;if(completed&&race.done){finish();accumulator=0;break;}accumulator-=1/120;}speed=Math.hypot(b.vx,b.vz);fluid.focus.x=b.x+Math.cos(b.angle)*7;fluid.focus.z=b.z+Math.sin(b.angle)*7;fluid.update(dt);effects(dt,speed);bigfoot.update(dt,b,camera,{speed,distance:settings.sprayDistance/100,volume:settings.waterVolume/100,throttle:input.throttle},()=>engine.vocal(false));engine.update(speed,input.throttle,dt,settings.top/3.6);}
+function frame(now){requestAnimationFrame(frame);const rawDt=Math.max(0,(now-last)/1000),dt=Math.min(rawDt,.05);last=Math.max(last,now);if(playing&&!document.hidden)graphics.sample(rawDt);waterTime.value=now*.001;let speed=Math.hypot(b.vx,b.vz);
+ if(playing&&!document.hidden){
+  gameClock+=rawDt;
+  const transitions=startSequence.update(gameClock),latestSignal=transitions[transitions.length-1];
+  if(latestSignal&&preferences.values.countdownAudio)engine.signal(latestSignal.kind);
+  if(startSequence.state==='RACING'){
+   const racingDt=Math.min(dt,Math.max(0,gameClock-startSequence.startAt));let advanced=0;
+   while(advanced<racingDt-1e-10){const step=Math.min(1/120,racingDt-advanced);beforeStep.x=b.x;beforeStep.z=b.z;stepBoat(b,input,step,nearest);advanced+=step;
+    const completed=race.step(beforeStep,b,step,settings,gameClock-racingDt+advanced-startSequence.startAt);
+    elapsed=race.total-race.lapStart;lap=Math.min(5,race.laps.length+1);best=race.laps.length?Math.min(...race.laps):null;
+    if(completed&&race.done){finish();break;}
+   }
+   speed=Math.hypot(b.vx,b.vz);effects(dt,speed);bigfoot.update(dt,b,camera,{speed,distance:settings.sprayDistance/100,volume:settings.waterVolume/100,throttle:input.throttle},()=>engine.vocal(false));engine.update(speed,input.throttle,dt,settings.top/3.6);
+  }else{b.vx=b.vz=0;speed=0;engine.update(0,input.throttle&&preferences.values.prestartRevving,dt,settings.top/3.6,true);}
+  fluid.focus.x=b.x+Math.cos(b.angle)*7;fluid.focus.z=b.z+Math.sin(b.angle)*7;fluid.update(dt);
+ }
+ const lamps=startSequence.lamps(gameClock);trackSignal.update(lamps);
+ const signalHUD=$('startSignal'),show=startSequence.active&&preferences.values.startHud&&(startSequence.state!=='RACING'||gameClock<startSequence.startAt+2);
+ signalHUD.hidden=!show;signalHUD.style.opacity=startSequence.state==='RACING'?String(Math.min(1,Math.max(0,startSequence.startAt+2-gameClock))):'1';
+ for(const id of ['upper','lower','green'])$('signal-'+id).classList.toggle('lit',lamps[id]);
+ const signalText=startSequence.state==='READY'?'READY':startSequence.state==='COUNTDOWN'?'SET':'GO!';if($('signalText').textContent!==signalText)$('signalText').textContent=signalText;
+
  boat.position.set(b.x,.1+Math.sin(now*.008)*.025*speed/20,b.z);boat.rotation.set(0,-b.angle,(Number(input.left)-Number(input.right))*.055*speed/20);
  // Fixed isometric angle, with velocity and course lookahead for the next bend.
  waterBoat.value.set(b.x,0,b.z);waterStrength.value=Math.min(1,speed/20);

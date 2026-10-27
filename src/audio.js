@@ -15,7 +15,7 @@ export function exhaustWave(context,bank=0){
 }
 export const audioTuning={reflection:.09,delay:.085,chorusDepth:.0015,chorusRate:.65,bass:.3};
 export class Engine {
- constructor(){this.reset();}
+ constructor(){this.muted=false;this.volume=1;this.reset();}
  reset(){this.rpm=900;this.throttle=0;this.burble=0;}
  start(){
   if(this.ctx){this.ctx.resume().catch(()=>{});return;}
@@ -25,7 +25,7 @@ export class Engine {
   const limiter=c.createDynamicsCompressor();limiter.threshold.value=-10;limiter.knee.value=12;limiter.ratio.value=8;limiter.attack.value=.004;limiter.release.value=.15;
   const echo=c.createDelay(.2),wet=c.createGain();echo.delayTime.value=audioTuning.delay;wet.gain.value=audioTuning.reflection;this.master.connect(echo);echo.connect(wet);wet.connect(limiter);
   const chorus=c.createDelay(.05),chorusGain=c.createGain(),lfo=c.createOscillator(),depth=c.createGain();chorus.delayTime.value=.018;chorusGain.gain.value=.055;lfo.frequency.value=audioTuning.chorusRate;depth.gain.value=audioTuning.chorusDepth;lfo.connect(depth);depth.connect(chorus.delayTime);lfo.start();this.master.connect(chorus);chorus.connect(chorusGain);chorusGain.connect(limiter);
-  this.master.connect(limiter);const ceiling=c.createWaveShaper();const curve=new Float32Array(1024);for(let i=0;i<curve.length;i++)curve[i]=.88*Math.tanh((i/(curve.length-1)*2-1)/.88);ceiling.curve=curve;limiter.connect(ceiling);ceiling.connect(c.destination);
+  this.master.connect(limiter);const ceiling=c.createWaveShaper();const curve=new Float32Array(1024);for(let i=0;i<curve.length;i++)curve[i]=.88*Math.tanh((i/(curve.length-1)*2-1)/.88);ceiling.curve=curve;limiter.connect(ceiling);this.output=c.createGain();this.output.gain.value=this.muted?0:this.volume;ceiling.connect(this.output);this.output.connect(c.destination);
   this.filter=c.createBiquadFilter();this.filter.type='lowpass';this.filter.frequency.value=700;this.filter.Q.value=.65;
   const highpass=c.createBiquadFilter();highpass.type='highpass';highpass.frequency.value=28;
   // Gentle bounded saturation rounds pulses; compressor provides output headroom.
@@ -45,8 +45,10 @@ export class Engine {
   c.resume().catch(()=>{});
  }
  vocal(angry){if(!this.ctx||this.ctx.state!=='running')return;const c=this.ctx,t=c.currentTime,o=c.createOscillator(),g=c.createGain(),f=c.createBiquadFilter();o.type='sawtooth';o.frequency.setValueAtTime(angry?95:150,t);o.frequency.exponentialRampToValueAtTime(55,t+.4);f.type='lowpass';f.frequency.value=420;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.2,t+.03);g.gain.exponentialRampToValueAtTime(.001,t+.45);o.connect(f);f.connect(g);g.connect(this.master);o.start();o.stop(t+.5);o.onended=()=>{o.disconnect();f.disconnect();g.disconnect();};}
+ setPreferences(muted,volume){this.muted=muted;this.volume=volume/100;if(this.output)this.output.gain.setTargetAtTime(muted?0:this.volume,this.ctx.currentTime,.025);}
+ signal(kind){if(!this.ctx||this.ctx.state!=='running')return;const c=this.ctx,t=c.currentTime,duration=kind==='go'?.65:.16;for(const frequency of kind==='go'?[880,1320]:[kind==='upper'?660:990]){const o=c.createOscillator(),gain=c.createGain();o.type='triangle';o.frequency.setValueAtTime(frequency,t);gain.gain.setValueAtTime(0,t);gain.gain.linearRampToValueAtTime(kind==='go'?.12:.18,t+.012);gain.gain.exponentialRampToValueAtTime(.001,t+duration);o.connect(gain);gain.connect(this.master);o.start(t);o.stop(t+duration+.02);o.onended=()=>{o.disconnect();gain.disconnect();};}}
  pause(){if(this.ctx)this.ctx.suspend().catch(()=>{});}
- update(speed,pressed,dt=1/60,maxSpeed=85/3.6){
+ update(speed,pressed,dt=1/60,maxSpeed=85/3.6,revOnly=false){
   if(!this.ctx||this.ctx.state!=='running')return;
   const c=this.ctx,t=c.currentTime,ratio=Math.min(1,speed/maxSpeed);
   const blend=(value,target,rate)=>value+(target-value)*(1-Math.exp(-rate*dt));
@@ -55,7 +57,7 @@ export class Engine {
   this.burble*=Math.exp(-dt*3);
   // Jet pump load grows with speed: no unloaded instantaneous redline.
   const load=this.throttle*(.8+.2*ratio);
-  const target=900+ratio*3900+this.throttle*(800+ratio*700);
+  const target=revOnly?900+this.throttle*4300:900+ratio*3900+this.throttle*(800+ratio*700);
   this.rpm=blend(this.rpm,target,target>this.rpm?3.8:2.2);
   const burble=this.burble*(.65+.35*Math.sin(t*37)*Math.sin(t*23));
   this.exhaust.forEach((o,i)=>o.frequency.setTargetAtTime(this.rpm/120*(1+i*.0015),t,.04));

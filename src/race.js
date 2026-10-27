@@ -1,11 +1,11 @@
 export const defaults={top:85,drift:65,steer:85,acceleration:21};
 export const modified=s=>Object.entries(defaults).some(([k,v])=>s[k]!==v);
-export const format=t=>{const ms=Math.round(t*1000);return `${Math.floor(ms/60000)}:${(Math.floor(ms/1000)%60).toString().padStart(2,'0')}.${(ms%1000).toString().padStart(3,'0')}`;};
+export const format=t=>{const ms=Math.round(t*1000);return `${String(Math.floor(ms/60000)).padStart(2,'0')}:${(Math.floor(ms/1000)%60).toString().padStart(2,'0')}.${(ms%1000).toString().padStart(3,'0')}`;};
 export class Race {
  constructor(gates,width){this.gates=gates;this.width=width;this.reset();}
  reset(){this.total=0;this.laps=[];this.lapStart=0;this.next=1;this.done=false;this.modified=false;}
- step(before,after,dt,settings){
-  if(this.done)return false;this.modified||=modified(settings);this.total+=dt;
+ step(before,after,dt,settings,totalTime=null){
+  if(this.done)return false;this.modified||=modified(settings);this.total=totalTime===null?this.total+dt:Math.max(this.total,totalTime);
   const g=this.gates[this.next],a=(before.x-g.x)*g.tx+(before.z-g.z)*g.tz,b=(after.x-g.x)*g.tx+(after.z-g.z)*g.tz;
   if(a<0&&b>=0){const t=-a/(b-a),x=before.x+(after.x-before.x)*t,z=before.z+(after.z-before.z)*t;
    if(Math.abs(-(x-g.x)*g.tz+(z-g.z)*g.tx)<=this.width){

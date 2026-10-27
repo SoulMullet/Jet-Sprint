@@ -1,0 +1,4 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {Engine} from '../src/audio.js';
+const parameter=()=>({setTargetAtTime(){}});
+function engine(){const e=new Engine();e.ctx={state:'running',currentTime:0};e.exhaust=[{frequency:parameter()}];e.bass={frequency:parameter()};e.filter={frequency:parameter()};e.master={gain:parameter()};e.intake={filter:{frequency:parameter()},gain:{gain:parameter()}};e.jet={gain:{gain:parameter()}};return e;}
+test('prestart revving raises RPM smoothly without requiring boat speed',()=>{const e=engine();e.update(0,true,1/60,85/3.6,true);assert.ok(e.rpm>900&&e.rpm<1500);for(let i=0;i<180;i++)e.update(0,true,1/60,85/3.6,true);assert.ok(e.rpm>5000&&e.rpm<5201);for(let i=0;i<300;i++)e.update(0,false,1/60,85/3.6,true);assert.ok(e.rpm<901);});
