@@ -39,3 +39,6 @@
 
 .debug-readout{position:fixed;left:12px;top:215px;z-index:7;max-width:min(310px,80vw);white-space:pre-line;background:#102c35e8;border-left:3px solid #dfff72;border-radius:5px;padding:8px 10px;color:#ecffd8;font:10px/1.45 system-ui;pointer-events:none}.debug-readout[hidden]{display:none}.bigfoot-readout{top:330px;bottom:auto;border-color:#ffc17d;color:#ffdab0}
 @media(orientation:landscape) and (max-height:500px){.debug-readout{top:115px;font-size:9px;max-width:270px}.bigfoot-readout{top:115px;bottom:auto;left:auto;right:12px}}
+
+/* Temporary identity check: visible on the actual start screen and racing HUD. */
+.build-debug{display:block;width:max-content;max-width:100%;padding:4px 6px;border:1px solid #f5ffd1;border-radius:4px;background:#dfff72;color:#132d28;font:800 11px/1.3 system-ui,sans-serif;letter-spacing:.4px;font-style:normal;text-shadow:none}.brand .build-debug{font-size:9px;letter-spacing:.4px}.intro-card .build-debug{margin-bottom:14px}@media(orientation:landscape) and (max-height:500px){.intro-card .build-debug{font-size:10px;margin-bottom:8px}.brand .build-debug{font-size:8px;padding:2px 5px;margin-top:1px}}
