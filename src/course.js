@@ -2,25 +2,28 @@ import * as THREE from 'three';
 import {course} from './physics.js';
 import {nearestOnTrack} from './track.js';
 import {projectRoute} from './route-math.js';
+import {junctionFractions,centralJunction,branchSplines} from './track-layout.js';
 
-export const courseId='emerald-network';
-export const routeId='crosswater-1';
-export const gameplayVersion='0.7';
+export const courseId='shelter-inspired';
+export const routeId='island-rotation-1';
+export const gameplayVersion='0.8';
 // Geometry is a graph, independent of the prescribed lap. Directed edges may be
 // reused in other route definitions without changing the banks or solver mask.
 export const prescribedRoute=['S-A','A-J','J-B','B-C','C-J','J-D','D-B','B-C','C-S'];
 const outerCurve=new THREE.CatmullRomCurve3(course.map(([x,z])=>new THREE.Vector3(x,0,z)),true,'centripetal');
 const at=t=>outerCurve.getPointAt(t);
 const v=(x,z)=>new THREE.Vector3(x,0,z);
-const fractions={S:0,A:.2,D:.4,B:.65,C:.8};
+const fractions=junctionFractions;
 export function createCourse(route=prescribedRoute){
- const nodes=Object.fromEntries(Object.entries(fractions).map(([id,t])=>[id,at(t)]));nodes.J=v(0,0);
+ const nodes=Object.fromEntries(Object.entries(fractions).map(([id,t])=>[id,at(t)]));nodes.J=v(...centralJunction);
  const edges=[];
- for(const [from,to,t0,t1] of [['S','A',0,.2],['A','D',.2,.4],['D','B',.4,.65],['B','C',.65,.8],['C','S',.8,1]]){
+ for(const [from,to] of [['S','A'],['A','D'],['D','B'],['B','C'],['C','S']]){
+  const t0=fractions[from],t1=to==='S'?1:fractions[to];
+  if(!(t1>t0))throw Error('Perimeter junction fractions must increase from S through A, D, B and C.');
   const n=Math.ceil((t1-t0)*240),points=Array.from({length:n+1},(_,i)=>at(t0+(t1-t0)*i/n));
   edges.push({id:`${from}-${to}`,from,to,points});
  }
- for(const [from,to,via] of [['A','J',[[28,-16],[14,-9]]],['J','B',[[-18,11],[-34,17]]],['C','J',[[-25,-18],[-12,-11]]],['J','D',[[11,10],[23,23]]]]){
+ for(const [from,to,via] of branchSplines){
   const c=new THREE.CatmullRomCurve3([nodes[from],...via.map(([x,z])=>v(x,z)),nodes[to]],false,'centripetal');
   const n=Math.ceil(c.getLength()/1.4);edges.push({id:`${from}-${to}`,from,to,points:Array.from({length:n+1},(_,i)=>c.getPointAt(i/n))});
  }

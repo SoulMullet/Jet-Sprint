@@ -13,7 +13,7 @@ test('union water has consistently upward normals and finite triangles',()=>{
 test('continuous projection matches every centerline segment midpoint',()=>{
  for(let i=0;i<points.length;i++){const a=points[i],b=points[(i+1)%points.length],x=(a.x+b.x)/2,z=(a.z+b.z)/2,p=nearestOnTrack(points,x,z);assert.ok(Math.hypot(x-p.x,z-p.z)<1e-8);}
 });
-test('valid channel positions near corners receive no collision penalty',()=>{
+test('hulls fully inside the channel near corners receive no collision penalty',()=>{
  for(let i=0;i<600;i+=3){const p=points[i],t=curve.getTangentAt(i/600);for(const side of [-1,1]){
   const x=p.x-t.z*6*side,z=p.z+t.x*6*side,b={x,z,vx:0,vz:0,angle:0};
   stepBoat(b,{},1/120,(x,z)=>nearestOnTrack(points,x,z));assert.ok(Math.hypot(b.x-x,b.z-z)<1e-8);

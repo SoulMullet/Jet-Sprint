@@ -1,7 +1,10 @@
 import {handlingDefaults} from './handling.js';
+import {outerSpline} from './track-layout.js';
 export const settings = { ...handlingDefaults, cameraResponse:8, effects:1, sprayDistance:100, waterVolume:100 };
-export const channel = { water:7.3, bank:8.4, hullLimit:6.5 };
-export const course = [[0, -35],[25,-34],[37,-19],[25,-3],[35,15],[23,33],[0,36],[-27,30],[-36,12],[-22,-2],[-34,-20],[-23,-34]].map(([x,z])=>[x*1.42,z*1.42]);
+// Preserve the driving corridor, with enough visible water beyond it to contain
+// the entire 2.5 m hull radius even during a broadside drift.
+export const channel = { water:9, bank:10.1, hullLimit:6.5 };
+export const course = outerSpline;
 // Pump thrust is independent of hull speed. Engine revving while staged never
 // calls this integrator, so neither thrust nor angular momentum can accumulate.
 export function stepBoat(b,input,dt,nearest) {
