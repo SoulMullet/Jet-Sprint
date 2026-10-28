@@ -7,9 +7,9 @@ const automaticResolution={low:64,medium:96,high:128};
 
 // Lifecycle/UI adapter; intentionally has no boat-force or spray integration.
 export class WaterSystem {
- constructor(renderer,scene,legacy,{nearest,width,start,quality='medium',onStatus=()=>{}}){
+ constructor(renderer,scene,legacy,{nearest,width,start,size=144,quality='medium',onStatus=()=>{}}){
   Object.assign(this,{renderer,scene,legacy,start,onStatus,quality});
-  this.options={nearest,width};
+  this.options={nearest,width,size};
   this.mode='simulated';
   this.resolution='auto';
   this.debug=0;this.waveScale=2.4;this.repeatWaves=true;this.nextWave=1.25;this.focus={...start};

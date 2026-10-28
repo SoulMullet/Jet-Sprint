@@ -13,12 +13,11 @@ test('a binary-input test driver completes five laps using the unchanged boat in
  for(let i=0;i<120*600&&!race.done;i++){
   const prev=c.gates[(race.next+c.gates.length-1)%c.gates.length],end=race.next===0?c.length:c.gates[race.next].distance;
   const d=c.project(boat,prev.distance-8,end+25).distance,cue=nav.update(boat,race,1/120);
-  const target=cue.wrong?{x:cue.targetX,z:cue.targetZ}:c.sample(d+6),future=c.sample(d+15),current=c.sample(d);
+  const target=cue.wrong?{x:cue.targetX,z:cue.targetZ}:c.sample(d+8);
   const heading=Math.atan2(target.z-boat.z,target.x-boat.x),error=Math.atan2(Math.sin(heading-boat.angle),Math.cos(heading-boat.angle));
-  const curvature=Math.acos(Math.max(-1,Math.min(1,current.tx*future.tx+current.tz*future.tz)));
-  const speed=Math.hypot(boat.vx,boat.vz),desiredSpeed=cue.wrong?8:curvature>.7?8:curvature>.3?12:20;
+  const speed=Math.hypot(boat.vx,boat.vz),desiredSpeed=cue.wrong?8:9;
   before.x=boat.x;before.z=boat.z;
-  stepBoat(boat,{throttle:speed<desiredSpeed||(Math.abs(error)>.35&&speed<13),left:error<-.08,right:error>.08},1/120,nearest);
+  stepBoat(boat,{throttle:speed<desiredSpeed||(Math.abs(error)>.35&&speed<12),left:error-(boat.yawRate||0)*.3<-.08,right:error-(boat.yawRate||0)*.3>.08},1/120,nearest);
   race.step(before,boat,1/120,defaults);
   assert.ok(Number.isFinite(boat.x)&&Number.isFinite(boat.angle));
  }

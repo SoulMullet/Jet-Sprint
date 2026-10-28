@@ -4,7 +4,7 @@ import {mergeVertices} from 'three/addons/utils/BufferGeometryUtils.js';
 // Union capsule segments before triangulating. Offset ribbons fold over themselves
 // when the inside radius is smaller than channel width, flipping lit normals.
 const polygonCache=new WeakMap();
-function channelPolygons(points,width){
+export function channelPolygons(points,width){
  let cache=polygonCache.get(points);if(!cache){cache=new Map();polygonCache.set(points,cache);}if(cache.has(width))return cache.get(width);
  const paths=points.paths||[points];
  const capsules=paths.flatMap(path=>path.slice(0,points.paths?-1:undefined).map((p,i)=>{

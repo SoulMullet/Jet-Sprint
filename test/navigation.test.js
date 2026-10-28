@@ -8,8 +8,8 @@ import {channel} from '../src/physics.js';
 import {makeDomain} from '../src/fluid/numerics.js';
 const venue=createCourse();
 test('network has shared intersections, alternate routes and separate closed race walk',()=>{
- assert.equal(venue.network.paths.length,9);assert.ok(venue.gates.length>=18&&venue.gates.length<40);
- const alternate=createCourse(['S-A','A-D','D-B','B-C','C-S']);assert.notEqual(alternate.length,venue.length);assert.deepEqual(alternate.edges.map(e=>e.points.map(p=>[p.x,p.z])),venue.edges.map(e=>e.points.map(p=>[p.x,p.z])));
+ assert.equal(venue.network.paths.length,10);assert.ok(venue.gates.length>=18&&venue.gates.length<40);
+ const alternate=createCourse(['S-A','A-B-cut','B-C-cut','C-D-cut','D-E','E-S']);assert.notEqual(alternate.length,venue.length);assert.deepEqual(alternate.edges.map(e=>e.points.map(p=>[p.x,p.z])),venue.edges.map(e=>e.points.map(p=>[p.x,p.z])));
  assert.throws(()=>createCourse([...prescribedRoute,'S-A']));
  for(const p of venue.gates){const q=nearestOnTrack(venue.network,p.x,p.z);assert.ok(Math.hypot(q.x-p.x,q.z-p.z)<.03);}
 });
@@ -22,8 +22,8 @@ test('wrong branch cannot skip gates; recovery must cross the same required gate
  const r=new Race(venue.gates,channel.hullLimit),nav=new RouteNavigator(venue,channel.hullLimit);let before=venue.sample(0);
  for(let d=.25;d<70;d+=.25){const after=venue.sample(d);r.step(before,after,.01,defaults);before=after;}
  const required=r.next;
- // Drive the outer A-D alternative, away from the required A-J interior branch.
- const edge=venue.edges.find(e=>e.id==='A-D');for(const after of edge.points){r.step(before,after,.05,defaults);nav.update({...after,angle:0},r,.05);before=after;}
+ // Drive the A-B cross-cut instead of the prescribed eastern hairpin.
+ const edge=venue.edges.find(e=>e.id==='A-B-cut');for(const after of edge.points){r.step(before,after,.05,defaults);nav.update({...after,angle:0},r,.05);before=after;}
  assert.equal(r.laps.length,0);assert.ok(r.next<required+4);assert.equal(nav.wrong,true);const missed=r.next;
  const g=venue.gates[missed],back={x:g.x-g.tx*2,z:g.z-g.tz*2};r.step(before,back,.01,defaults);r.step(back,{x:g.x+g.tx*.1,z:g.z+g.tz*.1},.01,defaults);assert.equal(r.next,(missed+1)%venue.gates.length);
  const cue=nav.update({...g,angle:0},r,.01);assert.equal(cue.wrong,false);
@@ -37,7 +37,7 @@ test('navigator handles left cues and tutorial cooldown without changing race st
 test('merged channel rendering and solver mask share every branch with no rectangular bridges',()=>{
  const water=channelGeometry(venue.network,channel.water),bank=channelBankGeometry(venue.network,channel.bank,channel.water);
  for(const geo of [water,bank]){const p=geo.attributes.position,n=geo.attributes.normal;for(let i=0;i<p.count;i++){const q=nearestOnTrack(venue.network,p.getX(i),p.getZ(i)),d=Math.hypot(q.x-p.getX(i),q.z-p.getZ(i));assert.ok(d<=channel.bank+.05);assert.ok(n.getY(i)>.99);if(geo===bank)assert.ok(d>channel.water-.05);}}
- const domain=makeDomain(96,144,(x,z)=>nearestOnTrack(venue.network,x,z),channel.water);for(const e of venue.edges)for(const p of e.points){const x=Math.floor((p.x+72)/domain.dx),y=Math.floor((p.z+72)/domain.dx);assert.equal(domain.mask[y*96+x],1);}
+ const domain=makeDomain(96,192,(x,z)=>nearestOnTrack(venue.network,x,z),channel.water);for(const e of venue.edges)for(const p of e.points){const x=Math.floor((p.x+96)/domain.dx),y=Math.floor((p.z+96)/domain.dx);assert.equal(domain.mask[y*96+x],1);}
  water.dispose();bank.dispose();
 });
 
@@ -69,7 +69,7 @@ test('every full-width gate accepts drift crossings at several angles and reject
  }
 });
 test('shared intersection approaches retain intended instructions before a genuine missed gate',()=>{
- const r=new Race(venue.gates,6.5),n=new RouteNavigator(venue,6.5),junction=venue.junctions.find(j=>j.node==='J');
+ const r=new Race(venue.gates,6.5),n=new RouteNavigator(venue,6.5),junction=venue.junctions.find(j=>j.node==='B');
  r.next=venue.gates.findIndex(g=>g.distance>junction.distance);
  const b=venue.sample(junction.distance-3);b.angle=Math.atan2(b.tz,b.tx);
  for(let i=0;i<90;i++)assert.equal(n.update(b,r,1/60).wrong,false);

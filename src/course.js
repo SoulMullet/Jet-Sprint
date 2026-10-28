@@ -1,32 +1,19 @@
 import * as THREE from 'three';
-import {course} from './physics.js';
 import {nearestOnTrack} from './track.js';
 import {projectRoute} from './route-math.js';
-import {junctionFractions,centralJunction,branchSplines} from './track-layout.js';
+import {trackConfig} from './track-layout.js';
 
-export const courseId='shelter-inspired';
-export const routeId='island-rotation-1';
-export const gameplayVersion='0.8';
-// Geometry is a graph, independent of the prescribed lap. Directed edges may be
-// reused in other route definitions without changing the banks or solver mask.
-export const prescribedRoute=['S-A','A-J','J-B','B-C','C-J','J-D','D-B','B-C','C-S'];
-const outerCurve=new THREE.CatmullRomCurve3(course.map(([x,z])=>new THREE.Vector3(x,0,z)),true,'centripetal');
-const at=t=>outerCurve.getPointAt(t);
-const v=(x,z)=>new THREE.Vector3(x,0,z);
-const fractions=junctionFractions;
+export const courseId=trackConfig.id;
+export const routeId='serpentine-rotation-v2';
+export const gameplayVersion='0.9-course-v2';
+export const prescribedRoute=trackConfig.route;
 export function createCourse(route=prescribedRoute){
- const nodes=Object.fromEntries(Object.entries(fractions).map(([id,t])=>[id,at(t)]));nodes.J=v(...centralJunction);
- const edges=[];
- for(const [from,to] of [['S','A'],['A','D'],['D','B'],['B','C'],['C','S']]){
-  const t0=fractions[from],t1=to==='S'?1:fractions[to];
-  if(!(t1>t0))throw Error('Perimeter junction fractions must increase from S through A, D, B and C.');
-  const n=Math.ceil((t1-t0)*240),points=Array.from({length:n+1},(_,i)=>at(t0+(t1-t0)*i/n));
-  edges.push({id:`${from}-${to}`,from,to,points});
- }
- for(const [from,to,via] of branchSplines){
-  const c=new THREE.CatmullRomCurve3([nodes[from],...via.map(([x,z])=>v(x,z)),nodes[to]],false,'centripetal');
-  const n=Math.ceil(c.getLength()/1.4);edges.push({id:`${from}-${to}`,from,to,points:Array.from({length:n+1},(_,i)=>c.getPointAt(i/n))});
- }
+ const nodes=Object.fromEntries(Object.entries(trackConfig.nodes).map(([id,[x,z]])=>[id,new THREE.Vector3(x,0,z)]));
+ const edges=trackConfig.edges.map(({id,from,to,via})=>{
+  const c=new THREE.CatmullRomCurve3([nodes[from],...via.map(([x,z])=>new THREE.Vector3(x,0,z)),nodes[to]],false,'centripetal');
+  const n=Math.ceil(c.getLength()/trackConfig.sampleSpacing);
+  return {id,from,to,points:Array.from({length:n+1},(_,i)=>c.getPointAt(i/n))};
+ });
  const lookup=new Map(edges.map(e=>[e.id,e]));
  const legs=route.map(id=>{const e=lookup.get(id);if(!e)throw Error(`Unknown route edge: ${id}`);return e;});
  for(let i=0;i<legs.length;i++)if(legs[i].to!==legs[(i+1)%legs.length].from)throw Error('Race route must be a connected closed walk.');
@@ -95,5 +82,5 @@ export function createCourse(route=prescribedRoute){
   const direction=bend.angle>0?'right':'left';if(previous?.kind.includes(direction))continue;
   cues.push({id:`bend-${bend.distance}`,node:null,distance:bend.distance,releaseAt:bend.distance+2,angle:bend.angle,kind:`${Math.abs(bend.angle)>1.45?'sharp-':''}${direction}`});}
  cues.sort((a,b)=>a.distance-b.distance);
- return {id:courseId,routeId,network,nodes,edges,legs,points,gates,cues,length,sample,line,junctions,project:(point,min,max,out)=>projectRoute(line,length,point,min,max,out)};
+ return {id:courseId,version:trackConfig.version,seed:trackConfig.seed,routeId,network,nodes,edges,legs,points,gates,cues,length,sample,line,junctions,project:(point,min,max,out)=>projectRoute(line,length,point,min,max,out)};
 }

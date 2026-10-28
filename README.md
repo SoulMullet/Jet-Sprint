@@ -1,8 +1,10 @@
-# JET SPRINT v0.7.1
+# JET SPRINT v0.9.0 — Course V2
 
 A mobile-first, single-player 3D jet sprint prototype built with JavaScript, Vite, Three.js and Web Audio. All geometry and sound are procedural; no assets, account, API keys or backend required.
 
-The current track and engine upgrade adds a Shelter View inspired course, 32 live V8 sound controls, separate audio presets and JSON, and stationary tuning. See [track and V8 upgrade notes](docs/track-v8-upgrade.md) for controls, idle tuning, reference sources and sample integration.
+The active course is **Braided Meadows V2**, a deterministic spline network with three hairpins, alternating S sections and four cross-cuts. See [Course V2 implementation and verification](docs/course-v2.md). Open **Game Settings → Course overview (V2)** to inspect the entire venue; the normal follow camera is unchanged. The playable HUD displays **COURSE V2 — SPLINE REBUILD**.
+
+The V8 Sound Lab, 32 live controls, independent presets/JSON and stationary tuning remain available; see [the earlier track and V8 notes](docs/track-v8-upgrade.md) for audio controls. That document describes the superseded Shelter course.
 
 ## Local development
 
