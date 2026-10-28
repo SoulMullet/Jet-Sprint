@@ -1,29 +1,23 @@
 import * as THREE from 'three';
-import {course} from './physics.js';
+import {layout} from './course-layout.js';
 import {nearestOnTrack} from './track.js';
 import {projectRoute} from './route-math.js';
 
-export const courseId='emerald-network';
-export const routeId='crosswater-1';
-export const gameplayVersion='0.7';
+export const courseId='shelter-inspired-network';
+export const routeId='shelter-rotation-1';
+export const gameplayVersion='0.8';
 // Geometry is a graph, independent of the prescribed lap. Directed edges may be
 // reused in other route definitions without changing the banks or solver mask.
 export const prescribedRoute=['S-A','A-J','J-B','B-C','C-J','J-D','D-B','B-C','C-S'];
-const outerCurve=new THREE.CatmullRomCurve3(course.map(([x,z])=>new THREE.Vector3(x,0,z)),true,'centripetal');
-const at=t=>outerCurve.getPointAt(t);
 const v=(x,z)=>new THREE.Vector3(x,0,z);
-const fractions={S:0,A:.2,D:.4,B:.65,C:.8};
 export function createCourse(route=prescribedRoute){
- const nodes=Object.fromEntries(Object.entries(fractions).map(([id,t])=>[id,at(t)]));nodes.J=v(0,0);
- const edges=[];
- for(const [from,to,t0,t1] of [['S','A',0,.2],['A','D',.2,.4],['D','B',.4,.65],['B','C',.65,.8],['C','S',.8,1]]){
-  const n=Math.ceil((t1-t0)*240),points=Array.from({length:n+1},(_,i)=>at(t0+(t1-t0)*i/n));
-  edges.push({id:`${from}-${to}`,from,to,points});
- }
- for(const [from,to,via] of [['A','J',[[28,-16],[14,-9]]],['J','B',[[-18,11],[-34,17]]],['C','J',[[-25,-18],[-12,-11]]],['J','D',[[11,10],[23,23]]]]){
-  const c=new THREE.CatmullRomCurve3([nodes[from],...via.map(([x,z])=>v(x,z)),nodes[to]],false,'centripetal');
-  const n=Math.ceil(c.getLength()/1.4);edges.push({id:`${from}-${to}`,from,to,points:Array.from({length:n+1},(_,i)=>c.getPointAt(i/n))});
- }
+ const nodes=Object.fromEntries(Object.entries(layout.nodes).map(([id,p])=>[id,v(...p)]));
+ const edges=layout.edges.map(def=>{
+  const controlPoints=[nodes[def.from],...def.via.map(p=>v(...p)),nodes[def.to]];
+  const curve=new THREE.CatmullRomCurve3(controlPoints,false,'centripetal');
+  const n=Math.ceil(curve.getLength()/1.1);
+  return {...def,controlPoints,curve,points:Array.from({length:n+1},(_,i)=>curve.getPointAt(i/n))};
+ });
  const lookup=new Map(edges.map(e=>[e.id,e]));
  const legs=route.map(id=>{const e=lookup.get(id);if(!e)throw Error(`Unknown route edge: ${id}`);return e;});
  for(let i=0;i<legs.length;i++)if(legs[i].to!==legs[(i+1)%legs.length].from)throw Error('Race route must be a connected closed walk.');
@@ -71,8 +65,8 @@ export function createCourse(route=prescribedRoute){
  }
  const gates=gateDistances.map(distance=>{
   const g={...sample(distance),halfWidth:7.1};
-  const edge=lookup.get(g.edgeId),own={paths:[edge.points]};
-  g.accept=(x,z)=>{const p=nearestOnTrack(own,x,z),n=nearestOnTrack(network,x,z),d=Math.hypot(x-p.x,z-p.z),other=Math.hypot(x-n.x,z-n.z);return d<=7.3&&(n.segmentId===g.edgeId||d<=other+.6);};
+  const edge=lookup.get(g.edgeId),own={paths:distance===0?[edge.points,legs.at(-1).points]:[edge.points]};
+  g.accept=(x,z)=>{const p=nearestOnTrack(own,x,z),n=nearestOnTrack(network,x,z),d=Math.hypot(x-p.x,z-p.z),other=Math.hypot(x-n.x,z-n.z);return d<=7.3&&(n.segmentId===g.edgeId||(distance===0&&n.segmentId===legs.at(-1).id)||d<=other+.6);};
   return g;
  });
  const cues=junctions.map((j,i)=>{

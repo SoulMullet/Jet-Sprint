@@ -42,3 +42,14 @@
 
 /* Temporary identity check: visible on the actual start screen and racing HUD. */
 .build-debug{display:block;width:max-content;max-width:100%;padding:4px 6px;border:1px solid #f5ffd1;border-radius:4px;background:#dfff72;color:#132d28;font:800 11px/1.3 system-ui,sans-serif;letter-spacing:.4px;font-style:normal;text-shadow:none}.brand .build-debug{font-size:9px;letter-spacing:.4px}.intro-card .build-debug{margin-bottom:14px}@media(orientation:landscape) and (max-height:500px){.intro-card .build-debug{font-size:10px;margin-bottom:8px}.brand .build-debug{font-size:8px;padding:2px 5px;margin-top:1px}}
+
+/* Sound Lab remains independently scrollable on iPhone and does not capture play gestures. */
+#soundLab{position:fixed;top:145px;right:28px;z-index:22;background:#102d35f2;border:1px solid #d9ff6255;border-radius:12px;font:12px/1.5 system-ui;max-width:calc(100vw - 24px);width:auto;box-shadow:0 10px 35px #0004}
+#soundLab>summary{padding:12px;color:#d9ff62;font-weight:750;min-height:44px}
+#soundLab[open]{width:350px;top:90px}.sound-lab-content{padding:0 16px 16px;max-height:calc(100dvh - 180px);overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y}
+#soundLab p{font-size:11px;color:#c4d8d2}#soundLab label{display:block;margin-top:13px}#soundLab input[type=range]{display:block;width:100%;height:28px;margin-top:4px;touch-action:pan-y}
+#soundLab select,#soundLab input[type=text],#soundLab textarea{width:100%;margin:8px 0;border:1px solid #ffffff35;border-radius:6px;padding:10px;color:#e9f3da;background:#213f43;font:16px system-ui}#soundLab textarea{font-size:12px;min-height:100px}
+#soundLab button{background:#d9ff62;color:#183b34;border-radius:6px;padding:10px;font-size:12px;min-height:44px;margin:7px 6px 0 0}#soundLab button[aria-pressed=true]{background:#ffc184}
+.v8-test{margin:16px 0;border:1px solid #ffffff30;border-radius:9px;padding:10px}.v8-test legend{color:#e5eea8}.v8-test #v8RPM{font:700 18px system-ui;color:#d9ff62;font-variant-numeric:tabular-nums}body.engine-testing .controls{opacity:.25;pointer-events:none}
+@media(max-width:600px){#soundLab{right:12px;top:190px}#soundLab[open]{top:64px}.sound-lab-content{max-height:calc(100dvh - 132px)}}
+@media(orientation:landscape) and (max-height:500px){#soundLab{top:108px;right:18px}#soundLab[open]{top:16px}.sound-lab-content{max-height:calc(100dvh - 76px)}}

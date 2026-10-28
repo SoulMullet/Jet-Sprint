@@ -2,7 +2,9 @@ import * as THREE from 'three';
 import './style.css';
 import {channel,settings,stepBoat} from './physics.js';
 import {Engine} from './audio.js';
-import {channelGeometry,channelBankGeometry,nearestOnTrack} from './track.js';
+import {AudioSettings} from './v8-settings.js';
+import {mountSoundLab} from './v8-panel.js';
+import {channelGeometry,slopedBankGeometry,nearestOnTrack} from './track.js';
 import {createBigfoot} from './bigfoot.js';
 import {Race,format,modified,readScores,saveScore,createDoubleTap} from './race.js';
 import {lighting,waterMaterial,terrain,racingBoat} from './visuals.js';
@@ -16,6 +18,7 @@ import {createCourse,courseId,routeId,gameplayVersion} from './course.js';
 import {NavigationView,BigfootView} from './debug-views.js';
 import {RouteNavigator,mountNavigator} from './navigation.js';
 import {bindControls} from './controls.js';
+import {resolveHullBanks} from './hull-collision.js';
 const preferences=new SettingsStore({getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)});
 for(const id of Object.keys(settings))if(Object.hasOwn(preferences.values,id))settings[id]=preferences.values[id];
 const $=id=>document.getElementById(id);
@@ -32,7 +35,7 @@ const venue=createCourse(),N=600,points=venue.points;
 const tangents=points.map(p=>({x:p.tx,z:p.tz}));
 // Bank, render surface, collision and bathymetry share the same channel network.
 const outline=venue.network;
-const shore=mesh(channelBankGeometry(outline,channel.bank,channel.water),bank,0,-.13,0);shore.receiveShadow=true;
+const shore=mesh(slopedBankGeometry(outline,channel.bank,channel.water),bank);shore.receiveShadow=true;
 const waterLook=waterMaterial(outline,channel.water,waterTime,waterBoat,waterStrength);
 const waterMesh=mesh(channelGeometry(outline,channel.water),waterLook.material);waterMesh.receiveShadow=true;
 function nearest(x,z){return nearestOnTrack(outline,x,z);}
@@ -44,7 +47,7 @@ for(const edge of venue.edges)for(let i=0;i<edge.points.length-1;i+=6){const p=e
 for(const [i,material] of [lime,white].entries()){const locations=markerLocations[i],markers=new THREE.InstancedMesh(markerGeometry,material,locations.length);locations.forEach(([x,z],i)=>{markerMatrix.makeTranslation(x,.2,z);markers.setMatrixAt(i,markerMatrix);});scene.add(markers);}
 // Deterministic landscaping, kept clear of the water.
 let seed=13;function random(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;}
-const environment=terrain(scene,venue.edges.flatMap(e=>e.points),nearest,random),forest=environment.trees;
+const environment=terrain(scene,venue.edges.flatMap(e=>e.points),nearest,random,outline),forest=environment.trees;
 const bigfoot=createBigfoot(scene,forest,nearest);
 const start=points[0],startT=tangents[0];const stripe=new THREE.Group();stripe.position.set(start.x,.035,start.z);stripe.rotation.y=-Math.atan2(startT.z,startT.x);scene.add(stripe);
 for(let x=0;x<2;x++)for(let z=0;z<15;z++)mesh(new THREE.BoxGeometry(.65,.025,.96),(x+z)%2?dark:white,(x-.5)*.65,0,(z-7)*.96,stripe);
@@ -68,7 +71,8 @@ $('testWave').onclick=()=>fluid.disturb(b.x+Math.cos(b.angle)*6,b.z+Math.sin(b.a
 $('resetWater').onclick=()=>fluid.reset();
 
 
-const engine=new Engine();let playing=false,gameClock=0,last=performance.now();
+const audioSettings=new AudioSettings({getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)});
+const engine=new Engine(audioSettings.values);let playing=false,gameClock=0,last=performance.now();
 const startSequence=new RaceStart(),trackSignal=createRaceSignal(scene,start,startT);
 const doubleTap=createDoubleTap(()=>{if(startSequence.state==='RACING')bigfoot.provoke(b,()=>engine.vocal(true));});
 const race=new Race(venue.gates,channel.hullLimit);
@@ -89,17 +93,17 @@ function finish(){startSequence.finish();playing=false;release();engine.pause();
 }
 $('saveScore').onclick=()=>{if(!result)return;try{saveScore(scoreStorage,result,$('playerName').value);const rank=board();$('saveScore').disabled=true;$('saveStatus').textContent=rank?`Saved · local position ${rank}`:'Outside the fastest 10';}catch{$('saveStatus').textContent='Storage unavailable. Results remain visible for this race.';}};
 $('raceRestart').onclick=()=>{playing=true;restart();engine.start();};
-const controls=bindControls(Object.fromEntries(['left','right','throttle'].map(name=>[name,$(name)])),name=>{if(playing){engine.start();if(name==='throttle')doubleTap.press(performance.now());}else release();});
+const controls=bindControls(Object.fromEntries(['left','right','throttle'].map(name=>[name,$(name)])),name=>{if(playing&&!soundLab.testing){engine.start();if(name==='throttle')doubleTap.press(performance.now());}else release();});
 const {input,setInput,release}=controls;
 // Older Safari may still dispatch touch gestures: cancel only on play surfaces.
 for(const el of [$('game'),document.querySelector('.controls')]){
  for(const event of ['touchstart','touchmove','touchend','gesturestart','gesturechange','contextmenu'])el.addEventListener(event,e=>e.preventDefault(),{passive:false});
 }
 const keyMap={ArrowLeft:'left',a:'left',ArrowRight:'right',d:'right',ArrowUp:'throttle',w:'throttle',' ':'throttle'};
-window.addEventListener('keydown',e=>{if(e.target instanceof HTMLInputElement||e.target instanceof HTMLSelectElement||e.target instanceof HTMLTextAreaElement||e.target.closest?.('#debug')||e.target.isContentEditable)return;const k=e.key.length===1?e.key.toLowerCase():e.key;if(keyMap[k]&&playing){e.preventDefault();engine.start();setInput(keyMap[k],k,true);}if(k==='r'&&!e.repeat)restart();});window.addEventListener('keyup',e=>{const k=e.key.length===1?e.key.toLowerCase():e.key;if(keyMap[k])setInput(keyMap[k],k,false);});
-window.addEventListener('blur',()=>{if(fluid?.solver)fluid.solver.accumulator=0;doubleTap.reset();release();engine.pause();});
-document.addEventListener('visibilitychange',()=>{doubleTap.reset();release();preferences.flush();if(document.hidden)engine.pause();else last=performance.now();});
-window.addEventListener('pagehide',()=>preferences.flush());
+window.addEventListener('keydown',e=>{if(e.target instanceof HTMLInputElement||e.target instanceof HTMLSelectElement||e.target instanceof HTMLTextAreaElement||e.target.closest?.('#debug')||e.target.closest?.('#soundLab')||e.target.isContentEditable)return;const k=e.key.length===1?e.key.toLowerCase():e.key;if(keyMap[k]&&playing&&!soundLab.testing){e.preventDefault();engine.start();setInput(keyMap[k],k,true);}if(k==='r'&&!e.repeat)restart();});window.addEventListener('keyup',e=>{const k=e.key.length===1?e.key.toLowerCase():e.key;if(keyMap[k])setInput(keyMap[k],k,false);});
+window.addEventListener('blur',()=>{if(fluid?.solver)fluid.solver.accumulator=0;doubleTap.reset();release();soundLab.suspend();engine.pause();});
+document.addEventListener('visibilitychange',()=>{doubleTap.reset();release();soundLab.suspend();preferences.flush();audioSettings.flush();if(document.hidden)engine.pause();else last=performance.now();});
+window.addEventListener('pagehide',()=>{preferences.flush();audioSettings.flush();});
 function applyPreferences(ids){const v=preferences.values;
  for(const id of ids)if(Object.hasOwn(settings,id))settings[id]=v[id];
  if(playing)race.modified||=modified(settings);
@@ -116,7 +120,13 @@ function applyPreferences(ids){const v=preferences.values;
 const settingsUI=mountSettings(preferences,applyPreferences);
 bigfootView.mount(settingsUI.groups['Debug Tools'],()=>b,camera);
 let b,elapsed=0,lap=1,best=null;
-function restart(){const now=performance.now();if(playing)gameClock+=Math.max(0,(now-last)/1000);last=now;startSequence.reset();playing=document.body.classList.contains('racing');if(playing)startSequence.begin(gameClock,preferences.values.countdownDuration);fluid?.reset();fluid?.disturb();race.reset();navigator.reset();race.modified=modified(settings);doubleTap.reset();$('results').hidden=true;result=null;release();engine.reset();b={x:start.x,z:start.z,angle:Math.atan2(startT.z,startT.x),vx:0,vz:0,pump:0,nozzle:0,yawRate:0};elapsed=0;lap=1;life.fill(0);alpha.fill(0);emit=0;positions.fill(-1000);for(const w of wakes)w.age=10;$('notice').textContent='Follow your navigator. Apply throttle to steer.';}
+let testMotion=null;
+const soundLab=mountSoundLab(audioSettings,engine,testing=>{
+ release();doubleTap.reset();last=performance.now();document.body.classList.toggle('engine-testing',testing);
+ if(testing){testMotion={vx:b.vx,vz:b.vz,yawRate:b.yawRate};b.vx=b.vz=b.yawRate=0;}else if(testMotion){Object.assign(b,testMotion);testMotion=null;}
+ if(!testing&&!playing)engine.pause();
+});
+function restart(){soundLab.stop();const now=performance.now();if(playing)gameClock+=Math.max(0,(now-last)/1000);last=now;startSequence.reset();playing=document.body.classList.contains('racing');if(playing)startSequence.begin(gameClock,preferences.values.countdownDuration);fluid?.reset();fluid?.disturb();race.reset();navigator.reset();race.modified=modified(settings);doubleTap.reset();$('results').hidden=true;result=null;release();engine.reset();b={x:start.x,z:start.z,angle:Math.atan2(startT.z,startT.x),vx:0,vz:0,pump:0,nozzle:0,yawRate:0};elapsed=0;lap=1;life.fill(0);alpha.fill(0);emit=0;positions.fill(-1000);for(const w of wakes)w.age=10;$('notice').textContent='Follow your navigator. Apply throttle to steer.';}
 restart();$('restart').onclick=()=>{if(document.body.classList.contains('racing'))playing=true;restart();if(playing)engine.start();};$('start').onclick=()=>{playing=true;document.body.classList.add('racing');engine.start();restart();};
 let previousSpeed=0;
 function effects(dt,speed){
@@ -145,14 +155,15 @@ function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);camera.
 const beforeStep={x:0,z:0};
 const cameraTarget=new THREE.Vector3(start.x,0,start.z),desiredTarget=new THREE.Vector3();
 let cameraReady=false,vegetationClock=0;
-function frame(now){requestAnimationFrame(frame);const rawDt=Math.max(0,(now-last)/1000),dt=Math.min(rawDt,.05);last=Math.max(last,now);if(playing&&!document.hidden)graphics.sample(rawDt);waterTime.value=now*.001;let speed=Math.hypot(b.vx,b.vz);
- if(playing&&!document.hidden){
+function frame(now){requestAnimationFrame(frame);const rawDt=Math.max(0,(now-last)/1000),dt=Math.min(rawDt,.05);last=Math.max(last,now);if(playing&&!soundLab.testing&&!document.hidden)graphics.sample(rawDt);waterTime.value=now*.001;let speed=Math.hypot(b.vx,b.vz);
+ if(soundLab.testing&&!document.hidden){engine.update(0,soundLab.throttle,dt,settings.top/3.6,true);soundLab.update();}
+ if(playing&&!soundLab.testing&&!document.hidden){
   gameClock+=rawDt;
   const transitions=startSequence.update(gameClock),latestSignal=transitions[transitions.length-1];
   if(latestSignal&&preferences.values.countdownAudio)engine.signal(latestSignal.kind);
   if(startSequence.state==='RACING'){
    const racingDt=Math.min(dt,Math.max(0,gameClock-startSequence.startAt));let advanced=0;
-   while(advanced<racingDt-1e-10){const step=Math.min(1/120,racingDt-advanced);beforeStep.x=b.x;beforeStep.z=b.z;stepBoat(b,input,step,nearest);advanced+=step;
+   while(advanced<racingDt-1e-10){const step=Math.min(1/120,racingDt-advanced);beforeStep.x=b.x;beforeStep.z=b.z;stepBoat(b,input,step,nearest);resolveHullBanks(b,nearest);advanced+=step;
     const completed=race.step(beforeStep,b,step,settings,gameClock-racingDt+advanced-startSequence.startAt);
     elapsed=race.total-race.lapStart;lap=Math.min(5,race.laps.length+1);best=race.laps.length?Math.min(...race.laps):null;
     if(completed&&race.done){finish();break;}
@@ -161,13 +172,13 @@ function frame(now){requestAnimationFrame(frame);const rawDt=Math.max(0,(now-las
   }else{b.vx=b.vz=0;speed=0;engine.update(0,input.throttle&&preferences.values.prestartRevving,dt,settings.top/3.6,true);}
   fluid.focus.x=b.x+Math.cos(b.angle)*7;fluid.focus.z=b.z+Math.sin(b.angle)*7;fluid.update(dt);
  }
- const navigating=playing&&!document.hidden&&startSequence.state==='RACING';
+ const navigating=playing&&!soundLab.testing&&!document.hidden&&startSequence.state==='RACING';
  if(!navigating&&preferences.values.bigfootDebug&&!document.hidden)bigfoot.update(dt,b,camera);
  let navigationCue=null;
  if(navigating){const cue=navigationCue=navigator.update(b,race,dt,input);navigatorHUD.update(cue,!$('debug').open&&(!preferences.values.startHud||gameClock>=startSequence.startAt+2));const notice=cue.notice||'Follow the arrows · Five laps';if($('notice').textContent!==notice)$('notice').textContent=notice;}else navigatorHUD.update(null,false);
  navigationView.update(b,race,navigationCue,navigating,dt);bigfootView.update(b,dt);
  const lamps=startSequence.lamps(gameClock);trackSignal.update(lamps);
- const signalHUD=$('startSignal'),show=startSequence.active&&preferences.values.startHud&&(startSequence.state!=='RACING'||gameClock<startSequence.startAt+2);
+ const signalHUD=$('startSignal'),show=!soundLab.testing&&startSequence.active&&preferences.values.startHud&&(startSequence.state!=='RACING'||gameClock<startSequence.startAt+2);
  signalHUD.hidden=!show;signalHUD.style.opacity=startSequence.state==='RACING'?String(Math.min(1,Math.max(0,startSequence.startAt+2-gameClock))):'1';
  for(const id of ['upper','lower','green'])$('signal-'+id).classList.toggle('lit',lamps[id]);
  const signalText=startSequence.state==='READY'?'READY':startSequence.state==='COUNTDOWN'?'SET':'GO!';if($('signalText').textContent!==signalText)$('signalText').textContent=signalText;
@@ -181,7 +192,7 @@ function frame(now){requestAnimationFrame(frame);const rawDt=Math.max(0,(now-las
  else cameraTarget.lerp(desiredTarget,1-Math.exp(-dt*settings.cameraResponse*(1+Math.max(0,settings.top/120-1)*.4)));
  const baseDistance=camera.aspect<1?Math.max(54,35/camera.aspect):52;
  const distance=baseDistance+Math.min(1,speed/(settings.top/3.6))*5*settings.effects;
- camera.position.set(cameraTarget.x,distance,cameraTarget.z+distance*.62);camera.lookAt(cameraTarget);
+ camera.position.set(cameraTarget.x,distance,cameraTarget.z+distance*.62);camera.lookAt(cameraTarget);engine.setDistance(camera.position.distanceTo(boat.position));
  const fov=43+Math.min(1,speed/50)*2;if(Math.abs(camera.fov-fov)>.01){camera.fov+=(fov-camera.fov)*(1-Math.exp(-dt*3));camera.updateProjectionMatrix();}
  vegetationClock+=dt;if(vegetationClock>.5){vegetationClock=0;environment.update(camera,quality.detail);}
  sun.position.set(cameraTarget.x-35,65,cameraTarget.z+25);sun.target.position.set(cameraTarget.x,0,cameraTarget.z);

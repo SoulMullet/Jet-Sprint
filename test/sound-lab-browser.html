@@ -1,0 +1,11 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>JET SPRINT · Sound Lab browser checks</title></head><body><main style="padding:20px;max-width:650px"><h1>V8 Sound Lab</h1><p>Independent audio fixture. No WebGL required.</p><p id="fixtureStatus">Ready. Open V8 SOUND LAB, then Start engine test.</p><details id="debug"><summary>Game Settings fixture</summary></details></main><script type="module">
+import '../src/style.css';
+import {AudioSettings} from '../src/v8-settings.js';
+import {Engine} from '../src/audio.js';
+import {mountSoundLab} from '../src/v8-panel.js';
+const store=new AudioSettings(localStorage),engine=new Engine(store.values);
+const panel=mountSoundLab(store,engine,testing=>{if(!testing)engine.pause();});
+let last=performance.now();
+function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;if(panel.testing){engine.update(0,panel.throttle,dt,85/3.6,true);panel.update();document.getElementById('fixtureStatus').textContent=engine.status;}requestAnimationFrame(frame);}requestAnimationFrame(frame);
+window.addEventListener('pagehide',()=>store.flush());
+</script></body></html>
