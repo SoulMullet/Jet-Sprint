@@ -1,3 +1,7 @@
+# JET SPRINT v0.8.0
+
+Shelter View inspired spline waterways and a 32-slider procedural V8 Sound Lab. [Upgrade details, idle tuning guide and validation](docs/v0.8.0.md). Existing handling settings and scores are preserved.
+
 # JET SPRINT v0.7.1
 
 A mobile-first, single-player 3D jet sprint prototype built with JavaScript, Vite, Three.js and Web Audio. All geometry and sound are procedural; no assets, account, API keys or backend required.

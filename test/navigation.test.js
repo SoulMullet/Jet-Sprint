@@ -8,7 +8,7 @@ import {channel} from '../src/physics.js';
 import {makeDomain} from '../src/fluid/numerics.js';
 const venue=createCourse();
 test('network has shared intersections, alternate routes and separate closed race walk',()=>{
- assert.equal(venue.network.paths.length,9);assert.ok(venue.gates.length>=18&&venue.gates.length<40);
+ assert.equal(venue.network.paths.length,11);assert.ok(venue.gates.length>=18&&venue.gates.length<40);
  const alternate=createCourse(['S-A','A-D','D-B','B-C','C-S']);assert.notEqual(alternate.length,venue.length);assert.deepEqual(alternate.edges.map(e=>e.points.map(p=>[p.x,p.z])),venue.edges.map(e=>e.points.map(p=>[p.x,p.z])));
  assert.throws(()=>createCourse([...prescribedRoute,'S-A']));
  for(const p of venue.gates){const q=nearestOnTrack(venue.network,p.x,p.z);assert.ok(Math.hypot(q.x-p.x,q.z-p.z)<.03);}

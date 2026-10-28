@@ -4,6 +4,7 @@ import {createCourse} from '../src/course.js';
 import {Race,defaults} from '../src/race.js';
 import {RouteNavigator} from '../src/navigation.js';
 import {stepBoat} from '../src/physics.js';
+import {resolveHullBanks} from '../src/hull-collision.js';
 import {nearestOnTrack} from '../src/track.js';
 
 test('a binary-input test driver completes five laps using the unchanged boat integrator',()=>{
@@ -19,6 +20,7 @@ test('a binary-input test driver completes five laps using the unchanged boat in
   const speed=Math.hypot(boat.vx,boat.vz),desiredSpeed=cue.wrong?8:curvature>.7?8:curvature>.3?12:20;
   before.x=boat.x;before.z=boat.z;
   stepBoat(boat,{throttle:speed<desiredSpeed||(Math.abs(error)>.35&&speed<13),left:error<-.08,right:error>.08},1/120,nearest);
+  resolveHullBanks(boat,nearest);
   race.step(before,boat,1/120,defaults);
   assert.ok(Number.isFinite(boat.x)&&Number.isFinite(boat.angle));
  }
