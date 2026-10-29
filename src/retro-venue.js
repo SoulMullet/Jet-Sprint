@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {racingBoat} from './visuals.js';
 import {venueLayout,spectatorLocations} from './venue-layout.js';
+import {venueMaterials} from './hf-venue-materials.js';
 
 // Static props are baked into one mesh per material, not one draw per plank.
 // People use instanced body parts; only their 48 arms animate. No skeletons.
@@ -10,6 +11,7 @@ export function createRetroVenue(scene,nearest){
  const colors={wood:'#79624d',plank:'#a58c69',roof:'#3c514c',trim:'#d6c5a0',glass:'#ffd08a',black:'#242c2b',metal:'#818e8a',rust:'#985638',cream:'#e8d5ac',red:'#ba503e',teal:'#367a7a',yellow:'#dfb247',navy:'#344b64',skin:'#c78f6c',white:'#e2dfcf',dirt:'#a18b63'};
  const mats=Object.fromEntries(Object.entries(colors).map(([key,color])=>[key,new THREE.MeshStandardMaterial({color,roughness:.85,metalness:key==='metal'?.4:0})]));
  mats.glass.emissive.set('#e6a65d');mats.glass.emissiveIntensity=.7;
+ venueMaterials(mats);
  const siding=document.createElement('canvas');siding.width=siding.height=128;const ctx=siding.getContext('2d');ctx.fillStyle='#a99a82';ctx.fillRect(0,0,128,128);
  for(let y=0;y<128;y+=16){ctx.fillStyle=y%32?'#807766':'#9a8d77';ctx.fillRect(0,y,128,1);for(let x=0;x<128;x+=7){ctx.fillStyle='#3b33291a';ctx.fillRect(x,y+3+(x%5),12,1);}}
  const woodTexture=new THREE.CanvasTexture(siding);woodTexture.colorSpace=THREE.SRGBColorSpace;woodTexture.wrapS=woodTexture.wrapT=THREE.RepeatWrapping;woodTexture.repeat.set(2,2);mats.wood.map=woodTexture;
@@ -36,6 +38,7 @@ export function createRetroVenue(scene,nearest){
  box('wood',0,2.6,0,10,4.5,8,cabin);roof(cabin,12,11,4.9);
  box('wood',3,6.7,-1.8,1,3.8,1,cabin);box('metal',3,8.7,-1.8,1.3,.25,1.3,cabin);
  box('plank',0,.35,5.4,12,.3,3.6,cabin);box('black',0,1.9,4.05,1.5,3,.08,cabin);box('wood',.05,1.8,4.13,1.3,2.7,.08,cabin);
+ box('metal',.52,1.8,4.21,.07,.2,.07,cabin);for(const side of [-1,1]){box('trim',side*5.1,2.65,0,.16,4.5,8.1,cabin);box('plank',side*5.9,4.85,0,.12,.14,11,cabin);}
  for(const x of [-3.1,3.1]){box('trim',x,2.8,4.1,2,1.7,.12,cabin);box('glass',x,2.8,4.19,1.7,1.4,.05,cabin);box('wood',x,2.8,4.25,.07,1.5,.08,cabin);box('wood',x,2.8,4.25,1.8,.07,.08,cabin);}
  for(const x of [-5.4,5.4]){box('plank',x,2.55,6.7,.18,4.5,.18,cabin);box('plank',x,1,5.35,.1,.1,2.6,cabin);}
  for(let i=-5;i<=5;i++)if(Math.abs(i)>1)box('wood',i,.95,7,.07,1.1,.07,cabin);
@@ -50,13 +53,14 @@ export function createRetroVenue(scene,nearest){
  const truck=group(venueLayout.pickup.x,venueLayout.pickup.z,.35);
  box('teal',0,1,0,3.3,.6,6.8,truck);box('teal',0,1.9,-.7,3,1.8,2.6,truck);box('black',0,2.1,.65,2.7,1,.08,truck);box('metal',0,1,3.55,3.4,.22,.2,truck);box('black',0,1.1,2,2.7,.08,2,truck);
  for(const side of [-1,1]){box('black',side*1.53,2.1,-.7,.06,.95,1.8,truck);for(const z of [-2.2,2.2]){const t=item(tireGeo,'black',side*1.65,.75,z,1.5,1.5,1.1,truck);t.rotation.y=Math.PI/2;}}
+ box('black',0,1.3,-3.45,2.9,.4,.08,truck);for(let i=-5;i<=5;i++)box('metal',i*.21,1.3,-3.51,.035,.3,.035,truck);for(const side of [-1,1]){box('cream',side*1.24,1.4,-3.51,.42,.3,.07,truck);box('metal',side*1.75,2.2,-.3,.27,.24,.3,truck);box('rust',side*1.66,.9,2.6,.06,.1,.5,truck);}
  // Small timing booth, launch approach, dirt paths and a parked boat trailer.
  const booth=group(-21,-39,.1);box('wood',0,1.5,0,3,2.6,2.6,booth);roof(booth,3.8,3.8,2.9);box('glass',0,1.9,1.35,2.4,.8,.05,booth);sign('RACE CONTROL','CEDAR CREEK / SUMMER 87',3.2,.7,0,2.8,1.5,booth);
  const trailer=group(-49,-52,.35);box('metal',0,.7,0,2.7,.12,6.5,trailer);box('metal',0,.65,3.8,.12,.12,2,trailer);for(const side of [-1,1]){const tire=item(tireGeo,'black',side*1.45,.5,.7,1.2,1.2,1.2,trailer);tire.rotation.y=Math.PI/2;box('plank',side*.8,.9,0,.25,.15,5.5,trailer);}
 
  // Dock occupies only the dead-end staging inlet, well outside the lap route.
  const dock=group(venueLayout.dock.x,venueLayout.dock.z);
- for(let i=0;i<16;i++)box('plank',0,.18,-4+i*.5,2.8,.16,.46,dock);
+ for(let i=0;i<16;i++){box('plank',0,.18,-4+i*.5,2.8,.16,.46,dock);for(const side of [-1,1])pole('metal',side*1.15,.269,-4+i*.5,.024,.012,dock);}
  for(const x of [-1.3,1.3])for(const z of [-4,0,3.5]){pole('wood',x,-.1,z,.14,2.5,dock);box('metal',x,.42,z,.5,.07,.12,dock);}
  for(const z of [-2,1.8]){item(tireGeo,'black',1.65,.1,z,1,1,1,dock);}
  sign('JET SPRINT RACING','CEDAR CREEK / STAGING ONLY',6,1.6,-1.5,3,-4.3,dock);

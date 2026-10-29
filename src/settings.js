@@ -1,6 +1,6 @@
 import {handlingDefaults} from './handling.js';
 export const SETTINGS_SCHEMA=2;
-export const GAME_VERSION='0.12.0';
+export const GAME_VERSION='0.13.0';
 export const settingsKey='jet-sprint-settings';
 export const presetsKey='jet-sprint-presets';
 const number=(category,label,defaultValue,min,max,step=1,unit='')=>({category,label,type:'number',default:defaultValue,min,max,step,unit});
@@ -10,7 +10,7 @@ export const registry={
  top:number('Boat Handling','Top speed',handlingDefaults.top,85,180,1,' km/h'),drift:number('Boat Handling','Drift',handlingDefaults.drift,0,100,1,'%'),steer:number('Boat Handling','Steering response',handlingDefaults.steer,20,100,1,'%'),acceleration:number('Boat Handling','Acceleration',handlingDefaults.acceleration,15,28),cameraResponse:number('Boat Handling','Camera response',8,3,12),effects:number('Spray Effects','Speed effects',1,.5,1.5,.1),sprayDistance:number('Spray Effects','Spray distance',100,0,200,1,'%'),waterVolume:number('Spray Effects','Water volume',100,0,200,1,'%'),
  nozzleAuthority:number('Boat Handling','Nozzle authority',handlingDefaults.nozzleAuthority,10,45,1,'°'),pumpResponse:number('Boat Handling','Pump response',handlingDefaults.pumpResponse,.03,.5,.01,' s'),pumpDecay:number('Boat Handling','Pump decay',handlingDefaults.pumpDecay,.03,.6,.01,' s'),lateralResistance:number('Boat Handling','Lateral resistance',handlingDefaults.lateralResistance,1,15,.5),yawDamping:number('Boat Handling','Yaw damping',handlingDefaults.yawDamping,1.5,10,.1),
  waterMode:choice('Water Physics','Water mode','legacy',['simulated','legacy']),fluidResolution:choice('Water Physics','Simulation grid','auto',['auto','64','96','128','192']),fluidDebug:choice('Water Physics','Water debug','0',['0','1','2','3']),waveScale:number('Water Physics','Visual wave height',240,0,300,1,'%'),repeatWaves:bool('Water Physics','Repeat diagnostic waves',false),
- graphics:choice('Graphics','Graphics quality','auto',['auto','low','medium','high']),mute:bool('Audio','Mute all sound',false),masterVolume:number('Audio','Master volume',100,0,100,1,'%'),
+ graphics:choice('Graphics','Graphics quality','auto',['auto','low','medium','high','ultra']),mute:bool('Audio','Mute all sound',false),masterVolume:number('Audio','Master volume',100,0,100,1,'%'),
  navigationDebug:bool('Debug Tools','Navigation Debug',false),bigfootDebug:bool('Debug Tools','Bigfoot Debug',false),
  countdownDuration:number('Race Start','Countdown seconds (next start)',5,2,15,.5,' s'),countdownAudio:bool('Race Start','Countdown audio',true),startHud:bool('Race Start','Starting light HUD',true),prestartRevving:bool('Race Start','Pre-start engine revving',true)
 };
@@ -36,9 +36,9 @@ export function migratePreset(input){
 }
 export function parsePreset(text){if(typeof text!=='string'||text.length>200000)throw Error('Preset is too large (maximum 200 KB).');let parsed;try{parsed=JSON.parse(text);}catch{throw Error('Invalid JSON. Paste or open an exported preset.');}return migratePreset(parsed);}
 export class SettingsStore {
- constructor(storage){this.storage=storage;this.values=defaultSettings();this.legacy={};this.listeners=new Set();this.warnings=[];this.timer=null;
+ constructor(storage){this.storage=storage;this.values=defaultSettings();this.legacy={};this.listeners=new Set();this.warnings=[];this.timer=null;this.restored=false;
   let savedText=null;
-  try{const text=savedText=storage.getItem(settingsKey);if(text){const migrated=parsePreset(text);this.values=migrated.values;this.legacy=migrated.legacy;this.warnings.push(...migrated.notes);this.schedule();return;}}catch(error){if(savedText)this.legacy.unreadableSavedSettings=savedText.slice(0,200000);this.warnings.push(`Saved settings could not be restored: ${error.message}`);}
+  try{const text=savedText=storage.getItem(settingsKey);if(text){const migrated=parsePreset(text);this.values=migrated.values;this.legacy=migrated.legacy;this.warnings.push(...migrated.notes);this.restored=true;this.schedule();return;}}catch(error){if(savedText)this.legacy.unreadableSavedSettings=savedText.slice(0,200000);this.warnings.push(`Saved settings could not be restored: ${error.message}`);}
   // Migrate the two historical keys, without deleting them or touching race data.
   try{const water=JSON.parse(storage.getItem('jet-sprint-water')||'null');if(plain(water))for(const [id,value] of Object.entries(water)){try{if(Object.hasOwn(registry,id))this.values[id]=valueFor(id,value,this.warnings);else if(safeKey(id))this.legacy[id]=value;}catch(error){this.legacy[id]=value;this.warnings.push(error.message);}}}catch(error){this.warnings.push(`Legacy water settings unavailable: ${error.message}`);}
   try{const graphics=storage.getItem('jet-sprint-graphics');if(graphics)this.values.graphics=valueFor('graphics',graphics,this.warnings);}catch(error){this.warnings.push(`Legacy graphics setting unavailable: ${error.message}`);}

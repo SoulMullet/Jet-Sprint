@@ -1,18 +1,22 @@
-# JET SPRINT v0.12.0 — Summer 1987
+# JET SPRINT v0.13.0 — HF-GRAPHICS-V2
 
 A mobile-first, single-player 3D jet sprint prototype built with JavaScript, Vite, Three.js and Web Audio. All geometry and sound are procedural; no assets, account, API keys or backend required.
 
-The active course is **Cedar Creek Figure Eight**, a compact two-loop circuit with one flat diagonal crossover and a separate staging inlet. A rustic race-office cabin, dock and moored boat, old pickup, 24 animated spectators and original local racing signs establish a Pacific Northwest venue in summer 1987. Open **Game Settings → Figure-eight overview** to see the layout; the default follow camera is unchanged. Look for **SUMMER 1987 · v0.12.0** plus the build identifier in the playable HUD. See [Summer rendering and verification notes](docs/summer-1987.md).
+The active course is **Cedar Creek Figure Eight**, a compact two-loop circuit with one flat diagonal crossover and a separate staging inlet. A rustic race-office cabin, dock and moored boat, old pickup, 24 animated spectators and original local racing signs establish a Pacific Northwest venue in summer 1987. Open **Game Settings → Figure-eight overview** to see the layout; the default follow camera is unchanged. Look for **HF-GRAPHICS-V2 · v0.13.0 · commit** in the playable HUD. See the [rendering audit, comparison captures and verification](docs/hf-graphics-v2.md).
+
+HF-GRAPHICS-V2 adds multi-frequency freshwater waves, animated normal textures, live planar scenery reflections on High/Ultra, a historical three-band foam wake, a GPU spray/mist/droplet pool, physical sky lighting, wet clear-coated boat materials, cockpit/engine details, cutout fir foliage and instanced bank vegetation. Ultra adds depth-based contact occlusion. All art and textures are generated locally; no runtime asset downloads are needed.
 
 The V8 Sound Lab, 32 live controls, independent presets/JSON and stationary tuning remain available; see [the earlier track and V8 notes](docs/track-v8-upgrade.md) for audio controls. That document describes the superseded Shelter course.
 
 ## Graphics Quality Lab
 
-Open **Game Settings → Graphics Quality Lab** for live water, spray, lighting, atmosphere, scenery and resolution controls. Use **Mobile**, **High** or **Ultra** presets; Mobile disables postprocessing and shadows, caps density/resolution, and retains responsive touch controls. The FPS switch reports the current animation frame rate; no physical-device benchmark is implied.
+Open **Game Settings → Graphics Quality Lab** for live water, spray, lighting, atmosphere, scenery and resolution controls. Use **Low** for older phones, **Medium** for modern phones, **High** for desktop, or **Ultra** for stronger desktop GPUs. Low disables shadows/postprocessing/live reflections; Medium retains soft shadows and sky reflections. High/Ultra add live reflections, more waves/particles/vegetation and larger shadow maps. The FPS switch reports the current animation frame rate; no physical-device benchmark is implied.
 
-The Lab saves separately from gameplay, audio and camera preferences. **Copy settings JSON**, **Paste JSON**, **Import JSON** and **Reset graphics defaults** operate on graphics only. The adaptive graphics preset is linked to the existing Graphics selector. Device pixel ratio and adaptive quality can cap the effective resolution and shadow map size.
+The Lab saves separately from gameplay, audio and camera preferences. **Copy settings JSON**, **Paste JSON**, **Import JSON** and **Reset graphics defaults** operate on graphics only. The render budget is linked to the existing Graphics selector. Device pixel ratio and the budget can cap effective resolution and shadow size. Previous graphics JSON/settings remain readable. New coarse-pointer devices default conservatively to Low (Medium when reported memory is above 4 GB); desktop defaults to High. Manual choices persist.
 
-New sessions default to the lightweight procedural water renderer. Existing saved water-mode and diagnostic-wave choices are respected. Simulated water remains available under Water Physics; it now allocates GPU resources only when selected, and releases them when you return to procedural/legacy water. Both renderers share Summer water appearance controls. Older wave-height, spray-distance and water-volume controls still apply alongside the Lab.
+**Developer comparison: previous water & spray** switches those systems in the same live scene. Updated boat/scenery/lighting remain. Full old-build comparison captures from identical camera positions and sun settings are linked in the rendering notes. This temporary comparison choice is not saved.
+
+New sessions default to the lightweight procedural water renderer. Existing saved water-mode and diagnostic-wave choices are respected. Simulated water remains available under Water Physics; it allocates GPU resources only when selected, and releases them when you return to procedural/legacy water. Both renderers share HF water appearance controls. Older wave-height, spray-distance and water-volume controls still apply alongside the Lab.
 
 ## Racing cameras
 
@@ -47,7 +51,7 @@ npm run build
 npm run preview
 ```
 
-Node tests cover speed convergence, steering, drag, bank recovery and drift settings. Build output is in `dist/`. Vite may warn about the Three.js bundle size (~176 KB compressed). Browser checks should cover: launch/audio unlock, simultaneous throttle and steering, pointer cancellation, left/right drift recovery, full valid laps, restart, background/resume, portrait and landscape. Test on an actual iPhone in Safari before claiming iPhone compatibility or performance. Audio can depend on device mute and volume settings.
+Node tests cover speed convergence, steering, drag, bank recovery, full five-lap races/cameras, fluid stability, graphics persistence, reflection clipping and GPU effect contracts. Build output is in `dist/`. Vite reports its existing large-chunk advisory (about 223 KB compressed). Browser checks should cover: launch/audio unlock, simultaneous throttle and steering, pointer cancellation, left/right drift recovery, full valid laps, restart, background/resume, portrait and landscape. Test on an actual iPhone in Safari before claiming iPhone performance. Audio can depend on device mute and volume settings.
 
 ## GitHub Pages
 
@@ -62,8 +66,10 @@ Push this repository to GitHub, then select **Settings → Pages → Build and d
 - `src/debug-views.js`: optional numbered gates/route diagnostics, Bigfoot marker/path/status and trigger/reset controls.
 - `src/audio.js`: interaction-unlocked harmonic V8 synthesis (an approximation, not a recording).
 - `src/style.css`: responsive overlays and touch controls.
+- `src/hf-{water,reflections,effects,wake,scenery,boat-details,venue-materials}.js`: active HF rendering components.
+- `src/graphics-lab.js` / `src/summer-settings.js` / `src/summer-post.js`: quality/persistence/UI, live renderer settings and optional postprocessing.
 
-The renderer caps pixel density at 1.7, uses low-poly geometry, no shadows and bounded particle pools. Physics runs at 120 Hz with bounded catch-up after pauses. No frame-rate benchmark or real iPhone test has been performed.
+The renderer uses preset-dependent pixel density (up to 2 on Ultra), bounded GPU particle pools, instancing, foliage LOD and optional shadows/reflections/postprocessing. Physics runs at 120 Hz with bounded catch-up after pauses. No real-device frame-rate benchmark or physical iPhone test has been performed. Historical release sections below describe previous rendering behavior.
 
 ## v0.2 changes and validation
 

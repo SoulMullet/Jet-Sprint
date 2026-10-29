@@ -1,3 +1,4 @@
+import {hfWaterUniforms,finishHFWater} from './hf-water.js';
 // Shared by both the procedural mobile surface and the retained GPU solver.
 export function waterUniforms(time){return {summerTime:time,summerWaves:{value:.8},summerSpeed:{value:1},summerFoam:{value:1}};}
 const common=`
@@ -10,6 +11,7 @@ const common=`
  }
 `;
 export function finishSummerWater(material,uniforms,{simulated=false}={}){
+ if(!uniforms.hfEnabled)Object.assign(uniforms,hfWaterUniforms());
  const previous=material.onBeforeCompile;
  material.onBeforeCompile=shader=>{
   previous?.(shader);Object.assign(shader.uniforms,uniforms);
@@ -37,4 +39,5 @@ export function finishSummerWater(material,uniforms,{simulated=false}={}){
  };
  material.customProgramCacheKey=()=>simulated?'summer-1987-fluid-v1':'summer-1987-procedural-v1';
  material.summerUniforms=uniforms;
+ finishHFWater(material,uniforms,{simulated});
 }

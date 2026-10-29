@@ -3,9 +3,9 @@ import * as THREE from 'three';
 export class BoatPresentation {
  constructor(boat){
   this.boat=boat;this.roll=0;this.pitch=0;this.lastSpeed=0;this.uniforms={engineClock:{value:0},engineRPM:{value:900}};
-  boat.rotation.order='YXZ';
+  boat.rotation.order='YXZ';const finishedMaterials=new Set();
   for(const m of boat.children){if(!m.isMesh)continue;const p=m.geometry.attributes.position,w=new Float32Array(p.count);for(let i=0;i<p.count;i++)w[i]=p.getX(i)<-.65&&p.getY(i)>.8?1:0;m.geometry.setAttribute('engineWeight',new THREE.BufferAttribute(w,1));
-   const material=m.material;material.onBeforeCompile=shader=>{Object.assign(shader.uniforms,this.uniforms);shader.vertexShader='attribute float engineWeight;uniform float engineClock,engineRPM;\n'+shader.vertexShader;shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>\ntransformed+=engineWeight*vec3(sin(engineClock*engineRPM*.11),cos(engineClock*engineRPM*.13),sin(engineClock*engineRPM*.09))*.0015;`);};material.customProgramCacheKey=()=> 'summer-engine-vibration';
+   const material=m.material;if(finishedMaterials.has(material))continue;finishedMaterials.add(material);const previous=material.onBeforeCompile,cache=material.customProgramCacheKey();material.onBeforeCompile=shader=>{previous?.(shader);Object.assign(shader.uniforms,this.uniforms);shader.vertexShader='attribute float engineWeight;uniform float engineClock,engineRPM;\n'+shader.vertexShader;shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>\ntransformed+=engineWeight*vec3(sin(engineClock*engineRPM*.11),cos(engineClock*engineRPM*.13),sin(engineClock*engineRPM*.09))*.0015;`);};material.customProgramCacheKey=()=> cache+'-engine-vibration';
   }
  }
  reset(){this.roll=this.pitch=this.lastSpeed=0;}

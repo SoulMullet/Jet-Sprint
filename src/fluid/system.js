@@ -3,7 +3,7 @@ import {ShallowWaterSolver} from './solver.js';
 import {renderGeometry} from './render-geometry.js';
 import {FluidSurface} from './surface.js';
 
-const automaticResolution={low:64,medium:96,high:128};
+const automaticResolution={low:64,medium:96,high:128,ultra:128};
 
 // Lifecycle/UI adapter; intentionally has no boat-force or spray integration.
 export class WaterSystem {

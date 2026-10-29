@@ -5,6 +5,8 @@ import {inSceneryClearing} from './venue-layout.js';
 import {pineCrown} from './summer-geometry.js';
 import {waterUniforms,finishSummerWater} from './summer-water.js';
 import {channel} from './physics.js';
+import {Sky} from 'three/addons/objects/Sky.js';
+import {boatDetail} from './hf-boat-details.js';
 const make=(color,roughness=.8,metalness=0)=>new THREE.MeshStandardMaterial({color,roughness,metalness});
 function add(parent,geometry,material,x=0,y=0,z=0){const m=new THREE.Mesh(geometry,material);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;}
 function texture(draw,size=256){const canvas=document.createElement('canvas');canvas.width=canvas.height=size;draw(canvas.getContext('2d'),size);const t=new THREE.CanvasTexture(canvas);t.colorSpace=THREE.SRGBColorSpace;return t;}
@@ -12,8 +14,9 @@ export function lighting(scene,renderer){
  renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
  scene.background=new THREE.Color('#c4d5d1');scene.fog=new THREE.Fog('#c4d5d1',105,240);
  scene.add(new THREE.HemisphereLight(0xb6d1db,0x3d5033,1.45));const sun=new THREE.DirectionalLight(0xffd09a,3.4);sun.position.set(-35,65,25);sun.castShadow=true;sun.shadow.camera.left=-45;sun.shadow.camera.right=45;sun.shadow.camera.top=45;sun.shadow.camera.bottom=-45;sun.shadow.camera.near=1;sun.shadow.camera.far=160;sun.shadow.bias=-.0003;sun.shadow.normalBias=.08;scene.add(sun,sun.target);
- const sky=texture((ctx,n)=>{const g=ctx.createLinearGradient(0,0,0,n);g.addColorStop(0,'#759dae');g.addColorStop(.5,'#e6d8b9');g.addColorStop(.55,'#8c9271');g.addColorStop(1,'#293e35');ctx.fillStyle=g;ctx.fillRect(0,0,n,n);ctx.fillStyle='#fff2d3';ctx.beginPath();ctx.arc(n*.2,n*.3,10,0,Math.PI*2);ctx.fill();for(let i=0;i<12;i++){ctx.fillStyle='#ffffff16';ctx.beginPath();ctx.ellipse((i*47)%n,n*.22+(i%3)*12,30,4,0,0,Math.PI*2);ctx.fill();}});sky.mapping=THREE.EquirectangularReflectionMapping;const pmrem=new THREE.PMREMGenerator(renderer),env=pmrem.fromEquirectangular(sky);scene.environment=env.texture;pmrem.dispose();sky.dispose();
- const dome=new THREE.Mesh(new THREE.SphereGeometry(390,32,16),new THREE.ShaderMaterial({side:THREE.BackSide,depthWrite:false,vertexShader:'varying vec3 skyDir;void main(){skyDir=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',fragmentShader:'varying vec3 skyDir;void main(){float t=smoothstep(-.02,.8,normalize(skyDir).y);gl_FragColor=vec4(mix(vec3(.72,.84,.82),vec3(.23,.49,.68),t),1.);\n#include <tonemapping_fragment>\n#include <colorspace_fragment>\n}'}));dome.renderOrder=-10;scene.add(dome);
+ const dome=new Sky();dome.scale.setScalar(450);dome.renderOrder=-10;dome.material.uniforms.turbidity.value=2;dome.material.uniforms.rayleigh.value=2.3;dome.material.uniforms.mieCoefficient.value=.003;scene.add(dome);scene.environmentIntensity=.28;
+ const reflectionSky=new Sky(),skyScene=new THREE.Scene();reflectionSky.scale.setScalar(450);reflectionSky.material=dome.material;skyScene.add(reflectionSky);const pmrem=new THREE.PMREMGenerator(renderer);let environment=null,lastElevation=-1;
+ sun.userData.updateSky=elevation=>{if(elevation===lastElevation)return;lastElevation=elevation;const a=elevation*Math.PI/180;dome.material.uniforms.sunPosition.value.set(-70*Math.cos(a),90*Math.sin(a),45*Math.cos(a)).normalize();const next=pmrem.fromScene(skyScene,.04,.1,600);environment?.dispose();environment=next;scene.environment=next.texture;};sun.userData.updateSky(35);sun.shadow.normalBias=.025;sun.shadow.bias=-.00015;
  return sun;
 }
 export function waterMaterial(points,width,time,boat,strength){
@@ -52,7 +55,7 @@ export function terrain(scene,points,nearest,random,network=null){
  for(let i=0;i<trees.length;i+=15){const t=trees[i],log=add(scene,i%2?logGeo:stumpGeo,bark,t.x+2,.4,t.z);if(i%2)log.rotation.z=Math.PI/2;}
  trunks.computeBoundingSphere();crowns.computeBoundingSphere();
  const trunkMatrices=trunks.instanceMatrix.array.slice(),crownMatrices=crowns.instanceMatrix.array.slice(),crownColors=crowns.instanceColor.array.slice();
- const result={trees,drawDistance:160,visibleTrees:trees.length,update(camera,fraction){
+ const result={trees,trunks,crowns,ground,details,drawDistance:160,visibleTrees:trees.length,update(camera,fraction){
   for(const mesh of details)mesh.visible=fraction>.5;
   let count=0;const radius=Math.min(result.drawDistance,45+fraction*80);
   for(let i=0;i<trees.length;i++){
@@ -68,7 +71,7 @@ export function terrain(scene,points,nearest,random,network=null){
 export function racingBoat(scene,{cockpitLayers=false}={}){
  const boat=new THREE.Group();scene.add(boat);const paint=new THREE.MeshPhysicalMaterial({color:'#e9ed86',roughness:.17,metalness:.04,clearcoat:1,clearcoatRoughness:.14}),metal=make('#9da9aa',.25,.8),rubber=make('#1c292b',.8),seat=make('#2c3739',.65),red=make('#d26033',.3,.3);
  const hull=new THREE.Shape();hull.moveTo(2.35,0);hull.bezierCurveTo(2.05,.35,1.25,.85,.55,.91);hull.lineTo(-1.65,.88);hull.quadraticCurveTo(-2,.86,-2,.52);hull.lineTo(-2,-.52);hull.quadraticCurveTo(-2,-.86,-1.65,-.88);hull.lineTo(.55,-.91);hull.bezierCurveTo(1.25,-.85,2.05,-.35,2.35,0);
- const g=new THREE.ExtrudeGeometry(hull,{depth:.35,bevelEnabled:true,bevelSegments:3,steps:1,bevelSize:.09,bevelThickness:.12,curveSegments:10});g.rotateX(Math.PI/2);add(boat,g,paint,0,.65);
+ const g=new THREE.ExtrudeGeometry(hull,{depth:.35,bevelEnabled:true,bevelSegments:5,steps:1,bevelSize:.09,bevelThickness:.12,curveSegments:24});g.rotateX(Math.PI/2);add(boat,g,paint,0,.65);
  add(boat,new THREE.BoxGeometry(2.25,.1,1.35),rubber,-.35,.7);add(boat,new THREE.BoxGeometry(1.15,.18,1.3),paint,1,.75);
  for(const side of [-1,1]){add(boat,new THREE.BoxGeometry(3.3,.09,.06),rubber,-.25,.65,side*.9);add(boat,new THREE.BoxGeometry(.6,.12,.48),seat,.15,.85,side*.35);const back=add(boat,new THREE.BoxGeometry(.12,.62,.5),seat,-.16,1.1,side*.35);back.rotation.z=-.15;}
  add(boat,new THREE.BoxGeometry(.9,.5,.7),metal,-1.1,1.03);for(const side of [-1,1]){const cover=add(boat,new THREE.BoxGeometry(.9,.22,.25),red,-1.08,1.36,side*.32);cover.rotation.x=side*.35;for(let i=0;i<4;i++){const pipe=add(boat,new THREE.TorusGeometry(.13,.045,5,8,Math.PI),metal,-1.45+i*.23,1.12,side*.56);pipe.rotation.y=Math.PI/2;}}
@@ -82,8 +85,8 @@ export function racingBoat(scene,{cockpitLayers=false}={}){
  for(const [role,z,helmet,jacket] of [['driver',-.35,red,paint],['navigator',.35,navigatorHelmet,red]]){
   const crewStart=boat.children.length;
   const x=.15;crew.push({role,x,z,helmetY:1.57});
-  add(boat,new THREE.BoxGeometry(.27,.36,.28),rubber,x,1.18,z);
-  add(boat,new THREE.BoxGeometry(.12,.3,.31),jacket,x+.12,1.2,z);
+  add(boat,new THREE.CapsuleGeometry(.135,.15,5,12),rubber,x,1.18,z);
+  const vest=add(boat,new THREE.SphereGeometry(1,12,8),jacket,x+.1,1.2,z);vest.scale.set(.105,.18,.17);
   add(boat,new THREE.BoxGeometry(.08,.32,.08),jacket,x-.04,1.22,z-.14);
   add(boat,new THREE.BoxGeometry(.08,.32,.08),jacket,x-.04,1.22,z+.14);
   add(boat,new THREE.CylinderGeometry(.07,.07,.1,7),rubber,x,1.41,z);
@@ -102,6 +105,7 @@ export function racingBoat(scene,{cockpitLayers=false}={}){
  }
  const wheel=add(boat,new THREE.TorusGeometry(.16,.026,6,12),metal,.62,1.17,-.35);wheel.rotation.y=Math.PI/2;
  boat.userData.crew=crew;
+ boatDetail(boat,{paint,metal,rubber,seat,red,add});
  // Static boat parts share a handful of draw calls; physics animates the group.
  const batches=new Map();boat.updateMatrixWorld(true);
  for(const child of boat.children){const hidden=!!child.userData.hideInCockpit,key=child.material.uuid+hidden;
