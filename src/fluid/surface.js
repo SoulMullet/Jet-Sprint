@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {finishSummerWater} from '../summer-water.js';
 import {renderGeometry} from './render-geometry.js';
 export class FluidSurface {
  constructor(solver,legacyMaterial,channel,nearest,width,cachedGeometry=null){
@@ -47,7 +48,8 @@ export class FluidSurface {
     if(fluidDebug>0)outgoingLight=diffuseColor.rgb;
     #include <opaque_fragment>`);
   };
-  m.customProgramCacheKey=()=> 'shallow-water-clipped-smooth-v061';
+  if(legacyMaterial.summerUniforms)finishSummerWater(m,legacyMaterial.summerUniforms,{simulated:true});
+  else m.customProgramCacheKey=()=> 'shallow-water-clipped-smooth-v061';
   this.ownsGeometry=!cachedGeometry;this.mesh=new THREE.Mesh(cachedGeometry||renderGeometry(channel,nearest,width),m);this.mesh.receiveShadow=true;this.mesh.frustumCulled=false;
  }
  sync(){const s=this.solver;this.uniforms.fluidState.value=s.texture;this.uniforms.fluidBed.value=s.bedTexture;this.uniforms.fluidSize.value=s.size;this.uniforms.fluidCell.value=s.dx;}

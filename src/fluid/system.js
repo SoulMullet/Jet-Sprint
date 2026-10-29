@@ -7,20 +7,20 @@ const automaticResolution={low:64,medium:96,high:128};
 
 // Lifecycle/UI adapter; intentionally has no boat-force or spray integration.
 export class WaterSystem {
- constructor(renderer,scene,legacy,{nearest,width,start,size=144,quality='medium',onStatus=()=>{}}){
+ constructor(renderer,scene,legacy,{nearest,width,start,size=144,initialMode='simulated',quality='medium',onStatus=()=>{}}){
   Object.assign(this,{renderer,scene,legacy,start,onStatus,quality});
   this.options={nearest,width,size};
-  this.mode='simulated';
+  this.mode=initialMode;
   this.resolution='auto';
-  this.debug=0;this.waveScale=2.4;this.repeatWaves=true;this.nextWave=1.25;this.focus={...start};
+  this.debug=0;this.waveScale=2.4;this.timeScale=1;this.repeatWaves=true;this.nextWave=1.25;this.focus={...start};
   this.solver=null;
   this.surface=null;
   this.failure='';
-  this.rebuild(automaticResolution[quality]||96);
+  if(this.mode==='simulated')this.rebuild(automaticResolution[quality]||96);else this.show();
  }
  release(){
   if(this.surface){this.scene.remove(this.surface.mesh);this.surface.dispose();this.surface=null;}
-  this.solver?.dispose();
+  this.solver?.dispose();this.solver=null;this.surface=null;
  }
  compileSurface(){
   const previous=this.renderer.debug.onShaderError;
@@ -41,7 +41,7 @@ export class WaterSystem {
      if(candidate!==64&&this.failure.startsWith('Fluid initialization failed'))continue;
      break;
     }
-    this.renderGeometry??=renderGeometry(this.legacy.geometry,this.options.nearest,this.options.width);
+    this.renderGeometry??=this.legacy.geometry.attributes.shoreFade?this.legacy.geometry:renderGeometry(this.legacy.geometry,this.options.nearest,this.options.width);
     this.surface=new FluidSurface(this.solver,this.legacy.material,this.legacy.geometry,this.options.nearest,this.options.width,this.renderGeometry);
     this.compileSurface();
     this.scene.add(this.surface.mesh);
@@ -69,11 +69,11 @@ export class WaterSystem {
   this.onStatus(status);
  }
  setWaveScale(percent){this.waveScale=Math.max(0,Math.min(300,percent))/100;this.show();}
- setMode(mode){this.mode=mode;this.show();}
+ setMode(mode){this.mode=mode;if(mode==='simulated'&&!this.solver){const n=this.resolution==='auto'?automaticResolution[this.quality]:Number(this.resolution);this.rebuild(n);return;}if(mode==='legacy')this.release();this.show();}
  setResolution(value){
   this.resolution=value;
   const n=value==='auto'?automaticResolution[this.quality]:Number(value);
-  if(n!==this.solver?.n)this.rebuild(n);
+  if(this.mode==='simulated'&&n!==this.solver?.n)this.rebuild(n);
  }
  setQuality(name){this.quality=name;if(this.resolution==='auto')this.setResolution('auto');}
  setDebug(value){this.debug=Number(value);this.show();}
@@ -94,7 +94,7 @@ export class WaterSystem {
    return;
   }
   if(this.repeatWaves&&this.solver.time>=this.nextWave){this.disturb(this.focus.x,this.focus.z);this.nextWave=this.solver.time+1.25;}
-  this.solver.update(dt);
+  this.solver.update(dt*this.timeScale);
   this.surface.sync();
  }
 }

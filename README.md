@@ -1,10 +1,18 @@
-# JET SPRINT v0.10.0 — Cedar Creek 1988
+# JET SPRINT v0.12.0 — Summer 1987
 
 A mobile-first, single-player 3D jet sprint prototype built with JavaScript, Vite, Three.js and Web Audio. All geometry and sound are procedural; no assets, account, API keys or backend required.
 
-The active course is **Cedar Creek Figure Eight**, a compact two-loop circuit with one flat diagonal crossover and a separate staging inlet. A rustic race-office cabin, dock and moored boat, old pickup, 24 animated spectators and original local racing signs establish a Pacific Northwest venue in summer 1988. Open **Game Settings → Figure-eight overview** to see the layout; the default follow camera is unchanged. Look for **JET SPRINT — RETRO 80s / FIGURE 8** in the actual playable HUD. See [retro implementation and verification notes](docs/retro-1988.md).
+The active course is **Cedar Creek Figure Eight**, a compact two-loop circuit with one flat diagonal crossover and a separate staging inlet. A rustic race-office cabin, dock and moored boat, old pickup, 24 animated spectators and original local racing signs establish a Pacific Northwest venue in summer 1987. Open **Game Settings → Figure-eight overview** to see the layout; the default follow camera is unchanged. Look for **SUMMER 1987 · v0.12.0** plus the build identifier in the playable HUD. See [Summer rendering and verification notes](docs/summer-1987.md).
 
 The V8 Sound Lab, 32 live controls, independent presets/JSON and stationary tuning remain available; see [the earlier track and V8 notes](docs/track-v8-upgrade.md) for audio controls. That document describes the superseded Shelter course.
+
+## Graphics Quality Lab
+
+Open **Game Settings → Graphics Quality Lab** for live water, spray, lighting, atmosphere, scenery and resolution controls. Use **Mobile**, **High** or **Ultra** presets; Mobile disables postprocessing and shadows, caps density/resolution, and retains responsive touch controls. The FPS switch reports the current animation frame rate; no physical-device benchmark is implied.
+
+The Lab saves separately from gameplay, audio and camera preferences. **Copy settings JSON**, **Paste JSON**, **Import JSON** and **Reset graphics defaults** operate on graphics only. The adaptive graphics preset is linked to the existing Graphics selector. Device pixel ratio and adaptive quality can cap the effective resolution and shadow map size.
+
+New sessions default to the lightweight procedural water renderer. Existing saved water-mode and diagnostic-wave choices are respected. Simulated water remains available under Water Physics; it now allocates GPU resources only when selected, and releases them when you return to procedural/legacy water. Both renderers share Summer water appearance controls. Older wave-height, spray-distance and water-volume controls still apply alongside the Lab.
 
 ## Racing cameras
 

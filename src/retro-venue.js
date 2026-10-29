@@ -13,7 +13,7 @@ export function createRetroVenue(scene,nearest){
  const siding=document.createElement('canvas');siding.width=siding.height=128;const ctx=siding.getContext('2d');ctx.fillStyle='#a99a82';ctx.fillRect(0,0,128,128);
  for(let y=0;y<128;y+=16){ctx.fillStyle=y%32?'#807766':'#9a8d77';ctx.fillRect(0,y,128,1);for(let x=0;x<128;x+=7){ctx.fillStyle='#3b33291a';ctx.fillRect(x,y+3+(x%5),12,1);}}
  const woodTexture=new THREE.CanvasTexture(siding);woodTexture.colorSpace=THREE.SRGBColorSpace;woodTexture.wrapS=woodTexture.wrapT=THREE.RepeatWrapping;woodTexture.repeat.set(2,2);mats.wood.map=woodTexture;
- const boxGeo=new THREE.BoxGeometry(1,1,1),cylinderGeo=new THREE.CylinderGeometry(1,1,1,8),sphereGeo=new THREE.IcosahedronGeometry(1,1),tireGeo=new THREE.TorusGeometry(.45,.15,5,10);
+ const boxGeo=new THREE.BoxGeometry(1,1,1),cylinderGeo=new THREE.CylinderGeometry(1,1,1,16),sphereGeo=new THREE.SphereGeometry(1,12,8),tireGeo=new THREE.TorusGeometry(.45,.15,5,10);
  function item(g,m,x,y,z,sx=1,sy=1,sz=1,parent=staticRoot){const o=new THREE.Mesh(g,mats[m]||m);o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=o.receiveShadow=true;parent.add(o);return o;}
  const box=(m,x,y,z,sx,sy,sz,parent)=>item(boxGeo,m,x,y,z,sx,sy,sz,parent);
  function group(x,z,rotation=0){const g=new THREE.Group();g.position.set(x,.4,z);g.rotation.y=rotation;staticRoot.add(g);return g;}
@@ -50,6 +50,10 @@ export function createRetroVenue(scene,nearest){
  const truck=group(venueLayout.pickup.x,venueLayout.pickup.z,.35);
  box('teal',0,1,0,3.3,.6,6.8,truck);box('teal',0,1.9,-.7,3,1.8,2.6,truck);box('black',0,2.1,.65,2.7,1,.08,truck);box('metal',0,1,3.55,3.4,.22,.2,truck);box('black',0,1.1,2,2.7,.08,2,truck);
  for(const side of [-1,1]){box('black',side*1.53,2.1,-.7,.06,.95,1.8,truck);for(const z of [-2.2,2.2]){const t=item(tireGeo,'black',side*1.65,.75,z,1.5,1.5,1.1,truck);t.rotation.y=Math.PI/2;}}
+ // Small timing booth, launch approach, dirt paths and a parked boat trailer.
+ const booth=group(-21,-39,.1);box('wood',0,1.5,0,3,2.6,2.6,booth);roof(booth,3.8,3.8,2.9);box('glass',0,1.9,1.35,2.4,.8,.05,booth);sign('RACE CONTROL','CEDAR CREEK / SUMMER 87',3.2,.7,0,2.8,1.5,booth);
+ const trailer=group(-49,-52,.35);box('metal',0,.7,0,2.7,.12,6.5,trailer);box('metal',0,.65,3.8,.12,.12,2,trailer);for(const side of [-1,1]){const tire=item(tireGeo,'black',side*1.45,.5,.7,1.2,1.2,1.2,trailer);tire.rotation.y=Math.PI/2;box('plank',side*.8,.9,0,.25,.15,5.5,trailer);}
+
  // Dock occupies only the dead-end staging inlet, well outside the lap route.
  const dock=group(venueLayout.dock.x,venueLayout.dock.z);
  for(let i=0;i<16;i++)box('plank',0,.18,-4+i*.5,2.8,.16,.46,dock);
@@ -68,20 +72,22 @@ export function createRetroVenue(scene,nearest){
   for(const x of [-4,1.5])chair(x,-1,terrace,i%2?'red':'yellow');cooler(4,-1.5,terrace);
   pole('wood',-5,2,-2,.06,4,terrace);const umbrella=item(new THREE.ConeGeometry(2.5,1,8),'cream',-5,4,-2,1,1,1,terrace);umbrella.rotation.y=i;
   box('navy',3,1,-1.5,.9,.5,.4,terrace);pole('metal',3.4,1.7,-1.5,.015,1.1,terrace);
-  const banner=sign(i===0?'MOSSBACK MARINE':i===1?'CASCADE MOTOR OIL':'CEDAR COUNTY 88',i===0?'REPAIRS / PARTS / COFFEE':i===1?'BIG BLOCKS. SMALL TOWN.':'FIGURE EIGHT INVITATIONAL',8,1.3,0,1.4,2.15,terrace,i===1?'#de9777':'#dfc48b');banner.rotation.y=0;
+  const banner=sign(i===0?'MOSSBACK MARINE':i===1?'CASCADE MOTOR OIL':'CEDAR COUNTY 87',i===0?'REPAIRS / PARTS / COFFEE':i===1?'BIG BLOCKS. SMALL TOWN.':'FIGURE EIGHT INVITATIONAL',8,1.3,0,1.4,2.15,terrace,i===1?'#de9777':'#dfc48b');banner.rotation.y=0;
  }
+ const dockTerrace=group(venueLayout.dockViewing.x,venueLayout.dockViewing.z);cooler(2,-1,dockTerrace);fence(-4,2,4,dockTerrace);
  // Batched rocks/reeds along both banks, safely outside the hull corridor.
- let seed=1988;const random=()=>((seed=(seed*1664525+1013904223)>>>0)/4294967296);
+ let seed=1987;const random=()=>((seed=(seed*1664525+1013904223)>>>0)/4294967296);
  for(let i=0;i<130;i++){const x=(random()-.5)*150,z=(random()-.5)*90,n=nearest(x,z),d=Math.hypot(x-n.x,z-n.z);if(d<9.8||d>12)continue;for(let j=0;j<3;j++){const reed=box('roof',x+j*.12,.5,z+j*.13,.055,.7+random()*.6,.055);reed.rotation.z=(random()-.5)*.4;}}
  // Distant hills are closed low-poly masses; no expensive terrain LOD system.
- for(let i=0;i<13;i++){const hill=item(new THREE.ConeGeometry(1,1,7),'roof',-115+i*20,6+random()*6,-91-random()*12,18+random()*12,20+random()*18,13+random()*10);hill.rotation.y=random()*3;}
+ for(let i=0;i<13;i++){const hill=item(new THREE.SphereGeometry(1,24,12),'roof',-115+i*20,6+random()*6,-91-random()*12,18+random()*12,20+random()*18,13+random()*10);hill.rotation.y=random()*3;}
  const people=spectatorLocations();
  for(const p of people){const n=nearest(p.x,p.z);p.angle=Math.atan2(n.x-p.x,n.z-p.z);p.height=p.seated?1.5:1.65;if(p.seated){const seat=group(p.x,p.z,p.angle);seat.scale.setScalar(.7);chair(0,0,seat,'cream');}}
  staticRoot.updateMatrixWorld(true);const batches=new Map();staticRoot.traverse(o=>{if(!o.isMesh)return;const g=o.geometry.clone();g.applyMatrix4(o.matrixWorld);if(g.index){const flat=g.toNonIndexed();g.dispose();if(!batches.has(o.material))batches.set(o.material,[]);batches.get(o.material).push(flat);}else{if(!batches.has(o.material))batches.set(o.material,[]);batches.get(o.material).push(g);}});
  const staticMeshes=[];for(const [material,geometries] of batches){const merged=mergeGeometries(geometries);for(const g of geometries)g.dispose();const mesh=new THREE.Mesh(merged,material);mesh.castShadow=mesh.receiveShadow=true;mesh.name='Retro venue static batch';scene.add(mesh);staticMeshes.push(mesh);}
  // Varied tees, denim shorts, sun caps and simple seated/standing poses.
  const skinColors=['#b77d59','#d6a47f','#976747','#d6b494'],shirtColors=['#d8a45a','#b85558','#589895','#d7d0af','#507598','#a589a6'];
- const torso=new THREE.InstancedMesh(boxGeo,new THREE.MeshStandardMaterial({roughness:1}),24),legs=new THREE.InstancedMesh(boxGeo,mats.navy,48),heads=new THREE.InstancedMesh(sphereGeo,new THREE.MeshStandardMaterial({roughness:1}),24),caps=new THREE.InstancedMesh(cylinderGeo,mats.cream,24),arms=new THREE.InstancedMesh(boxGeo,new THREE.MeshStandardMaterial({roughness:1}),48);
+ const bodyGeometry=new THREE.LatheGeometry([new THREE.Vector2(.34,-.5),new THREE.Vector2(.46,-.2),new THREE.Vector2(.5,.28),new THREE.Vector2(.3,.5)],12),limbGeometry=new THREE.CylinderGeometry(.5,.42,1,10);
+ const torso=new THREE.InstancedMesh(bodyGeometry,new THREE.MeshStandardMaterial({roughness:1}),24),legs=new THREE.InstancedMesh(limbGeometry,mats.navy,48),heads=new THREE.InstancedMesh(sphereGeo,new THREE.MeshStandardMaterial({roughness:1}),24),caps=new THREE.InstancedMesh(cylinderGeo,mats.cream,24),arms=new THREE.InstancedMesh(limbGeometry,new THREE.MeshStandardMaterial({roughness:1}),48);
  for(const m of [torso,legs,heads,caps,arms]){m.castShadow=true;m.frustumCulled=false;animated.add(m);}arms.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
  const matrix=new THREE.Matrix4(),position=new THREE.Vector3(),scale=new THREE.Vector3(),rotation=new THREE.Quaternion(),axis=new THREE.Vector3(0,1,0);
  function place(inst,i,x,y,z,sx,sy,sz,yaw=0){matrix.compose(position.set(x,y,z),rotation.setFromAxisAngle(axis,yaw),scale.set(sx,sy,sz));inst.setMatrixAt(i,matrix);}
@@ -92,12 +98,13 @@ export function createRetroVenue(scene,nearest){
  });
  for(let i=0;i<48;i++)arms.setColorAt(i,new THREE.Color(shirtColors[Math.floor(i/2)%shirtColors.length]));
  const armRoot=new THREE.Matrix4(),armRotation=new THREE.Matrix4(),armOffset=new THREE.Matrix4().makeTranslation(0,-.3,0);
- let age=0;
- return {people,staticMeshes,animated,update(dt,boat){
+ let age=0,activePeople=24;
+ return {people,staticMeshes,animated,setDrawDistance(distance,focus){for(const m of staticMeshes){if(!m.geometry.boundingSphere)m.geometry.computeBoundingSphere();const s=m.geometry.boundingSphere;m.visible=s.center.distanceTo(focus)-s.radius<distance;}},getSpectatorCount:()=>activePeople,setDensity(fraction){activePeople=Math.round(24*fraction);torso.count=heads.count=caps.count=activePeople;legs.count=arms.count=activePeople*2;},update(dt,boat){
   age+=dt;parked.position.y=.15+Math.sin(age*1.7)*.025;parked.rotation.z=Math.sin(age*1.3)*.008;
   for(let i=0;i<ripples.length;i++)ripples[i].scale.setScalar(1+(Math.sin(age*1.4+i)+1)*.3);
   // A nearby passing boat triggers a short wave/clap, otherwise gentle arm sway.
   people.forEach((p,i)=>{
+   if(i>=activePeople)return;
    const close=Math.hypot(boat.x-p.x,boat.z-p.z)<31,cheer=close&&Math.sin(age*.8+p.phase)>.05;
    for(const side of [-1,1]){
     const index=i*2+(side===1?1:0),swing=cheer?(-1.8+Math.sin(age*5+p.phase)*.5)*side:Math.sin(age*1.2+p.phase)*.07;

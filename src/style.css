@@ -52,7 +52,7 @@
 /* Cedar Creek Invitational, summer 1988. No filters over the play surface. */
 :root{--paper:#f3dfaf;--orange:#e8894b;--ink:#192e30;font-family:'Trebuchet MS',Arial,sans-serif;color:var(--paper)}
 .brand{font-family:Impact,'Arial Narrow',sans-serif;font-size:30px;letter-spacing:.5px;text-shadow:2px 2px 0 #192e3070;line-height:1}.brand span{color:var(--orange)}
-.brand:after{content:'1988  /  CEDAR CREEK INVITATIONAL';display:block;font:700 8px/2.5 monospace;letter-spacing:1.3px;color:var(--paper)}
+.brand:after{content:'1987  /  CEDAR CREEK INVITATIONAL';display:block;font:700 8px/2.5 monospace;letter-spacing:1.3px;color:var(--paper)}
 .build-debug,.brand .build-debug{background:#20383be0;color:#f3dfaf;border:1px solid #f3dfaf66;border-left:4px solid var(--orange);border-radius:0;font:700 8px/1.5 monospace;letter-spacing:.25px;text-shadow:none;margin-top:6px}
 .timing{gap:22px;background:#1e343ad9;border-top:3px solid #e8894b;padding:9px 14px 8px;box-shadow:3px 3px 0 #0c252541}.timing label{font:700 9px monospace;color:#efc994;letter-spacing:2px}.timing strong{font:700 26px/1.15 'Courier New',monospace;letter-spacing:-1.3px;font-variant-numeric:tabular-nums}
 #restart{border-radius:2px;font:700 11px monospace;letter-spacing:1px;background:#20383be0;border:1px solid #f3dfaf77}
@@ -77,3 +77,7 @@ header{align-items:flex-start}
 #debug .camera-note{font:10px/1.5 monospace;color:#d7c9aa}#debug #resetCameras{min-height:44px;background:#e8c58e;color:#20383b;padding:10px;margin-top:10px}
 @media(max-width:600px){#cameraSwitch{right:12px;top:230px;max-width:160px;min-height:42px;font-size:10px}#cameraToast{top:280px;font-size:11px}}
 @media(orientation:landscape) and (max-height:500px){#cameraSwitch{right:12px;top:115px;padding:8px 10px;min-height:36px;font-size:10px}#cameraToast{top:40px;font-size:10px}}
+
+#graphicsLab .summer-group{border-top:1px solid #e8c58e44;margin-top:12px;padding-top:12px}#graphicsLab textarea{width:100%;min-height:100px;background:#1d3538;color:#f1e1bb;font:12px monospace;margin-top:12px}#graphicsLab button{min-height:44px;padding:10px;margin:6px 4px 0 0}#graphicsLab input[type=checkbox]{width:22px;min-height:22px}#summerStatus{font:10px/1.5 monospace}#summerFPS{position:fixed;left:12px;bottom:8px;z-index:8;background:#173b3adb;padding:5px 8px;color:#f3dfaf;font:10px monospace;pointer-events:none}#summerFPS[hidden]{display:none}
+
+#graphicsLab input[type=range]{min-height:28px;touch-action:pan-y}@media(max-width:600px){#graphicsLab textarea{font-size:16px}}
