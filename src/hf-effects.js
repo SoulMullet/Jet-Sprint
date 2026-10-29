@@ -30,9 +30,9 @@ export class HFSpray {
   this.mesh=new THREE.Mesh(g,m);this.mesh.frustumCulled=false;this.mesh.renderOrder=3;this.mesh.name='HF GPU jet, mist and ballistic droplets';scene.add(this.mesh);this.reset();
   const p=[],uv=[],idx=[],rings=24,sides=8;for(let i=0;i<=rings;i++)for(let j=0;j<=sides;j++){p.push(i/rings,j/sides*Math.PI*2,0);uv.push(i/rings,j/sides);if(i<rings&&j<sides){const a=i*(sides+1)+j;idx.push(a,a+1,a+sides+1,a+1,a+sides+2,a+sides+1);}}
   const coreGeometry=new THREE.BufferGeometry();coreGeometry.setAttribute('position',new THREE.Float32BufferAttribute(p,3));coreGeometry.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));coreGeometry.setIndex(idx);
-  this.coreUniforms={...this.uniforms,jetLength:{value:8},jetHeight:{value:2},bend:{value:0},force:{value:0}};
+  this.coreUniforms={...this.uniforms,jetLength:{value:8},jetHeight:{value:2},jetOutletY:{value:.44},bend:{value:0},force:{value:0}};
   this.core=new THREE.Mesh(coreGeometry,new THREE.ShaderMaterial({transparent:true,depthWrite:false,side:THREE.DoubleSide,forceSinglePass:true,uniforms:this.coreUniforms,
-   vertexShader:`uniform float jetLength,jetHeight,bend,clock;varying vec2 st;void main(){st=uv;float t=position.x,a=position.y,r=(.025+t*.44)*(1.+sin(a*3.+t*49.-clock*18.)*.15);vec3 p=vec3(-2.35-t*jetLength,.44+4.*jetHeight*t*(1.-t)+sin(a)*r,cos(a)*r+bend*t*t);gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);}`,
+   vertexShader:`uniform float jetLength,jetHeight,jetOutletY,bend,clock;varying vec2 st;void main(){st=uv;float t=position.x,a=position.y,r=(.025+t*.44)*(1.+sin(a*3.+t*49.-clock*18.)*.15);vec3 p=vec3(-2.35-t*jetLength,jetOutletY+4.*jetHeight*t*(1.-t)+sin(a)*r,cos(a)*r+bend*t*t);gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);}`,
    fragmentShader:`uniform float force,clock;varying vec2 st;void main(){float filaments=.5+.5*sin(st.y*50.+sin(st.x*19.-clock*11.)*2.);float breakup=.5+.5*sin(st.x*137.-clock*31.+st.y*29.);float fade=(1.-smoothstep(.6,1.,st.x))*smoothstep(0.,.025,st.x);float alpha=fade*(.3+filaments*.4)*(.4+breakup*.6)*force;if(alpha<.01)discard;gl_FragColor=vec4(vec3(.88,.96,.95)*(1.+filaments*.16),alpha);
     #include <tonemapping_fragment>
     #include <colorspace_fragment>
@@ -41,7 +41,7 @@ export class HFSpray {
  random(){this.seed=(this.seed*1664525+1013904223)>>>0;return this.seed/4294967296;}
  configure(limit,quality){this.budget=Math.max(128,Math.min(this.capacity,Math.round(limit)));this.mesh.geometry.instanceCount=this.budget;this.quality=quality;}
  reset(){this.births?.fill(-1000);this.cursor=this.emission=this.previousSpeed=0;this.rate=0;this.wakeClock=0;this.history=0;if(this.core)this.core.visible=false;for(const w of this.water.hfWake.value)w.set(0,0,100,0);if(this.mesh){this.mesh.geometry.attributes.birth.clearUpdateRanges();this.mesh.geometry.attributes.birth.needsUpdate=true;}}
- update(dt,b,speed,input,{density=1,distance=1,volume=1,effects=1,persistence=3}={}){
+ update(dt,b,speed,input,{density=1,distance=1,volume=1,effects=1,persistence=3,outletY=.44,impact=0}={}){
   this.time+=dt;this.uniforms.clock.value=this.time;
   const fx=Math.cos(b.angle),fz=Math.sin(b.angle),slip=-b.vx*fz+b.vz*fx,accel=Math.max(0,(speed-this.previousSpeed)/Math.max(.01,dt)),pump=b.pump||0,yaw=b.yawRate||0;
   this.previousSpeed=speed;stern(b,this.origin);
@@ -50,8 +50,10 @@ export class HFSpray {
   this.wakeClock+=dt;const strength=Math.min(1.2,speed/20)*volume;
   if(speed>1&&this.wakeClock>.11){this.wakeClock=0;wakes[this.history++%24].set(this.origin.x,this.origin.z,0,strength);}
   const moving=THREE.MathUtils.smoothstep(speed,.7,5),force=(speed/24+Math.abs(slip)*.025+Math.abs(yaw)*.12+Math.min(10,accel)*.012)*moving;
-  this.core.visible=distance>0&&force*density*volume*effects>.015;this.core.position.set(b.x,0,b.z);this.core.rotation.y=-b.angle;this.coreUniforms.jetLength.value=(4+speed*.3)*distance;this.coreUniforms.jetHeight.value=.7+speed*.12;this.coreUniforms.bend.value=-yaw*1.4-(b.nozzle||0)*2.5+slip*.16;this.coreUniforms.force.value=Math.min(1,force*density*volume*effects*.9);
-  this.rate=Math.min(5000,(1100*force+650*pump*moving)*density*volume*effects*this.quality)*(distance>0?1:0);
+  const jet=Number.isFinite(b.jetPower)?Math.min(1.6,b.jetPower):pump;
+  this.core.visible=distance>0&&force*jet*density*volume*effects>.015;this.core.position.set(b.x,0,b.z);this.core.rotation.y=-b.angle;this.coreUniforms.jetOutletY.value=outletY;this.coreUniforms.jetLength.value=(4+speed*.3)*distance;this.coreUniforms.jetHeight.value=(.7+speed*.12)*Math.min(1.4,Math.sqrt(jet));this.coreUniforms.bend.value=-yaw*1.4-(b.nozzle||0)*2.5+slip*.16;this.coreUniforms.force.value=Math.min(1,force*jet*density*volume*effects*.9);
+  const hullSpray=Math.abs(b.lateralAcceleration||0)*12*moving+impact*600;
+  this.rate=Math.min(5000,((1100*force+650*pump*moving)*jet+hullSpray)*density*volume*effects*this.quality)*(distance>0?1:0);
   this.emission+=this.rate*dt;
   // Long background pauses cannot cause an unbounded allocation/emission burst.
   this.emission=Math.min(this.emission,this.budget);
@@ -59,7 +61,7 @@ export class HFSpray {
   while(this.emission>=1){this.emission--;born++;const i=this.cursor++%this.budget,j=i*4,r=this.random(),kind=r<.42?0:r<.78?1:2;
    const side=(this.random()-.5)*(1+Math.abs(slip)*.16),deflect=-(b.nozzle||0)*2.7-yaw*.9+slip*.25;
    const jet=(8+speed*.6+pump*4)*(kind===1?.75:1)*distance*(.7+this.random()*.55);
-   let x=this.origin.x,z=this.origin.z,y=.43;
+   let x=this.origin.x,z=this.origin.z,y=outletY;
    // The occasional hull sheet starts at an aft chine, safely behind the cockpit.
    if(kind===2&&Math.abs(slip)>3&&this.random()<.35){x+=-fz*Math.sign(slip)*.75;z+=fx*Math.sign(slip)*.75;}
    this.births[j]=x;this.births[j+1]=y;this.births[j+2]=z;this.births[j+3]=this.time;

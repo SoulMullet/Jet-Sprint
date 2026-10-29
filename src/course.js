@@ -5,7 +5,7 @@ import {trackConfig} from './track-layout.js';
 
 export const courseId=trackConfig.id;
 export const routeId='figure-eight-1988';
-export const gameplayVersion='0.10-retro-figure-eight';
+export const gameplayVersion='0.14-waterjet-handling';
 export const prescribedRoute=trackConfig.route;
 export function createCourse(route=prescribedRoute){
  const nodes=Object.fromEntries(Object.entries(trackConfig.nodes).map(([id,[x,z]])=>[id,new THREE.Vector3(x,0,z)]));

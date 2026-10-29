@@ -8,6 +8,7 @@ export function mountSettings(store,apply){
  for(const [id,s] of Object.entries(registry)){
   let el=document.getElementById(id),label=el?.closest('label');
   if(!el){label=document.createElement('label');label.append(document.createTextNode(s.label));el=document.createElement(s.type==='enum'?'select':'input');el.id=id;if(s.type==='enum')for(const name of s.options){const option=document.createElement('option');option.value=name;option.textContent=name;el.append(option);}else if(s.type==='boolean')el.type='checkbox';else{el.type='range';el.min=s.min;el.max=s.max;el.step=s.step;const out=document.createElement('output');out.id=id+'Out';label.append(out);}label.append(el);}
+  if(s.type==='number'){el.min=s.min;el.max=s.max;el.step=s.step;}
   if(label.firstChild?.nodeType===Node.TEXT_NODE)label.firstChild.textContent=s.label+' ';
   groups[s.category].append(label);
   const change=()=>{try{store.set(id,s.type==='boolean'?el.checked:s.type==='number'?Number(el.value):el.value);message('Settings updated.');}catch(error){message(error.message);}};

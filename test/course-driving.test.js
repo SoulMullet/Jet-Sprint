@@ -6,7 +6,7 @@ import {RouteNavigator} from '../src/navigation.js';
 import {stepBoat} from '../src/physics.js';
 import {nearestOnTrack} from '../src/track.js';
 
-test('a binary-input test driver completes five laps using the unchanged boat integrator',()=>{
+test('a binary-input test driver completes five laps using the active waterjet integrator',()=>{
  const c=createCourse(),race=new Race(c.gates,6.5),nav=new RouteNavigator(c,6.5),start=c.sample(0);
  const boat={x:start.x,z:start.z,angle:Math.atan2(start.tz,start.tx),vx:0,vz:0};
  const nearest=(x,z)=>nearestOnTrack(c.network,x,z),before={x:0,z:0};

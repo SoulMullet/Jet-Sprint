@@ -1,12 +1,22 @@
-# JET SPRINT v0.13.0 — HF-GRAPHICS-V2
+# JET SPRINT v0.14.0 — Boat Physics & Handling
 
 A mobile-first, single-player 3D jet sprint prototype built with JavaScript, Vite, Three.js and Web Audio. All geometry and sound are procedural; no assets, account, API keys or backend required.
 
-The active course is **Cedar Creek Figure Eight**, a compact two-loop circuit with one flat diagonal crossover and a separate staging inlet. A rustic race-office cabin, dock and moored boat, old pickup, 24 animated spectators and original local racing signs establish a Pacific Northwest venue in summer 1987. Open **Game Settings → Figure-eight overview** to see the layout; the default follow camera is unchanged. Look for **HF-GRAPHICS-V2 · v0.13.0 · commit** in the playable HUD. See the [rendering audit, comparison captures and verification](docs/hf-graphics-v2.md).
+The active course is **Cedar Creek Figure Eight**, a compact two-loop circuit with one flat diagonal crossover and a separate staging inlet. A rustic race-office cabin, dock and moored boat, old pickup, 24 animated spectators and original local racing signs establish a Pacific Northwest venue in summer 1987. Open **Game Settings → Figure-eight overview** to see the layout; the default follow camera is unchanged. Look for **PHYSICS-V1 · v0.14.0 · commit** in the playable HUD. See the [physics audit, implementation and verification](docs/boat-physics.md) and [retained HF rendering notes](docs/hf-graphics-v2.md).
 
 HF-GRAPHICS-V2 adds multi-frequency freshwater waves, animated normal textures, live planar scenery reflections on High/Ultra, a historical three-band foam wake, a GPU spray/mist/droplet pool, physical sky lighting, wet clear-coated boat materials, cockpit/engine details, cutout fir foliage and instanced bank vegetation. Ultra adds depth-based contact occlusion. All art and textures are generated locally; no runtime asset downloads are needed.
 
 The V8 Sound Lab, 32 live controls, independent presets/JSON and stationary tuning remain available; see [the earlier track and V8 notes](docs/track-v8-upgrade.md) for audio controls. That document describes the superseded Shelter course.
+
+## Boat Physics Lab
+
+Press **BOAT PHYSICS** during play (or use the shortcut under Game Settings). The scrollable drawer ends above the steering/throttle buttons and keeps the race running. Its six collapsible categories expose 37 live sliders for propulsion, waterjet steering, force-based banking, planing, drift/grip and damped water response, plus banking inversion. Each category has its own reset; **Restore factory physics** restores Balanced without changing graphics, cameras, audio or saved presets.
+
+**Balanced** is the new-user default: 85 km/h nominal target, 65% drift, 75% steering response and a 9° maximum bank angle. **Arcade** gives quicker response and stronger recovery. **Simulation-Inspired** adds inertia and more demanding cornering. Old valid handling values migrate additively and take precedence over new defaults; a changed tune displays **Custom**.
+
+Open **Custom presets & JSON** to save, update, load, rename or delete a physics-only preset. Export/copy, paste/import and JSON file import are available. Physics JSON and category resets leave unrelated settings untouched. Custom physics presets have their own collection; older full-game presets remain available in Game Settings. Enable **Show live physics telemetry**, then close the drawer to see real speed/input, yaw, actual/target roll, lateral slip, thrust, planing and preset values.
+
+Thrust builds with pump pressure and the stern nozzle produces both propulsion and yaw. Lifting throttle removes most steering authority; velocity continues independently of heading. The hull now banks from lateral acceleration, rises onto plane and follows a lightweight deterministic sample of the existing wind/wake field. This adds no fluid solver or GPU readback. Diagnostic waves in the optional GPU fluid solver are not sampled by the hull; see the documented approximation. Spray follows actual thrust and stern height, and V8 load includes propulsion load. No new audio settings are introduced.
 
 ## Graphics Quality Lab
 
@@ -51,7 +61,7 @@ npm run build
 npm run preview
 ```
 
-Node tests cover speed convergence, steering, drag, bank recovery, full five-lap races/cameras, fluid stability, graphics persistence, reflection clipping and GPU effect contracts. Build output is in `dist/`. Vite reports its existing large-chunk advisory (about 223 KB compressed). Browser checks should cover: launch/audio unlock, simultaneous throttle and steering, pointer cancellation, left/right drift recovery, full valid laps, restart, background/resume, portrait and landscape. Test on an actual iPhone in Safari before claiming iPhone performance. Audio can depend on device mute and volume settings.
+Node tests cover speed convergence, steering, drag, bank recovery, every physics slider's calculation, fixed-step stability, complete five-lap races for all three handling presets/four cameras, settings migration, fluid stability, reflection clipping and GPU effect contracts. Build output is in `dist/`. Vite reports its existing large-chunk advisory (about 230 KB compressed). Browser checks should cover: launch/audio unlock, simultaneous throttle and steering, pointer cancellation, left/right drift recovery, full valid laps, restart, background/resume, portrait and landscape. Test on an actual iPhone in Safari before claiming iPhone performance. Audio can depend on device mute and volume settings.
 
 ## GitHub Pages
 
@@ -61,6 +71,8 @@ Push this repository to GitHub, then select **Settings → Pages → Build and d
 
 - `src/main.js`: course/boat rendering, pooled spray and wake, camera, controls, lap checkpoints and HUD.
 - `src/physics.js` / `src/handling.js`: fixed-step waterjet dynamics and shared handling defaults.
+- `src/hull-motion.js` / `src/boat-presentation.js`: force-driven visual springs, water sampling and the hull/engine render transform.
+- `src/physics-lab.js`: six-section Lab, physics-only custom presets/JSON and optional telemetry, using the existing settings store.
 - `src/course.js` / `src/track.js`: independent waterway graph, prescribed route, directional gates and shared clipped channel geometry.
 - `src/navigation.js` / `src/route-math.js`: turn instructions, scoped route projection, recovery and HUD.
 - `src/debug-views.js`: optional numbered gates/route diagnostics, Bigfoot marker/path/status and trigger/reset controls.

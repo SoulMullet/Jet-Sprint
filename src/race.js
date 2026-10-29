@@ -1,6 +1,6 @@
-import {handlingDefaults} from './handling.js';
+import {handlingDefaults,forceKeys} from './handling.js';
 export const defaults=handlingDefaults;
-export const modified=s=>Object.entries(defaults).some(([k,v])=>(s[k]??v)!==v);
+export const modified=s=>forceKeys.some(k=>(s[k]??defaults[k])!==defaults[k]);
 export const format=t=>{const ms=Math.round(t*1000);return `${String(Math.floor(ms/60000)).padStart(2,'0')}:${(Math.floor(ms/1000)%60).toString().padStart(2,'0')}.${(ms%1000).toString().padStart(3,'0')}`;};
 export class Race {
  constructor(gates,width){this.gates=gates;this.width=width;this.reset();}

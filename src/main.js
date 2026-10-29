@@ -4,6 +4,9 @@ import {SummerSettings} from './summer-settings.js';
 import {SummerRenderer,mountGraphicsLab} from './graphics-lab.js';
 import {WakeTrail,RoosterCore} from './wake-trail.js';
 import {BoatPresentation} from './boat-presentation.js';
+import {createWaterSampler} from './hull-motion.js';
+import {mountPhysicsLab} from './physics-lab.js';
+import {presetName} from './handling.js';
 import {HFSpray} from './hf-effects.js';
 import {HFWake} from './hf-wake.js';
 import {HFScenery} from './hf-scenery.js';
@@ -56,7 +59,7 @@ function mesh(geo,material,x=0,y=0,z=0,parent=scene){const m=new THREE.Mesh(geo,
 const venue=createCourse(),N=600,points=venue.points;
 console.info(`Active track: ${venue.id} / version ${venue.version} / ${routeId}`);
 $('buildDebugHud').dataset.track=venue.id;
-for(const id of ['buildDebugHud','buildDebug'])$(id).textContent=`HF-GRAPHICS-V2 · v${__BUILD_VERSION__} · ${__BUILD_COMMIT__}`;
+for(const id of ['buildDebugHud','buildDebug'])$(id).textContent=`PHYSICS-V1 · v${__BUILD_VERSION__} · ${__BUILD_COMMIT__}`;
 const overview=document.createElement('label');overview.innerHTML='<input id="courseOverview" type="checkbox"> Figure-eight overview';$('debug').append(overview);
 const tangents=points.map(p=>({x:p.tx,z:p.tz}));
 // Bank, render surface, collision and bathymetry share the same channel network.
@@ -83,7 +86,7 @@ const start=points[0],startT=tangents[0];const stripe=new THREE.Group();stripe.p
 for(let x=0;x<2;x++)for(let z=0;z<15;z++)mesh(new THREE.BoxGeometry(.65,.025,.96),(x+z)%2?dark:white,(x-.5)*.65,0,(z-7)*.96,stripe);
 for(const side of [-1,1]){mesh(new THREE.BoxGeometry(.25,4,.25),dark,0,2,side*9,stripe);mesh(new THREE.BoxGeometry(.1,1,2),lime,0,3.3,side*8.2,stripe);}
 const boat=racingBoat(scene,{cockpitLayers:true});
-const boatPresentation=new BoatPresentation(boat);
+const boatPresentation=new BoatPresentation(boat,{tuning:settings,sampleWater:createWaterSampler(waterLook.uniforms),fixedStep:true});
 const cameraObstacles=scene.children.filter(o=>o.isMesh&&o!==waterMesh);
 scene.updateMatrixWorld(true);
 const cameraSystem=new RacingCameras(perspective,cameraPreferences,createCameraObstructionQuery(cameraObstacles));
@@ -123,7 +126,7 @@ function board(){const records=readScores(scoreStorage).filter(r=>r.course===`${
  for(const [i,r] of records.entries()){const row=document.createElement('p');row.textContent=`${i+1}. ${r.name} · ${format(r.total)} · best ${format(Math.min(...r.laps))} · ${new Date(r.date).toLocaleDateString()}`;$('scores').append(row);}
  return records.findIndex(r=>r.id===result.id)+1;
 }
-function finish(){startSequence.finish();playing=false;release();engine.pause();b.vx=b.vz=0;
+function finish(){startSequence.finish();playing=false;release();engine.pause();Object.assign(b,{vx:0,vz:0,pump:0,nozzle:0,yawRate:0,throttle:0,thrust:0,jetPower:0,engineLoad:0,forwardSpeed:0,lateralSpeed:0,forwardAcceleration:0,lateralAcceleration:0,collisionImpulse:0,planing:0});
  result={id:globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random()}`,course:`${courseId}/${routeId}`,version:gameplayVersion,modified:race.modified,total:race.total,laps:[...race.laps],date:new Date().toISOString()};
  $('resultStats').replaceChildren();const summary=document.createElement('p');summary.textContent=`Total ${format(result.total)} · Best ${format(Math.min(...result.laps))} · Average ${format(result.total/5)} · ${result.modified?'Modified':'Standard'}`;$('resultStats').append(summary);
  const list=document.createElement('ol');for(const t of result.laps){const item=document.createElement('li');item.textContent=format(t);list.append(item);}$('resultStats').append(list);
@@ -138,7 +141,7 @@ for(const el of [$('game'),document.querySelector('.controls')]){
  for(const event of ['touchstart','touchmove','touchend','gesturestart','gesturechange','contextmenu'])el.addEventListener(event,e=>e.preventDefault(),{passive:false});
 }
 const keyMap={ArrowLeft:'left',a:'left',ArrowRight:'right',d:'right',ArrowUp:'throttle',w:'throttle',' ':'throttle'};
-window.addEventListener('keydown',e=>{if(e.target instanceof HTMLInputElement||e.target instanceof HTMLSelectElement||e.target instanceof HTMLTextAreaElement||e.target.closest?.('#debug, #soundLab')||e.target.isContentEditable||soundLab.testing)return;const k=e.key.length===1?e.key.toLowerCase():e.key;if(keyMap[k]&&playing){e.preventDefault();engine.start();setInput(keyMap[k],k,true);}if(k==='r'&&!e.repeat)restart();});window.addEventListener('keyup',e=>{const k=e.key.length===1?e.key.toLowerCase():e.key;if(keyMap[k])setInput(keyMap[k],k,false);});
+window.addEventListener('keydown',e=>{if(e.target instanceof HTMLInputElement||e.target instanceof HTMLSelectElement||e.target instanceof HTMLTextAreaElement||e.target.closest?.('#debug, #soundLab, #physicsLab')||e.target.isContentEditable||soundLab.testing)return;const k=e.key.length===1?e.key.toLowerCase():e.key;if(keyMap[k]&&playing){e.preventDefault();engine.start();setInput(keyMap[k],k,true);}if(k==='r'&&!e.repeat)restart();});window.addEventListener('keyup',e=>{const k=e.key.length===1?e.key.toLowerCase():e.key;if(keyMap[k])setInput(keyMap[k],k,false);});
 window.addEventListener('blur',()=>{if(fluid?.solver)fluid.solver.accumulator=0;doubleTap.reset();release();engine.pause();});
 document.addEventListener('visibilitychange',()=>{doubleTap.reset();release();preferences.flush();audioSettings.flush();if(document.hidden)engine.pause();else last=performance.now();});
 window.addEventListener('pagehide',()=>{preferences.flush();audioSettings.flush();});
@@ -160,6 +163,8 @@ function applyPreferences(ids){const v=preferences.values;
  summerLab?.apply();
 }
 const settingsUI=mountSettings(preferences,applyPreferences);
+const physicsLab=mountPhysicsLab(preferences,()=>({boat:b,motion:boatPresentation.motion}),release);
+globalThis.__JET_SPRINT_PHYSICS__=Object.freeze({inspect:()=>({build:'PHYSICS-V1',preset:presetName[preferences.values.physicsPreset],settings:{...settings},boat:{...b},roll:boatPresentation.motion.roll,targetRoll:boatPresentation.motion.targetRoll,pitch:boatPresentation.motion.pitch,targetPitch:boatPresentation.motion.targetPitch,heave:boatPresentation.motion.heave,planing:boatPresentation.motion.planing,outletY:boatPresentation.motion.outletY,audioLoad:engine.load||0,audioRPM:engine.rpm,audioBackend:engine.backend||'not started',raceState:startSequence.state,elapsed:race.total,lap:race.laps.length,cameraMode:cameraPreferences.mode})});
 const reflectionExcluded=[waterMesh,spray,wakeTrail.mesh,roosterCore.mesh,hfSpray.mesh,hfWake.mesh];
 summerLab=new SummerRenderer({renderer,scene,sun,store:summerPreferences,water:waterLook,fluid,environment,venue:retroVenue,hfScenery,hfSpray,getReflectionExcluded:()=>{reflectionExcluded.length=6;if(fluid.surface)reflectionExcluded.push(fluid.surface.mesh);return reflectionExcluded;},getQuality:()=>quality,waveScale:()=>preferences.values.waveScale/240,getEffects:()=>({particleLimit:particleGeo.drawRange.count,activeParticles:alpha.reduce((n,a)=>n+Number(a>0),0),roosterVisible:roosterCore.mesh.visible,roosterStrength:roosterCore.uniforms.strength.value,wakePersistence:wakeTrail.persistence,waterMode:fluid.mode,solverReady:!!fluid.surface,emissionRate:lastEmissionRate,gpuEmissionRate:hfSpray.rate||0,wakeStamps:wakeTrail.fade.reduce((n,a)=>n+Number(a>0),0),cameraMode:cameraPreferences.mode,cameraPosition:camera.position.toArray(),cameraQuaternion:camera.quaternion.toArray(),boat:{...b},raceState:startSequence.state}),updateParticles:dpr=>{spray.material.uniforms.pixelRatio.value=dpr;particleGeo.setDrawRange(0,Math.floor(summerPreferences.values.sprayCount));}});
 summerPreferences.subscribe(()=>{preferences.set('graphics',summerPreferences.values.baseQuality);vegetationClock=1;});
@@ -174,7 +179,7 @@ let b,elapsed=0,lap=1,best=null;
 function restart(){cameraSystem.reset();if(soundLab.testing)soundLab.setTesting(false);const now=performance.now();if(playing)gameClock+=Math.max(0,(now-last)/1000);last=now;startSequence.reset();playing=document.body.classList.contains('racing');if(playing)startSequence.begin(gameClock,preferences.values.countdownDuration);fluid?.reset();fluid?.disturb();race.reset();navigator.reset();race.modified=modified(settings);doubleTap.reset();$('results').hidden=true;result=null;release();engine.reset();b={x:start.x,z:start.z,angle:Math.atan2(startT.z,startT.x),vx:0,vz:0,pump:0,nozzle:0,yawRate:0};elapsed=0;lap=1;life.fill(0);alpha.fill(0);emit=0;positions.fill(-1000);wakeTrail.reset();hfSpray.reset();hfWake.reset();roosterCore.mesh.visible=false;boatPresentation.reset();$('notice').textContent='Follow your navigator. Apply throttle to steer.';}
 restart();$('restart').onclick=()=>{if(document.body.classList.contains('racing'))playing=true;restart();if(playing)engine.start();};$('start').onclick=()=>{playing=true;document.body.classList.add('racing');engine.start();restart();};
 let previousSpeed=0,lastEmissionRate=0;
-const hfEffectsOptions={density:1,distance:1,volume:1,effects:1,persistence:3};
+const hfEffectsOptions={density:1,distance:1,volume:1,effects:1,persistence:3,outletY:.22,impact:0};
 function effects(dt,speed){
  const acceleration=Math.max(0,(speed-previousSpeed)/Math.max(dt,.001));previousSpeed=speed;
  const fx=Math.cos(b.angle),fz=Math.sin(b.angle),slide=-b.vx*fz+b.vz*fx,gfx=summerPreferences.values,limit=Math.min(COUNT,Math.floor(gfx.sprayCount));
@@ -199,7 +204,7 @@ function effects(dt,speed){
  particleGeo.attributes.position.needsUpdate=true;particleGeo.attributes.alpha.needsUpdate=true;
  wakeTrail.update(dt,b,speed,gfx.wakePersistence,gfx.foam*settings.waterVolume/100);roosterCore.update(b,dt,speed,input,gfx.roosterDensity,settings.sprayDistance/100,settings.waterVolume/100,waterTime.value);
  hfWake.update(dt,b,speed,gfx.wakePersistence,gfx.foam*settings.waterVolume/100);
- hfEffectsOptions.density=gfx.roosterDensity;hfEffectsOptions.distance=settings.sprayDistance/100;hfEffectsOptions.volume=settings.waterVolume/100;hfEffectsOptions.effects=settings.effects;hfEffectsOptions.persistence=gfx.wakePersistence;hfSpray.update(dt,b,speed,input,hfEffectsOptions);}
+ hfEffectsOptions.density=gfx.roosterDensity;hfEffectsOptions.distance=settings.sprayDistance/100;hfEffectsOptions.volume=settings.waterVolume/100;hfEffectsOptions.effects=settings.effects;hfEffectsOptions.persistence=gfx.wakePersistence;hfEffectsOptions.outletY=boatPresentation.motion.outletY;hfEffectsOptions.impact=boatPresentation.motion.impact;hfSpray.update(dt,b,speed,input,hfEffectsOptions);}
 
 function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);cameraSystem.resize(w,h);summerLab?.apply();summerLab?.resize();}window.addEventListener('resize',resize);resize();
 const beforeStep={x:0,z:0};
@@ -211,12 +216,12 @@ function frame(now){requestAnimationFrame(frame);const rawDt=Math.max(0,(now-las
   if(latestSignal&&preferences.values.countdownAudio)engine.signal(latestSignal.kind);
   if(startSequence.state==='RACING'){
    const racingDt=Math.min(dt,Math.max(0,gameClock-startSequence.startAt));let advanced=0;
-   while(advanced<racingDt-1e-10){const step=Math.min(1/120,racingDt-advanced);beforeStep.x=b.x;beforeStep.z=b.z;stepBoat(b,input,step,nearest);advanced+=step;
+   while(advanced<racingDt-1e-10){const step=Math.min(1/120,racingDt-advanced);beforeStep.x=b.x;beforeStep.z=b.z;stepBoat(b,input,step,nearest);advanced+=step;boatPresentation.step(b,step,now*.001-racingDt+advanced);
     const completed=race.step(beforeStep,b,step,settings,gameClock-racingDt+advanced-startSequence.startAt);
     elapsed=race.total-race.lapStart;lap=Math.min(5,race.laps.length+1);best=race.laps.length?Math.min(...race.laps):null;
     if(completed&&race.done){finish();break;}
    }
-   speed=Math.hypot(b.vx,b.vz);effects(dt,speed);bigfoot.update(dt,b,camera,{speed,distance:settings.sprayDistance/100,volume:settings.waterVolume/100,throttle:input.throttle},()=>engine.vocal(false));engine.update(speed,input.throttle,dt,settings.top/3.6);
+   speed=Math.hypot(b.vx,b.vz);effects(dt,speed);bigfoot.update(dt,b,camera,{speed,distance:settings.sprayDistance/100,volume:settings.waterVolume/100,throttle:input.throttle},()=>engine.vocal(false));engine.update(speed,input.throttle,dt,settings.top/3.6,false,b.engineLoad);
   }else{b.vx=b.vz=0;speed=0;engine.update(0,input.throttle&&preferences.values.prestartRevving,dt,settings.top/3.6,true);}
   fluid.focus.x=b.x+Math.cos(b.angle)*7;fluid.focus.z=b.z+Math.sin(b.angle)*7;fluid.update(dt);
  }
@@ -235,7 +240,8 @@ function frame(now){requestAnimationFrame(frame);const rawDt=Math.max(0,(now-las
  for(const id of ['upper','lower','green'])$('signal-'+id).classList.toggle('lit',lamps[id]);
  const signalText=startSequence.state==='READY'?'READY':startSequence.state==='COUNTDOWN'?'SET':'GO!';if($('signalText').textContent!==signalText)$('signalText').textContent=signalText;
 
- boatPresentation.update(b,input,dt,now*.001,engine.rpm,settings.top);
+ if(!playing||startSequence.state!=='RACING')boatPresentation.step(b,dt,now*.001);
+ boatPresentation.update(b,input,dt,now*.001,engine.rpm,settings.top);physicsLab.update(dt);
  // Rendering-only camera controller: it never writes boat or race state.
  waterBoat.value.set(b.x,0,b.z);waterStrength.value=Math.min(1,speed/20);
  const near=nearest(b.x,b.z),ahead=points[(near.index+Math.round(12+speed*.8))%N];

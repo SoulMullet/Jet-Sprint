@@ -75,12 +75,13 @@ export class Engine {
  setSampleBlend(mix){this.sampleBlend=this.sample?Math.max(0,Math.min(1,Number(mix)||0)):0;if(this.ctx)this.tuneGraph();}
  setPreferences(muted,volume){this.muted=muted;this.volume=Math.max(0,Math.min(1,volume/100));if(this.output)set(this.output.gain,muted?0:this.volume,this.ctx.currentTime,.025);}
  pause(){if(this.ctx)this.ctx.suspend().catch(()=>{});}
- update(speed,pressed,dt=1/60,maxSpeed=85/3.6,revOnly=false){
+ update(speed,pressed,dt=1/60,maxSpeed=85/3.6,revOnly=false,propulsionLoad=null){
   const s=this.settings;dt=Math.max(0,Math.min(.1,dt));
   const throttle=typeof pressed==='number'?Math.max(0,Math.min(1,pressed)):Number(!!pressed),ratio=Math.max(0,Math.min(1,speed/maxSpeed));
   if(throttle<this.throttle-.25)this.burble=Math.max(this.burble,this.throttle);
   this.throttle=blend(this.throttle,throttle,2+s.throttleResponse*.16,dt);this.burble*=Math.exp(-dt*3);
-  this.load=this.throttle*(.5+s.loadEffect*.005)*(.8+ratio*.2);
+  const waterLoad=Number.isFinite(propulsionLoad)?Math.max(0,Math.min(1,propulsionLoad)):null;
+  this.load=this.throttle*(.5+s.loadEffect*.005)*(waterLoad===null?.8+ratio*.2:.65+waterLoad*.7);
   const span=s.maxRPM-s.idleRPM;
   const target=s.idleRPM+span*(revOnly?this.throttle:Math.min(1,ratio*.72+this.throttle*(.14+ratio*.14)));
   this.rpm=blend(this.rpm,target,target>this.rpm?.7+s.rpmRise*.075:.5+s.rpmFall*.055,dt);

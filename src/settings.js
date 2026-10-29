@@ -1,14 +1,15 @@
-import {handlingDefaults} from './handling.js';
-export const SETTINGS_SCHEMA=2;
-export const GAME_VERSION='0.13.0';
+import {handlingDefaults,physicsControls,handlingKeys,handlingProfiles,identifyHandling} from './handling.js';
+export const SETTINGS_SCHEMA=3;
+export const GAME_VERSION='0.14.0';
 export const settingsKey='jet-sprint-settings';
 export const presetsKey='jet-sprint-presets';
 const number=(category,label,defaultValue,min,max,step=1,unit='')=>({category,label,type:'number',default:defaultValue,min,max,step,unit});
 const choice=(category,label,defaultValue,options)=>({category,label,type:'enum',default:defaultValue,options});
 const bool=(category,label,defaultValue)=>({category,label,type:'boolean',default:defaultValue});
 export const registry={
- top:number('Boat Handling','Top speed',handlingDefaults.top,85,180,1,' km/h'),drift:number('Boat Handling','Drift',handlingDefaults.drift,0,100,1,'%'),steer:number('Boat Handling','Steering response',handlingDefaults.steer,20,100,1,'%'),acceleration:number('Boat Handling','Acceleration',handlingDefaults.acceleration,15,28),cameraResponse:number('Boat Handling','Camera response',8,3,12),effects:number('Spray Effects','Speed effects',1,.5,1.5,.1),sprayDistance:number('Spray Effects','Spray distance',100,0,200,1,'%'),waterVolume:number('Spray Effects','Water volume',100,0,200,1,'%'),
- nozzleAuthority:number('Boat Handling','Nozzle authority',handlingDefaults.nozzleAuthority,10,45,1,'°'),pumpResponse:number('Boat Handling','Pump response',handlingDefaults.pumpResponse,.03,.5,.01,' s'),pumpDecay:number('Boat Handling','Pump decay',handlingDefaults.pumpDecay,.03,.6,.01,' s'),lateralResistance:number('Boat Handling','Lateral resistance',handlingDefaults.lateralResistance,1,15,.5),yawDamping:number('Boat Handling','Yaw damping',handlingDefaults.yawDamping,1.5,10,.1),
+ ...Object.fromEntries(Object.entries(physicsControls).map(([id,s])=>[id,{...number('Boat Handling',s.label,s.value,s.min,s.max,s.step,s.unit),description:s.description}])),
+ invertBank:bool('Boat Handling','Invert banking direction',false),physicsPreset:choice('Boat Handling','Physics preset','balanced',['balanced','arcade','simulation','custom']),physicsTelemetry:bool('Boat Handling','Show live physics telemetry',false),
+ cameraResponse:number('Boat Handling','Camera response',8,3,12),effects:number('Spray Effects','Speed effects',1,.5,1.5,.1),sprayDistance:number('Spray Effects','Spray distance',100,0,200,1,'%'),waterVolume:number('Spray Effects','Water volume',100,0,200,1,'%'),
  waterMode:choice('Water Physics','Water mode','legacy',['simulated','legacy']),fluidResolution:choice('Water Physics','Simulation grid','auto',['auto','64','96','128','192']),fluidDebug:choice('Water Physics','Water debug','0',['0','1','2','3']),waveScale:number('Water Physics','Visual wave height',240,0,300,1,'%'),repeatWaves:bool('Water Physics','Repeat diagnostic waves',false),
  graphics:choice('Graphics','Graphics quality','auto',['auto','low','medium','high','ultra']),mute:bool('Audio','Mute all sound',false),masterVolume:number('Audio','Master volume',100,0,100,1,'%'),
  navigationDebug:bool('Debug Tools','Navigation Debug',false),bigfootDebug:bool('Debug Tools','Bigfoot Debug',false),
@@ -21,7 +22,8 @@ const safeKey=k=>!['__proto__','constructor','prototype'].includes(k);
 function valueFor(id,value,notes){const s=registry[id];if(s.type==='boolean'){if(typeof value!=='boolean')throw Error(`${s.label} must be true or false.`);return value;}if(s.type==='enum'){if(typeof value!=='string'||!s.options.includes(value))throw Error(`Unsupported ${s.label}.`);return value;}if(typeof value!=='number'||!Number.isFinite(value))throw Error(`${s.label} must be a finite number.`);const clamped=Math.max(s.min,Math.min(s.max,value)),rounded=Math.max(s.min,Math.min(s.max,Math.round((clamped-s.min)/s.step)*s.step+s.min)),result=Number(rounded.toFixed(6));if(result!==value)notes.push(`${s.label} adjusted to ${result}${s.unit}.`);return result;}
 const migrations={
  0:input=>({...input,schemaVersion:1,settings:Object.fromEntries(Object.entries(input.settings??input.values).filter(([id])=>safeKey(id)).map(([id,value])=>[Object.hasOwn(aliases,id)?aliases[id]:id,value]))}),
- 1:input=>({...input,schemaVersion:2})
+ 1:input=>({...input,schemaVersion:2}),
+ 2:input=>({...input,schemaVersion:3})
 };
 export function migratePreset(input){
  if(!plain(input))throw Error('Preset must be a JSON object.');
@@ -32,7 +34,7 @@ export function migratePreset(input){
  const values=defaultSettings(),legacy=Object.assign(Object.create(null),plain(input.legacy)?Object.fromEntries(Object.entries(input.legacy).filter(([k])=>safeKey(k))):{}),notes=[...migrationNotes];
  for(const [key,value] of Object.entries(raw)){if(!safeKey(key))continue;const id=key;if(Object.hasOwn(registry,id)){values[id]=valueFor(id,value,notes);}else legacy[key]=value;}
  for(const [id,value] of Object.entries(legacy))if(Object.hasOwn(registry,id)&&!Object.hasOwn(raw,id)){values[id]=valueFor(id,value,notes);delete legacy[id];}
- return {values,legacy,notes};
+ values.physicsPreset=identifyHandling(values);return {values,legacy,notes};
 }
 export function parsePreset(text){if(typeof text!=='string'||text.length>200000)throw Error('Preset is too large (maximum 200 KB).');let parsed;try{parsed=JSON.parse(text);}catch{throw Error('Invalid JSON. Paste or open an exported preset.');}return migratePreset(parsed);}
 export class SettingsStore {
@@ -45,7 +47,11 @@ export class SettingsStore {
   this.schedule();
  }
  subscribe(callback){this.listeners.add(callback);return ()=>this.listeners.delete(callback);}
- set(id,value){if(!Object.hasOwn(registry,id))throw Error('Unknown setting.');const notes=[];const next=valueFor(id,value,notes);if(this.values[id]===next)return;this.values[id]=next;this.emit([id],notes);this.schedule();}
+ set(id,value){if(!Object.hasOwn(registry,id))throw Error('Unknown setting.');if(id==='physicsPreset'&&Object.hasOwn(handlingProfiles,value))return this.applyPhysics(handlingProfiles[value]);const notes=[];const next=valueFor(id,value,notes);if(this.values[id]===next)return;this.values[id]=next;const ids=[id];if(handlingKeys.includes(id)){this.values.physicsPreset=identifyHandling(this.values);ids.push('physicsPreset');}this.emit(ids,notes);this.schedule();}
+ applyPhysics(values){const ids=[],notes=[];for(const id of handlingKeys){if(!Object.hasOwn(values,id))continue;this.values[id]=valueFor(id,values[id],notes);ids.push(id);}this.values.physicsPreset=identifyHandling(this.values);this.emit([...ids,'physicsPreset'],notes);this.schedule();}
+ resetPhysics(group=null){this.applyPhysics(Object.fromEntries(handlingKeys.filter(id=>!group||physicsControls[id]?.group===group||id==='invertBank'&&group==='Banking & Roll').map(id=>[id,handlingDefaults[id]])));}
+ exportPhysicsText(){return JSON.stringify({type:'jet-sprint-boat-physics',schemaVersion:SETTINGS_SCHEMA,gameVersion:GAME_VERSION,settings:Object.fromEntries(handlingKeys.map(id=>[id,this.values[id]]))},null,2);}
+ importPhysicsText(text){if(typeof text!=='string'||text.length>200000)throw Error('Physics JSON exceeds 200 KB.');const raw=JSON.parse(text);if(raw?.type&&raw.type!=='jet-sprint-boat-physics')throw Error('This is not a boat physics configuration.');const next=parsePreset(text);this.applyPhysics(next.values);return next.notes;}
  emit(ids,notes=[]){for(const callback of this.listeners)callback(ids,notes);}
  schedule(){clearTimeout(this.timer);this.timer=setTimeout(()=>this.flush(),250);}
  flush(){clearTimeout(this.timer);this.timer=null;try{this.storage.setItem(settingsKey,this.exportText());return true;}catch(error){this.emit([],['Settings are active, but storage is unavailable. Export a backup to keep them.']);return false;}}
@@ -54,8 +60,8 @@ export class SettingsStore {
  reset(){this.values=defaultSettings();this.emit(Object.keys(registry));this.schedule();}
 }
 export class NamedPresets {
- constructor(storage){this.storage=storage;this.records=[];this.warning='';try{const data=JSON.parse(storage.getItem(presetsKey)||'null');if(data){if(data.schemaVersion!==1||!Array.isArray(data.records))throw Error('Unsupported saved preset collection.');this.records=data.records.filter(r=>typeof r.id==='string'&&typeof r.name==='string'&&typeof r.json==='string');}}catch(e){this.warning=e.message;}}
- write(records){this.storage.setItem(presetsKey,JSON.stringify({schemaVersion:1,records}));this.records=records;}
+ constructor(storage,key=presetsKey){this.storage=storage;this.key=key;this.records=[];this.warning='';try{const data=JSON.parse(storage.getItem(this.key)||'null');if(data){if(data.schemaVersion!==1||!Array.isArray(data.records))throw Error('Unsupported saved preset collection.');this.records=data.records.filter(r=>typeof r.id==='string'&&typeof r.name==='string'&&typeof r.json==='string');}}catch(e){this.warning=e.message;}}
+ write(records){this.storage.setItem(this.key,JSON.stringify({schemaVersion:1,records}));this.records=records;}
  name(value){const name=value.trim().slice(0,40);if(!name)throw Error('Enter a preset name.');return name;}
  save(name,json,overwrite=false){name=this.name(name);parsePreset(json);const existing=this.records.find(r=>r.name.toLowerCase()===name.toLowerCase());if(existing&&!overwrite)throw Error('A preset with that name already exists.');const item={id:existing?.id||`${Date.now()}-${Math.random()}`,name,json};this.write([...this.records.filter(r=>r.id!==item.id),item]);return item.id;}
  get(id){const item=this.records.find(r=>r.id===id);if(!item)throw Error('Select a saved preset.');return item;}
