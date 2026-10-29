@@ -1,0 +1,306 @@
+{
+  "platform": [
+    {
+      "selector": "#intro h1 span",
+      "fonts": [
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 3
+        }
+      ]
+    },
+    {
+      "selector": "#start",
+      "fonts": [
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 13
+        }
+      ]
+    },
+    {
+      "selector": ".intro-description",
+      "fonts": [
+        {
+          "familyName": "Chakra Petch",
+          "postScriptName": "ChakraPetch-Medium",
+          "isCustomFont": true,
+          "glyphCount": 67
+        }
+      ]
+    },
+    {
+      "selector": "#signalText",
+      "fonts": [
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 5
+        }
+      ]
+    },
+    {
+      "selector": "#time .instrument-digit",
+      "fonts": [
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "selector": "#lap .instrument-digit",
+      "fonts": [
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "selector": "#speed .instrument-digit",
+      "fonts": [
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "selector": "#dial-number-1",
+      "fonts": [
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 2
+        }
+      ]
+    },
+    {
+      "selector": "#pitTitle",
+      "fonts": [
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 15
+        }
+      ]
+    },
+    {
+      "selector": "#topOut",
+      "fonts": [
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 8
+        }
+      ]
+    },
+    {
+      "selector": "#pitTitle",
+      "fonts": [
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 16
+        }
+      ]
+    },
+    {
+      "selector": "#sprayLaunchSpeedOut",
+      "fonts": [
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 6
+        }
+      ]
+    },
+    {
+      "selector": "#pitTitle",
+      "fonts": [
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 19
+        }
+      ]
+    },
+    {
+      "selector": "#summer-low",
+      "fonts": [
+        {
+          "familyName": "Chakra Petch",
+          "postScriptName": "ChakraPetch-SemiBold",
+          "isCustomFont": true,
+          "glyphCount": 3
+        }
+      ]
+    },
+    {
+      "selector": "#pitTitle",
+      "fonts": [
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 14
+        }
+      ]
+    },
+    {
+      "selector": "#engineTest",
+      "fonts": [
+        {
+          "familyName": "Chakra Petch",
+          "postScriptName": "ChakraPetch-SemiBold",
+          "isCustomFont": true,
+          "glyphCount": 28
+        }
+      ]
+    },
+    {
+      "selector": "#pitTitle",
+      "fonts": [
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 14
+        }
+      ]
+    },
+    {
+      "selector": "#cameraSettings label",
+      "fonts": [
+        {
+          "familyName": "Chakra Petch",
+          "postScriptName": "ChakraPetch-SemiBold",
+          "isCustomFont": true,
+          "glyphCount": 11
+        }
+      ]
+    },
+    {
+      "selector": "#pitTitle",
+      "fonts": [
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 12
+        }
+      ]
+    },
+    {
+      "selector": "#debug .settings-section summary",
+      "fonts": [
+        {
+          "familyName": "Chakra Petch",
+          "postScriptName": "ChakraPetch-SemiBold",
+          "isCustomFont": true,
+          "glyphCount": 14
+        }
+      ]
+    },
+    {
+      "selector": "#resultTitle",
+      "fonts": [
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 13
+        }
+      ]
+    },
+    {
+      "selector": "#resultStats li",
+      "fonts": [
+        {
+          "familyName": "Chakra Petch",
+          "postScriptName": "ChakraPetch-SemiBold",
+          "isCustomFont": true,
+          "glyphCount": 6
+        },
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 9
+        }
+      ]
+    }
+  ],
+  "development": {
+    "status": "ready",
+    "faces": [
+      {
+        "family": "Russo One",
+        "weight": "400",
+        "status": "loaded"
+      },
+      {
+        "family": "Chakra Petch",
+        "weight": "500",
+        "status": "loaded"
+      },
+      {
+        "family": "Chakra Petch",
+        "weight": "600",
+        "status": "loaded"
+      }
+    ],
+    "computed": {
+      "#intro h1": {
+        "family": "\"Russo One\", Impact, \"Arial Black\", sans-serif",
+        "weight": "400"
+      },
+      "#time": {
+        "family": "\"Russo One\", Impact, \"Arial Black\", sans-serif",
+        "weight": "400"
+      },
+      "#lap": {
+        "family": "\"Russo One\", Impact, \"Arial Black\", sans-serif",
+        "weight": "400"
+      },
+      "#speed": {
+        "family": "\"Russo One\", Impact, \"Arial Black\", sans-serif",
+        "weight": "400"
+      },
+      "#pitTitle": {
+        "family": "\"Russo One\", Impact, \"Arial Black\", sans-serif",
+        "weight": "400"
+      },
+      "button": {
+        "family": "\"Chakra Petch\", \"Trebuchet MS\", system-ui, sans-serif",
+        "weight": "600"
+      },
+      "label": {
+        "family": "\"Chakra Petch\", \"Trebuchet MS\", system-ui, sans-serif",
+        "weight": "600"
+      },
+      "select": {
+        "family": "\"Chakra Petch\", \"Trebuchet MS\", system-ui, sans-serif",
+        "weight": "500"
+      }
+    }
+  }
+}

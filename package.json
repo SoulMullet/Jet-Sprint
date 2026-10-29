@@ -1,11 +1,11 @@
 {
   "name": "jet-sprint",
-  "version": "0.15.1",
+  "version": "0.16.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "vite build",
+    "build": "vite build && node scripts/build-proof.mjs",
     "preview": "vite preview --host 0.0.0.0",
     "test": "node --test"
   },

@@ -22,7 +22,7 @@ export function createRetroVenue(scene,nearest){
  function group(x,z,rotation=0){const g=new THREE.Group();g.position.set(x,.4,z);g.rotation.y=rotation;staticRoot.add(g);return g;}
  function pole(m,x,y,z,r,h,parent){return item(cylinderGeo,m,x,y,z,r,h,r,parent);}
  function sign(text,sub,width,height,x,y,z,parent,color='#d9c394'){
-  const canvas=document.createElement('canvas');canvas.width=512;canvas.height=160;const c=canvas.getContext('2d');const draw=()=>{c.fillStyle='#273e3c';c.fillRect(0,0,512,160);c.strokeStyle=color;c.lineWidth=10;c.strokeRect(8,8,496,144);c.fillStyle=color;c.textAlign='center';c.font=`400 41px ${displayFont}`;c.fillText(text,256,71,474);c.font=`700 22px ${interfaceFont}`;c.fillText(sub,256,112,470);for(let i=0;i<42;i++){c.fillStyle='#d5c39a18';c.fillRect((i*97)%512,(i*37)%160,30,2);}
+  const canvas=document.createElement('canvas');canvas.width=512;canvas.height=160;const c=canvas.getContext('2d');const draw=()=>{c.fillStyle='#273e3c';c.fillRect(0,0,512,160);c.strokeStyle=color;c.lineWidth=10;c.strokeRect(8,8,496,144);c.fillStyle=color;c.textAlign='center';c.font=`400 41px ${displayFont}`;c.fillText(text,256,71,474);c.font=`600 22px ${interfaceFont}`;c.fillText(sub,256,112,470);for(let i=0;i<42;i++){c.fillStyle='#d5c39a18';c.fillRect((i*97)%512,(i*37)%160,30,2);}
   };draw();const t=new THREE.CanvasTexture(canvas);repaintAfterFonts(()=>{draw();t.needsUpdate=true;});t.colorSpace=THREE.SRGBColorSpace;const material=new THREE.MeshStandardMaterial({map:t,roughness:1,side:THREE.DoubleSide});return item(new THREE.PlaneGeometry(width,height),material,x,y,z,1,1,1,parent);
  }
  function chair(x,z,parent,color='teal'){

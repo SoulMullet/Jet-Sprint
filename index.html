@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width,initial-scale=1,viewport-fit=cover"
     />
-    <meta name="theme-color" content="#11191D" />
+    <meta name="theme-color" content="#122D3B" />
     <meta
       name="description"
       content="JET SPRINT. Big-block power. Tight water. A summer 1987 arcade racing game."
@@ -15,14 +15,14 @@
     <link rel="icon" type="image/svg+xml" href="./identity.svg" />
     <link
       rel="preload"
-      href="./fonts/racing-sans-one-regular.woff2"
+      href="./fonts/russo-one-regular.woff2"
       as="font"
       type="font/woff2"
       crossorigin
     />
     <link
       rel="preload"
-      href="./fonts/rajdhani-semibold.woff2"
+      href="./fonts/chakra-petch-medium.woff2"
       as="font"
       type="font/woff2"
       crossorigin
@@ -35,7 +35,7 @@
         <span class="brand-jet">JET</span
         ><span class="brand-sprint">SPRINT</span
         ><small id="buildDebugHud" class="build-debug"
-          >TYPE-SPRAY · v0.15.1</small
+          >MARINE-87 · v0.16.0</small
         >
       </div>
       <nav class="race-toolbar" aria-label="Race controls">
@@ -61,7 +61,7 @@
         <span class="instrument-label">LAP</span><strong id="lap">1/5</strong>
       </div>
       <div class="time-instrument">
-        <span class="instrument-label">ELAPSED</span
+        <span class="instrument-label">RUN TIME</span
         ><strong id="time">0:00.00</strong>
       </div>
       <div class="best-instrument">
@@ -74,20 +74,7 @@
       <div><b>CEDAR CREEK</b><span>WASHINGTON / SUMMER 1987</span></div>
     </aside>
     <section class="speed" aria-label="Engine and speed instruments">
-      <div class="speed-face">
-        <span class="instrument-label">WATER SPEED</span
-        ><strong id="speed">0</strong><span class="speed-unit">KM/H</span>
-      </div>
-      <div class="tachometer">
-        <div class="tach-label">
-          <span>ENGINE RPM</span><output id="hudRPM">900</output>
-        </div>
-        <div class="rev-track"><div id="rev"></div></div>
-        <div class="tach-scale" aria-hidden="true">
-          <span>0</span><span>2</span><span>4</span><span>6</span
-          ><span>8 ×1000</span>
-        </div>
-      </div>
+      <strong id="speed">0</strong><output id="hudRPM">900</output>
     </section>
     <div id="notice" role="status">Cross the stripe. Find your flow.</div>
     <details id="debug">
@@ -240,7 +227,7 @@
             Control.</small
           >
         </footer>
-        <div id="buildDebug" class="build-debug">TYPE-SPRAY · v0.15.1</div>
+        <div id="buildDebug" class="build-debug">MARINE-87 · v0.16.0</div>
       </div>
       <aside class="entry-course" aria-hidden="true">
         <span>COURSE 01 / CEDAR CREEK</span

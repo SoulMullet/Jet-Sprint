@@ -1,4 +1,5 @@
-import {setInstrumentText} from "./typography.js";
+import { mountInstrumentGauge } from "./instrument-gauge.js";
+import { mountFontDiagnostics } from "./typography.js";
 import { registry } from "./settings.js";
 import { audioControls } from "./audio-settings.js";
 import { summerControls } from "./summer-settings.js";
@@ -13,6 +14,7 @@ import {
 const panelDefinitions = [
   ["race", "RACE", "RACE / SETUP", "debug"],
   ["physics", "HULL", "HULL / DYNAMICS", "physicsLab"],
+  ["spray", "SPRAY", "SPRAY / WATERJET", "sprayLab"],
   ["graphics", "VIDEO", "VIDEO / CALIBRATION", "graphicsLab"],
   ["audio", "V8", "V8 / SOUND LAB", "soundLab"],
   ["camera", "VIEW", "VIEW / CAMERAS", "cameraSettings"],
@@ -255,26 +257,12 @@ export function mountInterface({
   mountTooltips();
   trapFocus($("results"));
 
-  const rpm = $("hudRPM"),
-    rev = $("rev"),
-    speedFace = document.querySelector(".speed");
-  let gaugeClock = 1,
-    previousRPM = "";
+  const gauge = mountInstrumentGauge(document.querySelector(".speed"));
+  if (import.meta.env.DEV) mountFontDiagnostics();
   return {
     open,
     close: shut,
-    update(dt, engineRPM, maximumRPM) {
-      gaugeClock += dt;
-      if (gaugeClock < 0.08) return;
-      gaugeClock = 0;
-      const value = Math.max(0, Math.round(engineRPM || 0)),
-        text = String(value);
-      if (text !== previousRPM) {
-        setInstrumentText(rpm, text);
-        previousRPM = text;
-      }
-      rev.style.transform = `scaleX(${Math.min(1, value / 8000)})`;
-      speedFace.classList.toggle("redline", value >= maximumRPM * 0.95);
-    },
+    update: (dt, rpm, maxRPM, speed, top) =>
+      gauge.update(dt, rpm, maxRPM, speed, top),
   };
 }

@@ -1,3 +1,4 @@
+import { BallisticSpray } from "../src/ballistic-spray.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import * as THREE from "three";
@@ -8,7 +9,6 @@ import {
   jetLaunch,
   hullLaunch,
   hullSprayRate,
-  flightTime,
 } from "../src/spray-frame.js";
 import { HFSpray } from "../src/hf-effects.js";
 import { hfWaterUniforms } from "../src/hf-water.js";
@@ -106,17 +106,28 @@ test("airborne jet cannot point forward at high speed or reduced spray distance"
           assert.ok(
             v.vx * Math.cos(angle) + v.vz * Math.sin(angle) <= -0.499999,
           );
-          assert.ok(v.vy > 0);
+          assert.ok(Number.isFinite(v.vy));
           assert.ok(Object.values(v).every(Number.isFinite));
         }
 });
 
-test("water nozzle deflection opposes the physical hull reaction force", () => {
+test("jet centerline remains rearward regardless of steering nozzle angle", () => {
+  const baseline = jetLaunch(
+    {},
+    updateSprayFrame(createSprayFrame(), boat()),
+    24,
+    1,
+  );
   for (const nozzle of [-Math.PI / 4, Math.PI / 4]) {
-    const f = updateSprayFrame(createSprayFrame(), { ...boat(), nozzle }),
-      v = jetLaunch({}, f, 24, 1);
-    assert.equal(Math.sign(v.vz), Math.sign(nozzle));
-    assert.equal(Math.sign(v.vz), -Math.sign(-Math.sin(nozzle)));
+    const v = jetLaunch(
+      {},
+      updateSprayFrame(createSprayFrame(), { ...boat(), nozzle, yawRate: 2 }),
+      24,
+      1,
+    );
+    close(v.vx, baseline.vx);
+    close(v.vz, baseline.vz);
+    assert.ok(v.vx < 0);
   }
 });
 
@@ -147,16 +158,17 @@ test("chine spray follows slip and measured cornering load, rather than steering
   assert.equal(hullSprayRate(still, 0), 0);
 });
 
-test("core flight reaches water after upward lift with gravity-driven falloff", () => {
-  for (const speed of [0, 24, 50]) {
-    const f = updateSprayFrame(createSprayFrame(), boat(0, speed)),
-      v = jetLaunch({}, f, speed, 1),
-      t = flightTime(v.py, v.vy);
-    assert.ok(t > 0 && t <= 2);
-    close(v.py + v.vy * t - 4.9 * t * t, 0.035);
-    assert.ok(v.vy - 9.8 * t < 0);
-    assert.ok(v.py + v.vy * (t / 2) - 4.9 * (t / 2) ** 2 > v.py);
-  }
+test("gravity advances world Y and turns upward velocity downward", () => {
+  const p = new BallisticSpray(32);
+  p.emit({ px: 0, py: 1, pz: 0, vx: -12, vy: 5, vz: 0 }, 5);
+  for (let i = 0; i < 30; i++) p.integrate(1 / 120, -9.8, 1);
+  close(p.velocity[0], -12);
+  close(p.velocity[2], 0);
+  assert.ok(p.velocity[1] < 5 && p.velocity[1] > 0);
+  assert.ok(p.position[1] > 1);
+  for (let i = 0; i < 240; i++) p.integrate(1 / 120, -9.8, 1);
+  assert.equal(p.count, 0);
+  assert.equal(p.impactCount, 1);
 });
 
 test("GPU launch directions, history and fixed buffers survive left/right drift, reverse and idle", () => {
@@ -175,7 +187,8 @@ test("GPU launch directions, history and fixed buffers survive left/right drift,
     for (let i = 0; i < 12; i++)
       spray.update(1 / 60, b, Math.hypot(b.vx, b.vz), {});
     assert.ok(spray.cursor > 0);
-    assert.ok(spray.core.visible);
+    assert.ok(spray.activeCount > 0);
+    assert.equal(spray.inspect().attachedCore, false);
     assert.deepEqual(b, before);
     for (let i = 0; i < Math.min(spray.cursor, spray.budget); i++) {
       const j = i * 4;
@@ -196,9 +209,9 @@ test("GPU launch directions, history and fixed buffers survive left/right drift,
         yawRate: 0,
         lateralAcceleration: 0,
       };
-    spray.update(0.02, idle, 0, {});
+    spray.update(0.02, idle, 0, {}, { emit: false });
     assert.equal(spray.rate, 0);
-    assert.equal(spray.core.visible, false);
+    assert.ok(spray.activeCount > 0);
     assert.deepEqual(Array.from(spray.births.slice(0, 4)), first);
     assert.deepEqual(Array.from(spray.velocities.slice(0, 4)), velocity);
     const expected = stern(b, {}),
@@ -219,20 +232,23 @@ test("active GPU emitter remains aft at 180 km/h with short spray distance and s
         spray = new HFSpray(new THREE.Scene(), u, 1024);
       spray.configure(1024, 1);
       const b = { ...boat(angle, 50), nozzle, lateralAcceleration: 0 };
-      spray.update(0.05, b, 50, {}, { distance: 0.1 });
+      spray.update(
+        0.05,
+        b,
+        50,
+        {},
+        { distance: 0.1, tuning: { spraySpread: 0 } },
+      );
       assert.ok(spray.cursor > 0);
       for (let i = 0; i < spray.cursor; i++) {
         const j = i * 4,
           vx = spray.velocities[j],
           vz = spray.velocities[j + 2];
         assert.ok(vx * Math.cos(angle) + vz * Math.sin(angle) <= -0.499999);
-        assert.equal(
-          Math.sign(-vx * Math.sin(angle) + vz * Math.cos(angle)),
-          Math.sign(nozzle),
-        );
+        close(-vx * Math.sin(angle) + vz * Math.cos(angle), 0);
       }
-      assert.deepEqual(spray.core.position.toArray(), [0, 0, 0]);
-      assert.deepEqual(spray.core.rotation.toArray().slice(0, 3), [0, 0, 0]);
+      assert.deepEqual(spray.mesh.position.toArray(), [0, 0, 0]);
+      assert.equal(spray.inspect().attachedCore, false);
       spray.dispose();
       u.hfNormal.value.dispose();
     }

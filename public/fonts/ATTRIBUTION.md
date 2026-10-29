@@ -1,10 +1,10 @@
-# JET SPRINT interface fonts / v0.15.1
+# MARINE-87 interface fonts / v0.16.0
 
-All current fonts are served locally. There are no external font-service requests.
+All fonts are bundled locally; the game makes no third-party font requests.
 
-- **Racing Sans One Regular** — Copyright (c) 2012 Pablo Impallari and Rodrigo Fuenzalida, reserved font name “Racing Sans”. SIL Open Font License 1.1; full notice in `RacingSansOne-OFL.txt`. Used for titles, race headings and venue sign headings. The slant is part of the original design; no synthetic italic or bold is requested.
-- **Rajdhani SemiBold (600) / Bold (700)** — Copyright (c) 2014 Indian Type Foundry. SIL Open Font License 1.1; full notice in `Rajdhani-OFL.txt`. Used for HUD, menus, labels, buttons, inputs, numeric readouts, results and canvas instrumentation. This font has proportional figures; live HUD digits use fixed-width glyph cells to prevent timer/speed jitter while retaining Rajdhani.
+- **Russo One Regular (400)** — Copyright 2011–2012 Jovanny Lemonad. Used for titles, timer/lap instruments, prominent numbers and canvas sign headings. SIL Open Font License 1.1; see `RussoOne-OFL.txt` for the complete original notice.
+- **Chakra Petch Medium (500) / SemiBold (600)** — Copyright 2018 The Chakra Petch Project Authors. Used for functional UI, menus, buttons, labels, tuning and canvas instrumentation. SIL Open Font License 1.1; see `ChakraPetch-OFL.txt` for the complete original notice.
 
-Sources: https://github.com/google/fonts/tree/main/ofl/racingsansone and https://github.com/google/fonts/tree/main/ofl/rajdhani, retrieved October 29, 2026. Unmodified TTF outlines were losslessly compressed to WOFF2 with fontTools; no glyphs were edited or subsetted. Font loading completes before canvas signs are baked; a bounded fallback and late repaint handle unavailable or slow fonts.
+Sources: https://github.com/google/fonts/tree/main/ofl/russoone and https://github.com/google/fonts/tree/main/ofl/chakrapetch, retrieved October 29, 2026. Unmodified TTF outlines were losslessly compressed to WOFF2 using fontTools. No glyphs were modified or subsetted. Prior Racing Sans One/Rajdhani assets are removed from the active build. CSS fallback fonts support unavailable/slow downloads; canvas text repaints after a late font load.
 
-The previous Barlow/IBM Plex files were removed from the active build. Original UI artwork remains project artwork.
+Development mode exposes `__JET_SPRINT_FONTS__.inspect()` with loaded FontFace statuses and computed font families/weights for actual live components. Production files are covered by `build-info.json` and the deployment's live-file SHA-256 check.

@@ -1,3 +1,4 @@
+import { sprayDefaults } from "./spray-settings.js";
 // Visual emission only. Hull local +X is bow/forward; local -X is stern/aft.
 // Physics yaw is +towards world +Z, rendered by Three.js rotation.y = -angle.
 // Keep the immutable water/wake history and the propulsion integrator independent.
@@ -31,6 +32,8 @@ export function updateSprayFrame(out, b, pose = flat) {
   out.sx = -s * cr;
   out.sy = -sr;
   out.sz = c * cr;
+  out.vx = b.vx;
+  out.vz = b.vz;
   out.forward = b.vx * c + b.vz * s;
   out.lateral = -b.vx * s + b.vz * c;
   out.yaw = b.yawRate || 0;
@@ -63,36 +66,33 @@ export function jetLaunch(
   scale = 1,
   spread = 0,
   lift = 1,
+  tuning = sprayDefaults,
 ) {
-  const exit =
-    (8 + speed * 0.6 + frame.pump * 4) * Math.max(0, distance) * scale;
-  // Carry translation, but distance is a length control: reducing it must never
-  // turn the world-space launch into a forward-facing fountain at high speed.
-  const aft = Math.min(
-    -0.5 / Math.max(0.1, frame.forwardCos),
-    frame.forward * 0.55 - exit * Math.cos(frame.nozzle),
-  );
-  // Water goes opposite the hull's reaction force: positive nozzle => +local Z.
-  const side =
-    (frame.lateral - 2.35 * frame.yaw) * 0.35 +
-    exit * Math.sin(frame.nozzle) +
+  const inheritance = tuning.sprayInheritance ?? sprayDefaults.sprayInheritance,
+    angle =
+      ((tuning.sprayUpAngle ?? sprayDefaults.sprayUpAngle) * Math.PI) / 180;
+  const launch =
+    (tuning.sprayLaunchSpeed ?? sprayDefaults.sprayLaunchSpeed) *
+    Math.max(0, distance) *
+    scale;
+  const cone =
+    Math.tan(
+      ((tuning.spraySpread ?? sprayDefaults.spraySpread) * Math.PI) / 180,
+    ) *
+    launch *
     spread;
+  // Straight rearward local -X. No steering/nozzle/yaw deflection of the jet.
+  const rear = Math.max(
+    launch * Math.cos(angle),
+    (Math.max(0, frame.forward) * inheritance + 0.5) /
+      Math.max(0.1, frame.forwardCos),
+  );
   out.px = frame.sternX;
   out.py = frame.sternY;
   out.pz = frame.sternZ;
-  out.vx = frame.fx * aft + frame.sx * side;
-  out.vz = frame.fz * aft + frame.sz * side;
-  out.vy = Math.min(
-    9.2,
-    Math.max(
-      1.2,
-      (3.5 + speed * 0.12) *
-        lift *
-        Math.min(1, Math.sqrt(Math.max(0, distance))) +
-        frame.fy * aft +
-        frame.sy * side,
-    ),
-  );
+  out.vx = -frame.fx * rear + frame.sx * cone + frame.vx * inheritance;
+  out.vz = -frame.fz * rear + frame.sz * cone + frame.vz * inheritance;
+  out.vy = -frame.fy * rear + frame.sy * cone + launch * Math.sin(angle) * lift;
   return out;
 }
 export function hullLaunch(out, frame, speed, sample = 0.5, lift = 1) {
@@ -132,11 +132,5 @@ export function hullSprayRate(frame, speed, impact = 0) {
         Math.abs(Math.sin(frame.slip)) * speed * 35 +
         Math.min(25, Math.abs(frame.load)) * 12) +
     Math.max(0, impact) * 600
-  );
-}
-export function flightTime(y, vy) {
-  return Math.min(
-    2,
-    (vy + Math.sqrt(vy * vy + 19.6 * Math.max(0, y - 0.035))) / 9.8,
   );
 }

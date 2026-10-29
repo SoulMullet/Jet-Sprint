@@ -1,0 +1,19 @@
+{
+  "info": {
+    "model": "world-space-fixed-step",
+    "worldUp": "Y",
+    "step": 0.008333333333333333,
+    "active": 19,
+    "budget": 768,
+    "emitted": 45,
+    "impacts": 0,
+    "attachedCore": false,
+    "rate": 16.576
+  },
+  "pixels": {
+    "changed": 547,
+    "max": 160,
+    "active": 19
+  },
+  "canvasFont": "600 22px \"Chakra Petch\", \"Trebuchet MS\", system-ui, sans-serif"
+}

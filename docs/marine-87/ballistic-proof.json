@@ -1,0 +1,102 @@
+{
+  "scenarios": [
+    {
+      "name": "straight",
+      "model": "world-space-fixed-step",
+      "worldUp": "Y",
+      "step": 0.008333333333333333,
+      "active": 524,
+      "budget": 2688,
+      "emitted": 1170,
+      "impacts": 396,
+      "attachedCore": false,
+      "rate": 425.6
+    },
+    {
+      "name": "left",
+      "model": "world-space-fixed-step",
+      "worldUp": "Y",
+      "step": 0.008333333333333333,
+      "active": 470,
+      "budget": 2688,
+      "emitted": 1170,
+      "impacts": 700,
+      "attachedCore": false,
+      "rate": 425.6
+    },
+    {
+      "name": "right",
+      "model": "world-space-fixed-step",
+      "worldUp": "Y",
+      "step": 0.008333333333333333,
+      "active": 463,
+      "budget": 2688,
+      "emitted": 1170,
+      "impacts": 159,
+      "attachedCore": false,
+      "rate": 425.6
+    },
+    {
+      "name": "sideways",
+      "model": "world-space-fixed-step",
+      "worldUp": "Y",
+      "step": 0.008333333333333333,
+      "active": 530,
+      "budget": 2688,
+      "emitted": 1170,
+      "impacts": 14,
+      "attachedCore": false,
+      "rate": 425.6
+    },
+    {
+      "name": "reverse",
+      "model": "world-space-fixed-step",
+      "worldUp": "Y",
+      "step": 0.008333333333333333,
+      "active": 284,
+      "budget": 2688,
+      "emitted": 658,
+      "impacts": 5,
+      "attachedCore": false,
+      "rate": 239.40000000000006
+    },
+    {
+      "name": "idle",
+      "model": "world-space-fixed-step",
+      "worldUp": "Y",
+      "step": 0.008333333333333333,
+      "active": 0,
+      "budget": 2688,
+      "emitted": 0,
+      "impacts": 0,
+      "attachedCore": false,
+      "rate": 0
+    }
+  ],
+  "spin": {
+    "before": [
+      -36,
+      8,
+      -24
+    ],
+    "after": [
+      -38.39996337890625,
+      8.795833587646484,
+      -23.600006103515625
+    ],
+    "expected": [
+      -38.4,
+      8.795833333333333,
+      -23.6
+    ],
+    "error": [
+      0.000036621093748578915,
+      2.543131518706332e-7,
+      0.0000061035156235789145
+    ],
+    "parentIsScene": true,
+    "children": [
+      "Short-lived water contact foam"
+    ]
+  }
+}

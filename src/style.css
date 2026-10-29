@@ -1,5 +1,5 @@
 @import "./design-system.css";
-/* Screen composition. Reusable controls are defined in design-system.css. */
+/* Screen composition uses the same marine housings and physical controls. */
 body {
   overflow: hidden;
 }
@@ -30,234 +30,261 @@ canvas {
   left: max(24px, env(safe-area-inset-left));
   right: max(24px, env(safe-area-inset-right));
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
-  gap: 16px;
+  justify-content: space-between;
+  gap: 12px;
   pointer-events: none;
 }
 .race-header > * {
   pointer-events: auto;
 }
 .brand {
-  font: 600 normal 38px/0.8 var(--font-display);
-  letter-spacing: -0.8px;
-  text-shadow: 2px 2px 0 var(--graphite);
+  font: 400 29px/1 var(--font-display);
+  letter-spacing: -1.5px;
+  text-shadow: 0 3px 0 var(--deep);
 }
 .brand-sprint {
-  color: var(--orange);
-  margin-left: 4px;
+  color: #e09a63;
+  margin-left: 3px;
 }
 .brand:after {
-  content: "CEDAR CREEK / SUMMER ’87";
+  content: "LAKESIDE RACING CLUB / 1987";
   display: block;
   margin-top: 7px;
-  color: var(--ivory);
-  font: 600 8px/1.2 var(--font-tech);
-  letter-spacing: 1.4px;
+  font: 600 9px var(--font-label);
+  letter-spacing: 1px;
+  color: var(--cream);
 }
 .build-debug {
   display: block;
   width: max-content;
   max-width: 100%;
-  margin-top: 12px;
-  padding: 3px 0;
+  font: 500 9px/1.4 var(--font-label);
   color: var(--muted);
-  font: 600 9px/1.3 var(--font-tech);
-  letter-spacing: 0.2px;
+  letter-spacing: 0.3px;
+  margin-top: 6px;
   text-shadow: none;
 }
 .brand .build-debug {
-  font-size: 7px;
-  letter-spacing: 0;
-  margin-top: 6px;
+  font-size: 8px;
 }
 .race-toolbar {
   display: flex;
-  gap: 8px;
+  gap: 9px;
 }
 .tool-button {
-  height: 44px;
-  min-width: 44px;
-  padding: 8px 12px;
-  background: var(--graphite);
-  font-size: 13px;
-  box-shadow: 2px 3px 0 #0003;
-}
-.tool-button svg {
-  width: 20px;
-  height: 20px;
+  height: 46px;
+  min-width: 46px;
+  padding: 9px 13px;
+  font-size: 12px;
+  background: var(--navy);
+  border-radius: 15px;
 }
 .tool-button[aria-expanded="true"] {
-  border-color: var(--orange);
-  color: var(--gold);
+  background: var(--cream);
+  color: var(--deep);
+  border-color: #c6b08a;
 }
 #cameraSwitch {
   order: -1;
   max-width: 180px;
 }
+.tool-button svg {
+  width: 20px;
+  height: 20px;
+}
 .timing {
   position: fixed;
   z-index: 4;
+  top: 107px;
   left: max(24px, env(safe-area-inset-left));
-  top: 110px;
-  display: flex;
-  background: var(--graphite);
-  border-top: 3px solid var(--orange);
-  box-shadow: var(--shadow);
+  display: grid;
+  grid-template-columns: 72px 190px 124px;
+  gap: 6px;
+  padding: 7px;
+  background: var(--navy);
+  border: 2px solid #71888a;
+  border-radius: 24px;
+  box-shadow:
+    var(--shadow),
+    inset 0 2px 0 #ffffff25;
 }
 .timing > div {
-  padding: 10px 16px;
-  border-right: 1px solid var(--line-soft);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding: 10px 11px;
 }
-.timing > div:last-child {
-  border-right: 0;
+.time-instrument {
+  background: var(--cream);
+  color: var(--deep);
+  border-radius: 15px;
+  box-shadow: inset 0 2px 4px #81724c33;
 }
 .instrument-label {
   display: block;
-  font: 600 9px/1.4 var(--font-tech);
-  letter-spacing: 1.1px;
-  color: var(--muted);
+  font: 400 10px/1.4 var(--font-display);
+  letter-spacing: 0.4px;
+  color: #cbd2c5;
+}
+.time-instrument .instrument-label {
+  color: #53636a;
 }
 .timing strong {
   display: block;
+  font: 400 23px/1.3 var(--font-display);
+  letter-spacing: -0.3px;
   margin-top: 4px;
-  font: 600 25px/1.1 var(--font-tech);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -1.3px;
+  white-space: nowrap;
 }
-.timing .lap-instrument {
-  background: var(--ivory);
-  color: var(--graphite);
+.time-instrument strong {
+  font-size: 28px;
+}
+.best-instrument strong {
+  font-size: 17px;
 }
 .lap-instrument .instrument-label {
-  color: var(--graphite);
+  color: #e09a63;
 }
 .course-name {
   position: fixed;
   left: max(24px, env(safe-area-inset-left));
-  bottom: 175px;
+  bottom: 174px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   pointer-events: none;
-  text-shadow: 1px 2px 0 var(--graphite);
+  text-shadow: 0 2px 0 var(--deep);
 }
 .course-index {
-  font: 600 normal 40px/1 var(--font-display);
-  color: var(--gold);
-  border-right: 2px solid var(--orange);
-  padding-right: 12px;
+  font: 400 29px var(--font-display);
+  color: #e4ac74;
 }
 .course-name b {
-  font: 600 19px var(--font-label);
-  letter-spacing: 1.4px;
+  font: 600 17px var(--font-label);
+  letter-spacing: 1px;
 }
 .course-name div > span {
   display: block;
-  margin-top: 3px;
-  font-size: 8px;
-  letter-spacing: 1px;
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
 }
 .speed {
   position: fixed;
   right: max(24px, env(safe-area-inset-right));
-  bottom: 166px;
+  bottom: 162px;
   z-index: 4;
   width: 190px;
-  box-shadow: var(--shadow);
   pointer-events: none;
-  border: 2px solid var(--graphite);
-  background: var(--ivory);
-  color: var(--graphite);
 }
-.speed-face {
-  padding: 10px 14px 6px;
+.dial-bezel {
   position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  background: var(--navy);
+  border: 3px solid #78918f;
+  border-radius: 30px;
+  padding: 5px;
+  box-shadow:
+    var(--shadow),
+    inset 0 2px 0 #ffffff38;
 }
-.speed-face:after {
-  content: "";
-  position: absolute;
-  top: 10px;
-  right: 12px;
-  width: 13px;
-  height: 13px;
-  border: 2px solid var(--graphite);
-  border-radius: 50%;
-  box-shadow: inset 0 0 0 2px var(--ivory);
-  background: var(--teal);
-}
-.speed .instrument-label {
-  color: var(--graphite);
-  font-size: 8px;
-  letter-spacing: 1px;
-}
-.speed strong {
-  display: inline-block;
-  font: 600 normal 76px/0.95 var(--font-display);
-  min-width: 96px;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -2px;
-}
-.speed-unit {
-  font: 600 18px var(--font-label);
-  margin-left: 4px;
-}
-.tachometer {
-  padding: 10px 12px 7px;
-  background: var(--graphite);
-  color: var(--ivory);
-}
-.tach-label {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 8px;
-  letter-spacing: 1px;
-}
-.tach-label output {
-  font-size: 12px;
-  color: var(--ivory);
-}
-.rev-track {
-  height: 9px;
-  background: var(--panel-raised);
-  margin-top: 6px;
-  overflow: hidden;
-  position: relative;
-}
-.rev-track:after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    90deg,
-    transparent 0 8px,
-    var(--graphite) 8px 10px
-  );
-}
-#rev {
+.dial-face {
+  display: block;
+  width: 100%;
   height: 100%;
-  background: var(--teal);
-  transform-origin: left;
-  transform: scaleX(0);
-  transition: transform 80ms linear;
 }
-.speed.redline #rev {
-  background: var(--orange);
+.dial-paper {
+  fill: var(--cream);
 }
-.tach-scale {
+.dial-rim {
+  fill: none;
+  stroke: #b6a47c;
+  stroke-width: 2;
+}
+.dial-tick {
+  fill: none;
+  stroke: var(--navy);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+.dial-red {
+  fill: none;
+  stroke: var(--red);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+.dial-face text {
+  font: 400 9px var(--font-display);
+  text-anchor: middle;
+  fill: #425762;
+}
+.dial-face .dial-brand {
+  font: 600 8px var(--font-label);
+  letter-spacing: 1.2px;
+  fill: #627570;
+}
+.dial-needle {
+  fill: var(--red);
+  filter: drop-shadow(1px 2px 0 #122d3b33);
+}
+.dial-needle circle {
+  fill: var(--navy);
+  stroke: var(--cream);
+  stroke-width: 2;
+}
+.dial-revs {
+  fill: none;
+  stroke: var(--teal);
+  stroke-width: 3;
+  stroke-dasharray: 0 100;
+  stroke-linecap: round;
+}
+.redline .dial-revs {
+  stroke: var(--red);
+}
+.dial-digital {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 54%;
+  text-align: center;
+  color: var(--navy);
+}
+.dial-digital strong {
+  display: block;
+  font: 400 31px/1 var(--font-display);
+}
+.dial-digital > span {
+  font: 600 10px var(--font-label);
+  letter-spacing: 1px;
+}
+.dial-rpm {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 11%;
   display: flex;
-  justify-content: space-between;
-  margin-top: 4px;
-  font-size: 7px;
-  color: var(--muted);
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  color: var(--navy);
+}
+.dial-rpm output {
+  color: var(--navy);
+  font-size: 11px;
+}
+.dial-rpm > span {
+  font: 600 9px var(--font-label);
 }
 .controls {
   position: fixed;
   z-index: 9;
   left: max(24px, env(safe-area-inset-left));
   right: max(24px, env(safe-area-inset-right));
-  bottom: max(36px, env(safe-area-inset-bottom));
+  bottom: max(32px, env(safe-area-inset-bottom));
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
@@ -271,118 +298,117 @@ canvas {
 .controls button {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  height: 100px;
-  min-width: 100px;
+  gap: 5px;
+  min-width: 99px;
+  height: 99px;
   padding: 12px;
-  background: #11191deb;
-  border: 1px solid #e8d9b580;
-  border-bottom: 5px solid var(--graphite);
+  border: 2px solid #91a6a1;
+  border-radius: 23px;
+  background: #173747ef;
   box-shadow:
-    inset 0 0 0 3px var(--panel-raised),
-    3px 4px 0 #0004;
-  color: var(--ivory);
+    inset 0 3px 0 #ffffff20,
+    inset 0 -3px 0 #0003,
+    0 6px 0 #081c28,
+    0 9px 12px #081c2840;
+  color: var(--cream);
   pointer-events: auto;
-  font-size: 12px;
-  letter-spacing: 2px;
+  font-size: 11px;
+  letter-spacing: 1.4px;
 }
 .controls svg {
-  width: 34px;
-  height: 34px;
+  width: 31px;
+  height: 31px;
   stroke-width: 3;
 }
 .controls button.active {
-  background: var(--ivory);
-  color: var(--graphite);
-  border-color: var(--ivory);
-  box-shadow: inset 0 0 0 3px #11191d30;
-  transform: translateY(3px);
+  background: var(--cream);
+  color: var(--navy);
+  transform: translateY(4px);
+  box-shadow:
+    inset 0 2px 3px #122d3b44,
+    0 2px 0 #081c28;
 }
 #throttle {
   min-width: 145px;
-  background: #e65c28f2;
-  color: var(--graphite);
-  border-color: var(--orange);
-  border-bottom-color: #9c3c1b;
-  box-shadow:
-    inset 0 0 0 3px #11191d20,
-    3px 4px 0 #0004;
+  background: #ca7044f5;
+  border-color: #edb58a;
+  color: var(--deep);
 }
 #throttle.active {
-  background: var(--gold);
-  border-color: var(--gold);
-  box-shadow: inset 0 0 0 3px #11191d30;
+  background: #e7aa73;
 }
 #notice {
   position: fixed;
   z-index: 3;
-  bottom: max(10px, calc(env(safe-area-inset-bottom) + 4px));
+  bottom: max(8px, env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
   width: max-content;
-  max-width: 85vw;
-  padding: 3px 8px;
-  background: #11191de0;
-  color: var(--ivory);
+  max-width: 90vw;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: #122d3be8;
+  font-size: 10px;
+  line-height: 1.3;
   text-align: center;
-  font-size: 9px;
-  line-height: 1.4;
   pointer-events: none;
 }
 #navigator {
   position: fixed;
   z-index: 5;
-  top: 110px;
   left: 50%;
+  top: 112px;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 12px;
-  min-width: 160px;
-  padding: 10px 14px 10px 8px;
-  background: var(--graphite);
-  border-left: 4px solid var(--gold);
-  box-shadow: var(--shadow);
+  gap: 9px;
+  padding: 10px 14px 10px 9px;
+  background: var(--cream);
+  color: var(--navy);
+  border: 3px solid var(--navy);
+  border-radius: 19px;
+  box-shadow: 0 4px 0 #081c2855;
   pointer-events: none;
-  color: var(--gold);
+  min-width: 140px;
 }
 #navigator svg {
-  width: 46px;
-  height: 46px;
+  width: 35px;
+  height: 35px;
   flex-shrink: 0;
 }
 #navigator path {
   fill: none;
-  stroke: currentColor;
+  stroke: var(--teal);
   stroke-width: 8;
-  stroke-linecap: square;
-  stroke-linejoin: miter;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 #navigator strong {
   display: block;
-  font: 600 16px var(--font-label);
-  letter-spacing: 1px;
+  font: 600 13px var(--font-label);
+  letter-spacing: 0.5px;
 }
 #navigator span {
   display: block;
-  font-size: 14px;
-  color: var(--ivory);
-  margin-top: 3px;
+  font: 400 14px var(--font-display);
+  margin-top: 2px;
 }
 #navigator small {
   display: block;
-  font-size: 8px;
-  color: var(--muted);
-  margin-top: 4px;
+  font-size: 9px;
+  margin-top: 3px;
+  color: #597478;
 }
 #navigator.wrong {
-  border-color: var(--orange);
-  color: var(--orange);
+  border-color: var(--red);
+}
+#navigator.wrong path {
+  stroke: var(--red);
 }
 #startSignal {
   position: fixed;
   z-index: 6;
-  top: 190px;
+  top: 207px;
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
@@ -390,218 +416,215 @@ canvas {
 }
 .signal-caption {
   display: block;
-  padding: 5px 12px;
-  font-size: 8px;
-  letter-spacing: 2px;
-  background: var(--ivory);
-  color: var(--graphite);
+  width: max-content;
+  margin: 0 auto -2px;
+  padding: 6px 14px;
+  border-radius: 11px 11px 0 0;
+  background: var(--cream);
+  color: var(--navy);
+  font: 600 10px var(--font-label);
+  letter-spacing: 1px;
 }
 .signal-housing {
   display: flex;
-  gap: 10px;
-  padding: 12px 16px;
-  border: 2px solid var(--line);
-  border-top: 0;
-  background: var(--graphite);
-  box-shadow: var(--shadow);
+  gap: 12px;
+  padding: 13px 16px;
+  background: var(--navy);
+  border: 3px solid var(--line);
+  border-radius: 22px;
+  box-shadow: var(--shadow), var(--bevel);
 }
 .signal-housing i {
-  display: block;
-  width: 36px;
-  height: 36px;
-  border: 4px solid var(--panel-inset);
+  width: 34px;
+  height: 34px;
+  border: 5px solid var(--deep);
   border-radius: 50%;
-  background: var(--panel-raised);
-  box-shadow: 0 0 0 1px var(--line-soft);
+  background: #31454a;
+  box-shadow:
+    0 1px 0 #e9e0bd55,
+    inset 0 2px 4px #0009;
 }
 .signal-housing .amber.lit {
-  background: var(--gold);
-  box-shadow:
-    0 0 0 1px var(--gold),
-    0 0 18px #d9ac4650;
+  background: radial-gradient(circle at 35% 25%, #f3d99b, var(--orange));
+  box-shadow: 0 0 12px #c9673544;
 }
 .signal-housing .green.lit {
-  background: #7baa83;
-  box-shadow:
-    0 0 0 1px #7baa83,
-    0 0 18px #7baa8350;
+  background: radial-gradient(circle at 35% 25%, #c1d9b4, #6f9e8c);
+  box-shadow: 0 0 12px #6f9e8c44;
 }
 #signalText {
   display: block;
-  font: 600 normal 34px/1.1 var(--font-display);
-  margin-top: 8px;
-  text-shadow: 2px 2px 0 var(--graphite);
+  margin-top: 10px;
+  font: 400 26px var(--font-display);
+  text-shadow: 0 3px 0 var(--deep);
 }
-/* Entry poster: original speed stripes and a cabinet-style racing marquee. */
 #intro {
   position: fixed;
   z-index: 30;
   inset: 0;
   display: flex;
-  align-items: center;
+  align-items: safe center;
   overflow: auto;
-  background: linear-gradient(
-    90deg,
-    #11191df5 0%,
-    #11191df5 43%,
-    #11191d50 78%
-  );
-  padding: 40px max(5vw, env(safe-area-inset-left));
+  padding: 32px 5vw;
+  background: linear-gradient(90deg, #0b1b26ef 30%, #0b1b2670);
 }
 .intro-card {
   position: relative;
-  width: 470px;
+  width: 510px;
   max-width: 100%;
-  flex-shrink: 0;
-  border-left: 1px solid var(--line);
-  padding-left: 28px;
+  padding: 27px 30px;
+  background: #153544f2;
+  border: 3px solid #8a9d94;
+  border-radius: 36px;
+  box-shadow:
+    var(--shadow-panel),
+    inset 0 2px 0 #f0dfb544;
 }
 .entry-strap {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  border-top: 1px solid var(--ivory);
-  border-bottom: 1px solid var(--ivory);
-  padding: 8px 0;
-  font: 600 17px var(--font-label);
-  letter-spacing: 1.7px;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 11px 14px;
+  margin: -4px -8px 0;
+  border-radius: 15px;
+  background: var(--cream);
+  color: var(--navy);
+  font: 600 14px var(--font-label);
+  letter-spacing: 1px;
 }
 .entry-strap b {
-  font: 600 normal 32px/0.9 var(--font-display);
-  color: var(--gold);
+  font: 400 27px var(--font-display);
+  color: var(--red);
 }
 .eyebrow {
-  font: 600 9px/1.4 var(--font-tech);
-  letter-spacing: 1.8px;
-  color: var(--gold);
-  margin: 20px 0 16px;
+  font: 600 10px var(--font-label);
+  color: #e6b07d;
+  letter-spacing: 1.4px;
+  margin: 20px 0 12px;
 }
 h1 {
-  font: 600 normal clamp(84px, 9vw, 132px) / 0.72 var(--font-display);
-  letter-spacing: -2px;
-  margin: 20px 0 24px;
-  transform: translateX(-4px);
+  font: 400 clamp(72px, 8vw, 114px) / 0.91 var(--font-display);
+  letter-spacing: -5px;
+  margin: 22px 0 18px;
+  color: var(--cream);
+  text-shadow: 0 4px 0 #0b1b26;
 }
 h1 span,
 h1 em {
   display: block;
 }
 h1 em {
-  color: var(--orange);
   font-style: normal;
-  margin-top: 7px;
+  color: #d68552;
+  margin-top: 2px;
 }
 .speed-stripes {
   display: flex;
   gap: 7px;
   transform: skew(-15deg);
-  margin-right: 12px;
+  padding-right: 8px;
 }
 .speed-stripes i {
   height: 7px;
-  background: var(--orange);
   flex: 1;
+  border-radius: 3px;
+  background: var(--orange);
 }
 .speed-stripes i:nth-child(2) {
-  background: var(--gold);
-  flex: 0.55;
+  flex: 0.6;
+  background: var(--red);
 }
 .speed-stripes i:nth-child(3) {
+  flex: 0.35;
   background: var(--teal);
-  flex: 0.25;
 }
 .intro-tagline {
-  font: 600 31px/0.98 var(--font-label);
-  letter-spacing: 1.5px;
-  color: var(--ivory);
-  margin: 24px 0 12px;
+  font: 400 22px/1.2 var(--font-display);
+  color: var(--cream);
+  margin: 20px 0 12px;
 }
 .intro-description {
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.6;
   margin: 12px 0 20px;
+  color: #d1d2c0;
 }
 #start {
   width: 100%;
-  min-height: 62px;
+  min-height: 60px;
   justify-content: space-between;
-  padding: 14px 20px;
-  font-size: 24px;
+  padding: 14px 18px;
+  font-size: 19px;
 }
 .entry-specs {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  margin: 22px 0;
-  border-bottom: 1px solid var(--line);
-  padding-bottom: 18px;
+  gap: 8px;
+  margin: 22px 0 18px;
 }
 .entry-specs > div {
-  padding-left: 16px;
-  border-left: 1px solid var(--line);
-}
-.entry-specs > div:first-child {
-  padding-left: 0;
-  border-left: 0;
+  padding: 12px 9px;
+  border: 1px solid #d2be8d77;
+  border-radius: 13px;
+  background: #f0dfb510;
 }
 .entry-specs b {
   display: block;
-  font: 600 normal 32px/1 var(--font-display);
-  color: var(--ivory);
+  font: 400 24px var(--font-display);
+  color: var(--cream);
 }
 .entry-specs span {
   display: block;
-  margin-top: 4px;
-  font-size: 7px;
-  letter-spacing: 0.3px;
-  color: var(--muted);
+  font-size: 8px;
+  margin-top: 5px;
+  color: #c7ccbd;
 }
 footer {
-  font: 600 9px/1.8 var(--font-tech);
+  font: 500 11px/1.8 var(--font-label);
   color: var(--muted);
 }
 footer > span {
-  color: var(--ivory);
   display: inline-block;
-  width: 42px;
+  width: 43px;
+  color: var(--cream);
+  font-weight: 600;
 }
 footer small {
-  font-size: 8px;
   display: block;
-  max-width: 350px;
-  margin-top: 8px;
+  font-size: 10px;
   line-height: 1.5;
+  margin-top: 8px;
 }
 #introTune {
   margin-top: 12px;
-  padding: 6px 10px;
+  font-size: 11px;
   min-height: 44px;
-  font-size: 12px;
 }
 #intro .build-debug {
-  font-size: 8px;
-  margin-top: 8px;
+  font-size: 9px;
+  margin-top: 11px;
 }
 .entry-course {
   position: absolute;
   right: 6vw;
-  bottom: 7vh;
-  width: 280px;
+  bottom: 8vh;
+  width: 265px;
+  padding: 20px;
   transform: rotate(-4deg);
-  padding: 16px;
-  border: 1px solid #e8d9b566;
-  background: #11191deb;
+  border: 2px solid #d2be8d;
+  border-radius: 25px;
+  background: var(--navy);
   box-shadow: var(--shadow);
-  color: var(--ivory);
 }
 .entry-course > span {
   display: block;
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 0.5px;
 }
 .entry-course svg {
   width: 100%;
-  height: 132px;
-  overflow: visible;
+  height: 130px;
   margin: 8px 0;
 }
 .entry-course svg path {
@@ -609,7 +632,7 @@ footer small {
   stroke-linejoin: round;
 }
 .map-bank {
-  stroke: var(--line);
+  stroke: #6d8782;
   stroke-width: 22;
 }
 .map-water {
@@ -622,79 +645,84 @@ footer small {
 }
 .entry-course strong {
   display: block;
-  font: 600 22px var(--font-label);
-  letter-spacing: 1px;
-  margin-bottom: 6px;
+  font: 400 17px var(--font-display);
+  margin-bottom: 7px;
 }
 body.racing #intro {
   display: none;
 }
-/* One console shell reuses the existing live-bound panels. */
 #pitConsole {
   position: fixed;
   z-index: 40;
-  right: max(24px, env(safe-area-inset-right));
+  right: max(22px, env(safe-area-inset-right));
   top: 86px;
-  bottom: 154px;
-  width: 440px;
+  bottom: 152px;
+  width: 455px;
   display: flex;
   flex-direction: column;
-  background: var(--graphite);
-  border: var(--border);
-  border-top: 4px solid var(--orange);
-  box-shadow: var(--shadow-panel);
+  border: 3px solid #839a95;
+  border-radius: 28px;
+  background: var(--navy);
+  box-shadow: var(--shadow-panel), var(--bevel);
+  overflow: hidden;
   animation: panel-enter var(--normal) var(--ease);
 }
 .pit-heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 16px 10px;
-  gap: 12px;
+  gap: 8px;
+  padding: 15px 16px 12px;
+  background: var(--cream);
+  color: var(--navy);
+  box-shadow: inset 0 -3px 0 #897a5626;
 }
 .pit-heading h2 {
-  font: 600 normal 30px/0.95 var(--font-display);
+  font: 400 21px/1.2 var(--font-display);
   margin: 0;
-  letter-spacing: 0.3px;
 }
 .pit-heading p {
-  font-size: 8px;
+  font-size: 9px;
   margin: 7px 0 0;
-  color: var(--muted);
-  letter-spacing: 0.6px;
+  color: #4c686a;
+  letter-spacing: 0.5px;
 }
 #pitClose {
   width: 44px;
-  padding: 0;
   min-height: 44px;
-  font-size: 24px;
-  font-family: var(--font-tech);
+  flex-shrink: 0;
+  padding: 0;
+  background: var(--navy);
+  border-color: #a3aa91;
+  border-radius: 13px;
+  font-size: 25px;
+  color: var(--cream);
 }
 .pit-tabs {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  border-top: 1px solid var(--line-soft);
-  border-bottom: 1px solid var(--line);
-  padding: 0 8px;
-  gap: 0;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 5px;
+  padding: 10px 9px;
+  background: var(--deep);
+  border-bottom: 1px solid var(--soft-line);
 }
 .pit-tabs button {
-  border: 0;
-  border-bottom: 3px solid transparent;
-  border-radius: 0;
-  padding: 8px 4px;
-  font-size: 15px;
-  letter-spacing: 1px;
-  background: transparent;
-  color: var(--muted);
+  min-height: 44px;
+  min-width: 0;
+  padding: 8px 2px;
+  margin: 0;
+  border-radius: 10px;
+  font-size: 11px;
+  letter-spacing: 0.2px;
+  box-shadow:
+    inset 0 1px 0 #ffffff18,
+    0 2px 0 #0003;
 }
 .pit-tabs button[aria-selected="true"] {
-  color: var(--gold);
-  border-bottom-color: var(--orange);
-  background: var(--panel);
-}
-.pit-tabs button:hover {
-  color: var(--ivory);
+  background: var(--cream);
+  color: var(--navy);
+  border-color: #d3bc8b;
+  box-shadow: inset 0 -3px 0 #c9673577;
 }
 .pit-scroll {
   flex: 1;
@@ -702,86 +730,94 @@ body.racing #intro {
   overflow: auto;
   overscroll-behavior: contain;
   touch-action: pan-y;
-  padding: 4px 18px 20px;
+  padding: 6px 16px 18px;
   scrollbar-width: thin;
-  scrollbar-color: var(--line) var(--graphite);
+  scrollbar-color: var(--line) var(--navy);
 }
 .pit-scroll::-webkit-scrollbar {
   width: 5px;
 }
 .pit-scroll::-webkit-scrollbar-thumb {
+  border-radius: 6px;
   background: var(--line);
 }
 .pit-footer {
-  border-top: 1px solid var(--line-soft);
-  padding: 8px 16px;
-  font-size: 8px;
-  letter-spacing: 0.6px;
-  color: var(--muted);
   display: flex;
   justify-content: space-between;
+  gap: 8px;
+  padding: 8px 15px;
+  border-top: 1px solid var(--soft-line);
+  font-size: 9px;
+  color: #aebfb4;
 }
 .pit-page {
+  border: 0;
   margin: 0;
   padding: 0;
-  border: 0;
 }
 .pit-page > summary,
 .physics-heading,
 #physicsLabToggle {
   display: none;
 }
-.pit-page > p:first-of-type {
-  padding: 10px 0;
-  margin: 4px 0;
-  border-bottom: 1px solid var(--line-soft);
+.pit-page > details {
+  margin: 10px 0;
+  padding: 6px 11px;
+  background: #25465377;
+  border: 1px solid var(--soft-line);
+  border-radius: 17px;
 }
 .pit-page button:not(.range-reset) {
-  margin: 4px 6px 4px 0;
+  margin: 5px 6px 5px 0;
 }
-.pit-page .control-range button {
+.pit-page .range-reset {
   margin: 0;
 }
-.pit-page > details {
-  margin-top: 8px;
-}
 .pit-page p {
-  font-size: 10px;
+  font-size: 12px;
 }
-.pit-page .engine-test {
-  padding: 12px;
-  background: var(--panel-inset);
-  border-left: 3px solid var(--teal);
+.pit-page > p:first-of-type {
+  margin: 8px 0 13px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--soft-line);
+}
+.panel-description {
+  padding: 10px 12px !important;
+  background: #4c898922;
+  border-radius: 11px;
+}
+.engine-test {
   margin: 16px 0;
+  padding: 12px;
+  border: 1px solid var(--soft-line);
+  border-radius: 18px;
+  background: var(--deep);
 }
 .engine-test #testRPM {
   display: block;
-  font-size: 24px;
-  margin: 8px 0;
+  font: 400 20px var(--font-display);
+  color: #e7b07b;
+  margin: 10px 0;
 }
 .idle-tip {
-  border-left: 2px solid var(--gold);
-  padding-left: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #c5a35d16;
 }
 .quality-presets {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 4px;
-  margin: 12px 0;
+  gap: 5px;
+  margin: 14px 0;
 }
 .quality-presets button {
+  padding: 8px 3px;
   margin: 0 !important;
-  padding: 8px 4px;
 }
 .quality-presets button[aria-pressed="true"] {
-  background: var(--ivory);
-  color: var(--graphite);
-  border-color: var(--ivory);
+  background: var(--cream);
+  color: var(--navy);
   transform: none;
-}
-.panel-description {
-  border-left: 3px solid var(--teal);
-  padding-left: 10px !important;
 }
 .pit-open #navigator,
 .pit-open .course-name {
@@ -790,73 +826,75 @@ body.racing #intro {
 #cameraToast {
   position: fixed;
   z-index: 11;
-  top: 76px;
+  top: 64px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 9px 16px;
-  background: var(--ivory);
-  color: var(--graphite);
-  border-left: 4px solid var(--orange);
-  font: 600 16px var(--font-label);
-  text-transform: uppercase;
-  box-shadow: var(--shadow);
+  padding: 8px 14px;
+  border: 2px solid var(--navy);
+  border-radius: 13px;
+  background: var(--cream);
+  color: var(--navy);
+  box-shadow: 0 3px 0 #081c2844;
+  font: 600 12px var(--font-label);
   pointer-events: none;
-  animation: label-enter var(--normal) var(--ease);
 }
-/* Results use the same printed timing-slip and instrument typography. */
 #results {
   position: fixed;
-  inset: 0;
   z-index: 50;
+  inset: 0;
   overflow: auto;
-  background: #11191deb;
-  padding: max(24px, env(safe-area-inset-top))
-    max(16px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom));
+  padding: max(22px, env(safe-area-inset-top))
+    max(16px, env(safe-area-inset-right)) max(22px, env(safe-area-inset-bottom));
+  background: #0b1b26eb;
   overscroll-behavior: contain;
 }
 .result-card {
-  max-width: 560px;
+  max-width: 570px;
   margin: 2vh auto;
-  background: var(--graphite);
-  border: var(--border);
-  border-top: 7px solid var(--orange);
-  padding: 24px;
+  padding: 25px;
+  background: var(--navy);
+  border: 3px solid var(--line);
+  border-radius: 30px;
   box-shadow: var(--shadow-panel);
   animation: panel-enter var(--normal) var(--ease);
 }
 .finish-strap {
-  padding: 8px 0 12px;
-  border-bottom: 1px solid var(--line);
-  font-size: 9px;
-  letter-spacing: 1px;
+  font-size: 10px;
+  letter-spacing: 0.7px;
+  padding: 10px 13px;
+  background: var(--cream);
+  color: var(--navy);
+  border-radius: 13px;
 }
 .result-card h2 {
-  font: 600 normal clamp(40px, 7vw, 58px) / 0.95 var(--font-display);
-  margin: 0 0 20px;
-  color: var(--ivory);
+  font: 400 clamp(27px, 4vw, 37px) / 1.2 var(--font-display);
+  margin: 12px 0 20px;
+  color: var(--cream);
 }
 #resultStats > p {
-  padding: 14px;
-  background: var(--ivory);
-  color: var(--graphite);
-  font-size: 12px;
+  padding: 15px;
+  background: var(--cream);
+  color: var(--navy);
+  border-radius: 16px;
+  font-size: 13px;
 }
 #resultStats ol {
   list-style: none;
-  counter-reset: lap;
   padding: 0;
+  counter-reset: lap;
 }
 #resultStats li {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   counter-increment: lap;
-  border-bottom: 1px solid var(--line-soft);
-  padding: 10px;
-  font: 600 18px var(--font-tech);
+  padding: 12px;
+  border-bottom: 1px solid var(--soft-line);
+  font: 400 17px var(--font-display);
 }
 #resultStats li:before {
   content: "LAP 0" counter(lap);
-  font-size: 11px;
+  font: 600 12px var(--font-label);
   color: var(--muted);
 }
 .result-card button {
@@ -867,9 +905,9 @@ body.racing #intro {
   margin: 16px 0 0;
 }
 .result-card #board p {
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.8;
-  border-bottom: 1px solid var(--line-soft);
+  border-bottom: 1px solid var(--soft-line);
   padding-bottom: 8px;
 }
 .debug-readout,
@@ -878,31 +916,28 @@ body.racing #intro {
   position: fixed;
   z-index: 7;
   left: max(24px, env(safe-area-inset-left));
-  top: 200px;
+  top: 208px;
   max-width: min(310px, 80vw);
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: var(--navy);
+  color: var(--cream);
+  font: 500 11px/1.6 var(--font-label);
   white-space: pre-line;
-  background: var(--graphite);
-  border-left: 3px solid var(--teal);
-  padding: 8px 12px;
-  color: var(--ivory);
-  font: 600 10px/1.6 var(--font-tech);
   pointer-events: none;
 }
 .bigfoot-readout {
-  top: 345px;
-  border-color: var(--gold);
+  top: 355px;
 }
 #physicsTelemetryOverlay {
-  top: 205px;
   margin: 0;
-  font-size: 10px;
 }
 #summerFPS {
   left: auto;
   right: 24px;
-  top: 70px;
-  font-size: 9px;
-  border-color: var(--gold);
+  top: 75px;
+  font-size: 10px;
 }
 body.sound-testing #intro,
 body.sound-testing #navigator,
@@ -915,6 +950,21 @@ body.sound-testing .controls {
 body.sound-testing .timing {
   opacity: 0.5;
 }
+body > #debug {
+  display: none;
+}
+body:not(.racing) .race-header,
+body:not(.racing) .timing,
+body:not(.racing) .speed,
+body:not(.racing) .controls,
+body:not(.racing) .course-name,
+body:not(.racing) #notice,
+body:not(.racing) #cameraToast,
+body:not(.racing) #physicsTelemetryOverlay,
+body:not(.racing) .debug-readout,
+body:not(.racing) #summerFPS {
+  visibility: hidden;
+}
 @keyframes panel-enter {
   from {
     opacity: 0;
@@ -925,420 +975,435 @@ body.sound-testing .timing {
     transform: translateY(0);
   }
 }
-@keyframes label-enter {
-  from {
-    opacity: 0;
-    margin-top: 4px;
-  }
-  to {
-    opacity: 1;
-    margin-top: 0;
-  }
-}
 @media (min-width: 1600px) {
-  .race-header,
-  .timing {
-    left: max(40px, env(safe-area-inset-left));
+  .intro-card {
+    width: 570px;
+    padding: 30px 36px;
   }
-  .race-header {
-    right: 40px;
+  h1 {
+    font-size: 130px;
+  }
+  .entry-course {
+    width: 320px;
   }
   #pitConsole {
     width: 480px;
-    right: 40px;
-  }
-  .intro-card {
-    width: 540px;
-  }
-  h1 {
-    font-size: 152px;
-  }
-  .entry-course {
-    width: 340px;
-  }
-  .entry-course svg {
-    height: 170px;
   }
 }
-@media (max-width: 900px) {
+@media (max-width: 1050px) {
   .tool-button span {
     display: none;
   }
+  .tool-button,
   #cameraSwitch {
-    width: 44px;
-    padding: 10px;
-  }
-  .timing {
-    top: 100px;
-  }
-  .entry-course {
-    right: 3vw;
-    width: 240px;
-  }
-  .intro-card {
-    width: 430px;
-  }
-  .intro-tagline {
-    font-size: 28px;
+    width: 46px;
+    padding: 9px;
   }
   #navigator {
-    top: 100px;
     left: auto;
     right: 24px;
     transform: none;
   }
-  #navigator svg {
-    width: 38px;
-    height: 38px;
-  }
-  #navigator strong {
-    font-size: 14px;
+  .entry-course {
+    right: 4vw;
+    width: 230px;
   }
 }
 @media (max-width: 600px) {
   .race-header {
-    top: max(16px, env(safe-area-inset-top));
+    top: max(15px, env(safe-area-inset-top));
     left: max(12px, env(safe-area-inset-left));
     right: max(12px, env(safe-area-inset-right));
-    gap: 8px;
   }
   .brand {
-    font-size: 30px;
-    letter-spacing: -0.5px;
+    font-size: 23px;
+    letter-spacing: -1.2px;
   }
   .brand:after {
-    font-size: 6px;
-    letter-spacing: 0.8px;
+    font-size: 7px;
+    letter-spacing: 0.5px;
   }
   .brand .build-debug {
-    font-size: 6px;
-    margin-top: 5px;
+    font-size: 7px;
   }
   .race-toolbar {
     gap: 5px;
   }
-  .tool-button {
-    padding: 9px;
+  .tool-button,
+  #cameraSwitch {
     width: 44px;
+    min-width: 44px;
+    height: 44px;
+    padding: 10px;
+    border-radius: 13px;
   }
   .tool-button svg {
-    width: 19px;
-    height: 19px;
+    width: 18px;
+    height: 18px;
   }
   .timing {
     top: 94px;
     left: max(12px, env(safe-area-inset-left));
     right: max(12px, env(safe-area-inset-right));
-    box-shadow: 2px 3px 0 #0003;
+    grid-template-columns: 51px minmax(0, 1fr) 91px;
+    gap: 4px;
+    padding: 5px;
+    border-radius: 22px;
   }
   .timing > div {
-    padding: 8px 12px;
-  }
-  .timing .time-instrument {
-    flex: 1;
-  }
-  .timing strong {
-    font-size: 22px;
-    letter-spacing: -1px;
+    padding: 9px 6px;
   }
   .instrument-label {
-    font-size: 8px;
-    letter-spacing: 0.7px;
+    font-size: 9px;
+  }
+  .timing strong {
+    font-size: 19px;
+  }
+  .timing .time-instrument strong {
+    font-size: 23px;
+  }
+  .timing .best-instrument strong {
+    font-size: 13px;
+  }
+  .time-instrument {
+    border-radius: 14px;
   }
   .controls {
     left: max(12px, env(safe-area-inset-left));
     right: max(12px, env(safe-area-inset-right));
-    bottom: max(26px, calc(env(safe-area-inset-bottom) + 8px));
+    bottom: max(26px, calc(env(safe-area-inset-bottom) + 7px));
   }
   .steering-controls {
-    gap: 8px;
+    gap: 9px;
   }
   .controls button {
     min-width: 83px;
     height: 94px;
     padding: 8px;
+    border-radius: 22px;
     font-size: 10px;
-    letter-spacing: 1.4px;
   }
   .controls svg {
-    width: 30px;
-    height: 30px;
+    width: 29px;
+    height: 29px;
   }
   #throttle {
     min-width: 112px;
-    padding: 8px;
   }
   .speed {
+    width: 160px;
     right: max(12px, env(safe-area-inset-right));
-    bottom: max(136px, calc(env(safe-area-inset-bottom) + 118px));
-    width: 142px;
+    bottom: max(137px, calc(env(safe-area-inset-bottom) + 120px));
   }
-  .speed-face {
-    padding: 7px 10px 4px;
+  .dial-bezel {
+    border-radius: 26px;
   }
-  .speed-face:after {
-    width: 9px;
-    height: 9px;
-    top: 9px;
-    right: 8px;
+  .dial-digital strong {
+    font-size: 27px;
   }
-  .speed strong {
-    font-size: 62px;
-    min-width: 80px;
+  .dial-digital > span {
+    font-size: 9px;
   }
-  .speed-unit {
-    font-size: 14px;
-    margin-left: 0;
-  }
-  .speed .instrument-label {
-    font-size: 7px;
-    letter-spacing: 0.6px;
-  }
-  .tachometer {
-    padding: 7px 9px 5px;
-  }
-  .tach-label {
-    font-size: 6px;
-    letter-spacing: 0.5px;
-  }
-  .tach-label output {
+  .dial-rpm output {
     font-size: 10px;
   }
-  .tach-scale {
-    font-size: 6px;
+  .dial-rpm > span {
+    font-size: 8px;
   }
   .course-name {
     left: 12px;
-    bottom: 150px;
+    bottom: 154px;
     gap: 8px;
-    max-width: 190px;
+    max-width: 188px;
   }
   .course-index {
-    font-size: 30px;
-    padding-right: 8px;
+    font-size: 25px;
   }
   .course-name b {
-    font-size: 15px;
-    letter-spacing: 1px;
+    font-size: 14px;
+    letter-spacing: 0.5px;
   }
   .course-name div > span {
-    font-size: 6px;
-    letter-spacing: 0.1px;
+    font-size: 8px;
+    letter-spacing: 0;
   }
   #notice {
-    font-size: 8px;
     bottom: max(7px, env(safe-area-inset-bottom));
+    font-size: 9px;
     max-width: 94vw;
+    padding: 3px 8px;
   }
   #navigator {
-    top: 170px;
+    top: 174px;
     left: 12px;
     right: auto;
     transform: none;
-    min-width: 136px;
-    padding: 6px 12px 6px 6px;
-    gap: 8px;
+    min-width: 129px;
+    padding: 7px 10px 7px 6px;
+    border-radius: 17px;
+    gap: 7px;
+  }
+  #navigator svg {
+    width: 30px;
+    height: 30px;
   }
   #navigator strong {
-    font-size: 14px;
+    font-size: 12px;
   }
   #navigator span {
     font-size: 12px;
   }
   #navigator small {
-    font-size: 7px;
-  }
-  #navigator svg {
-    width: 34px;
-    height: 34px;
+    font-size: 8px;
   }
   #startSignal {
-    top: 175px;
+    top: 182px;
+  }
+  .signal-housing {
+    padding: 11px 14px;
+    gap: 10px;
   }
   .signal-housing i {
     width: 30px;
     height: 30px;
   }
-  .signal-housing {
-    padding: 10px 14px;
-    gap: 8px;
-  }
   #signalText {
-    font-size: 30px;
+    font-size: 24px;
   }
   #cameraToast {
     top: 160px;
-    font-size: 14px;
+    font-size: 11px;
   }
   #pitConsole {
     left: max(8px, env(safe-area-inset-left));
     right: max(8px, env(safe-area-inset-right));
-    top: 162px;
-    bottom: max(132px, calc(env(safe-area-inset-bottom) + 116px));
     width: auto;
+    top: 165px;
+    bottom: max(134px, calc(env(safe-area-inset-bottom) + 120px));
+    border-radius: 25px;
   }
   .pit-heading {
-    padding: 10px 12px 8px;
+    padding: 12px;
   }
   .pit-heading h2 {
-    font-size: 26px;
+    font-size: 19px;
   }
   .pit-heading p {
-    font-size: 7px;
-    letter-spacing: 0.3px;
+    font-size: 8px;
   }
-  .pit-scroll {
-    padding: 4px 12px 16px;
+  .pit-tabs {
+    gap: 4px;
+    padding: 8px 6px;
   }
   .pit-tabs button {
-    font-size: 14px;
+    font-size: 10px;
+    min-height: 44px;
+  }
+  .pit-scroll {
+    padding: 5px 12px 16px;
   }
   .pit-footer {
-    padding: 6px 12px;
-    font-size: 7px;
+    font-size: 8px;
+    padding: 7px 12px;
   }
   body.pit-open .speed {
     visibility: hidden;
   }
   #intro {
-    padding: max(20px, env(safe-area-inset-top))
-      max(24px, env(safe-area-inset-left))
-      max(20px, env(safe-area-inset-bottom));
-    background: #11191df0;
-    align-items: safe center;
+    padding: max(16px, env(safe-area-inset-top))
+      max(14px, env(safe-area-inset-left))
+      max(16px, env(safe-area-inset-bottom));
+    background: #0b1b26d9;
   }
   .intro-card {
-    border: 0;
-    padding: 0;
     width: 100%;
-    max-width: 380px;
+    max-width: 390px;
     margin: auto;
+    padding: 22px 20px;
+    border-radius: 30px;
   }
   .entry-strap {
-    font-size: 15px;
-    letter-spacing: 1px;
+    font-size: 11px;
+    letter-spacing: 0.6px;
+    margin: 0;
+    padding: 10px 11px;
+    border-radius: 12px;
   }
   .entry-strap b {
-    font-size: 28px;
+    font-size: 23px;
   }
   .eyebrow {
-    font-size: 8px;
-    letter-spacing: 1px;
-    margin: 16px 0;
+    font-size: 9px;
+    letter-spacing: 0.8px;
+    margin: 17px 0 10px;
   }
   h1 {
-    font-size: clamp(64px, 25vw, 98px);
-    line-height: 0.73;
-    margin: 18px 0 22px;
+    font-size: min(22vw, 90px);
+    letter-spacing: -4px;
+    margin: 19px 0 17px;
+    line-height: 0.94;
   }
   .intro-tagline {
-    font-size: 27px;
-    margin: 20px 0 10px;
+    font-size: 20px;
+    margin: 18px 0 10px;
   }
   .intro-description {
-    font-size: 11px;
+    font-size: 13px;
     margin: 10px 0 18px;
   }
   #start {
     min-height: 58px;
-    font-size: 23px;
+    font-size: 17px;
+    padding: 12px 15px;
   }
   .entry-specs {
-    margin: 18px 0 14px;
-    padding-bottom: 14px;
+    margin: 18px 0 15px;
+    gap: 7px;
+  }
+  .entry-specs > div {
+    padding: 10px 8px;
   }
   .entry-specs b {
-    font-size: 28px;
+    font-size: 22px;
+  }
+  .entry-specs span {
+    font-size: 7px;
+  }
+  footer {
+    font-size: 10px;
+  }
+  footer small {
+    font-size: 9px;
+  }
+  #introTune {
+    margin-top: 10px;
+  }
+  #intro .build-debug {
+    font-size: 8px;
+  }
+  .entry-course {
+    display: none;
+  }
+  .debug-readout,
+  #physicsTelemetryOverlay {
+    left: 12px;
+    top: 251px;
+    font-size: 9px;
+    max-width: 205px;
+    padding: 8px 10px;
+  }
+  .bigfoot-readout {
+    top: 399px;
+  }
+  #summerFPS {
+    top: 75px;
+    right: 12px;
+    font-size: 9px;
+  }
+  .result-card {
+    margin: 0 auto;
+    padding: 18px;
+    border-radius: 26px;
+  }
+  .finish-strap {
+    font-size: 9px;
+    padding: 9px 10px;
+  }
+  .result-card h2 {
+    font-size: clamp(24px, 7.5vw, 31px);
+  }
+}
+@media (max-width: 360px) {
+  .brand {
+    font-size: 20px;
+  }
+  .brand:after {
+    font-size: 6px;
+  }
+  .race-toolbar {
+    gap: 4px;
+  }
+  .timing {
+    grid-template-columns: 46px minmax(0, 1fr) 74px;
+  }
+  .timing .time-instrument strong {
+    font-size: 21px;
+  }
+  .timing .best-instrument strong {
+    font-size: 11px;
+  }
+  .timing .instrument-label {
+    font-size: 8px;
+  }
+  .course-name {
+    display: none;
+  }
+  .controls button {
+    min-width: 78px;
+  }
+  #throttle {
+    min-width: 106px;
+  }
+  .pit-heading h2 {
+    font-size: 16px;
+  }
+  .pit-tabs button {
+    font-size: 9px;
+  }
+}
+@media (max-width: 600px) and (max-height: 740px) {
+  .intro-card {
+    padding: 17px 18px;
+  }
+  .entry-strap {
+    padding: 8px;
+    font-size: 10px;
+  }
+  .entry-strap b {
+    font-size: 20px;
+  }
+  .eyebrow {
+    margin: 12px 0 8px;
+    font-size: 8px;
+  }
+  h1 {
+    font-size: 19.5vw;
+    margin: 13px 0;
+  }
+  .intro-tagline {
+    font-size: 17px;
+    margin: 14px 0 8px;
+  }
+  .intro-description {
+    font-size: 12px;
+    margin: 8px 0 14px;
+  }
+  #start {
+    min-height: 52px;
+  }
+  .entry-specs {
+    margin: 13px 0;
+  }
+  .entry-specs > div {
+    padding: 8px 6px;
+  }
+  .entry-specs b {
+    font-size: 18px;
   }
   .entry-specs span {
     font-size: 6px;
   }
-  .entry-specs > div {
-    padding-left: 12px;
-  }
   footer {
-    font-size: 8px;
+    font-size: 9px;
   }
   footer small {
-    font-size: 7px;
-    max-width: 290px;
-  }
-  .entry-course {
-    display: none;
+    font-size: 8px;
   }
   #introTune {
     margin-top: 8px;
   }
   #intro .build-debug {
-    font-size: 7px;
-  }
-  #physicsTelemetryOverlay,
-  .debug-readout {
-    left: 12px;
-    top: 255px;
-    font-size: 8px;
-    padding: 6px 8px;
-    max-width: 205px;
-  }
-  .bigfoot-readout {
-    top: 390px;
-  }
-  #summerFPS {
-    right: 12px;
-    top: 75px;
-    font-size: 8px;
-  }
-  .result-card {
-    margin: 0 auto;
-    padding: 20px;
-  }
-  .finish-strap {
-    font-size: 8px;
-  }
-  .result-card h2 {
-    font-size: 43px;
-  }
-}
-@media (max-width: 600px) and (max-height: 740px) {
-  #intro {
-    padding-top: 16px;
-    padding-bottom: 16px;
-  }
-  h1 {
-    font-size: clamp(60px, 23vw, 88px);
-    margin: 14px 0 18px;
-  }
-  .intro-tagline {
-    font-size: 23px;
-    margin-top: 16px;
-  }
-  .intro-description {
-    margin-bottom: 14px;
-    font-size: 10px;
-  }
-  .eyebrow {
-    margin: 12px 0;
-    font-size: 7px;
-  }
-  .entry-specs {
-    margin: 14px 0 10px;
-    padding-bottom: 10px;
-  }
-  .entry-specs b {
-    font-size: 24px;
-  }
-  #start {
-    min-height: 52px;
-  }
-  footer small {
-    margin-top: 4px;
-  }
-  .entry-strap {
-    font-size: 13px;
-    padding: 6px 0;
-  }
-  .entry-strap b {
-    font-size: 24px;
+    margin-top: 7px;
   }
 }
 @media (orientation: landscape) and (max-height: 500px) {
@@ -1348,30 +1413,37 @@ body.sound-testing .timing {
     right: max(16px, env(safe-area-inset-right));
   }
   .brand {
-    font-size: 27px;
+    font-size: 23px;
   }
   .brand:after {
     display: none;
   }
   .brand .build-debug {
-    font-size: 6px;
-  }
-  .race-toolbar {
-    gap: 6px;
+    font-size: 7px;
   }
   .timing {
-    top: 62px;
+    top: 61px;
     left: max(16px, env(safe-area-inset-left));
     right: auto;
+    grid-template-columns: 47px 142px 85px;
+    padding: 4px;
+    gap: 3px;
+    border-radius: 18px;
   }
   .timing > div {
-    padding: 6px 12px;
+    padding: 6px;
+  }
+  .timing .instrument-label {
+    font-size: 8px;
   }
   .timing strong {
-    font-size: 19px;
+    font-size: 17px;
   }
-  .instrument-label {
-    font-size: 7px;
+  .timing .time-instrument strong {
+    font-size: 22px;
+  }
+  .timing .best-instrument strong {
+    font-size: 12px;
   }
   .controls {
     bottom: max(18px, env(safe-area-inset-bottom));
@@ -1381,178 +1453,162 @@ body.sound-testing .timing {
   .controls button {
     height: 81px;
     min-width: 86px;
-    font-size: 10px;
+    border-radius: 20px;
+    font-size: 9px;
   }
   .controls svg {
-    width: 27px;
-    height: 27px;
+    width: 26px;
+    height: 26px;
   }
   #throttle {
     min-width: 115px;
   }
   .speed {
-    width: 130px;
-    bottom: 110px;
-    right: max(16px, env(safe-area-inset-right));
+    width: 133px;
+    right: 16px;
+    bottom: 111px;
   }
-  .speed strong {
-    font-size: 49px;
-    min-width: 70px;
+  .dial-bezel {
+    border-radius: 23px;
   }
-  .speed-face {
-    padding: 5px 8px;
+  .dial-digital strong {
+    font-size: 22px;
   }
-  .speed-face:after {
-    width: 8px;
-    height: 8px;
-    top: 7px;
-    right: 7px;
+  .dial-rpm output {
+    font-size: 8px;
   }
-  .speed .instrument-label {
-    font-size: 6px;
-  }
-  .speed-unit {
-    font-size: 13px;
-  }
-  .tachometer {
-    padding: 5px 8px;
-  }
-  .tach-label {
-    font-size: 6px;
-  }
-  .tach-label output {
-    font-size: 9px;
-  }
-  .tach-scale {
-    display: none;
-  }
-  .rev-track {
-    height: 7px;
-    margin-top: 4px;
+  .dial-digital > span,
+  .dial-rpm > span {
+    font-size: 7px;
   }
   .course-name {
-    bottom: 116px;
+    bottom: 117px;
     left: 16px;
   }
   .course-index {
-    font-size: 28px;
+    font-size: 23px;
   }
   .course-name b {
-    font-size: 14px;
+    font-size: 13px;
   }
   .course-name div > span {
-    font-size: 6px;
+    font-size: 7px;
   }
   #notice {
     bottom: 3px;
-    font-size: 7px;
+    font-size: 8px;
   }
   #navigator {
     top: 64px;
     left: 50%;
     right: auto;
     transform: translateX(-50%);
-    padding: 5px 10px 5px 5px;
-    min-width: 130px;
+    min-width: 120px;
+    padding: 5px 9px 5px 5px;
+    border-radius: 15px;
   }
   #navigator svg {
-    width: 30px;
-    height: 30px;
+    width: 26px;
+    height: 26px;
   }
   #navigator strong {
-    font-size: 12px;
+    font-size: 11px;
   }
   #navigator span {
-    font-size: 10px;
+    font-size: 11px;
   }
   #navigator small {
-    font-size: 6px;
-  }
-  #startSignal {
-    top: 126px;
-  }
-  .signal-housing {
-    padding: 8px 12px;
-    gap: 8px;
-  }
-  .signal-housing i {
-    width: 25px;
-    height: 25px;
-  }
-  #signalText {
-    font-size: 27px;
-  }
-  .signal-caption {
     font-size: 7px;
   }
+  #startSignal {
+    top: 133px;
+  }
+  .signal-housing {
+    padding: 9px 12px;
+  }
+  .signal-housing i {
+    width: 26px;
+    height: 26px;
+  }
+  .signal-caption {
+    font-size: 9px;
+  }
+  #signalText {
+    font-size: 22px;
+  }
   #cameraToast {
-    top: 63px;
-    font-size: 13px;
+    top: 62px;
+    font-size: 11px;
   }
   #pitConsole {
-    top: 60px;
+    top: max(12px, env(safe-area-inset-top));
     bottom: 112px;
     left: auto;
     right: max(12px, env(safe-area-inset-right));
-    width: min(420px, 54vw);
+    width: min(430px, 54vw);
+    border-radius: 23px;
   }
   .pit-heading {
-    padding: 6px 12px;
+    padding: 8px 11px;
   }
   .pit-heading h2 {
-    font-size: 23px;
+    font-size: 17px;
   }
   .pit-heading p {
-    font-size: 6px;
+    font-size: 7px;
     margin-top: 4px;
   }
+  .pit-tabs {
+    padding: 6px;
+    gap: 4px;
+  }
   .pit-tabs button {
-    min-height: 38px;
-    font-size: 13px;
+    font-size: 9px;
+    min-height: 44px;
   }
   .pit-footer {
     display: none;
   }
   .pit-scroll {
-    padding: 2px 12px 12px;
+    padding: 2px 11px 12px;
   }
   body.pit-open .speed {
     visibility: hidden;
   }
   #intro {
-    padding: 16px 28px;
-    align-items: safe center;
-    background: linear-gradient(90deg, #11191df5 0 55%, #11191d90);
+    padding: 12px 22px;
+    background: #0b1b26d9;
   }
   .intro-card {
-    width: 580px;
-    max-width: 85%;
-    margin: 0;
-    padding: 0;
-    border: 0;
+    width: 630px;
+    max-width: 90%;
+    margin: auto;
+    padding: 15px 22px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    column-gap: 24px;
+    gap: 0 23px;
+    border-radius: 26px;
   }
   .entry-strap {
     grid-column: 1/-1;
-    font-size: 13px;
-    padding: 5px 0;
+    padding: 6px 10px;
+    font-size: 10px;
   }
   .entry-strap b {
-    font-size: 24px;
+    font-size: 20px;
   }
   .eyebrow {
     grid-column: 1/-1;
-    margin: 8px 0;
-    font-size: 7px;
+    margin: 9px 0 5px;
+    font-size: 8px;
   }
   h1 {
     grid-column: 1;
     grid-row: 3/6;
-    font-size: 88px;
-    line-height: 0.72;
-    margin: 10px 0 18px;
+    font-size: 65px;
+    letter-spacing: -3px;
+    line-height: 0.91;
+    margin: 12px 0;
   }
   .speed-stripes {
     grid-column: 1;
@@ -1561,264 +1617,82 @@ body.sound-testing .timing {
   .intro-tagline {
     grid-column: 2;
     grid-row: 3;
-    font-size: 25px;
+    font-size: 16px;
     margin: 5px 0 8px;
   }
   .intro-description {
     grid-column: 2;
     grid-row: 4;
-    font-size: 9px;
-    line-height: 1.5;
-    margin: 0 0 10px;
+    font-size: 11px;
+    margin: 0 0 9px;
   }
   #start {
     grid-column: 2;
     grid-row: 5/7;
     min-height: 48px;
-    font-size: 20px;
+    font-size: 15px;
     padding: 10px 12px;
   }
   .entry-specs {
     grid-column: 1;
     grid-row: 7;
-    margin: 12px 0 0;
-    padding-bottom: 8px;
-  }
-  .entry-specs b {
-    font-size: 24px;
-  }
-  .entry-specs span {
-    font-size: 5px;
+    margin: 11px 0 0;
+    gap: 5px;
   }
   .entry-specs > div {
-    padding-left: 8px;
+    padding: 7px 6px;
+    border-radius: 10px;
+  }
+  .entry-specs b {
+    font-size: 18px;
+  }
+  .entry-specs span {
+    font-size: 6px;
   }
   footer {
     grid-column: 2;
     grid-row: 7;
-    margin-top: 10px;
-    font-size: 7px;
+    font-size: 8px;
     line-height: 1.6;
+    margin-top: 10px;
   }
   footer small {
-    font-size: 6px;
-    max-width: 220px;
+    font-size: 7px;
     margin-top: 4px;
   }
   #introTune {
     grid-column: 1;
     grid-row: 8;
     min-height: 44px;
-    margin-top: 8px;
+    margin-top: 9px;
+    font-size: 10px;
     width: max-content;
-    font-size: 11px;
   }
   #intro .build-debug {
     grid-column: 2;
     grid-row: 8;
     align-self: center;
-    font-size: 7px;
-    margin: 0;
+    font-size: 8px;
+    margin-top: 0;
   }
   .entry-course {
     display: none;
   }
   .debug-readout,
   #physicsTelemetryOverlay {
-    top: 126px;
+    top: 132px;
     left: 16px;
-    font-size: 8px;
+    font-size: 9px;
     max-width: 240px;
   }
   .bigfoot-readout {
-    top: 126px;
+    top: 132px;
     left: auto;
     right: 16px;
   }
   #summerFPS {
     top: 64px;
     right: 16px;
-    font-size: 8px;
-  }
-}
-/* Entry screen is a clean marquee; race instruments appear when the race begins. */
-body:not(.racing) .race-header,
-body:not(.racing) .timing,
-body:not(.racing) .speed,
-body:not(.racing) .controls,
-body:not(.racing) .course-name,
-body:not(.racing) #notice,
-body:not(.racing) #cameraToast {
-  visibility: hidden;
-}
-@media (max-width: 600px) {
-  .timing .best-instrument strong {
-    font-size: 18px;
-    margin-top: 6px;
-  }
-  .course-name div > span {
-    font-size: 7px;
-  }
-}
-@media (max-width: 360px) {
-  .timing > div {
-    padding: 8px;
-  }
-  .timing strong {
-    font-size: 19px;
-  }
-  .timing .best-instrument strong {
-    font-size: 16px;
-  }
-  .controls button {
-    min-width: 76px;
-  }
-  #throttle {
-    min-width: 102px;
-  }
-}
-body:not(.racing) #physicsTelemetryOverlay,
-body:not(.racing) .debug-readout,
-body:not(.racing) #summerFPS {
-  visibility: hidden;
-}
-@media (orientation: landscape) and (max-height: 500px) {
-  #pitConsole {
-    top: max(12px, env(safe-area-inset-top));
-  }
-}
-
-/* Rajdhani supplies real SemiBold/Bold faces; glyph cells keep live clocks steady. */
-.timing strong,
-.tach-label output,
-#resultStats li,
-.control-range > output {
-  font-weight: 700;
-  font-variant-numeric: lining-nums tabular-nums;
-}
-.speed strong {
-  font-family: var(--font-tech);
-  font-weight: 700;
-  font-style: normal;
-  letter-spacing: -2px;
-}
-
-.instrument-digit {
-  display: inline-block;
-  width: 0.54em;
-  text-align: center;
-  letter-spacing: 0;
-}
-.instrument-separator {
-  display: inline-block;
-  min-width: 0.25em;
-  text-align: center;
-  letter-spacing: 0;
-}
-.speed strong {
-  font-size: 74px;
-}
-@media (max-width: 600px) {
-  .speed strong {
-    font-size: 58px;
-  }
-}
-@media (orientation: landscape) and (max-height: 500px) {
-  .speed strong {
-    font-size: 46px;
-  }
-}
-/* Refit the wider Racing Sans marquee and make the condensed instrument text legible. */
-.intro-tagline {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-style: normal;
-}
-.instrument-label {
-  font-size: 10px;
-}
-.pit-page p {
-  font-size: 12px;
-}
-@media (max-width: 600px) {
-  .brand {
-    font-size: clamp(22px, 7vw, 30px);
-  }
-  .brand:after,
-  .brand .build-debug {
-    font-size: 8px;
-  }
-  .timing .instrument-label {
-    font-size: 10px;
-  }
-  .tach-label {
     font-size: 9px;
-  }
-  .tach-label output {
-    font-size: 14px;
-  }
-  .tach-scale {
-    font-size: 8px;
-  }
-  .pit-heading p,
-  .pit-footer {
-    font-size: 9px;
-  }
-  .result-card h2 {
-    font-size: clamp(30px, 10.2vw, 43px);
-  }
-}
-.intro-description {
-  font-size: 14px;
-}
-footer {
-  font-size: 11px;
-}
-footer small {
-  font-size: 10px;
-}
-.entry-specs span {
-  font-size: 9px;
-}
-@media (max-width: 600px) {
-  .intro-description {
-    font-size: 13px;
-  }
-  footer {
-    font-size: 10px;
-  }
-  footer small {
-    font-size: 9px;
-  }
-  .entry-specs span {
-    font-size: 8px;
-  }
-}
-@media (max-width: 600px) and (max-height: 740px) {
-  .intro-description {
-    font-size: 11px;
-  }
-  footer {
-    font-size: 9px;
-  }
-  footer small {
-    font-size: 8px;
-  }
-  .entry-specs span {
-    font-size: 7px;
-  }
-}
-@media (orientation: landscape) and (max-height: 500px) {
-  .intro-description {
-    font-size: 11px;
-  }
-  footer {
-    font-size: 9px;
-  }
-  footer small {
-    font-size: 8px;
-  }
-  .entry-specs span {
-    font-size: 7px;
   }
 }

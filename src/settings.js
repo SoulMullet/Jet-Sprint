@@ -1,12 +1,14 @@
+import {sprayControls,sprayDefaults} from './spray-settings.js';
 import {handlingDefaults,physicsControls,handlingKeys,handlingProfiles,identifyHandling} from './handling.js';
 export const SETTINGS_SCHEMA=3;
-export const GAME_VERSION='0.15.1';
+export const GAME_VERSION='0.16.0';
 export const settingsKey='jet-sprint-settings';
 export const presetsKey='jet-sprint-presets';
 const number=(category,label,defaultValue,min,max,step=1,unit='')=>({category,label,type:'number',default:defaultValue,min,max,step,unit});
 const choice=(category,label,defaultValue,options)=>({category,label,type:'enum',default:defaultValue,options});
 const bool=(category,label,defaultValue)=>({category,label,type:'boolean',default:defaultValue});
 export const registry={
+ ...Object.fromEntries(Object.entries(sprayControls).map(([id,s])=>[id,{...number('Spray Effects',s.label,s.value,s.min,s.max,s.step,s.unit),description:s.description}])),
  ...Object.fromEntries(Object.entries(physicsControls).map(([id,s])=>[id,{...number('Boat Handling',s.label,s.value,s.min,s.max,s.step,s.unit),description:s.description}])),
  invertBank:bool('Boat Handling','Invert banking direction',false),physicsPreset:choice('Boat Handling','Physics preset','balanced',['balanced','arcade','simulation','custom']),physicsTelemetry:bool('Boat Handling','Show live physics telemetry',false),
  cameraResponse:number('Boat Handling','Camera response',8,3,12),effects:number('Spray Effects','Speed effects',1,.5,1.5,.1),sprayDistance:number('Spray Effects','Spray distance',100,0,200,1,'%'),waterVolume:number('Spray Effects','Water volume',100,0,200,1,'%'),
@@ -49,6 +51,7 @@ export class SettingsStore {
  subscribe(callback){this.listeners.add(callback);return ()=>this.listeners.delete(callback);}
  set(id,value){if(!Object.hasOwn(registry,id))throw Error('Unknown setting.');if(id==='physicsPreset'&&Object.hasOwn(handlingProfiles,value))return this.applyPhysics(handlingProfiles[value]);const notes=[];const next=valueFor(id,value,notes);if(this.values[id]===next)return;this.values[id]=next;const ids=[id];if(handlingKeys.includes(id)){this.values.physicsPreset=identifyHandling(this.values);ids.push('physicsPreset');}this.emit(ids,notes);this.schedule();}
  applyPhysics(values){const ids=[],notes=[];for(const id of handlingKeys){if(!Object.hasOwn(values,id))continue;this.values[id]=valueFor(id,values[id],notes);ids.push(id);}this.values.physicsPreset=identifyHandling(this.values);this.emit([...ids,'physicsPreset'],notes);this.schedule();}
+ resetSpray(){const ids=Object.keys(sprayDefaults);for(const id of ids)this.values[id]=sprayDefaults[id];this.emit(ids);this.schedule();}
  resetPhysics(group=null){this.applyPhysics(Object.fromEntries(handlingKeys.filter(id=>!group||physicsControls[id]?.group===group||id==='invertBank'&&group==='Banking & Roll').map(id=>[id,handlingDefaults[id]])));}
  exportPhysicsText(){return JSON.stringify({type:'jet-sprint-boat-physics',schemaVersion:SETTINGS_SCHEMA,gameVersion:GAME_VERSION,settings:Object.fromEntries(handlingKeys.map(id=>[id,this.values[id]]))},null,2);}
  importPhysicsText(text){if(typeof text!=='string'||text.length>200000)throw Error('Physics JSON exceeds 200 KB.');const raw=JSON.parse(text);if(raw?.type&&raw.type!=='jet-sprint-boat-physics')throw Error('This is not a boat physics configuration.');const next=parsePreset(text);this.applyPhysics(next.values);return next.notes;}

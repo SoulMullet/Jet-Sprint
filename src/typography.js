@@ -1,15 +1,15 @@
 // Shared names for CSS and canvas. Main waits before baking text into textures.
-export const displayFont =
-  '"Racing Sans One", Impact, "Arial Black", sans-serif';
-export const interfaceFont = 'Rajdhani, "Arial Narrow", system-ui, sans-serif';
+export const displayFont = '"Russo One", Impact, "Arial Black", sans-serif';
+export const interfaceFont =
+  '"Chakra Petch", "Trebuchet MS", system-ui, sans-serif';
 let loading;
 
 export async function loadGameFonts(fonts = globalThis.document?.fonts) {
   if (!fonts) return false;
   loading ??= Promise.all([
-    fonts.load('400 48px "Racing Sans One"', "JET SPRINT"),
-    fonts.load("600 18px Rajdhani", "0123456789 SETUP"),
-    fonts.load("700 24px Rajdhani", "0123456789 RACE"),
+    fonts.load('400 48px "Russo One"', "JET SPRINT"),
+    fonts.load('500 18px "Chakra Petch"', "0123456789 SETUP"),
+    fonts.load('600 24px "Chakra Petch"', "0123456789 RACE"),
   ])
     .then((groups) =>
       groups.every(
@@ -42,8 +42,7 @@ export function repaintAfterFonts(draw) {
   });
 }
 
-// Rajdhani has proportional numerals and no tnum table. Fixed-width glyph cells
-// keep live instruments steady while still rendering the requested real font.
+// Fixed glyph cells keep Russo One timers steady without changing their strings.
 const digitCache = new WeakMap();
 export function setInstrumentText(node, value) {
   const text = String(value);
@@ -71,4 +70,40 @@ export function setInstrumentText(node, value) {
       }
     state.text = text;
   }
+}
+
+export function mountFontDiagnostics() {
+  const inspect = () => ({
+    status: document.documentElement.dataset.fonts,
+    faces: [...document.fonts].map((f) => ({
+      family: f.family,
+      weight: f.weight,
+      status: f.status,
+    })),
+    computed: Object.fromEntries(
+      [
+        "#intro h1",
+        "#time",
+        "#lap",
+        "#speed",
+        "#pitTitle",
+        "button",
+        "label",
+        "select",
+      ].map((selector) => {
+        const node = document.querySelector(selector);
+        return [
+          selector,
+          node
+            ? {
+                family: getComputedStyle(node).fontFamily,
+                weight: getComputedStyle(node).fontWeight,
+              }
+            : null,
+        ];
+      }),
+    ),
+  });
+  globalThis.__JET_SPRINT_FONTS__ = Object.freeze({ inspect });
+  console.info("[JET SPRINT font diagnostics]", inspect());
 }

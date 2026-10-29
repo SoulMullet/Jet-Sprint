@@ -1,0 +1,172 @@
+[
+  {
+    "name": "straight",
+    "mode": "chase",
+    "model": "world-space-fixed-step",
+    "worldUp": "Y",
+    "step": 0.008333333333333333,
+    "active": 147,
+    "budget": 768,
+    "emitted": 334,
+    "impacts": 121,
+    "attachedCore": false,
+    "rate": 121.6,
+    "pixels": {
+      "changed": 7141,
+      "max": 182,
+      "active": 147
+    }
+  },
+  {
+    "name": "left",
+    "mode": "chase",
+    "model": "world-space-fixed-step",
+    "worldUp": "Y",
+    "step": 0.008333333333333333,
+    "active": 133,
+    "budget": 768,
+    "emitted": 334,
+    "impacts": 201,
+    "attachedCore": false,
+    "rate": 121.6,
+    "pixels": {
+      "changed": 5997,
+      "max": 181,
+      "active": 133
+    }
+  },
+  {
+    "name": "right",
+    "mode": "chase",
+    "model": "world-space-fixed-step",
+    "worldUp": "Y",
+    "step": 0.008333333333333333,
+    "active": 134,
+    "budget": 768,
+    "emitted": 334,
+    "impacts": 44,
+    "attachedCore": false,
+    "rate": 121.6,
+    "pixels": {
+      "changed": 6164,
+      "max": 185,
+      "active": 134
+    }
+  },
+  {
+    "name": "sideways",
+    "mode": "overhead",
+    "model": "world-space-fixed-step",
+    "worldUp": "Y",
+    "step": 0.008333333333333333,
+    "active": 150,
+    "budget": 768,
+    "emitted": 334,
+    "impacts": 6,
+    "attachedCore": false,
+    "rate": 121.6,
+    "pixels": {
+      "changed": 85,
+      "max": 147,
+      "active": 150
+    }
+  },
+  {
+    "name": "reverse",
+    "mode": "chase",
+    "model": "world-space-fixed-step",
+    "worldUp": "Y",
+    "step": 0.008333333333333333,
+    "active": 125,
+    "budget": 768,
+    "emitted": 292,
+    "impacts": 3,
+    "attachedCore": false,
+    "rate": 106.40000000000003,
+    "pixels": {
+      "changed": 1786,
+      "max": 173,
+      "active": 125
+    }
+  },
+  {
+    "name": "idle",
+    "mode": "chase",
+    "model": "world-space-fixed-step",
+    "worldUp": "Y",
+    "step": 0.008333333333333333,
+    "active": 0,
+    "budget": 768,
+    "emitted": 0,
+    "impacts": 0,
+    "attachedCore": false,
+    "rate": 0,
+    "pixels": {
+      "changed": 0,
+      "max": 0,
+      "active": 0
+    }
+  },
+  {
+    "name": "classic",
+    "mode": "classic",
+    "model": "world-space-fixed-step",
+    "worldUp": "Y",
+    "step": 0.008333333333333333,
+    "active": 147,
+    "budget": 768,
+    "emitted": 334,
+    "impacts": 0,
+    "attachedCore": false,
+    "rate": 121.6,
+    "pixels": {
+      "changed": 305,
+      "max": 178,
+      "active": 147
+    }
+  },
+  {
+    "name": "cockpit",
+    "mode": "cockpit",
+    "model": "world-space-fixed-step",
+    "worldUp": "Y",
+    "step": 0.008333333333333333,
+    "active": 147,
+    "budget": 768,
+    "emitted": 334,
+    "impacts": 121,
+    "attachedCore": false,
+    "rate": 121.6,
+    "pixels": {
+      "changed": 0,
+      "max": 0,
+      "active": 147
+    }
+  },
+  {
+    "name": "overhead",
+    "mode": "overhead",
+    "model": "world-space-fixed-step",
+    "worldUp": "Y",
+    "step": 0.008333333333333333,
+    "active": 147,
+    "budget": 768,
+    "emitted": 334,
+    "impacts": 121,
+    "attachedCore": false,
+    "rate": 121.6,
+    "pixels": {
+      "changed": 291,
+      "max": 176,
+      "active": 147
+    }
+  },
+  {
+    "name": "side-profile",
+    "pixels": {
+      "changed": 3242,
+      "max": 168,
+      "active": 147
+    }
+  }
+]
