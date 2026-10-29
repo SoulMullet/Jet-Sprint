@@ -1,12 +1,20 @@
-# JET SPRINT v0.15.0 — Arcade Identity
+# JET SPRINT v0.15.1 — Typography & Spray Fixes
 
 A mobile-first, single-player 3D jet sprint prototype built with JavaScript, Vite, Three.js and Web Audio. Geometry and sound are procedural; licensed interface fonts are bundled locally. No paid assets, account, API keys or backend are required.
 
-The active course is **Cedar Creek Figure Eight**, a compact two-loop circuit with one flat diagonal crossover and a separate staging inlet. A rustic race-office cabin, dock and moored boat, old pickup, 24 animated spectators and original local racing signs establish a Pacific Northwest venue in summer 1987. Open **Pit Control → RACE → Figure-eight overview** to see the layout; the default follow camera is unchanged. Look for **ARCADE-GUI · v0.15.0 · commit** in the playable HUD. See the [physics audit, implementation and verification](docs/boat-physics.md) and [retained HF rendering notes](docs/hf-graphics-v2.md).
+The active course is **Cedar Creek Figure Eight**, a compact two-loop circuit with one flat diagonal crossover and a separate staging inlet. A rustic race-office cabin, dock and moored boat, old pickup, 24 animated spectators and original local racing signs establish a Pacific Northwest venue in summer 1987. Open **Pit Control → RACE → Figure-eight overview** to see the layout; the default follow camera is unchanged. Look for **TYPE-SPRAY · v0.15.1 · commit** in the playable HUD. See the [physics audit, implementation and verification](docs/boat-physics.md) and [retained HF rendering notes](docs/hf-graphics-v2.md).
 
 HF-GRAPHICS-V2 adds multi-frequency freshwater waves, animated normal textures, live planar scenery reflections on High/Ultra, a historical three-band foam wake, a GPU spray/mist/droplet pool, physical sky lighting, wet clear-coated boat materials, cockpit/engine details, cutout fir foliage and instanced bank vegetation. Ultra adds depth-based contact occlusion. All art and textures are generated locally; no runtime asset downloads are needed.
 
 The V8 Sound Lab, 32 live controls, independent presets/JSON and stationary tuning remain available; see [the earlier track and V8 notes](docs/track-v8-upgrade.md) for audio controls. That document describes the superseded Shelter course.
+
+## Typography and spray fixes
+
+**Racing Sans One** now renders the large titles/race headings, and **Rajdhani SemiBold/Bold** renders functional UI, HUD, controls, readouts and results. Both are bundled locally with OFL licenses. The same families are used in canvas signs/debug labels, with font loading before texture creation and a late repaint if loading is slow. Fixed-width glyph cells keep live numbers steady without falling back to another numeric font. See [font attribution](public/fonts/ATTRIBUTION.md).
+
+Airborne spray now shares the boat's local axes and stern transform across GPU particles, the dense jet core and the comparison renderer. Positive nozzle deflection sends water opposite the hull reaction force; inherited velocity cannot turn a short-distance jet forward at high speed. Cornering sheets respond to lateral velocity, slip and measured lateral load. Launches include pitch/bank, upward lift and gravity; stored preferences, propulsion, steering and historical wake direction remain unchanged.
+
+See [audit, changed files, render evidence and validation](docs/type-spray.md). Browser platform-font reporting confirms actual Racing Sans One / Rajdhani glyphs. Captures cover menus/HUD/results and controlled straight/turn/drift/reverse/stationary spray states from multiple cameras. Physical iPhone performance remains unverified.
 
 ## Arcade interface
 
@@ -87,7 +95,8 @@ Push this repository to GitHub, then select **Settings → Pages → Build and d
 - `src/navigation.js` / `src/route-math.js`: turn instructions, scoped route projection, recovery and HUD.
 - `src/debug-views.js`: optional numbered gates/route diagnostics, Bigfoot marker/path/status and trigger/reset controls.
 - `src/audio.js`: interaction-unlocked harmonic V8 synthesis (an approximation, not a recording).
-- `src/design-system.css` / `src/style.css`: centralized tokens/components and responsive screen composition.
+- `src/design-system.css` / `src/style.css` / `src/typography.js`: shared font loading, canvas typography, stable numeric glyph cells and responsive interface styling.
+- `src/spray-frame.js`: reused boat-local nozzle/chine transforms and airborne launch calculations.
 - `src/interface.js` / `src/ui-components.js`: shared Pit Control shell, range resets, tabs, tooltips, confirmation dialog and focus handling.
 - `public/fonts`: three locally bundled OFL fonts and their attribution/licenses.
 - `src/hf-{water,reflections,effects,wake,scenery,boat-details,venue-materials}.js`: active HF rendering components.

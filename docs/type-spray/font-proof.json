@@ -1,0 +1,200 @@
+[
+  {
+    "selector": "#intro h1 span",
+    "fonts": [
+      {
+        "familyName": "Racing Sans One",
+        "postScriptName": "RacingSansOne-Regular",
+        "isCustomFont": true,
+        "glyphCount": 3
+      }
+    ]
+  },
+  {
+    "selector": "#start",
+    "fonts": [
+      {
+        "familyName": "Rajdhani",
+        "postScriptName": "Rajdhani-SemiBold",
+        "isCustomFont": true,
+        "glyphCount": 13
+      }
+    ]
+  },
+  {
+    "selector": "#signalText",
+    "fonts": [
+      {
+        "familyName": "Racing Sans One",
+        "postScriptName": "RacingSansOne-Regular",
+        "isCustomFont": true,
+        "glyphCount": 5
+      }
+    ]
+  },
+  {
+    "selector": "#time .instrument-digit",
+    "fonts": [
+      {
+        "familyName": "Rajdhani",
+        "postScriptName": "Rajdhani-Bold",
+        "isCustomFont": true,
+        "glyphCount": 1
+      }
+    ]
+  },
+  {
+    "selector": "#speed .instrument-digit",
+    "fonts": [
+      {
+        "familyName": "Rajdhani",
+        "postScriptName": "Rajdhani-Bold",
+        "isCustomFont": true,
+        "glyphCount": 1
+      }
+    ]
+  },
+  {
+    "selector": "#hudRPM .instrument-digit",
+    "fonts": [
+      {
+        "familyName": "Rajdhani",
+        "postScriptName": "Rajdhani-Bold",
+        "isCustomFont": true,
+        "glyphCount": 1
+      }
+    ]
+  },
+  {
+    "selector": "#pitTitle",
+    "fonts": [
+      {
+        "familyName": "Racing Sans One",
+        "postScriptName": "RacingSansOne-Regular",
+        "isCustomFont": true,
+        "glyphCount": 15
+      }
+    ]
+  },
+  {
+    "selector": "#topOut",
+    "fonts": [
+      {
+        "familyName": "Rajdhani",
+        "postScriptName": "Rajdhani-Bold",
+        "isCustomFont": true,
+        "glyphCount": 7
+      }
+    ]
+  },
+  {
+    "selector": "#pitTitle",
+    "fonts": [
+      {
+        "familyName": "Racing Sans One",
+        "postScriptName": "RacingSansOne-Regular",
+        "isCustomFont": true,
+        "glyphCount": 19
+      }
+    ]
+  },
+  {
+    "selector": "#summer-waveIntensity-value",
+    "fonts": [
+      {
+        "familyName": "Rajdhani",
+        "postScriptName": "Rajdhani-Bold",
+        "isCustomFont": true,
+        "glyphCount": 3
+      }
+    ]
+  },
+  {
+    "selector": "#pitTitle",
+    "fonts": [
+      {
+        "familyName": "Racing Sans One",
+        "postScriptName": "RacingSansOne-Regular",
+        "isCustomFont": true,
+        "glyphCount": 14
+      }
+    ]
+  },
+  {
+    "selector": "#engineTest",
+    "fonts": [
+      {
+        "familyName": "Rajdhani",
+        "postScriptName": "Rajdhani-SemiBold",
+        "isCustomFont": true,
+        "glyphCount": 28
+      }
+    ]
+  },
+  {
+    "selector": "#pitTitle",
+    "fonts": [
+      {
+        "familyName": "Racing Sans One",
+        "postScriptName": "RacingSansOne-Regular",
+        "isCustomFont": true,
+        "glyphCount": 14
+      }
+    ]
+  },
+  {
+    "selector": "#cameraSettings label",
+    "fonts": [
+      {
+        "familyName": "Rajdhani",
+        "postScriptName": "Rajdhani-SemiBold",
+        "isCustomFont": true,
+        "glyphCount": 11
+      }
+    ]
+  },
+  {
+    "selector": "#pitTitle",
+    "fonts": [
+      {
+        "familyName": "Racing Sans One",
+        "postScriptName": "RacingSansOne-Regular",
+        "isCustomFont": true,
+        "glyphCount": 12
+      }
+    ]
+  },
+  {
+    "selector": "#debug .settings-section summary",
+    "fonts": [
+      {
+        "familyName": "Rajdhani",
+        "postScriptName": "Rajdhani-SemiBold",
+        "isCustomFont": true,
+        "glyphCount": 14
+      }
+    ]
+  },
+  {
+    "selector": "#resultTitle",
+    "fonts": [
+      {
+        "familyName": "Racing Sans One",
+        "postScriptName": "RacingSansOne-Regular",
+        "isCustomFont": true,
+        "glyphCount": 13
+      }
+    ]
+  },
+  {
+    "selector": "#resultStats li",
+    "fonts": [
+      {
+        "familyName": "Rajdhani",
+        "postScriptName": "Rajdhani-Bold",
+        "isCustomFont": true,
+        "glyphCount": 15
+      }
+    ]
+  }
+]

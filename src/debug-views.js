@@ -1,9 +1,10 @@
 import * as THREE from 'three';
+import {interfaceFont,repaintAfterFonts} from './typography.js';
 function spriteLabel(text,color='#dfff72',width=256,height=64){
  const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;const ctx=canvas.getContext('2d'),texture=new THREE.CanvasTexture(canvas);
  texture.colorSpace=THREE.SRGBColorSpace;
  const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,transparent:true,depthTest:false,depthWrite:false}));sprite.renderOrder=12;
- const set=text=>{ctx.clearRect(0,0,width,height);ctx.fillStyle='#102b32e8';ctx.fillRect(0,0,width,height);ctx.strokeStyle=color;ctx.lineWidth=4;ctx.strokeRect(2,2,width-4,height-4);ctx.fillStyle=color;ctx.font='bold 30px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,width/2,height/2);texture.needsUpdate=true;};set(text);
+ let value=text;const set=text=>{value=text;ctx.clearRect(0,0,width,height);ctx.fillStyle='#102b32e8';ctx.fillRect(0,0,width,height);ctx.strokeStyle=color;ctx.lineWidth=4;ctx.strokeRect(2,2,width-4,height-4);ctx.fillStyle=color;ctx.font=`700 34px ${interfaceFont}`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,width/2,height/2);texture.needsUpdate=true;};set(text);repaintAfterFonts(()=>set(value));
  sprite.scale.set(5,5*height/width,1);return {sprite,set};
 }
 function line(points,color,segments=false){const geometry=new THREE.BufferGeometry().setFromPoints(points),material=new THREE.LineBasicMaterial({color,transparent:true,opacity:.8,depthTest:false,depthWrite:false});const mesh=segments?new THREE.LineSegments(geometry,material):new THREE.Line(geometry,material);mesh.renderOrder=10;return mesh;}

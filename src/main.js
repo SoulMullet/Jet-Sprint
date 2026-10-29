@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import './style.css';
+import {loadGameFonts,setInstrumentText} from './typography.js';
 import {mountInterface} from './interface.js';
 import {SummerSettings} from './summer-settings.js';
 import {SummerRenderer,mountGraphicsLab} from './graphics-lab.js';
@@ -9,6 +10,7 @@ import {createWaterSampler} from './hull-motion.js';
 import {mountPhysicsLab} from './physics-lab.js';
 import {presetName} from './handling.js';
 import {HFSpray} from './hf-effects.js';
+import {createSprayFrame,updateSprayFrame,jetLaunch,hullLaunch,hullSprayRate} from './spray-frame.js';
 import {HFWake} from './hf-wake.js';
 import {HFScenery} from './hf-scenery.js';
 import {renderGeometry} from './fluid/render-geometry.js';
@@ -36,6 +38,7 @@ import {createCourse,courseId,routeId,gameplayVersion} from './course.js';
 import {NavigationView,BigfootView} from './debug-views.js';
 import {RouteNavigator,mountNavigator} from './navigation.js';
 import {bindControls} from './controls.js';
+await loadGameFonts();
 const preferences=new SettingsStore({getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)});
 for(const id of Object.keys(settings))if(Object.hasOwn(preferences.values,id))settings[id]=preferences.values[id];
 const summerPreferences=new SummerSettings({getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)},matchMedia('(pointer:coarse)').matches);
@@ -60,7 +63,7 @@ function mesh(geo,material,x=0,y=0,z=0,parent=scene){const m=new THREE.Mesh(geo,
 const venue=createCourse(),N=600,points=venue.points;
 console.info(`Active track: ${venue.id} / version ${venue.version} / ${routeId}`);
 $('buildDebugHud').dataset.track=venue.id;
-for(const id of ['buildDebugHud','buildDebug'])$(id).textContent=`ARCADE-GUI · v${__BUILD_VERSION__} · ${__BUILD_COMMIT__}`;
+for(const id of ['buildDebugHud','buildDebug'])$(id).textContent=`TYPE-SPRAY · v${__BUILD_VERSION__} · ${__BUILD_COMMIT__}`;
 const overview=document.createElement('label');overview.innerHTML='<input id="courseOverview" type="checkbox"> Figure-eight overview';$('debug').append(overview);
 const tangents=points.map(p=>({x:p.tx,z:p.tz}));
 // Bank, render surface, collision and bathymetry share the same channel network.
@@ -181,10 +184,11 @@ let b,elapsed=0,lap=1,best=null;
 function restart(){cameraSystem.reset();if(soundLab.testing)soundLab.setTesting(false);const now=performance.now();if(playing)gameClock+=Math.max(0,(now-last)/1000);last=now;startSequence.reset();playing=document.body.classList.contains('racing');if(playing)startSequence.begin(gameClock,preferences.values.countdownDuration);fluid?.reset();fluid?.disturb();race.reset();navigator.reset();race.modified=modified(settings);doubleTap.reset();$('results').hidden=true;result=null;release();engine.reset();b={x:start.x,z:start.z,angle:Math.atan2(startT.z,startT.x),vx:0,vz:0,pump:0,nozzle:0,yawRate:0};elapsed=0;lap=1;life.fill(0);alpha.fill(0);emit=0;positions.fill(-1000);wakeTrail.reset();hfSpray.reset();hfWake.reset();roosterCore.mesh.visible=false;boatPresentation.reset();$('notice').textContent='Follow your navigator. Apply throttle to steer.';}
 restart();$('restart').onclick=()=>{if(document.body.classList.contains('racing'))playing=true;restart();if(playing)engine.start();};$('start').onclick=()=>{playing=true;document.body.classList.add('racing');engine.start();restart();};
 let previousSpeed=0,lastEmissionRate=0;
-const hfEffectsOptions={density:1,distance:1,volume:1,effects:1,persistence:3,outletY:.22,impact:0};
+const hfEffectsOptions={density:1,distance:1,volume:1,effects:1,persistence:3,pose:boatPresentation.motion,impact:0};
+const sprayFrame=createSprayFrame(),sprayLaunch={};
 function effects(dt,speed){
  const acceleration=Math.max(0,(speed-previousSpeed)/Math.max(dt,.001));previousSpeed=speed;
- const fx=Math.cos(b.angle),fz=Math.sin(b.angle),slide=-b.vx*fz+b.vz*fx,gfx=summerPreferences.values,limit=Math.min(COUNT,Math.floor(gfx.sprayCount));
+ const frame=updateSprayFrame(sprayFrame,b,boatPresentation.motion),gfx=summerPreferences.values,limit=Math.min(COUNT,Math.floor(gfx.sprayCount));
  particleGeo.setDrawRange(0,limit);
  for(let i=0;i<COUNT;i++){
   if(i>=limit){life[i]=alpha[i]=0;continue;}if(life[i]<=0)continue;life[i]-=dt;const j=i*3;
@@ -193,20 +197,20 @@ function effects(dt,speed){
   alpha[i]=Math.max(0,life[i]/lifetime[i])*.85;
   if(positions[j+1]<.02&&life[i]>0&&!splashPhase[i]){const p=nearest(positions[j],positions[j+2]);splashPhase[i]=1;positions[j+1]=.03;velocity[j]*=.15;velocity[j+2]*=.15;velocity[j+1]=1+Math.random();life[i]=lifetime[i]=.35;}if(splashPhase[i]&&positions[j+1]<.02)life[i]=0;if(life[i]<=0){alpha[i]=0;positions[j+1]=-1000;}
  }
- lastEmissionRate=(speed*8+(input.throttle?35+acceleration*2:0)+Math.abs(slide)*5)*settings.effects*settings.waterVolume/100*quality.particles*gfx.particleQuality*gfx.roosterDensity*1.8*(settings.sprayDistance>0?1:0);
+ const jetRate=(speed*8+(input.throttle?35+acceleration*2:0))*(b.jetPower??b.pump??0),hullRate=hullSprayRate(frame,speed,boatPresentation.motion.impact)*.25,hullChance=hullRate/Math.max(1,jetRate+hullRate);
+ lastEmissionRate=(jetRate+hullRate)*settings.effects*settings.waterVolume/100*quality.particles*gfx.particleQuality*gfx.roosterDensity*1.8*(settings.sprayDistance>0?1:0);
  emit+=lastEmissionRate*dt;
- while(emit>=1){emit--;const i=cursor++%limit,j=i*3,spread=(Math.random()-.5)*(2+Math.abs(slide)*.3);
+ while(emit>=1){emit--;const i=cursor++%limit,j=i*3;
   splashPhase[i]=0;life[i]=lifetime[i]=2.6;alpha[i]=.85;
-  positions[j]=b.x-fx*2.35;positions[j+1]=.4;positions[j+2]=b.z-fz*2.35;
-  const jet=(6+speed*.65+(input.throttle?4:0))*settings.sprayDistance/100;
-  velocity[j]=b.vx*.25-fx*jet-fz*spread-slide*fz*.5;
-  velocity[j+1]=2+Math.random()*(3+speed*.16);
-  velocity[j+2]=b.vz*.25-fz*jet+fx*spread+slide*fx*.5;
+  if(Math.random()<hullChance)hullLaunch(sprayLaunch,frame,speed,Math.random(),.65+Math.random()*.6);
+  else jetLaunch(sprayLaunch,frame,speed,settings.sprayDistance/100,.7+Math.random()*.55,(Math.random()-.5)*(1+Math.abs(frame.lateral)*.16),.65+Math.random()*.6);
+  positions[j]=sprayLaunch.px;positions[j+1]=sprayLaunch.py;positions[j+2]=sprayLaunch.pz;
+  velocity[j]=sprayLaunch.vx;velocity[j+1]=sprayLaunch.vy;velocity[j+2]=sprayLaunch.vz;
  }
  particleGeo.attributes.position.needsUpdate=true;particleGeo.attributes.alpha.needsUpdate=true;
- wakeTrail.update(dt,b,speed,gfx.wakePersistence,gfx.foam*settings.waterVolume/100);roosterCore.update(b,dt,speed,input,gfx.roosterDensity,settings.sprayDistance/100,settings.waterVolume/100,waterTime.value);
+ wakeTrail.update(dt,b,speed,gfx.wakePersistence,gfx.foam*settings.waterVolume/100);roosterCore.update(b,dt,speed,input,gfx.roosterDensity,settings.sprayDistance/100,settings.waterVolume/100,waterTime.value,boatPresentation.motion);
  hfWake.update(dt,b,speed,gfx.wakePersistence,gfx.foam*settings.waterVolume/100);
- hfEffectsOptions.density=gfx.roosterDensity;hfEffectsOptions.distance=settings.sprayDistance/100;hfEffectsOptions.volume=settings.waterVolume/100;hfEffectsOptions.effects=settings.effects;hfEffectsOptions.persistence=gfx.wakePersistence;hfEffectsOptions.outletY=boatPresentation.motion.outletY;hfEffectsOptions.impact=boatPresentation.motion.impact;hfSpray.update(dt,b,speed,input,hfEffectsOptions);}
+ hfEffectsOptions.density=gfx.roosterDensity;hfEffectsOptions.distance=settings.sprayDistance/100;hfEffectsOptions.volume=settings.waterVolume/100;hfEffectsOptions.effects=settings.effects;hfEffectsOptions.persistence=gfx.wakePersistence;hfEffectsOptions.impact=boatPresentation.motion.impact;hfSpray.update(dt,b,speed,input,hfEffectsOptions);}
 
 function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);cameraSystem.resize(w,h);summerLab?.apply();summerLab?.resize();}window.addEventListener('resize',resize);resize();
 const beforeStep={x:0,z:0};
@@ -256,5 +260,5 @@ function frame(now){requestAnimationFrame(frame);const rawDt=Math.max(0,(now-las
  }
  summerLab.update(rawDt,cameraSystem.target,cameraFrame.overview);
  const comparison=!!summerLab.comparison;spray.visible=comparison;roosterCore.mesh.visible&&=comparison;hfSpray.mesh.visible=!comparison;wakeTrail.mesh.visible&&=comparison;hfWake.mesh.visible&&=!comparison;
- $('speed').textContent=Math.round(speed*3.6);$('time').textContent=format(elapsed);$('lap').textContent=`${lap}/5`;$('best').textContent=best===null?'—':format(best);interfaceUI.update(dt,engine.rpm,audioSettings.values.maxRPM);summerLab.render(camera,dt);}
+ setInstrumentText($('speed'),Math.round(speed*3.6));setInstrumentText($('time'),format(elapsed));setInstrumentText($('lap'),`${lap}/5`);setInstrumentText($('best'),best===null?'—':format(best));interfaceUI.update(dt,engine.rpm,audioSettings.values.maxRPM);summerLab.render(camera,dt);}
 requestAnimationFrame(frame);

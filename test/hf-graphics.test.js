@@ -33,7 +33,7 @@ test('GPU spray emits three particle families aft at every heading, without muta
  for(const angle of [0,Math.PI/2,Math.PI,-1]){
   const scene=new THREE.Scene(),u=hfWaterUniforms(),spray=new HFSpray(scene,u),b={x:5,z:9,angle,vx:15*Math.cos(angle),vz:15*Math.sin(angle),pump:1,nozzle:.1,yawRate:.5},before={...b};spray.configure(1024,.8);
   for(let i=0;i<30;i++)spray.update(1/60,b,15,{});assert.deepEqual(b,before);assert.equal(scene.children.length,1);assert.equal(spray.mesh.geometry.instanceCount,1024);const kinds=new Set();
-  for(let i=0;i<Math.min(spray.cursor,spray.budget);i++){const j=i*4;assert.ok((spray.births[j]-b.x)*Math.cos(angle)+(spray.births[j+2]-b.z)*Math.sin(angle)<-2.3);kinds.add(spray.styles[j+2]);}
+  for(let i=0;i<Math.min(spray.cursor,spray.budget);i++){const j=i*4;const along=(spray.births[j]-b.x)*Math.cos(angle)+(spray.births[j+2]-b.z)*Math.sin(angle);if(spray.velocities[j+3]===0)assert.ok(along<-2.3);else assert.ok(along>=-1.61&&along<=-.59);assert.ok(spray.velocities[j]*Math.cos(angle)+spray.velocities[j+2]*Math.sin(angle)<0);kinds.add(spray.styles[j+2]);}
   assert.equal(kinds.size,3);const version=spray.mesh.geometry.attributes.birth.version;spray.update(.02,{...b,vx:0,vz:0,pump:0,yawRate:0},0,{});assert.equal(spray.rate,0);assert.equal(spray.mesh.geometry.attributes.birth.version,version);spray.reset();assert.ok(spray.births.every(v=>v===-1000));spray.dispose();assert.equal(scene.children.length,0);u.hfNormal.value.dispose();
  }
 });

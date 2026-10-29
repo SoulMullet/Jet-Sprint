@@ -1,3 +1,4 @@
+import {setInstrumentText} from "./typography.js";
 import { registry } from "./settings.js";
 import { audioControls } from "./audio-settings.js";
 import { summerControls } from "./summer-settings.js";
@@ -269,7 +270,7 @@ export function mountInterface({
       const value = Math.max(0, Math.round(engineRPM || 0)),
         text = String(value);
       if (text !== previousRPM) {
-        rpm.textContent = text;
+        setInstrumentText(rpm, text);
         previousRPM = text;
       }
       rev.style.transform = `scaleX(${Math.min(1, value / 8000)})`;

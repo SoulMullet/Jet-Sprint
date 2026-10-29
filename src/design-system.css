@@ -1,22 +1,22 @@
 /* JET SPRINT / instrument system. All interface colours and component states live here. */
 @font-face {
-  font-family: Jet Display;
-  src: url("/fonts/barlow-condensed-extrabold-italic.woff2") format("woff2");
-  font-weight: 800;
-  font-style: italic;
+  font-family: "Racing Sans One";
+  src: url("/fonts/racing-sans-one-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: Jet Condensed;
-  src: url("/fonts/barlow-condensed-semibold.woff2") format("woff2");
+  font-family: Rajdhani;
+  src: url("/fonts/rajdhani-semibold.woff2") format("woff2");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: Jet Mono;
-  src: url("/fonts/ibm-plex-mono-regular.woff2") format("woff2");
-  font-weight: 400;
+  font-family: Rajdhani;
+  src: url("/fonts/rajdhani-bold.woff2") format("woff2");
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
@@ -33,9 +33,9 @@
   --line: #526062;
   --line-soft: #364448;
   --ink: #11191d;
-  --font-display: "Jet Display", Impact, "Arial Narrow", sans-serif;
-  --font-label: "Jet Condensed", "Arial Narrow", sans-serif;
-  --font-tech: "Jet Mono", "Courier New", monospace;
+  --font-display: "Racing Sans One", Impact, "Arial Black", sans-serif;
+  --font-label: Rajdhani, "Arial Narrow", system-ui, sans-serif;
+  --font-tech: Rajdhani, "Arial Narrow", system-ui, sans-serif;
   --text-xs: 10px;
   --text-sm: 12px;
   --text-md: 14px;
@@ -61,6 +61,8 @@
   color: var(--ivory);
   background: var(--graphite);
   font-synthesis: none;
+  font-weight: 600;
+  font-variant-numeric: lining-nums tabular-nums;
 }
 * {
   box-sizing: border-box;
@@ -160,12 +162,12 @@ label {
 label small,
 p,
 .camera-note {
-  font: 400 var(--text-sm) / 1.65 var(--font-tech);
+  font: 600 var(--text-sm) / 1.65 var(--font-tech);
   letter-spacing: 0;
   color: var(--muted);
 }
 output {
-  font: 400 var(--text-sm) / 1.4 var(--font-tech);
+  font: 600 var(--text-sm) / 1.4 var(--font-tech);
   font-variant-numeric: tabular-nums;
   color: var(--gold);
 }
@@ -181,7 +183,7 @@ textarea {
   border-radius: var(--radius);
   background: var(--panel-inset);
   color: var(--ivory);
-  font: 400 16px/1.5 var(--font-tech);
+  font: 600 16px/1.5 var(--font-tech);
   padding: 10px 12px;
   letter-spacing: 0;
 }
@@ -406,7 +408,7 @@ summary::-webkit-details-marker {
 summary::after {
   content: "+";
   color: var(--gold);
-  font: 400 22px var(--font-tech);
+  font: 600 22px var(--font-tech);
 }
 details[open] > summary::after {
   content: "−";
@@ -418,7 +420,7 @@ summary:hover {
   display: none;
 }
 [role="status"] {
-  font: 400 var(--text-xs) / 1.6 var(--font-tech);
+  font: 600 var(--text-xs) / 1.6 var(--font-tech);
   color: var(--muted);
 }
 .status-led {
@@ -439,7 +441,7 @@ summary:hover {
   color: var(--graphite);
   border-left: 3px solid var(--orange);
   box-shadow: var(--shadow);
-  font: 400 11px/1.5 var(--font-tech);
+  font: 600 11px/1.5 var(--font-tech);
   pointer-events: none;
 }
 .ui-dialog {
@@ -459,7 +461,7 @@ summary:hover {
 }
 .ui-dialog h2 {
   margin: 8px 0;
-  font: 800 italic 36px/0.95 var(--font-display);
+  font: 400 normal 36px/0.95 var(--font-display);
   text-transform: uppercase;
 }
 .dialog-actions {

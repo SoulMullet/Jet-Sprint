@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {createSprayFrame,updateSprayFrame,jetLaunch,flightTime} from './spray-frame.js';
 // Every stamp starts at the stern and extends only backwards in hull space.
 export function stern(boat,out){out.x=boat.x-Math.cos(boat.angle)*2.35;out.z=boat.z-Math.sin(boat.angle)*2.35;return out;}
 const foamNoise=`float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}float foamNoise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x),mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.)),f.x),f.y);}`;
@@ -30,12 +31,15 @@ export class RoosterCore {
  constructor(scene){
   const p=[],uv=[],idx=[];for(let i=0;i<=20;i++)for(const side of [-1,1]){p.push(i/20,0,side);uv.push(i/20,(side+1)/2);if(i<20&&side===-1){const j=i*2;idx.push(j,j+1,j+2,j+1,j+3,j+2);}}
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(idx);
-  this.uniforms={plumeLength:{value:8},plumeHeight:{value:3},spread:{value:1},bend:{value:0},strength:{value:1},time:{value:0}};
-  this.mesh=new THREE.Mesh(g,new THREE.ShaderMaterial({transparent:true,depthWrite:false,side:THREE.DoubleSide,uniforms:this.uniforms,vertexShader:`uniform float plumeLength,plumeHeight,spread,bend;varying vec2 st;void main(){st=uv;float t=position.x;vec3 p=vec3(-2.35-t*plumeLength,.35+4.*plumeHeight*t*(1.-t),position.z*(.12+t*spread)+bend*t*t);gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);}`,fragmentShader:foamNoise+`uniform float strength,time;varying vec2 st;void main(){float side=abs(st.y-.5)*2.;float edge=1.-smoothstep(.3,1.,side);float n=foamNoise(vec2(st.x*24.-time*4.,st.y*12.+time))*.65+foamNoise(st*vec2(53.,21.))*.35;float a=edge*smoothstep(0.,.08,st.x)*(1.-smoothstep(.65,1.,st.x))*(.45+.55*n)*.5*strength;if(a<.005)discard;gl_FragColor=vec4(.94,.99,1.,a);}`}));this.mesh.frustumCulled=false;this.mesh.visible=false;this.mesh.renderOrder=2;scene.add(this.mesh);
+  this.frame=createSprayFrame();this.launch={};this.uniforms={jetOrigin:{value:new THREE.Vector3()},jetVelocity:{value:new THREE.Vector3()},jetSide:{value:new THREE.Vector3()},jetFlightTime:{value:1},spread:{value:1},strength:{value:1},time:{value:0}};
+  this.mesh=new THREE.Mesh(g,new THREE.ShaderMaterial({transparent:true,depthWrite:false,side:THREE.DoubleSide,uniforms:this.uniforms,vertexShader:`uniform vec3 jetOrigin,jetVelocity,jetSide;uniform float jetFlightTime,spread;varying vec2 st;
+  void main(){st=uv;float t=position.x,age=t*jetFlightTime;vec3 p=jetOrigin+jetVelocity*age+jetSide*position.z*(.12+t*spread);p.y-=4.9*age*age;gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);}`,fragmentShader:foamNoise+`uniform float strength,time;varying vec2 st;void main(){float side=abs(st.y-.5)*2.;float edge=1.-smoothstep(.3,1.,side);float n=foamNoise(vec2(st.x*24.-time*4.,st.y*12.+time))*.65+foamNoise(st*vec2(53.,21.))*.35;float a=edge*smoothstep(0.,.08,st.x)*(1.-smoothstep(.65,1.,st.x))*(.45+.55*n)*.5*strength;if(a<.005)discard;gl_FragColor=vec4(.94,.99,1.,a);}`}));this.mesh.frustumCulled=false;this.mesh.visible=false;this.mesh.renderOrder=2;scene.add(this.mesh);
  }
- update(b,dt,speed,input,density,distance,volume,time){
-  const force=Math.min(1.3,((b.pump||0)*.4+speed/24*.7))*density*volume;this.mesh.visible=force>.02&&distance>0;
-  this.uniforms.plumeLength.value=(5+speed*.4)*distance;this.uniforms.plumeHeight.value=1+speed*.105;this.uniforms.spread.value=.6+speed*.04;this.uniforms.bend.value=-(b.nozzle||0)*4+(-b.vx*Math.sin(b.angle)+b.vz*Math.cos(b.angle))*.08;this.uniforms.strength.value=force;this.uniforms.time.value=time;
-  this.mesh.position.set(b.x,0,b.z);this.mesh.rotation.y=-b.angle;
+ update(b,dt,speed,input,density,distance,volume,time,pose){
+  const frame=updateSprayFrame(this.frame,b,pose),jet=Number.isFinite(b.jetPower)?b.jetPower:frame.pump;
+  const force=Math.min(1.3,(.1+speed/24*.7)*jet)*density*volume;this.mesh.visible=force>.02&&distance>0;
+  const launch=jetLaunch(this.launch,frame,speed,distance),u=this.uniforms;
+  u.jetOrigin.value.set(launch.px,launch.py,launch.pz);u.jetVelocity.value.set(launch.vx,launch.vy,launch.vz);u.jetSide.value.set(-frame.hz,0,frame.hx);
+  u.jetFlightTime.value=flightTime(launch.py,launch.vy);u.spread.value=.6+speed*.04;u.strength.value=force;u.time.value=time;
  }
 }
