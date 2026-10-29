@@ -1,4 +1,5 @@
 import {registry,NamedPresets} from './settings.js';
+import {confirmDialog} from './ui-components.js';
 export function mountSettings(store,apply){
  const root=document.getElementById('debug'),status=document.createElement('p');status.id='settingsStatus';status.setAttribute('role','status');
  const message=text=>status.textContent=text;
@@ -24,11 +25,11 @@ export function mountSettings(store,apply){
  const list=document.createElement('select');list.id='presetList';list.setAttribute('aria-label','Saved presets');panel.append(name,list);
  const refreshList=selected=>{list.replaceChildren();const empty=document.createElement('option');empty.value='';empty.textContent='Choose a preset';list.append(empty);for(const r of named.records){const o=document.createElement('option');o.value=r.id;o.textContent=r.name;list.append(o);}list.value=selected||'';};refreshList();list.onchange=()=>{if(list.value)name.value=named.get(list.value).name;};
  const button=(title,id,action,parent=panel)=>{const b=document.createElement('button');b.type='button';b.textContent=title;b.id=id;b.onclick=async()=>{try{await action();}catch(error){message(error.message);}};parent.append(b);return b;};
- button('Save Current Preset','savePreset',()=>{const existing=named.records.find(r=>r.name.toLowerCase()===name.value.trim().toLowerCase());if(existing&&!confirm(`Overwrite preset “${existing.name}”?`))return;const id=named.save(name.value,store.exportText(),!!existing);refreshList(id);message('Preset saved on this device.');});
+ button('Save Current Preset','savePreset',async()=>{const existing=named.records.find(r=>r.name.toLowerCase()===name.value.trim().toLowerCase());if(existing&&!await confirmDialog(`Overwrite preset “${existing.name}”?`))return;const id=named.save(name.value,store.exportText(),!!existing);refreshList(id);message('Preset saved on this device.');});
  button('Load Preset','loadPreset',()=>{const r=named.get(list.value);const notes=store.importText(r.json);message(`Loaded ${r.name}. ${notes.join(' ')}`);});
  button('Rename','renamePreset',()=>{named.rename(list.value,name.value);refreshList(list.value);message('Preset renamed.');});
- button('Delete','deletePreset',()=>{const r=named.get(list.value);if(!confirm(`Delete preset “${r.name}”?`))return;named.delete(r.id);refreshList();message('Preset deleted.');});
- button('Reset to Defaults','resetDefaults',()=>{if(!confirm('Reset active settings? Saved presets and race results are kept.'))return;store.reset();message('Defaults restored.');});
+ button('Delete','deletePreset',async()=>{const r=named.get(list.value);if(!await confirmDialog(`Delete preset “${r.name}”?`))return;named.delete(r.id);refreshList();message('Preset deleted.');});
+ button('Reset to Defaults','resetDefaults',async()=>{if(!await confirmDialog('Reset active settings? Saved presets and race results are kept.'))return;store.reset();message('Defaults restored.');});
  const portable=document.createElement('details'),title=document.createElement('summary');title.textContent='Portable JSON preset';portable.append(title);panel.append(portable);
  const text=document.createElement('textarea');text.id='presetJSON';text.rows=7;text.setAttribute('aria-label','Preset JSON for export or import');text.spellcheck=false;portable.append(text);
  const exportText=()=>{text.value=store.exportText();portable.open=true;return text.value;};

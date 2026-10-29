@@ -1,26 +1,36 @@
-# JET SPRINT v0.14.0 — Boat Physics & Handling
+# JET SPRINT v0.15.0 — Arcade Identity
 
-A mobile-first, single-player 3D jet sprint prototype built with JavaScript, Vite, Three.js and Web Audio. All geometry and sound are procedural; no assets, account, API keys or backend required.
+A mobile-first, single-player 3D jet sprint prototype built with JavaScript, Vite, Three.js and Web Audio. Geometry and sound are procedural; licensed interface fonts are bundled locally. No paid assets, account, API keys or backend are required.
 
-The active course is **Cedar Creek Figure Eight**, a compact two-loop circuit with one flat diagonal crossover and a separate staging inlet. A rustic race-office cabin, dock and moored boat, old pickup, 24 animated spectators and original local racing signs establish a Pacific Northwest venue in summer 1987. Open **Game Settings → Figure-eight overview** to see the layout; the default follow camera is unchanged. Look for **PHYSICS-V1 · v0.14.0 · commit** in the playable HUD. See the [physics audit, implementation and verification](docs/boat-physics.md) and [retained HF rendering notes](docs/hf-graphics-v2.md).
+The active course is **Cedar Creek Figure Eight**, a compact two-loop circuit with one flat diagonal crossover and a separate staging inlet. A rustic race-office cabin, dock and moored boat, old pickup, 24 animated spectators and original local racing signs establish a Pacific Northwest venue in summer 1987. Open **Pit Control → RACE → Figure-eight overview** to see the layout; the default follow camera is unchanged. Look for **ARCADE-GUI · v0.15.0 · commit** in the playable HUD. See the [physics audit, implementation and verification](docs/boat-physics.md) and [retained HF rendering notes](docs/hf-graphics-v2.md).
 
 HF-GRAPHICS-V2 adds multi-frequency freshwater waves, animated normal textures, live planar scenery reflections on High/Ultra, a historical three-band foam wake, a GPU spray/mist/droplet pool, physical sky lighting, wet clear-coated boat materials, cockpit/engine details, cutout fir foliage and instanced bank vegetation. Ultra adds depth-based contact occlusion. All art and textures are generated locally; no runtime asset downloads are needed.
 
 The V8 Sound Lab, 32 live controls, independent presets/JSON and stationary tuning remain available; see [the earlier track and V8 notes](docs/track-v8-upgrade.md) for audio controls. That document describes the superseded Shelter course.
 
+## Arcade interface
+
+The Summer ’87 identity uses a condensed italic racing wordmark, ivory instrument faces, graphite control housings, orange switches, gold readouts and teal indicators. Open **PIT CONTROL** from the title screen or the toolbar. Its **RACE / HULL / VIDEO / V8 / VIEW** tabs reuse the original settings, physics, graphics, sound and camera panels. The console scrolls above the driving buttons and applies changes live; opening it releases held inputs. It does not pause a race. Closing or leaving the V8 tab ends a stationary engine test so a hidden test cannot leave the clock frozen.
+
+Every numeric tuning slider has its original live readout and an individual reset button. Existing category/factory resets, saved presets, file imports, JSON sharing, telemetry, debug tools and storage keys remain available. Arrow keys/Home/End navigate console tabs; Escape closes the console and restores focus. Destructive full-game preset operations use a styled confirmation dialog. Camera cycling remains one tap in the top toolbar.
+
+The HUD now pairs speed with the engine's **actual RPM**, a segmented tachometer, lap/elapsed/best instruments, route arrows and starting lamps. Reduced-motion preferences disable interface transitions and route-cue animation. Native input semantics, custom range/toggle/select surfaces, 44 px targets and safe-area spacing support touch and keyboard use. No pause screen existed, so none was added.
+
+See [design, changed files and QA details](docs/arcade-ui.md), [screenshots](docs/arcade-ui), and [font attribution/licenses](public/fonts/ATTRIBUTION.md). The font files are served by this site; no external font requests or new package dependencies were added. Chromium browser checks cover all tuning sliders, preset workflows, phone-sized touch, reload persistence, results (using a test-only completed-race fixture), and 320×568 through 1920×1080 layouts. Physical iPhone Safari and sustained frame rates remain unverified.
+
 ## Boat Physics Lab
 
-Press **BOAT PHYSICS** during play (or use the shortcut under Game Settings). The scrollable drawer ends above the steering/throttle buttons and keeps the race running. Its six collapsible categories expose 37 live sliders for propulsion, waterjet steering, force-based banking, planing, drift/grip and damped water response, plus banking inversion. Each category has its own reset; **Restore factory physics** restores Balanced without changing graphics, cameras, audio or saved presets.
+Open **PIT CONTROL → HULL** during play or from the title screen. The scrollable drawer ends above the steering/throttle buttons and keeps the race running. Its six collapsible categories expose 37 live sliders for propulsion, waterjet steering, force-based banking, planing, drift/grip and damped water response, plus banking inversion. Each category has its own reset; **Restore factory physics** restores Balanced without changing graphics, cameras, audio or saved presets.
 
 **Balanced** is the new-user default: 85 km/h nominal target, 65% drift, 75% steering response and a 9° maximum bank angle. **Arcade** gives quicker response and stronger recovery. **Simulation-Inspired** adds inertia and more demanding cornering. Old valid handling values migrate additively and take precedence over new defaults; a changed tune displays **Custom**.
 
-Open **Custom presets & JSON** to save, update, load, rename or delete a physics-only preset. Export/copy, paste/import and JSON file import are available. Physics JSON and category resets leave unrelated settings untouched. Custom physics presets have their own collection; older full-game presets remain available in Game Settings. Enable **Show live physics telemetry**, then close the drawer to see real speed/input, yaw, actual/target roll, lateral slip, thrust, planing and preset values.
+Open **Custom presets & JSON** to save, update, load, rename or delete a physics-only preset. Export/copy, paste/import and JSON file import are available. Physics JSON and category resets leave unrelated settings untouched. Custom physics presets have their own collection; older full-game presets remain available in **RACE → Saved Presets**. Enable **Show live physics telemetry**, then close the drawer to see real speed/input, yaw, actual/target roll, lateral slip, thrust, planing and preset values.
 
 Thrust builds with pump pressure and the stern nozzle produces both propulsion and yaw. Lifting throttle removes most steering authority; velocity continues independently of heading. The hull now banks from lateral acceleration, rises onto plane and follows a lightweight deterministic sample of the existing wind/wake field. This adds no fluid solver or GPU readback. Diagnostic waves in the optional GPU fluid solver are not sampled by the hull; see the documented approximation. Spray follows actual thrust and stern height, and V8 load includes propulsion load. No new audio settings are introduced.
 
 ## Graphics Quality Lab
 
-Open **Game Settings → Graphics Quality Lab** for live water, spray, lighting, atmosphere, scenery and resolution controls. Use **Low** for older phones, **Medium** for modern phones, **High** for desktop, or **Ultra** for stronger desktop GPUs. Low disables shadows/postprocessing/live reflections; Medium retains soft shadows and sky reflections. High/Ultra add live reflections, more waves/particles/vegetation and larger shadow maps. The FPS switch reports the current animation frame rate; no physical-device benchmark is implied.
+Open **PIT CONTROL → VIDEO** for live water, spray, lighting, atmosphere, scenery and resolution controls. Use **Low** for older phones, **Medium** for modern phones, **High** for desktop, or **Ultra** for stronger desktop GPUs. Low disables shadows/postprocessing/live reflections; Medium retains soft shadows and sky reflections. High/Ultra add live reflections, more waves/particles/vegetation and larger shadow maps. The FPS switch reports the current animation frame rate; no physical-device benchmark is implied.
 
 The Lab saves separately from gameplay, audio and camera preferences. **Copy settings JSON**, **Paste JSON**, **Import JSON** and **Reset graphics defaults** operate on graphics only. The render budget is linked to the existing Graphics selector. Device pixel ratio and the budget can cap effective resolution and shadow size. Previous graphics JSON/settings remain readable. New coarse-pointer devices default conservatively to Low (Medium when reported memory is above 4 GB); desktop defaults to High. Manual choices persist.
 
@@ -30,9 +40,9 @@ New sessions default to the lightweight procedural water renderer. Existing save
 
 ## Racing cameras
 
-Use the compact **▣ camera-name** button to cycle **Classic Arcade → Chase → Cockpit → Overhead**. Classic retains the original elevated follow view. Chase follows low behind the boat; Cockpit uses the existing driver seat and boat model; Overhead is an orthographic, north-up view.
+Use the compact **camera** button to cycle **Classic Arcade → Chase → Cockpit → Overhead**. Classic retains the original elevated follow view. Chase follows low behind the boat; Cockpit uses the existing driver seat and boat model; Overhead is an orthographic, north-up view.
 
-Open **Game Settings → Racing Cameras** to select a mode and tune its distance/height, FOV or zoom, lag, and look-ahead where applicable. Higher lag softens following. Each mode saves independently on this device. **Reset Cameras to Defaults** resets only camera preferences and returns to Classic. The legacy **Camera response** control still sets Classic's lag. Camera preferences are stored separately from the existing gameplay/audio settings and their JSON presets.
+Open **PIT CONTROL → VIEW** to select a mode and tune its distance/height, FOV or zoom, lag, and look-ahead where applicable. Higher lag softens following. Each mode saves independently on this device. **Reset Cameras to Defaults** resets only camera preferences and returns to Classic. The legacy **Camera response** control still sets Classic's lag. Camera preferences are stored separately from the existing gameplay/audio settings and their JSON presets.
 
 The existing **Figure-eight overview** remains a full-course diagnostic override. Switching camera or resetting cameras exits that overview. See [camera implementation and verification](docs/cameras.md) for limits and screenshots.
 
@@ -77,7 +87,9 @@ Push this repository to GitHub, then select **Settings → Pages → Build and d
 - `src/navigation.js` / `src/route-math.js`: turn instructions, scoped route projection, recovery and HUD.
 - `src/debug-views.js`: optional numbered gates/route diagnostics, Bigfoot marker/path/status and trigger/reset controls.
 - `src/audio.js`: interaction-unlocked harmonic V8 synthesis (an approximation, not a recording).
-- `src/style.css`: responsive overlays and touch controls.
+- `src/design-system.css` / `src/style.css`: centralized tokens/components and responsive screen composition.
+- `src/interface.js` / `src/ui-components.js`: shared Pit Control shell, range resets, tabs, tooltips, confirmation dialog and focus handling.
+- `public/fonts`: three locally bundled OFL fonts and their attribution/licenses.
 - `src/hf-{water,reflections,effects,wake,scenery,boat-details,venue-materials}.js`: active HF rendering components.
 - `src/graphics-lab.js` / `src/summer-settings.js` / `src/summer-post.js`: quality/persistence/UI, live renderer settings and optional postprocessing.
 

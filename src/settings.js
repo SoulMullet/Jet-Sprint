@@ -1,6 +1,6 @@
 import {handlingDefaults,physicsControls,handlingKeys,handlingProfiles,identifyHandling} from './handling.js';
 export const SETTINGS_SCHEMA=3;
-export const GAME_VERSION='0.14.0';
+export const GAME_VERSION='0.15.0';
 export const settingsKey='jet-sprint-settings';
 export const presetsKey='jet-sprint-presets';
 const number=(category,label,defaultValue,min,max,step=1,unit='')=>({category,label,type:'number',default:defaultValue,min,max,step,unit});

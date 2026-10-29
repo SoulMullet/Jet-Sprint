@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import './style.css';
+import {mountInterface} from './interface.js';
 import {SummerSettings} from './summer-settings.js';
 import {SummerRenderer,mountGraphicsLab} from './graphics-lab.js';
 import {WakeTrail,RoosterCore} from './wake-trail.js';
@@ -59,7 +60,7 @@ function mesh(geo,material,x=0,y=0,z=0,parent=scene){const m=new THREE.Mesh(geo,
 const venue=createCourse(),N=600,points=venue.points;
 console.info(`Active track: ${venue.id} / version ${venue.version} / ${routeId}`);
 $('buildDebugHud').dataset.track=venue.id;
-for(const id of ['buildDebugHud','buildDebug'])$(id).textContent=`PHYSICS-V1 · v${__BUILD_VERSION__} · ${__BUILD_COMMIT__}`;
+for(const id of ['buildDebugHud','buildDebug'])$(id).textContent=`ARCADE-GUI · v${__BUILD_VERSION__} · ${__BUILD_COMMIT__}`;
 const overview=document.createElement('label');overview.innerHTML='<input id="courseOverview" type="checkbox"> Figure-eight overview';$('debug').append(overview);
 const tangents=points.map(p=>({x:p.tx,z:p.tz}));
 // Bank, render surface, collision and bathymetry share the same channel network.
@@ -141,7 +142,7 @@ for(const el of [$('game'),document.querySelector('.controls')]){
  for(const event of ['touchstart','touchmove','touchend','gesturestart','gesturechange','contextmenu'])el.addEventListener(event,e=>e.preventDefault(),{passive:false});
 }
 const keyMap={ArrowLeft:'left',a:'left',ArrowRight:'right',d:'right',ArrowUp:'throttle',w:'throttle',' ':'throttle'};
-window.addEventListener('keydown',e=>{if(e.target instanceof HTMLInputElement||e.target instanceof HTMLSelectElement||e.target instanceof HTMLTextAreaElement||e.target.closest?.('#debug, #soundLab, #physicsLab')||e.target.isContentEditable||soundLab.testing)return;const k=e.key.length===1?e.key.toLowerCase():e.key;if(keyMap[k]&&playing){e.preventDefault();engine.start();setInput(keyMap[k],k,true);}if(k==='r'&&!e.repeat)restart();});window.addEventListener('keyup',e=>{const k=e.key.length===1?e.key.toLowerCase():e.key;if(keyMap[k])setInput(keyMap[k],k,false);});
+window.addEventListener('keydown',e=>{if(e.target instanceof HTMLInputElement||e.target instanceof HTMLSelectElement||e.target instanceof HTMLTextAreaElement||e.target.closest?.('#pitConsole, .ui-dialog, #results')||e.target.isContentEditable||soundLab.testing)return;const k=e.key.length===1?e.key.toLowerCase():e.key;if(keyMap[k]&&playing){e.preventDefault();engine.start();setInput(keyMap[k],k,true);}if(k==='r'&&!e.repeat)restart();});window.addEventListener('keyup',e=>{const k=e.key.length===1?e.key.toLowerCase():e.key;if(keyMap[k])setInput(keyMap[k],k,false);});
 window.addEventListener('blur',()=>{if(fluid?.solver)fluid.solver.accumulator=0;doubleTap.reset();release();engine.pause();});
 document.addEventListener('visibilitychange',()=>{doubleTap.reset();release();preferences.flush();audioSettings.flush();if(document.hidden)engine.pause();else last=performance.now();});
 window.addEventListener('pagehide',()=>{preferences.flush();audioSettings.flush();});
@@ -175,6 +176,7 @@ mountCameraPanel(cameraPreferences,$('debug'),()=>{$('courseOverview').checked=f
 const soundLab=mountSoundLab(audioSettings,engine,{onTestChange:on=>{release();if(!on&&!playing)engine.pause();last=performance.now();}});
 soundLab.root.addEventListener('toggle',()=>{if(soundLab.root.open)release();});
 bigfootView.mount(settingsUI.groups['Debug Tools'],()=>b,()=>camera);
+const interfaceUI=mountInterface({preferences,audioSettings,summerPreferences,cameraPreferences,release,soundLab});
 let b,elapsed=0,lap=1,best=null;
 function restart(){cameraSystem.reset();if(soundLab.testing)soundLab.setTesting(false);const now=performance.now();if(playing)gameClock+=Math.max(0,(now-last)/1000);last=now;startSequence.reset();playing=document.body.classList.contains('racing');if(playing)startSequence.begin(gameClock,preferences.values.countdownDuration);fluid?.reset();fluid?.disturb();race.reset();navigator.reset();race.modified=modified(settings);doubleTap.reset();$('results').hidden=true;result=null;release();engine.reset();b={x:start.x,z:start.z,angle:Math.atan2(startT.z,startT.x),vx:0,vz:0,pump:0,nozzle:0,yawRate:0};elapsed=0;lap=1;life.fill(0);alpha.fill(0);emit=0;positions.fill(-1000);wakeTrail.reset();hfSpray.reset();hfWake.reset();roosterCore.mesh.visible=false;boatPresentation.reset();$('notice').textContent='Follow your navigator. Apply throttle to steer.';}
 restart();$('restart').onclick=()=>{if(document.body.classList.contains('racing'))playing=true;restart();if(playing)engine.start();};$('start').onclick=()=>{playing=true;document.body.classList.add('racing');engine.start();restart();};
@@ -254,5 +256,5 @@ function frame(now){requestAnimationFrame(frame);const rawDt=Math.max(0,(now-las
  }
  summerLab.update(rawDt,cameraSystem.target,cameraFrame.overview);
  const comparison=!!summerLab.comparison;spray.visible=comparison;roosterCore.mesh.visible&&=comparison;hfSpray.mesh.visible=!comparison;wakeTrail.mesh.visible&&=comparison;hfWake.mesh.visible&&=!comparison;
- $('speed').textContent=Math.round(speed*3.6);$('time').textContent=format(elapsed);$('lap').textContent=`${lap}/5`;$('best').textContent=best===null?'—':format(best);$('rev').style.transform=`scaleX(${Math.min(1,speed/(settings.top/3.6))})`;summerLab.render(camera,dt);}
+ $('speed').textContent=Math.round(speed*3.6);$('time').textContent=format(elapsed);$('lap').textContent=`${lap}/5`;$('best').textContent=best===null?'—':format(best);interfaceUI.update(dt,engine.rpm,audioSettings.values.maxRPM);summerLab.render(camera,dt);}
 requestAnimationFrame(frame);

@@ -51,7 +51,7 @@ export function mountNavigator(root){
  const paths={straight:'M40 56 V10 M24 26 L40 10 L56 26',right:'M18 56 V35 Q18 20 34 20 H65 M50 5 L65 20 L50 35','sharp-right':'M15 57 V26 Q15 9 33 9 H43 Q62 9 62 28 V48 M49 35 L62 48 L75 35'};
  let previous='';
  return {update(cue,visible){root.hidden=!visible;if(!visible)return;const key=cue.kind+cue.wrong;
-  if(previous!==key){arrow.setAttribute('d',paths[cue.kind.replace('left','right')]);arrow.setAttribute('transform',cue.kind.includes('left')?'translate(80 0) scale(-1 1)':'');text.textContent=cue.text;root.classList.toggle('wrong',cue.wrong);if(previous)root.animate?.([{opacity:.35,transform:'translateX(-50%) translateY(3px)'},{opacity:1,transform:'translateX(-50%) translateY(0)'}],{duration:180});previous=key;}
+  if(previous!==key){arrow.setAttribute('d',paths[cue.kind.replace('left','right')]);arrow.setAttribute('transform',cue.kind.includes('left')?'translate(80 0) scale(-1 1)':'');text.textContent=cue.text;root.classList.toggle('wrong',cue.wrong);if(previous&&!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches)root.animate?.([{opacity:.35},{opacity:1}],{duration:180});previous=key;}
   if(preview.textContent!==cue.preview)preview.textContent=cue.preview;preview.hidden=!cue.preview;
   const value=`${cue.distance} m`;if(distance.textContent!==value)distance.textContent=value;root.classList.toggle('urgent',cue.urgent);
  }};

@@ -1,91 +1,1689 @@
-:root{font-family:Barlow,system-ui,sans-serif;color:#fff;background:#142c31;font-synthesis:none}*{box-sizing:border-box}body{margin:0}canvas{display:block;width:100%;height:100%}#game{position:fixed;inset:0}button{font:inherit;color:inherit;cursor:pointer;border:0;touch-action:manipulation}header{position:absolute;top:max(22px,env(safe-area-inset-top));left:28px;right:28px;display:flex;justify-content:space-between;align-items:center}.brand{font-size:26px;font-weight:800;font-style:italic;letter-spacing:-1px}.brand span{color:#d9ff62}.brand small{display:block;font-size:9px;font-style:normal;letter-spacing:2px;margin-top:3px}#restart{background:#163b41bd;border:1px solid #ffffff30;border-radius:30px;padding:12px 18px;font-size:13px}.timing{position:absolute;top:100px;left:28px;display:flex;gap:26px}.timing label{display:block;color:#d8eee1;font-size:10px;letter-spacing:2px;margin-bottom:5px}.timing strong{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-variant-numeric:tabular-nums}.course-name{position:absolute;left:28px;bottom:175px;display:grid;gap:6px;font-size:11px;letter-spacing:1px}.course-name span{font-size:10px;opacity:.65;letter-spacing:0}.speed{position:absolute;right:30px;bottom:170px;text-align:right}.speed strong{font:italic 76px 'Barlow Condensed',sans-serif;line-height:1}.speed span{font-size:11px;margin-left:8px}#rev{height:4px;background:#d9ff62;margin-top:6px;transform-origin:right;transform:scaleX(0)}#notice{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);font-size:11px;color:#d6e7dc;white-space:nowrap;pointer-events:none}.controls{position:absolute;bottom:max(62px,env(safe-area-inset-bottom));left:28px;right:28px;display:flex;justify-content:space-between}.controls>div{display:flex;gap:12px}.controls button{height:76px;min-width:76px;background:#153e4599;border:1px solid #ffffff55;border-radius:20px;font-size:22px;backdrop-filter:blur(10px);user-select:none;-webkit-user-select:none}.controls button.active{background:#d9ff62;color:#183b34;transform:scale(.96)}#throttle{padding:0 23px;font-size:12px;font-weight:700;letter-spacing:1px}#throttle span{font-size:28px;margin-left:12px}#debug{position:absolute;right:28px;top:100px;background:#163b41d9;border:1px solid #ffffff25;border-radius:12px;padding:12px;font-size:10px;width:180px}summary{cursor:pointer;letter-spacing:1px}#debug label{display:block;margin-top:14px}output{float:right;color:#d9ff62}input{width:100%;accent-color:#d9ff62;margin-top:9px}#intro{position:fixed;inset:0;background:linear-gradient(90deg,#102d36ed,#102d3670);display:flex;align-items:center;padding:8vw}.intro-card{max-width:450px}.intro-card small{font-size:10px;letter-spacing:3px;color:#d9ff62}h1{font:800 italic clamp(72px,14vw,130px)/.8 'Barlow Condensed',sans-serif;letter-spacing:-3px;margin:30px 0}h1 em{color:#d9ff62;font-style:inherit}.intro-card p{font-size:16px;line-height:1.7;color:#c7dfdd}.intro-card button{background:#d9ff62;color:#183b34;padding:20px 25px;border-radius:8px;font-weight:800;letter-spacing:1px;width:100%;margin:15px 0 25px}.intro-card button span{float:right}footer{font-size:10px;line-height:1.9;letter-spacing:1px;color:#b0c8c6}body.racing #intro{display:none}@media(max-width:600px){header{left:18px;right:18px}.brand{font-size:22px}.timing{left:18px;gap:20px;top:88px}.timing strong{font-size:25px}#debug{right:18px;top:145px;width:150px}.course-name{left:18px;bottom:175px}.controls{left:18px;right:18px}.controls button{min-width:64px;height:72px}#throttle{padding:0 14px}.speed{right:18px}.speed strong{font-size:60px}#restart span{display:none}}
-
-/* Gesture restrictions belong to the play surface, not the browser/document. */
-#game, #game canvas, .controls, .controls button {
- touch-action:none; overscroll-behavior:none; user-select:none;
- -webkit-user-select:none; -webkit-touch-callout:none;
+@import "./design-system.css";
+/* Screen composition. Reusable controls are defined in design-system.css. */
+body {
+  overflow: hidden;
 }
-#game {overflow:hidden}
-@media (orientation:landscape) and (max-height:500px) {
- header{top:max(10px,env(safe-area-inset-top));left:max(18px,env(safe-area-inset-left));right:max(18px,env(safe-area-inset-right))}
- .timing{top:64px;gap:18px}.timing strong{font-size:22px}
- .controls{bottom:max(18px,env(safe-area-inset-bottom));left:max(18px,env(safe-area-inset-left));right:max(18px,env(safe-area-inset-right))}
- .controls button{height:62px;min-width:66px}.speed{bottom:95px}.speed strong{font-size:48px}
- .course-name{bottom:95px}#notice{bottom:7px}#debug{top:64px;right:18px;width:150px}
- .intro-card{max-width:520px}h1{font-size:64px;margin:14px 0}.intro-card p{font-size:13px;line-height:1.4;margin:8px 0}.intro-card button{padding:12px;margin:8px 0}footer{font-size:9px}
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
-
-/* 30% larger steering targets, including compact landscape layouts. */
-.controls>div{gap:14px}#left,#right{min-width:99px;height:99px}
-@media(max-width:600px){#left,#right{min-width:83px;height:94px}.controls{left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right))}#throttle{padding:0 10px}}
-@media(orientation:landscape) and (max-height:500px){#left,#right{min-width:86px;height:81px}}
-
-#debug{max-height:55dvh;overflow:auto;overscroll-behavior:contain}#results{position:fixed;inset:0;z-index:20;background:#102d36ed;overflow:auto;padding:max(20px,env(safe-area-inset-top)) 18px}#results[hidden]{display:none}.result-card{max-width:560px;margin:auto;padding:20px;background:#163b41;border-radius:18px}.result-card button{padding:16px;background:#d9ff62;color:#183b34;border-radius:8px;margin:12px 8px 8px 0}.result-card input{padding:12px;color:#183b34;font-size:16px}.result-card table{width:100%;font-size:12px;border-collapse:collapse}.result-card td,.result-card th{padding:8px 3px;text-align:left;border-bottom:1px solid #ffffff22}.result-card ol{line-height:1.8}.result-card p{line-height:1.5}
-
-#graphics{width:100%;font:inherit;font-size:16px;color:#edf0db;background:#243e3f;border:1px solid #849383;border-radius:6px;padding:8px;margin-top:8px}
-#debug select{width:100%;font:inherit;font-size:16px;color:#edf0db;background:#243e3f;border:1px solid #849383;border-radius:6px;padding:8px;margin-top:8px}#waterStatus{font-size:10px;line-height:1.5;color:#d4e6d7}#testWave,#resetWater{padding:10px;margin:4px 5px 4px 0;background:#d9ff62;color:#183b34;border-radius:5px}
-#repeatWaves{width:auto;margin-right:8px;vertical-align:middle}
-
-#debug{width:230px;max-height:65dvh;z-index:8}.settings-section{padding:12px 0;border-top:1px solid #ffffff20}.settings-section>summary{font-size:12px;font-weight:700}.settings-section label{line-height:1.5}.settings-section input[type=checkbox]{width:auto;min-width:22px;min-height:22px;vertical-align:middle}.settings-section input[type=text],.settings-section textarea{font:inherit;font-size:16px;width:100%;color:#183b34;padding:10px;border-radius:6px}.settings-section textarea{min-height:130px}.settings-section button{display:inline-block;min-height:44px;background:#d9ff62;color:#183b34;padding:9px;border-radius:6px;margin:5px 5px 0 0;font-size:11px}#settingsStatus{font-size:11px;line-height:1.5;color:#e5f2ce}#startSignal{position:fixed;z-index:6;top:165px;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none;transition:opacity .12s linear}#startSignal[hidden]{display:none}.signal-housing{padding:10px 13px;background:linear-gradient(110deg,#343b3d,#0c1011 35%,#202627);border:2px solid #596163;border-radius:12px;box-shadow:4px 9px 15px #0007,inset 1px 1px 3px #99a2a355}.signal-housing i{display:block;width:43px;height:43px;margin:8px 0;border:5px solid #080d0f;border-top-width:8px;border-radius:50%;background:radial-gradient(at 35% 30%,#353b32,#121812 65%);box-shadow:0 -4px 0 #41484a,inset 0 4px 8px #000}.signal-housing .amber.lit{background:radial-gradient(at 35% 30%,#fff6bd,#ffb522 55%,#a75c00);box-shadow:0 0 20px #ffbf5077,inset 0 0 7px #ffe481}.signal-housing .green.lit{background:radial-gradient(at 35% 30%,#d5ffe0,#35f279 55%,#087633);box-shadow:0 0 22px #55ff8877,inset 0 0 7px #bdffd0}#signalText{display:block;margin-top:12px;letter-spacing:3px;font-weight:900;font-size:22px;text-shadow:0 2px 6px #000}
-@media(max-width:600px){#debug{width:210px;right:12px}}@media(orientation:landscape) and (max-height:500px){#startSignal{top:60px;transform:translateX(-50%) scale(.72);transform-origin:top center}#debug{max-height:65dvh}}
-
-/* Stable route cues sit below timing, clear of touch controls and the boat. */
-#navigator{position:fixed;top:160px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px;padding:8px 15px 8px 8px;border:1px solid #e0ef6470;border-radius:14px;background:#102d36de;color:#e0ef64;pointer-events:none;box-shadow:0 4px 14px #0004;z-index:4;opacity:.85}
-#navigator[hidden]{display:none}#navigator svg{width:56px;height:48px;filter:drop-shadow(0 2px 2px #000)}#navigator path{fill:none;stroke:currentColor;stroke-width:8;stroke-linecap:round;stroke-linejoin:round}#navigator strong{display:block;font-size:12px;letter-spacing:1px}#navigator span{display:block;font-size:13px;color:#e8f2e0;margin-top:4px;font-variant-numeric:tabular-nums}#navigator.urgent{opacity:1}#navigator.wrong{color:#ffc284;border-color:#f8a45d;background:#462b24eb}#notice{max-width:90vw;white-space:normal;text-align:center}
-@media(max-width:600px){#navigator{top:137px;padding:6px 10px 6px 4px;gap:4px;left:32%;}#navigator svg{width:43px;height:40px}#navigator strong{font-size:10px}#navigator span{font-size:11px}}
-@media(orientation:landscape) and (max-height:500px){#navigator{top:67px;left:50%;padding:4px 10px 4px 4px}#navigator svg{width:42px;height:37px}#navigator strong{font-size:10px}#navigator span{font-size:10px}}
-
-#debug:not([open]){width:auto}#navigator small{display:block;margin-top:4px;color:#f4f0d8;font-size:9px;letter-spacing:.4px}#navigator small[hidden]{display:none}
-
-.debug-readout{position:fixed;left:12px;top:215px;z-index:7;max-width:min(310px,80vw);white-space:pre-line;background:#102c35e8;border-left:3px solid #dfff72;border-radius:5px;padding:8px 10px;color:#ecffd8;font:10px/1.45 system-ui;pointer-events:none}.debug-readout[hidden]{display:none}.bigfoot-readout{top:330px;bottom:auto;border-color:#ffc17d;color:#ffdab0}
-@media(orientation:landscape) and (max-height:500px){.debug-readout{top:115px;font-size:9px;max-width:270px}.bigfoot-readout{top:115px;bottom:auto;left:auto;right:12px}}
-
-/* Temporary identity check: visible on the actual start screen and racing HUD. */
-.build-debug{display:block;width:max-content;max-width:100%;padding:4px 6px;border:1px solid #f5ffd1;border-radius:4px;background:#dfff72;color:#132d28;font:800 11px/1.3 system-ui,sans-serif;letter-spacing:.4px;font-style:normal;text-shadow:none}.brand .build-debug{font-size:9px;letter-spacing:.4px}.intro-card .build-debug{margin-bottom:14px}@media(orientation:landscape) and (max-height:500px){.intro-card .build-debug{font-size:10px;margin-bottom:8px}.brand .build-debug{font-size:8px;padding:2px 5px;margin-top:1px}}
-
-/* Independent Sound Lab; normal scrolling and native sliders remain available on iOS. */
-#soundLab{position:fixed;z-index:15;right:max(28px,env(safe-area-inset-right));top:55px;width:290px;max-width:calc(100vw - 24px);max-height:calc(100dvh - 85px);overflow:auto;overscroll-behavior:contain;background:#132f36f5;border:1px solid #d9ff6270;border-radius:12px;padding:12px;box-shadow:0 8px 28px #0004;font:12px/1.5 system-ui,sans-serif;color:#eaf2dc;touch-action:pan-y}
-#soundLab:not([open]){width:auto}#soundLab>summary{font-size:11px;font-weight:800;color:#d9ff62;letter-spacing:1.2px;min-height:20px}#soundLab p{font-size:11px;color:#c7dbcf;margin:10px 0}#soundLab details{padding:12px 0;border-top:1px solid #ffffff25}#soundLab details summary{font-size:12px;font-weight:700;letter-spacing:0}#soundLab label{display:block;margin:14px 0;line-height:1.6}#soundLab input[type=range]{display:block;min-height:28px;margin:4px 0 0;width:100%;touch-action:pan-y}#soundLab select,#soundLab input[type=text],#soundLab textarea{width:100%;margin:8px 0;background:#254249;color:#f1f6df;border:1px solid #647d78;padding:10px;border-radius:6px;font:16px system-ui}#soundLab textarea{font-size:12px;resize:vertical;min-height:100px}#soundLab input[type=file]{font-size:11px}#soundLab button{min-height:44px;margin:6px 5px 6px 0;padding:9px 12px;background:#d9ff62;color:#16372f;font-size:11px;font-weight:700;border-radius:7px}#soundLab button:focus-visible,#soundLab summary:focus-visible{outline:2px solid white;outline-offset:3px}#soundLab .engine-test{padding:8px 10px;margin:12px 0;background:#081e2580;border-radius:8px}#testRPM{float:none;display:block;font:700 22px/1.5 system-ui;color:#d9ff62;font-variant-numeric:tabular-nums}#soundLab .idle-tip{border-left:2px solid #d9ff62;padding-left:10px}#audioStatus{min-height:30px}body.sound-testing #intro,body.sound-testing #navigator,body.sound-testing #startSignal{display:none}body.sound-testing .controls{visibility:hidden}body.sound-testing .timing{opacity:.45}
-@media(max-width:600px){#soundLab{right:12px;top:54px;width:min(310px,calc(100vw - 24px));max-height:calc(100dvh - 76px)}}
-@media(orientation:landscape) and (max-height:500px){#soundLab{top:48px;right:12px;width:300px;max-height:calc(100dvh - 62px)}}
-
-/* Cedar Creek Invitational, summer 1988. No filters over the play surface. */
-:root{--paper:#f3dfaf;--orange:#e8894b;--ink:#192e30;font-family:'Trebuchet MS',Arial,sans-serif;color:var(--paper)}
-.brand{font-family:Impact,'Arial Narrow',sans-serif;font-size:30px;letter-spacing:.5px;text-shadow:2px 2px 0 #192e3070;line-height:1}.brand span{color:var(--orange)}
-.brand:after{content:'1987  /  CEDAR CREEK INVITATIONAL';display:block;font:700 8px/2.5 monospace;letter-spacing:1.3px;color:var(--paper)}
-.build-debug,.brand .build-debug{background:#20383be0;color:#f3dfaf;border:1px solid #f3dfaf66;border-left:4px solid var(--orange);border-radius:0;font:700 8px/1.5 monospace;letter-spacing:.25px;text-shadow:none;margin-top:6px}
-.timing{gap:22px;background:#1e343ad9;border-top:3px solid #e8894b;padding:9px 14px 8px;box-shadow:3px 3px 0 #0c252541}.timing label{font:700 9px monospace;color:#efc994;letter-spacing:2px}.timing strong{font:700 26px/1.15 'Courier New',monospace;letter-spacing:-1.3px;font-variant-numeric:tabular-nums}
-#restart{border-radius:2px;font:700 11px monospace;letter-spacing:1px;background:#20383be0;border:1px solid #f3dfaf77}
-#debug,#soundLab{border-radius:3px;background:#1b3035ed;border:1px solid #e5c48b88;color:#f3dfaf}#debug{top:113px}#soundLab{top:63px}
-#soundLab>summary{color:#efc994}#debug input,#soundLab input{accent-color:#e8894b}output{color:#efc994}
-#debug button,#soundLab button,.result-card button{background:#e8c58e;color:#1d3032;border-radius:2px}#debug select,#soundLab select{border-radius:2px}
-#navigator{border-radius:3px;border-color:#f0c78b;background:#233d3be8;color:#f0c78b;box-shadow:3px 3px 0 #10282a55}#navigator strong{font-family:monospace;letter-spacing:1px}#navigator svg{filter:none}
-.speed{background:#20383bbf;border-right:4px solid #e8894b;padding:6px 12px 7px;min-width:125px}.speed strong{font:italic 700 62px/.95 'Arial Narrow',Impact,sans-serif;letter-spacing:-2px}.speed span{font:700 9px monospace}#rev{background:repeating-linear-gradient(90deg,#f0c78b 0 9px,transparent 9px 12px);height:5px}
-.controls button{border-radius:5px;background:#1b3438bd;border:1px solid #f3dfaf99;box-shadow:inset 0 -4px 0 #0f282b44;backdrop-filter:none;color:#f3dfaf}.controls button.active{background:#e8b774;color:#233638}.controls #throttle{font-family:monospace;letter-spacing:1px;border-bottom:4px solid #e8894b}
-.course-name b{font-family:monospace;letter-spacing:1.4px;color:#f4d59f}.course-name span{opacity:.85;color:#f4e8cb}.course-name{background:#193432b3;padding:8px 10px;border-left:3px solid #dc8652}
-#notice{color:#fff1cf;text-shadow:1px 1px 2px #102a2b;font-family:monospace}
-#intro{background:linear-gradient(90deg,#172c33f0 0%,#172c33d0 35%,#172c3310 100%)}.intro-card{border-left:5px solid #e8894b;padding-left:25px;max-width:495px}.intro-card small{color:#efc994;font:700 10px/1.6 monospace;letter-spacing:1.8px}h1{font-family:Impact,'Arial Narrow',sans-serif;font-size:clamp(72px,12vw,130px);font-style:italic;letter-spacing:-1px;line-height:.88;text-shadow:4px 4px 0 #192f35}h1 em{color:#e8894b}.intro-card p{color:#e0d2b3;font-size:16px}.intro-card button{background:#e8c58e;border-radius:2px;border-bottom:4px solid #b66e3e;color:#213638;font-family:monospace}footer{color:#bdbea4;font-family:monospace;font-size:9px}
-.result-card{background:#20393d;border:1px solid #e8c58e88;border-radius:3px}.result-card h2{font-family:Impact,'Arial Narrow',sans-serif;letter-spacing:1px}.result-card td{font-family:monospace}
-@media(max-width:600px){header{top:max(16px,env(safe-area-inset-top))}.brand{font-size:25px}.brand:after{font-size:7px;letter-spacing:.7px}.brand .build-debug{font-size:7px}.timing{top:109px;gap:17px;padding:7px 10px}.timing strong{font-size:21px}.timing label{font-size:8px;margin-bottom:4px}#debug{top:182px}#soundLab{top:72px}#navigator{top:185px;left:28%}.speed strong{font-size:51px}.speed{min-width:105px}.intro-card{padding-left:18px}.course-name{max-width:220px;font-size:10px}}
-@media(orientation:landscape) and (max-height:500px){.brand{font-size:22px}.brand:after{display:none}.brand .build-debug{font-size:7px}.timing{top:68px;padding:5px 9px;gap:15px}.timing strong{font-size:19px}.timing label{font-size:8px}#debug{top:71px}#soundLab{top:40px}#navigator{top:70px}.intro-card{max-width:500px}h1{font-size:64px}.intro-card small{font-size:9px}.intro-card p{font-size:12px}footer{font-size:8px}.speed strong{font-size:43px}.course-name{padding:5px 8px}.intro-card .build-debug{font-size:8px}}
-
-header{align-items:flex-start}
-
-/* Camera cycling stays clear of steering/throttle, timing and the two menus. */
-#cameraSwitch{position:fixed;right:max(28px,env(safe-area-inset-right));top:164px;z-index:7;max-width:180px;min-height:40px;padding:10px 12px;background:#20383be8;color:#f3dfaf;border:1px solid #f3dfaf77;border-radius:3px;font:700 11px monospace;touch-action:manipulation}
-#cameraToast{position:fixed;z-index:9;left:50%;top:116px;transform:translateX(-50%);padding:9px 16px;background:#20383bed;border-bottom:2px solid #e8894b;color:#f3dfaf;font:700 12px monospace;pointer-events:none}#cameraToast[hidden]{display:none}
-#debug .camera-note{font:10px/1.5 monospace;color:#d7c9aa}#debug #resetCameras{min-height:44px;background:#e8c58e;color:#20383b;padding:10px;margin-top:10px}
-@media(max-width:600px){#cameraSwitch{right:12px;top:230px;max-width:160px;min-height:42px;font-size:10px}#cameraToast{top:280px;font-size:11px}}
-@media(orientation:landscape) and (max-height:500px){#cameraSwitch{right:12px;top:115px;padding:8px 10px;min-height:36px;font-size:10px}#cameraToast{top:40px;font-size:10px}}
-
-#graphicsLab .summer-group{border-top:1px solid #e8c58e44;margin-top:12px;padding-top:12px}#graphicsLab textarea{width:100%;min-height:100px;background:#1d3538;color:#f1e1bb;font:12px monospace;margin-top:12px}#graphicsLab button{min-height:44px;padding:10px;margin:6px 4px 0 0}#graphicsLab input[type=checkbox]{width:22px;min-height:22px}#summerStatus{font:10px/1.5 monospace}#summerFPS{position:fixed;left:12px;bottom:8px;z-index:8;background:#173b3adb;padding:5px 8px;color:#f3dfaf;font:10px monospace;pointer-events:none}#summerFPS[hidden]{display:none}
-
-#graphicsLab input[type=range]{min-height:28px;touch-action:pan-y}@media(max-width:600px){#graphicsLab textarea{font-size:16px}}
-
-/* Physics drawer stops above the driving buttons; the race continues behind it. */
-#physicsLabToggle{position:fixed;right:28px;top:214px;z-index:7;min-height:42px;padding:10px 12px;background:#20383bef;color:#f3dfaf;border:1px solid #f3dfaf77;font:700 11px monospace;touch-action:manipulation}
-#physicsLab{position:fixed;right:20px;top:264px;bottom:180px;width:340px;z-index:18;overflow:auto;overscroll-behavior:contain;background:#173238f5;color:#f3dfaf;border:1px solid #e8c58e88;padding:16px;box-shadow:0 12px 32px #0008;font:13px/1.5 monospace}
-#physicsLab[hidden],#physicsTelemetryOverlay[hidden]{display:none}#physicsLab h2{font-size:18px;margin:0 0 8px}#physicsLabStatus{font-size:11px;line-height:1.4}#physicsLab label{display:block;margin:12px 0}#physicsLab output{float:right;font-weight:bold}#physicsLab input[type=range]{display:block;width:100%;min-height:44px;touch-action:pan-y}#physicsLab small{display:block;color:#d3c9b3;font:11px/1.4 sans-serif}#physicsLab input[type=checkbox]{width:auto;min-width:22px;min-height:22px;vertical-align:middle;margin-right:8px}#physicsLab input[type=text],#physicsLab textarea,#physicsLab select{display:block;width:100%;font:16px monospace;color:#f3dfaf;background:#213e42;border:1px solid #a39c7d;padding:9px;margin:8px 0}#physicsLab textarea{min-height:140px}#physicsLab button{min-height:44px;padding:10px;margin:4px 6px 4px 0;background:#e8c58e;color:#173238;font:700 11px monospace}.physics-heading{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:8px;background:#173238;padding:8px 0}.physics-heading h2{margin:0!important}#physicsLabClose{margin:0}.physics-group{border-top:1px solid #e8c58e66;padding-top:12px;margin:12px 0}.physics-group>summary{font-weight:bold;min-height:32px;cursor:pointer}
-#physicsTelemetryOverlay{position:fixed;left:12px;top:215px;z-index:6;margin:0;padding:8px;background:#173238db;color:#f3dfaf;font:11px/1.6 monospace;pointer-events:none;white-space:pre}
-@media(max-width:600px){#physicsLabToggle{right:12px;top:282px;font-size:10px}#physicsLab{left:12px;right:12px;width:auto;top:180px;bottom:185px;padding:12px}#physicsTelemetryOverlay{top:318px;max-width:185px;font-size:10px}}
-@media(orientation:landscape) and (max-height:500px){#physicsLabToggle{right:12px;top:160px;min-height:36px;padding:8px}#physicsLab{left:auto;right:12px;top:12px;bottom:112px;width:min(360px,48vw)}#physicsTelemetryOverlay{top:115px;font-size:9px;line-height:1.45}}
+#game {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+#game,
+#game canvas,
+.controls,
+.controls button {
+  touch-action: none;
+  overscroll-behavior: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+.race-header {
+  position: fixed;
+  z-index: 8;
+  top: max(20px, env(safe-area-inset-top));
+  left: max(24px, env(safe-area-inset-left));
+  right: max(24px, env(safe-area-inset-right));
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  pointer-events: none;
+}
+.race-header > * {
+  pointer-events: auto;
+}
+.brand {
+  font: 800 italic 38px/0.8 var(--font-display);
+  letter-spacing: -0.8px;
+  text-shadow: 2px 2px 0 var(--graphite);
+}
+.brand-sprint {
+  color: var(--orange);
+  margin-left: 4px;
+}
+.brand:after {
+  content: "CEDAR CREEK / SUMMER ’87";
+  display: block;
+  margin-top: 7px;
+  color: var(--ivory);
+  font: 400 8px/1.2 var(--font-tech);
+  letter-spacing: 1.4px;
+}
+.build-debug {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  margin-top: 12px;
+  padding: 3px 0;
+  color: var(--muted);
+  font: 400 9px/1.3 var(--font-tech);
+  letter-spacing: 0.2px;
+  text-shadow: none;
+}
+.brand .build-debug {
+  font-size: 7px;
+  letter-spacing: 0;
+  margin-top: 6px;
+}
+.race-toolbar {
+  display: flex;
+  gap: 8px;
+}
+.tool-button {
+  height: 44px;
+  min-width: 44px;
+  padding: 8px 12px;
+  background: var(--graphite);
+  font-size: 13px;
+  box-shadow: 2px 3px 0 #0003;
+}
+.tool-button svg {
+  width: 20px;
+  height: 20px;
+}
+.tool-button[aria-expanded="true"] {
+  border-color: var(--orange);
+  color: var(--gold);
+}
+#cameraSwitch {
+  order: -1;
+  max-width: 180px;
+}
+.timing {
+  position: fixed;
+  z-index: 4;
+  left: max(24px, env(safe-area-inset-left));
+  top: 110px;
+  display: flex;
+  background: var(--graphite);
+  border-top: 3px solid var(--orange);
+  box-shadow: var(--shadow);
+}
+.timing > div {
+  padding: 10px 16px;
+  border-right: 1px solid var(--line-soft);
+}
+.timing > div:last-child {
+  border-right: 0;
+}
+.instrument-label {
+  display: block;
+  font: 400 9px/1.4 var(--font-tech);
+  letter-spacing: 1.1px;
+  color: var(--muted);
+}
+.timing strong {
+  display: block;
+  margin-top: 4px;
+  font: 400 25px/1.1 var(--font-tech);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -1.3px;
+}
+.timing .lap-instrument {
+  background: var(--ivory);
+  color: var(--graphite);
+}
+.lap-instrument .instrument-label {
+  color: var(--graphite);
+}
+.course-name {
+  position: fixed;
+  left: max(24px, env(safe-area-inset-left));
+  bottom: 175px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: none;
+  text-shadow: 1px 2px 0 var(--graphite);
+}
+.course-index {
+  font: 800 italic 40px/1 var(--font-display);
+  color: var(--gold);
+  border-right: 2px solid var(--orange);
+  padding-right: 12px;
+}
+.course-name b {
+  font: 600 19px var(--font-label);
+  letter-spacing: 1.4px;
+}
+.course-name div > span {
+  display: block;
+  margin-top: 3px;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+.speed {
+  position: fixed;
+  right: max(24px, env(safe-area-inset-right));
+  bottom: 166px;
+  z-index: 4;
+  width: 190px;
+  box-shadow: var(--shadow);
+  pointer-events: none;
+  border: 2px solid var(--graphite);
+  background: var(--ivory);
+  color: var(--graphite);
+}
+.speed-face {
+  padding: 10px 14px 6px;
+  position: relative;
+}
+.speed-face:after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 13px;
+  height: 13px;
+  border: 2px solid var(--graphite);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px var(--ivory);
+  background: var(--teal);
+}
+.speed .instrument-label {
+  color: var(--graphite);
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+.speed strong {
+  display: inline-block;
+  font: 800 italic 76px/0.95 var(--font-display);
+  min-width: 96px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -2px;
+}
+.speed-unit {
+  font: 600 18px var(--font-label);
+  margin-left: 4px;
+}
+.tachometer {
+  padding: 10px 12px 7px;
+  background: var(--graphite);
+  color: var(--ivory);
+}
+.tach-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+.tach-label output {
+  font-size: 12px;
+  color: var(--ivory);
+}
+.rev-track {
+  height: 9px;
+  background: var(--panel-raised);
+  margin-top: 6px;
+  overflow: hidden;
+  position: relative;
+}
+.rev-track:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0 8px,
+    var(--graphite) 8px 10px
+  );
+}
+#rev {
+  height: 100%;
+  background: var(--teal);
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 80ms linear;
+}
+.speed.redline #rev {
+  background: var(--orange);
+}
+.tach-scale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 7px;
+  color: var(--muted);
+}
+.controls {
+  position: fixed;
+  z-index: 9;
+  left: max(24px, env(safe-area-inset-left));
+  right: max(24px, env(safe-area-inset-right));
+  bottom: max(36px, env(safe-area-inset-bottom));
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  pointer-events: none;
+}
+.steering-controls {
+  display: flex;
+  gap: 12px;
+  pointer-events: auto;
+}
+.controls button {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  height: 100px;
+  min-width: 100px;
+  padding: 12px;
+  background: #11191deb;
+  border: 1px solid #e8d9b580;
+  border-bottom: 5px solid var(--graphite);
+  box-shadow:
+    inset 0 0 0 3px var(--panel-raised),
+    3px 4px 0 #0004;
+  color: var(--ivory);
+  pointer-events: auto;
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+.controls svg {
+  width: 34px;
+  height: 34px;
+  stroke-width: 3;
+}
+.controls button.active {
+  background: var(--ivory);
+  color: var(--graphite);
+  border-color: var(--ivory);
+  box-shadow: inset 0 0 0 3px #11191d30;
+  transform: translateY(3px);
+}
+#throttle {
+  min-width: 145px;
+  background: #e65c28f2;
+  color: var(--graphite);
+  border-color: var(--orange);
+  border-bottom-color: #9c3c1b;
+  box-shadow:
+    inset 0 0 0 3px #11191d20,
+    3px 4px 0 #0004;
+}
+#throttle.active {
+  background: var(--gold);
+  border-color: var(--gold);
+  box-shadow: inset 0 0 0 3px #11191d30;
+}
+#notice {
+  position: fixed;
+  z-index: 3;
+  bottom: max(10px, calc(env(safe-area-inset-bottom) + 4px));
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 85vw;
+  padding: 3px 8px;
+  background: #11191de0;
+  color: var(--ivory);
+  text-align: center;
+  font-size: 9px;
+  line-height: 1.4;
+  pointer-events: none;
+}
+#navigator {
+  position: fixed;
+  z-index: 5;
+  top: 110px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 160px;
+  padding: 10px 14px 10px 8px;
+  background: var(--graphite);
+  border-left: 4px solid var(--gold);
+  box-shadow: var(--shadow);
+  pointer-events: none;
+  color: var(--gold);
+}
+#navigator svg {
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+}
+#navigator path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 8;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+}
+#navigator strong {
+  display: block;
+  font: 600 16px var(--font-label);
+  letter-spacing: 1px;
+}
+#navigator span {
+  display: block;
+  font-size: 14px;
+  color: var(--ivory);
+  margin-top: 3px;
+}
+#navigator small {
+  display: block;
+  font-size: 8px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+#navigator.wrong {
+  border-color: var(--orange);
+  color: var(--orange);
+}
+#startSignal {
+  position: fixed;
+  z-index: 6;
+  top: 190px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  pointer-events: none;
+}
+.signal-caption {
+  display: block;
+  padding: 5px 12px;
+  font-size: 8px;
+  letter-spacing: 2px;
+  background: var(--ivory);
+  color: var(--graphite);
+}
+.signal-housing {
+  display: flex;
+  gap: 10px;
+  padding: 12px 16px;
+  border: 2px solid var(--line);
+  border-top: 0;
+  background: var(--graphite);
+  box-shadow: var(--shadow);
+}
+.signal-housing i {
+  display: block;
+  width: 36px;
+  height: 36px;
+  border: 4px solid var(--panel-inset);
+  border-radius: 50%;
+  background: var(--panel-raised);
+  box-shadow: 0 0 0 1px var(--line-soft);
+}
+.signal-housing .amber.lit {
+  background: var(--gold);
+  box-shadow:
+    0 0 0 1px var(--gold),
+    0 0 18px #d9ac4650;
+}
+.signal-housing .green.lit {
+  background: #7baa83;
+  box-shadow:
+    0 0 0 1px #7baa83,
+    0 0 18px #7baa8350;
+}
+#signalText {
+  display: block;
+  font: 800 italic 34px/1.1 var(--font-display);
+  margin-top: 8px;
+  text-shadow: 2px 2px 0 var(--graphite);
+}
+/* Entry poster: original speed stripes and a cabinet-style racing marquee. */
+#intro {
+  position: fixed;
+  z-index: 30;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  overflow: auto;
+  background: linear-gradient(
+    90deg,
+    #11191df5 0%,
+    #11191df5 43%,
+    #11191d50 78%
+  );
+  padding: 40px max(5vw, env(safe-area-inset-left));
+}
+.intro-card {
+  position: relative;
+  width: 470px;
+  max-width: 100%;
+  flex-shrink: 0;
+  border-left: 1px solid var(--line);
+  padding-left: 28px;
+}
+.entry-strap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--ivory);
+  border-bottom: 1px solid var(--ivory);
+  padding: 8px 0;
+  font: 600 17px var(--font-label);
+  letter-spacing: 1.7px;
+}
+.entry-strap b {
+  font: 800 italic 32px/0.9 var(--font-display);
+  color: var(--gold);
+}
+.eyebrow {
+  font: 400 9px/1.4 var(--font-tech);
+  letter-spacing: 1.8px;
+  color: var(--gold);
+  margin: 20px 0 16px;
+}
+h1 {
+  font: 800 italic clamp(84px, 9.5vw, 142px) / 0.72 var(--font-display);
+  letter-spacing: -2px;
+  margin: 20px 0 24px;
+  transform: translateX(-4px);
+}
+h1 span,
+h1 em {
+  display: block;
+}
+h1 em {
+  color: var(--orange);
+  font-style: italic;
+  margin-top: 7px;
+}
+.speed-stripes {
+  display: flex;
+  gap: 7px;
+  transform: skew(-15deg);
+  margin-right: 12px;
+}
+.speed-stripes i {
+  height: 7px;
+  background: var(--orange);
+  flex: 1;
+}
+.speed-stripes i:nth-child(2) {
+  background: var(--gold);
+  flex: 0.55;
+}
+.speed-stripes i:nth-child(3) {
+  background: var(--teal);
+  flex: 0.25;
+}
+.intro-tagline {
+  font: 600 31px/0.98 var(--font-label);
+  letter-spacing: 1.5px;
+  color: var(--ivory);
+  margin: 24px 0 12px;
+}
+.intro-description {
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 12px 0 20px;
+}
+#start {
+  width: 100%;
+  min-height: 62px;
+  justify-content: space-between;
+  padding: 14px 20px;
+  font-size: 24px;
+}
+.entry-specs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 22px 0;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 18px;
+}
+.entry-specs > div {
+  padding-left: 16px;
+  border-left: 1px solid var(--line);
+}
+.entry-specs > div:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+.entry-specs b {
+  display: block;
+  font: 800 italic 32px/1 var(--font-display);
+  color: var(--ivory);
+}
+.entry-specs span {
+  display: block;
+  margin-top: 4px;
+  font-size: 7px;
+  letter-spacing: 0.3px;
+  color: var(--muted);
+}
+footer {
+  font: 400 9px/1.8 var(--font-tech);
+  color: var(--muted);
+}
+footer > span {
+  color: var(--ivory);
+  display: inline-block;
+  width: 42px;
+}
+footer small {
+  font-size: 8px;
+  display: block;
+  max-width: 350px;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+#introTune {
+  margin-top: 12px;
+  padding: 6px 10px;
+  min-height: 44px;
+  font-size: 12px;
+}
+#intro .build-debug {
+  font-size: 8px;
+  margin-top: 8px;
+}
+.entry-course {
+  position: absolute;
+  right: 6vw;
+  bottom: 7vh;
+  width: 280px;
+  transform: rotate(-4deg);
+  padding: 16px;
+  border: 1px solid #e8d9b566;
+  background: #11191deb;
+  box-shadow: var(--shadow);
+  color: var(--ivory);
+}
+.entry-course > span {
+  display: block;
+  font-size: 8px;
+  letter-spacing: 0.5px;
+}
+.entry-course svg {
+  width: 100%;
+  height: 132px;
+  overflow: visible;
+  margin: 8px 0;
+}
+.entry-course svg path {
+  fill: none;
+  stroke-linejoin: round;
+}
+.map-bank {
+  stroke: var(--line);
+  stroke-width: 22;
+}
+.map-water {
+  stroke: var(--teal);
+  stroke-width: 12;
+}
+.map-start {
+  stroke: var(--orange);
+  stroke-width: 5;
+}
+.entry-course strong {
+  display: block;
+  font: 600 22px var(--font-label);
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+body.racing #intro {
+  display: none;
+}
+/* One console shell reuses the existing live-bound panels. */
+#pitConsole {
+  position: fixed;
+  z-index: 40;
+  right: max(24px, env(safe-area-inset-right));
+  top: 86px;
+  bottom: 154px;
+  width: 440px;
+  display: flex;
+  flex-direction: column;
+  background: var(--graphite);
+  border: var(--border);
+  border-top: 4px solid var(--orange);
+  box-shadow: var(--shadow-panel);
+  animation: panel-enter var(--normal) var(--ease);
+}
+.pit-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 10px;
+  gap: 12px;
+}
+.pit-heading h2 {
+  font: 800 italic 30px/0.95 var(--font-display);
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+.pit-heading p {
+  font-size: 8px;
+  margin: 7px 0 0;
+  color: var(--muted);
+  letter-spacing: 0.6px;
+}
+#pitClose {
+  width: 44px;
+  padding: 0;
+  min-height: 44px;
+  font-size: 24px;
+  font-family: var(--font-tech);
+}
+.pit-tabs {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  border-top: 1px solid var(--line-soft);
+  border-bottom: 1px solid var(--line);
+  padding: 0 8px;
+  gap: 0;
+}
+.pit-tabs button {
+  border: 0;
+  border-bottom: 3px solid transparent;
+  border-radius: 0;
+  padding: 8px 4px;
+  font-size: 15px;
+  letter-spacing: 1px;
+  background: transparent;
+  color: var(--muted);
+}
+.pit-tabs button[aria-selected="true"] {
+  color: var(--gold);
+  border-bottom-color: var(--orange);
+  background: var(--panel);
+}
+.pit-tabs button:hover {
+  color: var(--ivory);
+}
+.pit-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  padding: 4px 18px 20px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) var(--graphite);
+}
+.pit-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+.pit-scroll::-webkit-scrollbar-thumb {
+  background: var(--line);
+}
+.pit-footer {
+  border-top: 1px solid var(--line-soft);
+  padding: 8px 16px;
+  font-size: 8px;
+  letter-spacing: 0.6px;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+}
+.pit-page {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.pit-page > summary,
+.physics-heading,
+#physicsLabToggle {
+  display: none;
+}
+.pit-page > p:first-of-type {
+  padding: 10px 0;
+  margin: 4px 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.pit-page button:not(.range-reset) {
+  margin: 4px 6px 4px 0;
+}
+.pit-page .control-range button {
+  margin: 0;
+}
+.pit-page > details {
+  margin-top: 8px;
+}
+.pit-page p {
+  font-size: 10px;
+}
+.pit-page .engine-test {
+  padding: 12px;
+  background: var(--panel-inset);
+  border-left: 3px solid var(--teal);
+  margin: 16px 0;
+}
+.engine-test #testRPM {
+  display: block;
+  font-size: 24px;
+  margin: 8px 0;
+}
+.idle-tip {
+  border-left: 2px solid var(--gold);
+  padding-left: 12px;
+}
+.quality-presets {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  margin: 12px 0;
+}
+.quality-presets button {
+  margin: 0 !important;
+  padding: 8px 4px;
+}
+.quality-presets button[aria-pressed="true"] {
+  background: var(--ivory);
+  color: var(--graphite);
+  border-color: var(--ivory);
+  transform: none;
+}
+.panel-description {
+  border-left: 3px solid var(--teal);
+  padding-left: 10px !important;
+}
+.pit-open #navigator,
+.pit-open .course-name {
+  visibility: hidden;
+}
+#cameraToast {
+  position: fixed;
+  z-index: 11;
+  top: 76px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 9px 16px;
+  background: var(--ivory);
+  color: var(--graphite);
+  border-left: 4px solid var(--orange);
+  font: 600 16px var(--font-label);
+  text-transform: uppercase;
+  box-shadow: var(--shadow);
+  pointer-events: none;
+  animation: label-enter var(--normal) var(--ease);
+}
+/* Results use the same printed timing-slip and instrument typography. */
+#results {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  overflow: auto;
+  background: #11191deb;
+  padding: max(24px, env(safe-area-inset-top))
+    max(16px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom));
+  overscroll-behavior: contain;
+}
+.result-card {
+  max-width: 560px;
+  margin: 2vh auto;
+  background: var(--graphite);
+  border: var(--border);
+  border-top: 7px solid var(--orange);
+  padding: 24px;
+  box-shadow: var(--shadow-panel);
+  animation: panel-enter var(--normal) var(--ease);
+}
+.finish-strap {
+  padding: 8px 0 12px;
+  border-bottom: 1px solid var(--line);
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+.result-card h2 {
+  font: 800 italic clamp(40px, 7vw, 58px) / 0.95 var(--font-display);
+  margin: 0 0 20px;
+  color: var(--ivory);
+}
+#resultStats > p {
+  padding: 14px;
+  background: var(--ivory);
+  color: var(--graphite);
+  font-size: 12px;
+}
+#resultStats ol {
+  list-style: none;
+  counter-reset: lap;
+  padding: 0;
+}
+#resultStats li {
+  display: flex;
+  justify-content: space-between;
+  counter-increment: lap;
+  border-bottom: 1px solid var(--line-soft);
+  padding: 10px;
+  font: 400 18px var(--font-tech);
+}
+#resultStats li:before {
+  content: "LAP 0" counter(lap);
+  font-size: 11px;
+  color: var(--muted);
+}
+.result-card button {
+  margin: 8px 8px 8px 0;
+}
+#raceRestart {
+  width: 100%;
+  margin: 16px 0 0;
+}
+.result-card #board p {
+  font-size: 11px;
+  line-height: 1.8;
+  border-bottom: 1px solid var(--line-soft);
+  padding-bottom: 8px;
+}
+.debug-readout,
+#physicsTelemetryOverlay,
+#summerFPS {
+  position: fixed;
+  z-index: 7;
+  left: max(24px, env(safe-area-inset-left));
+  top: 200px;
+  max-width: min(310px, 80vw);
+  white-space: pre-line;
+  background: var(--graphite);
+  border-left: 3px solid var(--teal);
+  padding: 8px 12px;
+  color: var(--ivory);
+  font: 400 10px/1.6 var(--font-tech);
+  pointer-events: none;
+}
+.bigfoot-readout {
+  top: 345px;
+  border-color: var(--gold);
+}
+#physicsTelemetryOverlay {
+  top: 205px;
+  margin: 0;
+  font-size: 10px;
+}
+#summerFPS {
+  left: auto;
+  right: 24px;
+  top: 70px;
+  font-size: 9px;
+  border-color: var(--gold);
+}
+body.sound-testing #intro,
+body.sound-testing #navigator,
+body.sound-testing #startSignal {
+  display: none;
+}
+body.sound-testing .controls {
+  visibility: hidden;
+}
+body.sound-testing .timing {
+  opacity: 0.5;
+}
+@keyframes panel-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes label-enter {
+  from {
+    opacity: 0;
+    margin-top: 4px;
+  }
+  to {
+    opacity: 1;
+    margin-top: 0;
+  }
+}
+@media (min-width: 1600px) {
+  .race-header,
+  .timing {
+    left: max(40px, env(safe-area-inset-left));
+  }
+  .race-header {
+    right: 40px;
+  }
+  #pitConsole {
+    width: 480px;
+    right: 40px;
+  }
+  .intro-card {
+    width: 540px;
+  }
+  h1 {
+    font-size: 160px;
+  }
+  .entry-course {
+    width: 340px;
+  }
+  .entry-course svg {
+    height: 170px;
+  }
+}
+@media (max-width: 900px) {
+  .tool-button span {
+    display: none;
+  }
+  #cameraSwitch {
+    width: 44px;
+    padding: 10px;
+  }
+  .timing {
+    top: 100px;
+  }
+  .entry-course {
+    right: 3vw;
+    width: 240px;
+  }
+  .intro-card {
+    width: 430px;
+  }
+  .intro-tagline {
+    font-size: 28px;
+  }
+  #navigator {
+    top: 100px;
+    left: auto;
+    right: 24px;
+    transform: none;
+  }
+  #navigator svg {
+    width: 38px;
+    height: 38px;
+  }
+  #navigator strong {
+    font-size: 14px;
+  }
+}
+@media (max-width: 600px) {
+  .race-header {
+    top: max(16px, env(safe-area-inset-top));
+    left: max(12px, env(safe-area-inset-left));
+    right: max(12px, env(safe-area-inset-right));
+    gap: 8px;
+  }
+  .brand {
+    font-size: 30px;
+    letter-spacing: -0.5px;
+  }
+  .brand:after {
+    font-size: 6px;
+    letter-spacing: 0.8px;
+  }
+  .brand .build-debug {
+    font-size: 6px;
+    margin-top: 5px;
+  }
+  .race-toolbar {
+    gap: 5px;
+  }
+  .tool-button {
+    padding: 9px;
+    width: 44px;
+  }
+  .tool-button svg {
+    width: 19px;
+    height: 19px;
+  }
+  .timing {
+    top: 94px;
+    left: max(12px, env(safe-area-inset-left));
+    right: max(12px, env(safe-area-inset-right));
+    box-shadow: 2px 3px 0 #0003;
+  }
+  .timing > div {
+    padding: 8px 12px;
+  }
+  .timing .time-instrument {
+    flex: 1;
+  }
+  .timing strong {
+    font-size: 22px;
+    letter-spacing: -1px;
+  }
+  .instrument-label {
+    font-size: 8px;
+    letter-spacing: 0.7px;
+  }
+  .controls {
+    left: max(12px, env(safe-area-inset-left));
+    right: max(12px, env(safe-area-inset-right));
+    bottom: max(26px, calc(env(safe-area-inset-bottom) + 8px));
+  }
+  .steering-controls {
+    gap: 8px;
+  }
+  .controls button {
+    min-width: 83px;
+    height: 94px;
+    padding: 8px;
+    font-size: 10px;
+    letter-spacing: 1.4px;
+  }
+  .controls svg {
+    width: 30px;
+    height: 30px;
+  }
+  #throttle {
+    min-width: 112px;
+    padding: 8px;
+  }
+  .speed {
+    right: max(12px, env(safe-area-inset-right));
+    bottom: max(136px, calc(env(safe-area-inset-bottom) + 118px));
+    width: 142px;
+  }
+  .speed-face {
+    padding: 7px 10px 4px;
+  }
+  .speed-face:after {
+    width: 9px;
+    height: 9px;
+    top: 9px;
+    right: 8px;
+  }
+  .speed strong {
+    font-size: 62px;
+    min-width: 80px;
+  }
+  .speed-unit {
+    font-size: 14px;
+    margin-left: 0;
+  }
+  .speed .instrument-label {
+    font-size: 7px;
+    letter-spacing: 0.6px;
+  }
+  .tachometer {
+    padding: 7px 9px 5px;
+  }
+  .tach-label {
+    font-size: 6px;
+    letter-spacing: 0.5px;
+  }
+  .tach-label output {
+    font-size: 10px;
+  }
+  .tach-scale {
+    font-size: 6px;
+  }
+  .course-name {
+    left: 12px;
+    bottom: 150px;
+    gap: 8px;
+    max-width: 190px;
+  }
+  .course-index {
+    font-size: 30px;
+    padding-right: 8px;
+  }
+  .course-name b {
+    font-size: 15px;
+    letter-spacing: 1px;
+  }
+  .course-name div > span {
+    font-size: 6px;
+    letter-spacing: 0.1px;
+  }
+  #notice {
+    font-size: 8px;
+    bottom: max(7px, env(safe-area-inset-bottom));
+    max-width: 94vw;
+  }
+  #navigator {
+    top: 170px;
+    left: 12px;
+    right: auto;
+    transform: none;
+    min-width: 136px;
+    padding: 6px 12px 6px 6px;
+    gap: 8px;
+  }
+  #navigator strong {
+    font-size: 14px;
+  }
+  #navigator span {
+    font-size: 12px;
+  }
+  #navigator small {
+    font-size: 7px;
+  }
+  #navigator svg {
+    width: 34px;
+    height: 34px;
+  }
+  #startSignal {
+    top: 175px;
+  }
+  .signal-housing i {
+    width: 30px;
+    height: 30px;
+  }
+  .signal-housing {
+    padding: 10px 14px;
+    gap: 8px;
+  }
+  #signalText {
+    font-size: 30px;
+  }
+  #cameraToast {
+    top: 160px;
+    font-size: 14px;
+  }
+  #pitConsole {
+    left: max(8px, env(safe-area-inset-left));
+    right: max(8px, env(safe-area-inset-right));
+    top: 162px;
+    bottom: max(132px, calc(env(safe-area-inset-bottom) + 116px));
+    width: auto;
+  }
+  .pit-heading {
+    padding: 10px 12px 8px;
+  }
+  .pit-heading h2 {
+    font-size: 26px;
+  }
+  .pit-heading p {
+    font-size: 7px;
+    letter-spacing: 0.3px;
+  }
+  .pit-scroll {
+    padding: 4px 12px 16px;
+  }
+  .pit-tabs button {
+    font-size: 14px;
+  }
+  .pit-footer {
+    padding: 6px 12px;
+    font-size: 7px;
+  }
+  body.pit-open .speed {
+    visibility: hidden;
+  }
+  #intro {
+    padding: max(20px, env(safe-area-inset-top))
+      max(24px, env(safe-area-inset-left))
+      max(20px, env(safe-area-inset-bottom));
+    background: #11191df0;
+    align-items: safe center;
+  }
+  .intro-card {
+    border: 0;
+    padding: 0;
+    width: 100%;
+    max-width: 380px;
+    margin: auto;
+  }
+  .entry-strap {
+    font-size: 15px;
+    letter-spacing: 1px;
+  }
+  .entry-strap b {
+    font-size: 28px;
+  }
+  .eyebrow {
+    font-size: 8px;
+    letter-spacing: 1px;
+    margin: 16px 0;
+  }
+  h1 {
+    font-size: 108px;
+    line-height: 0.73;
+    margin: 18px 0 22px;
+  }
+  .intro-tagline {
+    font-size: 27px;
+    margin: 20px 0 10px;
+  }
+  .intro-description {
+    font-size: 11px;
+    margin: 10px 0 18px;
+  }
+  #start {
+    min-height: 58px;
+    font-size: 23px;
+  }
+  .entry-specs {
+    margin: 18px 0 14px;
+    padding-bottom: 14px;
+  }
+  .entry-specs b {
+    font-size: 28px;
+  }
+  .entry-specs span {
+    font-size: 6px;
+  }
+  .entry-specs > div {
+    padding-left: 12px;
+  }
+  footer {
+    font-size: 8px;
+  }
+  footer small {
+    font-size: 7px;
+    max-width: 290px;
+  }
+  .entry-course {
+    display: none;
+  }
+  #introTune {
+    margin-top: 8px;
+  }
+  #intro .build-debug {
+    font-size: 7px;
+  }
+  #physicsTelemetryOverlay,
+  .debug-readout {
+    left: 12px;
+    top: 255px;
+    font-size: 8px;
+    padding: 6px 8px;
+    max-width: 205px;
+  }
+  .bigfoot-readout {
+    top: 390px;
+  }
+  #summerFPS {
+    right: 12px;
+    top: 75px;
+    font-size: 8px;
+  }
+  .result-card {
+    margin: 0 auto;
+    padding: 20px;
+  }
+  .finish-strap {
+    font-size: 8px;
+  }
+  .result-card h2 {
+    font-size: 43px;
+  }
+}
+@media (max-width: 600px) and (max-height: 740px) {
+  #intro {
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+  h1 {
+    font-size: 86px;
+    margin: 14px 0 18px;
+  }
+  .intro-tagline {
+    font-size: 23px;
+    margin-top: 16px;
+  }
+  .intro-description {
+    margin-bottom: 14px;
+    font-size: 10px;
+  }
+  .eyebrow {
+    margin: 12px 0;
+    font-size: 7px;
+  }
+  .entry-specs {
+    margin: 14px 0 10px;
+    padding-bottom: 10px;
+  }
+  .entry-specs b {
+    font-size: 24px;
+  }
+  #start {
+    min-height: 52px;
+  }
+  footer small {
+    margin-top: 4px;
+  }
+  .entry-strap {
+    font-size: 13px;
+    padding: 6px 0;
+  }
+  .entry-strap b {
+    font-size: 24px;
+  }
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  .race-header {
+    top: max(10px, env(safe-area-inset-top));
+    left: max(16px, env(safe-area-inset-left));
+    right: max(16px, env(safe-area-inset-right));
+  }
+  .brand {
+    font-size: 27px;
+  }
+  .brand:after {
+    display: none;
+  }
+  .brand .build-debug {
+    font-size: 6px;
+  }
+  .race-toolbar {
+    gap: 6px;
+  }
+  .timing {
+    top: 62px;
+    left: max(16px, env(safe-area-inset-left));
+    right: auto;
+  }
+  .timing > div {
+    padding: 6px 12px;
+  }
+  .timing strong {
+    font-size: 19px;
+  }
+  .instrument-label {
+    font-size: 7px;
+  }
+  .controls {
+    bottom: max(18px, env(safe-area-inset-bottom));
+    left: max(16px, env(safe-area-inset-left));
+    right: max(16px, env(safe-area-inset-right));
+  }
+  .controls button {
+    height: 81px;
+    min-width: 86px;
+    font-size: 10px;
+  }
+  .controls svg {
+    width: 27px;
+    height: 27px;
+  }
+  #throttle {
+    min-width: 115px;
+  }
+  .speed {
+    width: 130px;
+    bottom: 110px;
+    right: max(16px, env(safe-area-inset-right));
+  }
+  .speed strong {
+    font-size: 49px;
+    min-width: 70px;
+  }
+  .speed-face {
+    padding: 5px 8px;
+  }
+  .speed-face:after {
+    width: 8px;
+    height: 8px;
+    top: 7px;
+    right: 7px;
+  }
+  .speed .instrument-label {
+    font-size: 6px;
+  }
+  .speed-unit {
+    font-size: 13px;
+  }
+  .tachometer {
+    padding: 5px 8px;
+  }
+  .tach-label {
+    font-size: 6px;
+  }
+  .tach-label output {
+    font-size: 9px;
+  }
+  .tach-scale {
+    display: none;
+  }
+  .rev-track {
+    height: 7px;
+    margin-top: 4px;
+  }
+  .course-name {
+    bottom: 116px;
+    left: 16px;
+  }
+  .course-index {
+    font-size: 28px;
+  }
+  .course-name b {
+    font-size: 14px;
+  }
+  .course-name div > span {
+    font-size: 6px;
+  }
+  #notice {
+    bottom: 3px;
+    font-size: 7px;
+  }
+  #navigator {
+    top: 64px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    padding: 5px 10px 5px 5px;
+    min-width: 130px;
+  }
+  #navigator svg {
+    width: 30px;
+    height: 30px;
+  }
+  #navigator strong {
+    font-size: 12px;
+  }
+  #navigator span {
+    font-size: 10px;
+  }
+  #navigator small {
+    font-size: 6px;
+  }
+  #startSignal {
+    top: 126px;
+  }
+  .signal-housing {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+  .signal-housing i {
+    width: 25px;
+    height: 25px;
+  }
+  #signalText {
+    font-size: 27px;
+  }
+  .signal-caption {
+    font-size: 7px;
+  }
+  #cameraToast {
+    top: 63px;
+    font-size: 13px;
+  }
+  #pitConsole {
+    top: 60px;
+    bottom: 112px;
+    left: auto;
+    right: max(12px, env(safe-area-inset-right));
+    width: min(420px, 54vw);
+  }
+  .pit-heading {
+    padding: 6px 12px;
+  }
+  .pit-heading h2 {
+    font-size: 23px;
+  }
+  .pit-heading p {
+    font-size: 6px;
+    margin-top: 4px;
+  }
+  .pit-tabs button {
+    min-height: 38px;
+    font-size: 13px;
+  }
+  .pit-footer {
+    display: none;
+  }
+  .pit-scroll {
+    padding: 2px 12px 12px;
+  }
+  body.pit-open .speed {
+    visibility: hidden;
+  }
+  #intro {
+    padding: 16px 28px;
+    align-items: safe center;
+    background: linear-gradient(90deg, #11191df5 0 55%, #11191d90);
+  }
+  .intro-card {
+    width: 580px;
+    max-width: 85%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 24px;
+  }
+  .entry-strap {
+    grid-column: 1/-1;
+    font-size: 13px;
+    padding: 5px 0;
+  }
+  .entry-strap b {
+    font-size: 24px;
+  }
+  .eyebrow {
+    grid-column: 1/-1;
+    margin: 8px 0;
+    font-size: 7px;
+  }
+  h1 {
+    grid-column: 1;
+    grid-row: 3/6;
+    font-size: 88px;
+    line-height: 0.72;
+    margin: 10px 0 18px;
+  }
+  .speed-stripes {
+    grid-column: 1;
+    grid-row: 6;
+  }
+  .intro-tagline {
+    grid-column: 2;
+    grid-row: 3;
+    font-size: 25px;
+    margin: 5px 0 8px;
+  }
+  .intro-description {
+    grid-column: 2;
+    grid-row: 4;
+    font-size: 9px;
+    line-height: 1.5;
+    margin: 0 0 10px;
+  }
+  #start {
+    grid-column: 2;
+    grid-row: 5/7;
+    min-height: 48px;
+    font-size: 20px;
+    padding: 10px 12px;
+  }
+  .entry-specs {
+    grid-column: 1;
+    grid-row: 7;
+    margin: 12px 0 0;
+    padding-bottom: 8px;
+  }
+  .entry-specs b {
+    font-size: 24px;
+  }
+  .entry-specs span {
+    font-size: 5px;
+  }
+  .entry-specs > div {
+    padding-left: 8px;
+  }
+  footer {
+    grid-column: 2;
+    grid-row: 7;
+    margin-top: 10px;
+    font-size: 7px;
+    line-height: 1.6;
+  }
+  footer small {
+    font-size: 6px;
+    max-width: 220px;
+    margin-top: 4px;
+  }
+  #introTune {
+    grid-column: 1;
+    grid-row: 8;
+    min-height: 44px;
+    margin-top: 8px;
+    width: max-content;
+    font-size: 11px;
+  }
+  #intro .build-debug {
+    grid-column: 2;
+    grid-row: 8;
+    align-self: center;
+    font-size: 7px;
+    margin: 0;
+  }
+  .entry-course {
+    display: none;
+  }
+  .debug-readout,
+  #physicsTelemetryOverlay {
+    top: 126px;
+    left: 16px;
+    font-size: 8px;
+    max-width: 240px;
+  }
+  .bigfoot-readout {
+    top: 126px;
+    left: auto;
+    right: 16px;
+  }
+  #summerFPS {
+    top: 64px;
+    right: 16px;
+    font-size: 8px;
+  }
+}
+/* Entry screen is a clean marquee; race instruments appear when the race begins. */
+body:not(.racing) .race-header,
+body:not(.racing) .timing,
+body:not(.racing) .speed,
+body:not(.racing) .controls,
+body:not(.racing) .course-name,
+body:not(.racing) #notice,
+body:not(.racing) #cameraToast {
+  visibility: hidden;
+}
+@media (max-width: 600px) {
+  .timing .best-instrument strong {
+    font-size: 18px;
+    margin-top: 6px;
+  }
+  .course-name div > span {
+    font-size: 7px;
+  }
+}
+@media (max-width: 360px) {
+  .timing > div {
+    padding: 8px;
+  }
+  .timing strong {
+    font-size: 19px;
+  }
+  .timing .best-instrument strong {
+    font-size: 16px;
+  }
+  .controls button {
+    min-width: 76px;
+  }
+  #throttle {
+    min-width: 102px;
+  }
+}
+body:not(.racing) #physicsTelemetryOverlay,
+body:not(.racing) .debug-readout,
+body:not(.racing) #summerFPS {
+  visibility: hidden;
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  #pitConsole {
+    top: max(12px, env(safe-area-inset-top));
+  }
+}
