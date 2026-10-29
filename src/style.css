@@ -70,3 +70,10 @@
 @media(orientation:landscape) and (max-height:500px){.brand{font-size:22px}.brand:after{display:none}.brand .build-debug{font-size:7px}.timing{top:68px;padding:5px 9px;gap:15px}.timing strong{font-size:19px}.timing label{font-size:8px}#debug{top:71px}#soundLab{top:40px}#navigator{top:70px}.intro-card{max-width:500px}h1{font-size:64px}.intro-card small{font-size:9px}.intro-card p{font-size:12px}footer{font-size:8px}.speed strong{font-size:43px}.course-name{padding:5px 8px}.intro-card .build-debug{font-size:8px}}
 
 header{align-items:flex-start}
+
+/* Camera cycling stays clear of steering/throttle, timing and the two menus. */
+#cameraSwitch{position:fixed;right:max(28px,env(safe-area-inset-right));top:164px;z-index:7;max-width:180px;min-height:40px;padding:10px 12px;background:#20383be8;color:#f3dfaf;border:1px solid #f3dfaf77;border-radius:3px;font:700 11px monospace;touch-action:manipulation}
+#cameraToast{position:fixed;z-index:9;left:50%;top:116px;transform:translateX(-50%);padding:9px 16px;background:#20383bed;border-bottom:2px solid #e8894b;color:#f3dfaf;font:700 12px monospace;pointer-events:none}#cameraToast[hidden]{display:none}
+#debug .camera-note{font:10px/1.5 monospace;color:#d7c9aa}#debug #resetCameras{min-height:44px;background:#e8c58e;color:#20383b;padding:10px;margin-top:10px}
+@media(max-width:600px){#cameraSwitch{right:12px;top:230px;max-width:160px;min-height:42px;font-size:10px}#cameraToast{top:280px;font-size:11px}}
+@media(orientation:landscape) and (max-height:500px){#cameraSwitch{right:12px;top:115px;padding:8px 10px;min-height:36px;font-size:10px}#cameraToast{top:40px;font-size:10px}}

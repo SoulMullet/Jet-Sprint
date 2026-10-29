@@ -6,6 +6,14 @@ The active course is **Cedar Creek Figure Eight**, a compact two-loop circuit wi
 
 The V8 Sound Lab, 32 live controls, independent presets/JSON and stationary tuning remain available; see [the earlier track and V8 notes](docs/track-v8-upgrade.md) for audio controls. That document describes the superseded Shelter course.
 
+## Racing cameras
+
+Use the compact **▣ camera-name** button to cycle **Classic Arcade → Chase → Cockpit → Overhead**. Classic retains the original elevated follow view. Chase follows low behind the boat; Cockpit uses the existing driver seat and boat model; Overhead is an orthographic, north-up view.
+
+Open **Game Settings → Racing Cameras** to select a mode and tune its distance/height, FOV or zoom, lag, and look-ahead where applicable. Higher lag softens following. Each mode saves independently on this device. **Reset Cameras to Defaults** resets only camera preferences and returns to Classic. The legacy **Camera response** control still sets Classic's lag. Camera preferences are stored separately from the existing gameplay/audio settings and their JSON presets.
+
+The existing **Figure-eight overview** remains a full-course diagnostic override. Switching camera or resetting cameras exits that overview. See [camera implementation and verification](docs/cameras.md) for limits and screenshots.
+
 ## Local development
 
 Use Node.js 22.12+ (or 24) and npm:

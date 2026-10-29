@@ -54,7 +54,7 @@ export class BigfootView {
  setDebug(enabled){this.enabled=enabled;this.label.sprite.visible=this.path.visible=enabled;this.status.hidden=!enabled;if(this.controls)this.controls.hidden=!enabled;}
  mount(panel,boat,camera){
   const wrap=document.createElement('div');wrap.hidden=!this.enabled;this.controls=wrap;panel.append(wrap);
-  const trigger=document.createElement('button');trigger.id='triggerBigfoot';trigger.type='button';trigger.textContent='Trigger Bigfoot Now';trigger.onclick=()=>{const ok=this.actor.triggerNow(boat(),camera);this.status.textContent=ok?'Bigfoot triggered · Walking to Shore':'No safe shoreline corridor available.';};
+  const trigger=document.createElement('button');trigger.id='triggerBigfoot';trigger.type='button';trigger.textContent='Trigger Bigfoot Now';trigger.onclick=()=>{const ok=this.actor.triggerNow(boat(),typeof camera==='function'?camera():camera);this.status.textContent=ok?'Bigfoot triggered · Walking to Shore':'No safe shoreline corridor available.';};
   const reset=document.createElement('button');reset.id='resetBigfoot';reset.type='button';reset.textContent='Reset Bigfoot';reset.onclick=()=>this.actor.reset();wrap.append(trigger,reset);
  }
  update(boat,dt){

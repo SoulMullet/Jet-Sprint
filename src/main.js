@@ -1,5 +1,8 @@
 import * as THREE from 'three';
 import './style.css';
+import {CameraSettings} from './camera-settings.js';
+import {RacingCameras,createCameraObstructionQuery} from './cameras.js';
+import {mountCameraPanel} from './camera-panel.js';
 import {createRetroVenue} from './retro-venue.js';
 import {trackConfig} from './track-layout.js';
 import {channel,settings,stepBoat} from './physics.js';
@@ -23,11 +26,13 @@ import {RouteNavigator,mountNavigator} from './navigation.js';
 import {bindControls} from './controls.js';
 const preferences=new SettingsStore({getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)});
 for(const id of Object.keys(settings))if(Object.hasOwn(preferences.values,id))settings[id]=preferences.values[id];
+const cameraPreferences=new CameraSettings({getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)},settings.cameraResponse);
 const $=id=>document.getElementById(id);
 const scene=new THREE.Scene();scene.background=new THREE.Color('#a6d4cb');scene.fog=new THREE.Fog('#a6d4cb',150,260);
 const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.outputColorSpace=THREE.SRGBColorSpace;$('game').appendChild(renderer.domElement);
-const camera=new THREE.PerspectiveCamera(43,1,1,600);
-const sun=lighting(scene,renderer);
+const perspective=new THREE.PerspectiveCamera(43,1,1,600);
+let camera=perspective;
+const sun=lighting(scene,renderer);sun.shadow.camera.layers.enable(1);
 const mat=(color,roughness=.8)=>new THREE.MeshStandardMaterial({color,roughness});
 const waterTime={value:0},waterBoat={value:new THREE.Vector3()},waterStrength={value:0};
 const bank=mat('#645b45'),dark=mat('#183237'),lime=mat('#e0ef64'),white=mat('#ddd6b7');
@@ -58,7 +63,12 @@ const bigfoot=createBigfoot(scene,forest,nearest);
 const start=points[0],startT=tangents[0];const stripe=new THREE.Group();stripe.position.set(start.x,.035,start.z);stripe.rotation.y=-Math.atan2(startT.z,startT.x);scene.add(stripe);
 for(let x=0;x<2;x++)for(let z=0;z<15;z++)mesh(new THREE.BoxGeometry(.65,.025,.96),(x+z)%2?dark:white,(x-.5)*.65,0,(z-7)*.96,stripe);
 for(const side of [-1,1]){mesh(new THREE.BoxGeometry(.25,4,.25),dark,0,2,side*9,stripe);mesh(new THREE.BoxGeometry(.1,1,2),lime,0,3.3,side*8.2,stripe);}
-const boat=racingBoat(scene);
+const boat=racingBoat(scene,{cockpitLayers:true});
+const cameraObstacles=scene.children.filter(o=>o.isMesh&&o!==waterMesh);
+scene.updateMatrixWorld(true);
+const cameraSystem=new RacingCameras(perspective,cameraPreferences,createCameraObstructionQuery(cameraObstacles));
+const cameraFrame={playing:false,top:85,effects:1,overview:false};
+const vegetationCamera={position:new THREE.Vector3()};
 // Pooled particles and wake rings: bounded memory and draw calls.
 const COUNT=800,positions=new Float32Array(COUNT*3),life=new Float32Array(COUNT),velocity=new Float32Array(COUNT*3),lifetime=new Float32Array(COUNT),alpha=new Float32Array(COUNT),splashPhase=new Uint8Array(COUNT);positions.fill(-1000);
 const particleGeo=new THREE.BufferGeometry();particleGeo.setAttribute('position',new THREE.BufferAttribute(positions,3));particleGeo.setAttribute('alpha',new THREE.BufferAttribute(alpha,1));
@@ -110,9 +120,11 @@ window.addEventListener('keydown',e=>{if(e.target instanceof HTMLInputElement||e
 window.addEventListener('blur',()=>{if(fluid?.solver)fluid.solver.accumulator=0;doubleTap.reset();release();engine.pause();});
 document.addEventListener('visibilitychange',()=>{doubleTap.reset();release();preferences.flush();audioSettings.flush();if(document.hidden)engine.pause();else last=performance.now();});
 window.addEventListener('pagehide',()=>{preferences.flush();audioSettings.flush();});
+let cameraSyncReady=false;
 function applyPreferences(ids){const v=preferences.values;
  for(const id of ids)if(Object.hasOwn(settings,id))settings[id]=v[id];
  if(playing)race.modified||=modified(settings);
+ if(cameraSyncReady&&ids.includes('cameraResponse'))cameraPreferences.set('classic','lag',1/v.cameraResponse);
  if(ids.includes('graphics')&&graphics.selected!==v.graphics)graphics.select(v.graphics);
  if(ids.includes('fluidResolution'))fluid.setResolution(v.fluidResolution);
  if(ids.includes('waterMode'))fluid.setMode(v.waterMode);
@@ -124,11 +136,13 @@ function applyPreferences(ids){const v=preferences.values;
  if(ids.includes('mute')||ids.includes('masterVolume'))engine.setPreferences(v.mute,v.masterVolume);
 }
 const settingsUI=mountSettings(preferences,applyPreferences);
+cameraSyncReady=true;
+mountCameraPanel(cameraPreferences,$('debug'),()=>{$('courseOverview').checked=false;});
 const soundLab=mountSoundLab(audioSettings,engine,{onTestChange:on=>{release();if(!on&&!playing)engine.pause();last=performance.now();}});
 soundLab.root.addEventListener('toggle',()=>{if(soundLab.root.open)release();});
-bigfootView.mount(settingsUI.groups['Debug Tools'],()=>b,camera);
+bigfootView.mount(settingsUI.groups['Debug Tools'],()=>b,()=>camera);
 let b,elapsed=0,lap=1,best=null;
-function restart(){if(soundLab.testing)soundLab.setTesting(false);const now=performance.now();if(playing)gameClock+=Math.max(0,(now-last)/1000);last=now;startSequence.reset();playing=document.body.classList.contains('racing');if(playing)startSequence.begin(gameClock,preferences.values.countdownDuration);fluid?.reset();fluid?.disturb();race.reset();navigator.reset();race.modified=modified(settings);doubleTap.reset();$('results').hidden=true;result=null;release();engine.reset();b={x:start.x,z:start.z,angle:Math.atan2(startT.z,startT.x),vx:0,vz:0,pump:0,nozzle:0,yawRate:0};elapsed=0;lap=1;life.fill(0);alpha.fill(0);emit=0;positions.fill(-1000);for(const w of wakes)w.age=10;$('notice').textContent='Follow your navigator. Apply throttle to steer.';}
+function restart(){cameraSystem.reset();if(soundLab.testing)soundLab.setTesting(false);const now=performance.now();if(playing)gameClock+=Math.max(0,(now-last)/1000);last=now;startSequence.reset();playing=document.body.classList.contains('racing');if(playing)startSequence.begin(gameClock,preferences.values.countdownDuration);fluid?.reset();fluid?.disturb();race.reset();navigator.reset();race.modified=modified(settings);doubleTap.reset();$('results').hidden=true;result=null;release();engine.reset();b={x:start.x,z:start.z,angle:Math.atan2(startT.z,startT.x),vx:0,vz:0,pump:0,nozzle:0,yawRate:0};elapsed=0;lap=1;life.fill(0);alpha.fill(0);emit=0;positions.fill(-1000);for(const w of wakes)w.age=10;$('notice').textContent='Follow your navigator. Apply throttle to steer.';}
 restart();$('restart').onclick=()=>{if(document.body.classList.contains('racing'))playing=true;restart();if(playing)engine.start();};$('start').onclick=()=>{playing=true;document.body.classList.add('racing');engine.start();restart();};
 let previousSpeed=0;
 function effects(dt,speed){
@@ -153,10 +167,9 @@ function effects(dt,speed){
  particleGeo.attributes.position.needsUpdate=true;particleGeo.attributes.alpha.needsUpdate=true;
  wakeClock+=dt;if(wakeClock>.09&&speed>1){wakeClock=0;const w=wakes[wakeCursor++%wakes.length];w.age=0;w.m.position.set(b.x-Math.cos(b.angle)*1.6,.025,b.z-Math.sin(b.angle)*1.6);}
  for(const w of wakes){w.age+=dt;w.m.visible=w.age<2;w.m.scale.setScalar(1+w.age*2);w.m.material.opacity=Math.max(0,.26*(1-w.age/2))*Math.min(1.6,settings.waterVolume/100);}}
-function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();}window.addEventListener('resize',resize);resize();
+function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);cameraSystem.resize(w,h);}window.addEventListener('resize',resize);resize();
 const beforeStep={x:0,z:0};
-const cameraTarget=new THREE.Vector3(start.x,0,start.z),desiredTarget=new THREE.Vector3();
-let cameraReady=false,vegetationClock=0;
+let vegetationClock=0;
 function frame(now){requestAnimationFrame(frame);const rawDt=Math.max(0,(now-last)/1000),dt=Math.min(rawDt,.05);last=Math.max(last,now);if(playing&&!document.hidden)graphics.sample(rawDt);waterTime.value=now*.001;let speed=Math.hypot(b.vx,b.vz);
  if(playing&&!document.hidden&&!soundLab.testing){
   gameClock+=rawDt;
@@ -188,19 +201,16 @@ function frame(now){requestAnimationFrame(frame);const rawDt=Math.max(0,(now-las
  const signalText=startSequence.state==='READY'?'READY':startSequence.state==='COUNTDOWN'?'SET':'GO!';if($('signalText').textContent!==signalText)$('signalText').textContent=signalText;
 
  boat.position.set(b.x,.1+Math.sin(now*.008)*.025*speed/20,b.z);boat.rotation.set(0,-b.angle,(Number(input.left)-Number(input.right))*.055*speed/20);
- // Fixed isometric angle, with velocity and course lookahead for the next bend.
+ // Rendering-only camera controller: it never writes boat or race state.
  waterBoat.value.set(b.x,0,b.z);waterStrength.value=Math.min(1,speed/20);
  const near=nearest(b.x,b.z),ahead=points[(near.index+Math.round(12+speed*.8))%N];
- desiredTarget.set(b.x+(ahead.x-b.x)*.25+b.vx*.18,0,b.z+(ahead.z-b.z)*.25+b.vz*.18);
- if(!cameraReady||!playing){cameraTarget.copy(desiredTarget);cameraReady=true;}
- else cameraTarget.lerp(desiredTarget,1-Math.exp(-dt*settings.cameraResponse*(1+Math.max(0,settings.top/120-1)*.4)));
- const baseDistance=camera.aspect<1?Math.max(54,35/camera.aspect):52;
- const distance=baseDistance+Math.min(1,speed/(settings.top/3.6))*5*settings.effects;
- camera.position.set(cameraTarget.x,distance,cameraTarget.z+distance*.62);camera.lookAt(cameraTarget);
- scene.fog.near=$('courseOverview').checked?350:105;scene.fog.far=$('courseOverview').checked?600:240;
- if($('courseOverview').checked){camera.position.set(-6,137,86);camera.lookAt(-6,0,-1);}
- const fov=43+Math.min(1,speed/50)*2;if(Math.abs(camera.fov-fov)>.01){camera.fov+=(fov-camera.fov)*(1-Math.exp(-dt*3));camera.updateProjectionMatrix();}
- vegetationClock+=dt;if(vegetationClock>.5){vegetationClock=0;environment.update(camera,quality.detail);}
- sun.position.set(cameraTarget.x-35,65,cameraTarget.z+25);sun.target.position.set(cameraTarget.x,0,cameraTarget.z);
+ cameraFrame.playing=playing;cameraFrame.top=settings.top;cameraFrame.effects=settings.effects;cameraFrame.overview=$('courseOverview').checked;
+ camera=cameraSystem.update(b,boat,ahead,dt,cameraFrame);
+ scene.fog.near=cameraFrame.overview?350:105;scene.fog.far=cameraFrame.overview?600:240;
+ vegetationClock+=dt;if(vegetationClock>.5){vegetationClock=0;
+  vegetationCamera.position.set(b.x,0,b.z+35);
+  environment.update(cameraPreferences.mode==='classic'||cameraFrame.overview?camera:vegetationCamera,quality.detail);
+ }
+ sun.position.set(cameraSystem.target.x-35,65,cameraSystem.target.z+25);sun.target.position.set(cameraSystem.target.x,0,cameraSystem.target.z);
  $('speed').textContent=Math.round(speed*3.6);$('time').textContent=format(elapsed);$('lap').textContent=`${lap}/5`;$('best').textContent=best===null?'—':format(best);$('rev').style.transform=`scaleX(${Math.min(1,speed/(settings.top/3.6))})`;renderer.render(scene,camera);}
 requestAnimationFrame(frame);
