@@ -7,29 +7,29 @@ import {nearestOnTrack,channelGeometry,channelBankGeometry} from '../src/track.j
 import {channel} from '../src/physics.js';
 import {makeDomain} from '../src/fluid/numerics.js';
 const venue=createCourse();
-test('network has shared intersections, alternate routes and separate closed race walk',()=>{
- assert.equal(venue.network.paths.length,10);assert.ok(venue.gates.length>=18&&venue.gates.length<40);
- const alternate=createCourse(['S-A','A-B-cut','B-C-cut','C-D-cut','D-E','E-S']);assert.notEqual(alternate.length,venue.length);assert.deepEqual(alternate.edges.map(e=>e.points.map(p=>[p.x,p.z])),venue.edges.map(e=>e.points.map(p=>[p.x,p.z])));
- assert.throws(()=>createCourse([...prescribedRoute,'S-A']));
+test('network has a shared crossover and a separately validated closed race walk',()=>{
+ assert.equal(venue.network.paths.length,6);assert.ok(venue.gates.length>=12&&venue.gates.length<40);
+ const alternate=createCourse([...prescribedRoute,...prescribedRoute]);assert.notEqual(alternate.length,venue.length);assert.deepEqual(alternate.edges.map(e=>e.points.map(p=>[p.x,p.z])),venue.edges.map(e=>e.points.map(p=>[p.x,p.z])));
+ assert.throws(()=>createCourse([...prescribedRoute,'S-W']));
  for(const p of venue.gates){const q=nearestOnTrack(venue.network,p.x,p.z);assert.ok(Math.hypot(q.x-p.x,q.z-p.z)<.03);}
 });
 test('following the actual prescribed route completes exactly five laps with stable cues',()=>{
  const r=new Race(venue.gates,channel.hullLimit),nav=new RouteNavigator(venue,channel.hullLimit);let before=venue.sample(0),wrong=0;const cueIds=new Set();
  for(let d=.25;d<=venue.length*5+1&&!r.done;d+=.25){const after=venue.sample(d);after.angle=Math.atan2(after.tz,after.tx);r.step(before,after,.01,defaults);const cue=nav.update(after,r,.01);wrong+=Number(cue.wrong);cueIds.add(cue.kind);before=after;}
- assert.equal(r.done,true);assert.equal(r.laps.length,5);assert.equal(wrong,0);assert.ok(cueIds.has('sharp-right'));assert.ok(cueIds.has('straight'));
+ assert.equal(r.done,true);assert.equal(r.laps.length,5);assert.equal(wrong,0);assert.ok(cueIds.has('right')&&cueIds.has('left'));assert.ok(cueIds.has('straight'));
 });
 test('wrong branch cannot skip gates; recovery must cross the same required gate',()=>{
  const r=new Race(venue.gates,channel.hullLimit),nav=new RouteNavigator(venue,channel.hullLimit);let before=venue.sample(0);
- for(let d=.25;d<70;d+=.25){const after=venue.sample(d);r.step(before,after,.01,defaults);before=after;}
+ for(let d=.25;d<venue.junctions.find(j=>j.node==='J').distance-1;d+=.25){const after=venue.sample(d);r.step(before,after,.01,defaults);before=after;}
  const required=r.next;
- // Drive the A-B cross-cut instead of the prescribed eastern hairpin.
- const edge=venue.edges.find(e=>e.id==='A-B-cut');for(const after of edge.points){r.step(before,after,.05,defaults);nav.update({...after,angle:0},r,.05);before=after;}
+ // At the first crossover, take the later J-S diagonal instead of J-R.
+ const edge=venue.edges.find(e=>e.id==='J-S');for(const after of edge.points){r.step(before,after,.05,defaults);nav.update({...after,angle:0},r,.05);before=after;}
  assert.equal(r.laps.length,0);assert.ok(r.next<required+4);assert.equal(nav.wrong,true);const missed=r.next;
  const g=venue.gates[missed],back={x:g.x-g.tx*2,z:g.z-g.tz*2};r.step(before,back,.01,defaults);r.step(back,{x:g.x+g.tx*.1,z:g.z+g.tz*.1},.01,defaults);assert.equal(r.next,(missed+1)%venue.gates.length);
  const cue=nav.update({...g,angle:0},r,.01);assert.equal(cue.wrong,false);
 });
 test('later gates, backwards crossing and short circuits never award laps',()=>{
- const r=new Race(venue.gates,channel.hullLimit);for(let lap=0;lap<6;lap++)for(const i of [5,10,15,0]){const g=venue.gates[i];r.step({x:g.x-g.tx,z:g.z-g.tz},{x:g.x+g.tx,z:g.z+g.tz},.1,defaults);}assert.equal(r.next,1);assert.equal(r.laps.length,0);
+ const r=new Race(venue.gates,channel.hullLimit);for(let lap=0;lap<6;lap++)for(const i of [4,8,12,0]){const g=venue.gates[i];r.step({x:g.x-g.tx,z:g.z-g.tz},{x:g.x+g.tx,z:g.z+g.tz},.1,defaults);}assert.equal(r.next,1);assert.equal(r.laps.length,0);
 });
 test('navigator handles left cues and tutorial cooldown without changing race state',()=>{
  const c={...venue,cues:venue.cues.map(c=>({...c,kind:'left'}))},r=new Race(c.gates,6.5),n=new RouteNavigator(c,6.5),b={...c.sample(0),angle:0,pump:0};const cue=n.update(b,r,.1,{left:true});assert.equal(cue.kind,'left');assert.equal(cue.notice,'Apply throttle to steer');n.update(b,r,2);assert.equal(n.update(b,r,.1,{left:true}).notice,'');assert.equal(r.next,1);n.reset();assert.equal(n.wrong,false);
@@ -69,7 +69,7 @@ test('every full-width gate accepts drift crossings at several angles and reject
  }
 });
 test('shared intersection approaches retain intended instructions before a genuine missed gate',()=>{
- const r=new Race(venue.gates,6.5),n=new RouteNavigator(venue,6.5),junction=venue.junctions.find(j=>j.node==='B');
+ const r=new Race(venue.gates,6.5),n=new RouteNavigator(venue,6.5),junction=venue.junctions.find(j=>j.node==='J');
  r.next=venue.gates.findIndex(g=>g.distance>junction.distance);
  const b=venue.sample(junction.distance-3);b.angle=Math.atan2(b.tz,b.tx);
  for(let i=0;i<90;i++)assert.equal(n.update(b,r,1/60).wrong,false);

@@ -42,16 +42,30 @@ export function shorelineGeometry(points,water,bank){
 }
 export function landGeometry(points,width){
  const land=geometryFromPolygons(polygonClipping.difference([[[[-125,-110],[125,-110],[125,110],[-125,110],[-125,-110]]]],channelPolygons(points,width)));
- const pos=land.attributes.position,idx=land.index.array,vertices=[];
- const subdivide=(a,b,c,depth=0)=>{
-  const lengths=[Math.hypot(a[0]-b[0],a[2]-b[2]),Math.hypot(b[0]-c[0],b[2]-c[2]),Math.hypot(c[0]-a[0],c[2]-a[2])],longest=lengths.indexOf(Math.max(...lengths));
-  if(depth<9&&lengths[longest]>12){
-   const v=[a,b,c],p=v[longest],q=v[(longest+1)%3],r=v[(longest+2)%3],mid=[(p[0]+q[0])/2,0,(p[2]+q[2])/2];
-   subdivide(p,mid,r,depth+1);subdivide(mid,q,r,depth+1);
-  }else vertices.push(...a,...b,...c);
- };
- for(let i=0;i<idx.length;i+=3)subdivide(...[idx[i],idx[i+1],idx[i+2]].map(j=>[pos.getX(j),0,pos.getZ(j)]));
- const raw=new THREE.BufferGeometry();raw.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));const result=mergeVertices(raw,1e-4);raw.dispose();land.dispose();
+ // Split marked edges globally, including their neighbouring triangles.
+ // Independent recursive triangle splits create T-junctions: after elevation
+ // is applied, the unmatched midpoints leave visible cracks in the grass.
+ const positions=land.attributes.position,vertices=Array.from({length:positions.count},(_,i)=>[positions.getX(i),0,positions.getZ(i)]);
+ let faces=Array.from(land.index.array);
+ const edgeKey=(a,b)=>a<b?`${a}/${b}`:`${b}/${a}`;
+ for(let pass=0;pass<10;pass++){
+  const midpoints=new Map();
+  for(let i=0;i<faces.length;i+=3)for(let j=0;j<3;j++){
+   const a=faces[i+j],b=faces[i+(j+1)%3],key=edgeKey(a,b),p=vertices[a],q=vertices[b];
+   if(!midpoints.has(key)&&Math.hypot(p[0]-q[0],p[2]-q[2])>12){midpoints.set(key,vertices.length);vertices.push([(p[0]+q[0])/2,0,(p[2]+q[2])/2]);}
+  }
+  if(!midpoints.size)break;
+  const next=[];
+  for(let i=0;i<faces.length;i+=3){
+   const v=faces.slice(i,i+3),m=v.map((a,j)=>midpoints.get(edgeKey(a,v[(j+1)%3]))),count=m.filter(x=>x!==undefined).length;
+   if(count===0)next.push(...v);
+   else if(count===3)next.push(v[0],m[0],m[2],m[0],v[1],m[1],m[2],m[1],v[2],m[0],m[1],m[2]);
+   else if(count===1){const j=m.findIndex(x=>x!==undefined),a=v[j],b=v[(j+1)%3],c=v[(j+2)%3];next.push(a,m[j],c,m[j],b,c);}
+   else{const j=m.findIndex((x,j)=>x!==undefined&&m[(j+1)%3]!==undefined),a=v[j],b=v[(j+1)%3],c=v[(j+2)%3],p=m[j],q=m[(j+1)%3];next.push(b,q,p,a,p,c,p,q,c);}
+  }
+  faces=next;
+ }
+ const result=new THREE.BufferGeometry();result.setAttribute('position',new THREE.Float32BufferAttribute(vertices.flat(),3));result.setIndex(faces);land.dispose();
  const p=result.attributes.position,uv=new Float32Array(p.count*2);
  for(let i=0;i<p.count;i++){const x=p.getX(i),z=p.getZ(i),n=nearestOnTrack(points,x,z),d=Math.hypot(x-n.x,z-n.z),t=Math.max(0,Math.min(1,(d-width)/12));p.setY(i,.35+t*t*(3-2*t)*(.65+Math.sin(x*.08)*Math.cos(z*.09)*.4));uv[i*2]=(x+125)/250;uv[i*2+1]=(110-z)/220;}
  result.setAttribute('uv',new THREE.BufferAttribute(uv,2));result.computeVertexNormals();return result;

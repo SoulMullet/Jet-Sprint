@@ -1,8 +1,8 @@
-# JET SPRINT v0.9.0 — Course V2
+# JET SPRINT v0.10.0 — Cedar Creek 1988
 
 A mobile-first, single-player 3D jet sprint prototype built with JavaScript, Vite, Three.js and Web Audio. All geometry and sound are procedural; no assets, account, API keys or backend required.
 
-The active course is **Braided Meadows V2**, a deterministic spline network with three hairpins, alternating S sections and four cross-cuts. See [Course V2 implementation and verification](docs/course-v2.md). Open **Game Settings → Course overview (V2)** to inspect the entire venue; the normal follow camera is unchanged. The playable HUD displays **COURSE V2 — SPLINE REBUILD**.
+The active course is **Cedar Creek Figure Eight**, a compact two-loop circuit with one flat diagonal crossover and a separate staging inlet. A rustic race-office cabin, dock and moored boat, old pickup, 24 animated spectators and original local racing signs establish a Pacific Northwest venue in summer 1988. Open **Game Settings → Figure-eight overview** to see the layout; the default follow camera is unchanged. Look for **JET SPRINT — RETRO 80s / FIGURE 8** in the actual playable HUD. See [retro implementation and verification notes](docs/retro-1988.md).
 
 The V8 Sound Lab, 32 live controls, independent presets/JSON and stationary tuning remain available; see [the earlier track and V8 notes](docs/track-v8-upgrade.md) for audio controls. That document describes the superseded Shelter course.
 
@@ -19,7 +19,7 @@ Open the address Vite prints. On a phone on the same network, use the computer's
 
 Press **HIT THE WATER** to unlock audio and begin. Hold throttle and either steering button simultaneously. On desktop use **W / up arrow / space** for throttle, **A/D / left/right arrows** for steering, and **R** to restart. Release throttle to coast; reapply throttle to steer and recover a slide. Slide through bends and carry momentum. Bank contact slows and redirects the boat without ending the run. The setup panel adjusts top speed, drift retention and steering response; new-install defaults are 85 km/h, 65%, and 75%. Existing saved values are preserved.
 
-A READY stage and five-second lamp countdown hold the boat at the stripe while allowing engine revving. Green releases the boat and starts the timer together. Follow the navigator through the interconnected Shelter Islands channels; all ordered gates are required for each of five laps. Wrong turns require recovering the missed gate while the timer continues. Finish results and local leaderboards remain available. There is no reverse throttle, opponent AI, ghost, progression or network play.
+A READY stage and five-second lamp countdown hold the boat at the stripe while allowing engine revving. Green releases the boat and starts the timer together. Follow the navigator around both figure-eight loops and straight through the flat crossover on each diagonal; all ordered gates are required for each of five laps. Wrong turns require recovering the missed gate while the timer continues. Finish results and local leaderboards remain available. There is no reverse throttle, opponent AI, ghost, progression or network play.
 
 See [v0.7.1 navigation and Bigfoot notes](docs/v0.7.1.md) for the checkpoint fix, both debug systems and validation. See [v0.7.0 build notes](docs/v0.7.0.md) for recommended handling values, settings migrations, changed files, validation and the physical iPhone checklist. Older release sections below describe their historical behavior.
 

@@ -4,15 +4,18 @@ import {projectRoute} from './route-math.js';
 import {trackConfig} from './track-layout.js';
 
 export const courseId=trackConfig.id;
-export const routeId='serpentine-rotation-v2';
-export const gameplayVersion='0.9-course-v2';
+export const routeId='figure-eight-1988';
+export const gameplayVersion='0.10-retro-figure-eight';
 export const prescribedRoute=trackConfig.route;
 export function createCourse(route=prescribedRoute){
  const nodes=Object.fromEntries(Object.entries(trackConfig.nodes).map(([id,[x,z]])=>[id,new THREE.Vector3(x,0,z)]));
- const edges=trackConfig.edges.map(({id,from,to,via})=>{
-  const c=new THREE.CatmullRomCurve3([nodes[from],...via.map(([x,z])=>new THREE.Vector3(x,0,z)),nodes[to]],false,'centripetal');
-  const n=Math.ceil(c.getLength()/trackConfig.sampleSpacing);
-  return {id,from,to,points:Array.from({length:n+1},(_,i)=>c.getPointAt(i/n))};
+ const spline=new THREE.CatmullRomCurve3(trackConfig.spline.map(([x,z])=>new THREE.Vector3(x,0,z)),true,'centripetal');
+ const edges=trackConfig.edges.map(({id,from,to,via,start,end})=>{
+  const main=start!==undefined;
+  const c=main?spline:new THREE.CatmullRomCurve3([nodes[from],...via.map(([x,z])=>new THREE.Vector3(x,0,z)),nodes[to]],false,'centripetal');
+  const t0=main?start/trackConfig.spline.length:0,t1=main?end/trackConfig.spline.length:1;
+  const n=Math.ceil(c.getLength()*(t1-t0)/trackConfig.sampleSpacing);
+  return {id,from,to,points:Array.from({length:n+1},(_,i)=>c.getPoint(t0+(t1-t0)*i/n))};
  });
  const lookup=new Map(edges.map(e=>[e.id,e]));
  const legs=route.map(id=>{const e=lookup.get(id);if(!e)throw Error(`Unknown route edge: ${id}`);return e;});

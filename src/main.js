@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import './style.css';
+import {createRetroVenue} from './retro-venue.js';
 import {trackConfig} from './track-layout.js';
 import {channel,settings,stepBoat} from './physics.js';
 import {Engine} from './audio.js';
@@ -35,7 +36,7 @@ function mesh(geo,material,x=0,y=0,z=0,parent=scene){const m=new THREE.Mesh(geo,
 const venue=createCourse(),N=600,points=venue.points;
 console.info(`Active track: ${venue.id} / version ${venue.version} / ${routeId}`);
 $('buildDebugHud').dataset.track=venue.id;
-const overview=document.createElement('label');overview.innerHTML='<input id="courseOverview" type="checkbox"> Course overview (V2)';$('debug').append(overview);
+const overview=document.createElement('label');overview.innerHTML='<input id="courseOverview" type="checkbox"> Figure-eight overview';$('debug').append(overview);
 const tangents=points.map(p=>({x:p.tx,z:p.tz}));
 // Bank, render surface, collision and bathymetry share the same channel network.
 const outline=venue.network;
@@ -52,6 +53,7 @@ for(const [i,material] of [lime,white].entries()){const locations=markerLocation
 // Deterministic landscaping, kept clear of the water.
 let seed=trackConfig.seed;function random(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;}
 const environment=terrain(scene,venue.edges.flatMap(e=>e.points),nearest,random,outline),forest=environment.trees;
+const retroVenue=createRetroVenue(scene,nearest);
 const bigfoot=createBigfoot(scene,forest,nearest);
 const start=points[0],startT=tangents[0];const stripe=new THREE.Group();stripe.position.set(start.x,.035,start.z);stripe.rotation.y=-Math.atan2(startT.z,startT.x);scene.add(stripe);
 for(let x=0;x<2;x++)for(let z=0;z<15;z++)mesh(new THREE.BoxGeometry(.65,.025,.96),(x+z)%2?dark:white,(x-.5)*.65,0,(z-7)*.96,stripe);
@@ -173,6 +175,7 @@ function frame(now){requestAnimationFrame(frame);const rawDt=Math.max(0,(now-las
  }
  if(soundLab.testing&&!document.hidden){engine.update(0,soundLab.throttle,dt,settings.top/3.6,true);speed=0;}
  soundLab.update();
+ retroVenue.update(document.hidden?0:dt,b);
  const navigating=playing&&!document.hidden&&!soundLab.testing&&startSequence.state==='RACING';
  if(!navigating&&preferences.values.bigfootDebug&&!document.hidden)bigfoot.update(dt,b,camera);
  let navigationCue=null;
@@ -195,7 +198,7 @@ function frame(now){requestAnimationFrame(frame);const rawDt=Math.max(0,(now-las
  const distance=baseDistance+Math.min(1,speed/(settings.top/3.6))*5*settings.effects;
  camera.position.set(cameraTarget.x,distance,cameraTarget.z+distance*.62);camera.lookAt(cameraTarget);
  scene.fog.near=$('courseOverview').checked?350:105;scene.fog.far=$('courseOverview').checked?600:240;
- if($('courseOverview').checked){camera.position.set(-8,160,95);camera.lookAt(-8,0,-2);}
+ if($('courseOverview').checked){camera.position.set(-6,137,86);camera.lookAt(-6,0,-1);}
  const fov=43+Math.min(1,speed/50)*2;if(Math.abs(camera.fov-fov)>.01){camera.fov+=(fov-camera.fov)*(1-Math.exp(-dt*3));camera.updateProjectionMatrix();}
  vegetationClock+=dt;if(vegetationClock>.5){vegetationClock=0;environment.update(camera,quality.detail);}
  sun.position.set(cameraTarget.x-35,65,cameraTarget.z+25);sun.target.position.set(cameraTarget.x,0,cameraTarget.z);
