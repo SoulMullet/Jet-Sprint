@@ -1,4 +1,4 @@
-# JET SPRINT v0.19.0 — Summer Series ’87
+# JET SPRINT v0.19.1 — Summer Series ’87
 
 A mobile-first, single-player 3D jet sprint prototype built with JavaScript, Vite, Three.js and Web Audio. Geometry and sound are procedural; licensed interface fonts are bundled locally. No paid assets, account, API keys or backend are required.
 
@@ -6,7 +6,7 @@ The playable campaign is **Rookie Run → River Rush 1 → Timberline → River 
 
 The rivers are approximately **1.69 km / 2.43 km / 3.45 km**, with 21 / 22.8 / 24.6 m channels, downstream current, increasingly strong standing crests and later river rocks. Ordered checkpoints, pace/navigation scoring and optional side jumps remain. Normal progression uses one continuous world and scene: boat momentum, controls, camera, audio and airborne spray continue through every boundary. At the next venue, drive through the staging inlet, wait for green and cross the start line to start timing. No interstage loading screen or automatic boat relocation is used.
 
-Look for **CAMPAIGN-4 · v0.19.0 · commit** in the HUD. The MARINE-87 fonts, original boat integrator, analog touch/keyboard/gamepad adapters, four cameras, V8 and tuning labs remain. See [current campaign architecture, exact changed files, screenshots and verification](docs/campaign-expanded.md), [retained interface/spray notes](docs/marine-87.md), [physics audit](docs/boat-physics.md) and [rendering notes](docs/hf-graphics-v2.md). [Phase 1 notes](docs/campaign-phase1.md) describe the superseded short river and preview basin.
+Look for **CAMPAIGN-4 · v0.19.1 · commit** in the HUD. The MARINE-87 fonts, original boat integrator, analog touch/keyboard/gamepad adapters, four cameras, V8 and tuning labs remain. See [current campaign architecture, exact changed files, screenshots and verification](docs/campaign-expanded.md), [retained interface/spray notes](docs/marine-87.md), [physics audit](docs/boat-physics.md) and [rendering notes](docs/hf-graphics-v2.md). [Phase 1 notes](docs/campaign-phase1.md) describe the superseded short river and preview basin.
 
 ## Prizes, progress and world preparation
 
@@ -28,7 +28,7 @@ The title screen lets you begin a new run at an unlocked venue. That initial sel
 
 Environment geometry is prepared on one module worker and installed in small jobs, using bounded 160 m tiles: at most 49 on Low/Medium, 64 on High/Ultra, plus the retained origin scene. The next venue prepares during the current race and river journey; distant unneeded chunks dispose their owned GPU resources. Grass/water/banks share exact clipped tile boundaries. A failed worker produces an explicitly labelled simplified-water fallback while navigation, collisions and progress continue. Use **RACE → Debug Tools → Retry scenery preparation** to recover. This fallback preserves play/progress but is visibly degraded scenery.
 
-In `npm run dev`, **RACE → Debug Tools → Campaign diagnostics / DEV** includes all seven practice stages, gate/checkpoint/stream status and FPS. Practice shortcuts relocate only for testing and award no prizes or unlocks; they are excluded from production.
+Open **Pit Control → RACE → Debug Tools → Level debug / select track or river** in the published game or local development. Choose any of the four tracks or three bonus rivers and press **Go to selected level**. This starts a practice visit and closes the panel; distant scenery prepares around the selected location. Practice awards no prizes or unlocks, and Restart returns to normal Rookie Run. The panel also shows gate/checkpoint/stream status and FPS.
 
 River duration targets are 90–120 / 120–180 / 180–240 seconds, rather than imposed timers. The continuous automated driver meets these ranges; human pace and subjective course difficulty still need playtesting. Physical iPhone Safari, real Xbox hardware, sustained mobile FPS and thermal behavior have not been tested. Use Low on constrained devices. The optional GPU water diagnostic grid remains at Rookie Run; later waterways use procedural/HF waves, the new standing crests and environmental current, rather than a streamed hydrology solver. The existing large Three.js bundle advisory remains.
 

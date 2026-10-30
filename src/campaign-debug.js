@@ -1,5 +1,5 @@
 import { campaignEvents } from "./campaign-data.js";
-// Dynamically imported only in development; absent from production.
+// Available in published builds for explicit, reward-free level testing.
 export function mountCampaignDebug({
   campaign,
   world,
@@ -17,23 +17,23 @@ export function mountCampaignDebug({
   root.id = "campaignDiagnostics";
   root.className = "settings-section";
   const summary = document.createElement("summary");
-  summary.textContent = "Campaign diagnostics / DEV";
+  summary.textContent = "Level debug / select track or river";
   root.append(summary);
   const label = document.createElement("label");
-  label.textContent = "Practice event ";
+  label.textContent = "Level or bonus river ";
   const select = document.createElement("select");
   select.id = "devCampaignStage";
   campaignEvents.forEach((e, i) => {
     const o = document.createElement("option");
     o.value = i;
-    o.textContent = `${i + 1}. ${e.name}`;
+    o.textContent = `${e.kind === "river" ? "BONUS" : "TRACK"} / ${e.name}`;
     select.append(o);
   });
   label.append(select);
   root.append(label);
   const b = document.createElement("button");
   b.id = "devCampaignJump";
-  b.textContent = "Practice selected event";
+  b.textContent = "Go to selected level";
   b.onclick = () => jump(select.value);
   root.append(b);
   for (const [stage, id, text] of [
