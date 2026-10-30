@@ -14,10 +14,11 @@ function fixture() {
   ]);
   const info = {
     commit: sha,
-    version: "0.16.0",
+    version: "0.18.0",
     identity: "MARINE-87",
     simulation: "world-space-fixed-step",
     campaign: "phase-1-kowhai-willow-matai",
+    controls: "analog-input-v1",
     fonts: ["Russo One", "Chakra Petch"],
     assets: [...files].map(([path, text]) => ({
       path,

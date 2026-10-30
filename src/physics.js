@@ -18,7 +18,8 @@ export function stepBoat(b,input,dt,nearest){
 }
 function integrate(b,input,dt,nearest){
  const oldX=b.vx,oldZ=b.vz,speed=Math.hypot(oldX,oldZ),max=settings.top/3.6;
- const steering=Number(!!input.right)-Number(!!input.left);
+ // Normalized analog command; legacy binary callers retain identical behavior.
+ const steering=typeof input.steering==='number'?(Number.isFinite(input.steering)?clamp(input.steering,-1,1):0):Number(!!input.right)-Number(!!input.left);
  const throttle=typeof input.throttle==='number'?(Number.isFinite(input.throttle)?clamp(input.throttle,0,1):0):Number(!!input.throttle);
  const response=throttle>b.pump?settings.pumpResponse:settings.pumpDecay;
  b.pump+=(throttle-b.pump)*(1-Math.exp(-dt/response));

@@ -18,6 +18,7 @@ const panelDefinitions = [
   ["graphics", "VIDEO", "VIDEO / CALIBRATION", "graphicsLab"],
   ["audio", "V8", "V8 / SOUND LAB", "soundLab"],
   ["camera", "VIEW", "VIEW / CAMERAS", "cameraSettings"],
+  ["controls", "INPUT", "CONTROL LAB / ANALOG", "controlLab"],
 ];
 
 /** Presentation only: existing panels and handlers are reparented, never cloned. */
@@ -91,6 +92,7 @@ export function mountInterface({
       String(key === "physics"),
     );
     scroll.scrollTop = positions.get(key) || 0;
+    pages.get(key).button.scrollIntoView({block: "nearest", inline: "nearest"});
     if (focus) pages.get(key).button.focus({ preventScroll: true });
     refreshControls();
   }

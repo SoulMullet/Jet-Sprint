@@ -35,10 +35,21 @@
         <span class="brand-jet">JET</span
         ><span class="brand-sprint">SPRINT</span
         ><small id="buildDebugHud" class="build-debug"
-          >CAMPAIGN-1 · v0.17.0</small
+          >CAMPAIGN-1 · v0.18.0</small
         >
       </div>
       <nav class="race-toolbar" aria-label="Race controls">
+        <button
+          id="pauseToggle"
+          class="tool-button"
+          aria-label="Pause race"
+          aria-controls="pauseMenu"
+          aria-expanded="false"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M8 4v16M16 4v16" /></svg
+          ><span>PAUSE</span>
+        </button>
         <button
           id="pitToggle"
           class="tool-button"
@@ -71,7 +82,9 @@
     </section>
     <aside class="course-name">
       <span class="course-index">01</span>
-      <div><b>KŌWHAI SPRINT PARK</b><span>NEW ZEALAND INSPIRED / SUMMER 1987</span></div>
+      <div>
+        <b>KŌWHAI SPRINT PARK</b><span>NEW ZEALAND INSPIRED / SUMMER 1987</span>
+      </div>
     </aside>
     <section class="speed" aria-label="Engine and speed instruments">
       <strong id="speed">0</strong><output id="hudRPM">900</output>
@@ -162,24 +175,68 @@
         ><input id="waterVolume" type="range" min="0" max="200" value="100"
       /></label>
     </details>
-    <nav class="controls" aria-label="Boat controls">
-      <div class="steering-controls">
-        <button id="left" aria-label="Steer left">
-          <svg viewBox="0 0 32 32" aria-hidden="true">
-            <path d="m20 6-11 10 11 10" /></svg
-          ><span>PORT</span></button
-        ><button id="right" aria-label="Steer right">
-          <svg viewBox="0 0 32 32" aria-hidden="true">
-            <path d="m12 6 11 10-11 10" /></svg
-          ><span>STBD</span>
-        </button>
+    <nav class="controls analog-controls" aria-label="Analog boat controls">
+      <div
+        id="steering"
+        class="analog-control analog-steering"
+        role="slider"
+        tabindex="0"
+        aria-label="Waterjet steering"
+        aria-orientation="horizontal"
+        aria-valuemin="-100"
+        aria-valuemax="100"
+        aria-valuenow="0"
+      >
+        <span class="analog-housing" aria-hidden="true"></span
+        ><span class="analog-header"
+          ><span>PORT ← STEER → STBD</span><output>0%</output></span
+        >
+        <span class="analog-rail" aria-hidden="true"
+          ><i class="analog-thumb"></i></span
+        ><span class="analog-footer"
+          ><span id="inputDeviceStatus" role="status">TOUCH / KEYS</span
+          ><span>CENTRE 0</span></span
+        >
       </div>
-      <button id="throttle">
-        <svg viewBox="0 0 32 32" aria-hidden="true">
-          <path d="M16 27V6M6 16 16 6l10 10" /></svg
-        ><span>THROTTLE</span>
-      </button>
+      <div
+        id="throttle"
+        class="analog-control analog-throttle"
+        role="slider"
+        tabindex="0"
+        aria-label="Waterjet throttle"
+        aria-orientation="vertical"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow="0"
+      >
+        <span class="analog-housing" aria-hidden="true"></span
+        ><span class="analog-header">THROTTLE</span
+        ><span class="analog-rail" aria-hidden="true"
+          ><i class="analog-thumb"></i></span
+        ><span class="analog-footer"><output>0%</output></span>
+      </div>
     </nav>
+    <section
+      id="pauseMenu"
+      hidden
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="pauseTitle"
+    >
+      <div class="pause-card">
+        <p class="eyebrow">RACE CONTROL / ENGINE IDLE</p>
+        <h2 id="pauseTitle">HOLDING AT THE DOCK</h2>
+        <button id="resumeRace" class="button-primary">Resume run</button
+        ><button id="pauseSetup">Control Lab / setup</button
+        ><button id="pauseRestart">Restart race</button>
+        <p>
+          Menu / P pauses. A confirms. D-pad selects; left/right adjusts.
+          Release RT and centre the stick before resuming.
+        </p>
+        <button id="pauseAudio">Enable / resume audio</button>
+        <p id="pauseAudioStatus" role="status"></p>
+      </div>
+    </section>
     <aside id="navigator" hidden aria-label="Route navigator">
       <svg viewBox="0 0 80 64" aria-hidden="true">
         <path d="M40 56 V10 M24 26 L40 10 L56 26" />
@@ -220,13 +277,18 @@
           <div><b>85</b><span>KM/H · BASE SETUP</span></div>
         </div>
         <footer>
-          <span>TOUCH</span> STEER + HOLD THROTTLE<br /><span>KEYS</span> WASD /
-          ARROWS · R RESTART<br /><small
-            >Audio starts with your first race. Tune your setup in Pit
-            Control.</small
+          <span>TOUCH</span> DRAG STEERING + THROTTLE<br /><span>KEYS</span>
+          WASD / ARROWS · R RESTART · P PAUSE<br /><span
+            id="controllerEntryStatus"
+            role="status"
+            >PAD</span
+          >
+          LEFT STICK + RT · A START<br /><small
+            >Tune your setup in Pit Control. Some browsers need a tap or click
+            to enable audio.</small
           >
         </footer>
-        <div id="buildDebug" class="build-debug">CAMPAIGN-1 · v0.17.0</div>
+        <div id="buildDebug" class="build-debug">CAMPAIGN-1 · v0.18.0</div>
       </div>
       <aside class="entry-course" aria-hidden="true">
         <span>COURSE 01 / KŌWHAI PARK</span
@@ -259,8 +321,8 @@
         <div id="resultStats"></div>
         <label
           >Driver name<input
-          id="playerName"
-          type="text"
+            id="playerName"
+            type="text"
             maxlength="16"
             value="Racer"
             autocomplete="nickname" /></label
@@ -270,7 +332,9 @@
           <summary>Local leaderboard · this device</summary>
           <div id="scores"></div>
         </details>
-        <button id="continueJourney" class="button-primary">BACK TO THE BOAT</button>
+        <button id="continueJourney" class="button-primary">
+          BACK TO THE BOAT
+        </button>
         <button id="raceRestart">RESTART TRACK 1</button>
       </div>
     </section>

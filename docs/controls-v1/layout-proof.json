@@ -1,0 +1,302 @@
+{
+  "version": "0.18.0",
+  "viewports": [
+    {
+      "width": 320,
+      "height": 568,
+      "clearance": "178px",
+      "steering": {
+        "x": 12,
+        "y": 456,
+        "width": 204,
+        "height": 88,
+        "top": 456,
+        "right": 216,
+        "bottom": 544,
+        "left": 12
+      },
+      "throttle": {
+        "x": 230,
+        "y": 402,
+        "width": 78,
+        "height": 142,
+        "top": 402,
+        "right": 308,
+        "bottom": 544,
+        "left": 230
+      },
+      "speed": {
+        "x": 192,
+        "y": 274,
+        "width": 116,
+        "height": 116,
+        "top": 274,
+        "right": 308,
+        "bottom": 390,
+        "left": 192
+      },
+      "values": null
+    },
+    {
+      "width": 375,
+      "height": 667,
+      "clearance": "192px",
+      "steering": {
+        "x": 12,
+        "y": 555,
+        "width": 208,
+        "height": 88,
+        "top": 555,
+        "right": 220,
+        "bottom": 643,
+        "left": 12
+      },
+      "throttle": {
+        "x": 285,
+        "y": 487,
+        "width": 78,
+        "height": 156,
+        "top": 487,
+        "right": 363,
+        "bottom": 643,
+        "left": 285
+      },
+      "speed": {
+        "x": 219,
+        "y": 331,
+        "width": 144,
+        "height": 144,
+        "top": 331,
+        "right": 363,
+        "bottom": 475,
+        "left": 219
+      },
+      "values": null
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "clearance": "192px",
+      "steering": {
+        "x": 12,
+        "y": 732,
+        "width": 208,
+        "height": 88,
+        "top": 732,
+        "right": 220,
+        "bottom": 820,
+        "left": 12
+      },
+      "throttle": {
+        "x": 300,
+        "y": 664,
+        "width": 78,
+        "height": 156,
+        "top": 664,
+        "right": 378,
+        "bottom": 820,
+        "left": 300
+      },
+      "speed": {
+        "x": 234,
+        "y": 508,
+        "width": 144,
+        "height": 144,
+        "top": 508,
+        "right": 378,
+        "bottom": 652,
+        "left": 234
+      },
+      "values": null
+    },
+    {
+      "width": 667,
+      "height": 375,
+      "clearance": "136px",
+      "steering": {
+        "x": 12,
+        "y": 264.75,
+        "width": 208,
+        "height": 86.25,
+        "top": 264.75,
+        "right": 220,
+        "bottom": 351,
+        "left": 12
+      },
+      "throttle": {
+        "x": 577,
+        "y": 251,
+        "width": 78,
+        "height": 100,
+        "top": 251,
+        "right": 655,
+        "bottom": 351,
+        "left": 577
+      },
+      "speed": {
+        "x": 539,
+        "y": 127,
+        "width": 112,
+        "height": 112,
+        "top": 127,
+        "right": 651,
+        "bottom": 239,
+        "left": 539
+      },
+      "values": null
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "clearance": "136px",
+      "steering": {
+        "x": 12,
+        "y": 278,
+        "width": 208,
+        "height": 88,
+        "top": 278,
+        "right": 220,
+        "bottom": 366,
+        "left": 12
+      },
+      "throttle": {
+        "x": 754,
+        "y": 266,
+        "width": 78,
+        "height": 100,
+        "top": 266,
+        "right": 832,
+        "bottom": 366,
+        "left": 754
+      },
+      "speed": {
+        "x": 716,
+        "y": 142,
+        "width": 112,
+        "height": 112,
+        "top": 142,
+        "right": 828,
+        "bottom": 254,
+        "left": 716
+      },
+      "values": null
+    },
+    {
+      "width": 1920,
+      "height": 1080,
+      "clearance": "192px",
+      "steering": {
+        "x": 12,
+        "y": 968,
+        "width": 208,
+        "height": 88,
+        "top": 968,
+        "right": 220,
+        "bottom": 1056,
+        "left": 12
+      },
+      "throttle": {
+        "x": 1830,
+        "y": 900,
+        "width": 78,
+        "height": 156,
+        "top": 900,
+        "right": 1908,
+        "bottom": 1056,
+        "left": 1830
+      },
+      "speed": {
+        "x": 1706,
+        "y": 698,
+        "width": 190,
+        "height": 190,
+        "top": 698,
+        "right": 1896,
+        "bottom": 888,
+        "left": 1706
+      },
+      "values": {
+        "type": "jet-sprint-controls",
+        "schemaVersion": 1,
+        "preset": "custom",
+        "settings": {
+          "steerSensitivity": 1,
+          "steerDeadzone": 0.02,
+          "steerCurve": 1,
+          "steerSmoothing": 0.025,
+          "steerRamp": 18,
+          "steerReturn": "spring",
+          "steerReturnSpeed": 8,
+          "steerSpring": 1.5,
+          "steerReturnDelay": 0.15,
+          "speedSteering": 10,
+          "steerTravel": 100,
+          "steerWidth": 208,
+          "steerHeight": 88,
+          "steerX": 0,
+          "steerY": 100,
+          "throttleSensitivity": 1,
+          "throttleDeadzone": 0.015,
+          "throttleCurve": 1,
+          "throttleSmoothing": 0.02,
+          "throttleRampUp": 10,
+          "throttleRampDown": 16,
+          "throttleReturn": "spring",
+          "throttleReturnSpeed": 12,
+          "throttleTravel": 100,
+          "throttleHeight": 156,
+          "throttleWidth": 78,
+          "throttleX": 100,
+          "throttleY": 100,
+          "touchSteerCentre": 0,
+          "touchThrottleIdle": 0,
+          "touchThrottleFull": 1,
+          "padDeadzone": 0.12,
+          "padTriggerDeadzone": 0.03,
+          "padSensitivity": 1,
+          "padCurve": 1,
+          "padThrottleCurve": 1,
+          "padMapping": "auto",
+          "padTriggerRest": "negative",
+          "padRightAxis": 5,
+          "priority": "recent",
+          "haptics": false,
+          "diagnostics": false
+        }
+      }
+    }
+  ],
+  "stress": {
+    "cases": 90,
+    "passed": true,
+    "safeAreaPaddingPx": {
+      "top": 20,
+      "right": 44,
+      "bottom": 34,
+      "left": 44
+    },
+    "requestedHousingPx": {
+      "steeringWidth": 360,
+      "steeringHeight": 140,
+      "throttleWidth": 120,
+      "throttleHeight": 280
+    },
+    "positionsX": [
+      0,
+      25,
+      50,
+      75,
+      100
+    ],
+    "positionsY": [
+      0,
+      50,
+      100
+    ],
+    "checks": [
+      "independent hit regions do not overlap",
+      "both hit regions remain within artificial safe area",
+      "sizes clamp to screen"
+    ]
+  }
+}

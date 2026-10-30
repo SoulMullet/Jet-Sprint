@@ -1,0 +1,129 @@
+{
+  "version": "0.18.0",
+  "controls": "analog-input-v1",
+  "fonts": [
+    {
+      "selector": "#steering .analog-header",
+      "fonts": [
+        {
+          "familyName": "Chakra Petch",
+          "postScriptName": "ChakraPetch-SemiBold",
+          "isCustomFont": true,
+          "glyphCount": 19
+        },
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 2
+        }
+      ]
+    },
+    {
+      "selector": "#intro h1 span",
+      "fonts": [
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 3
+        }
+      ]
+    }
+  ],
+  "gamepad": {
+    "device": "gamepad",
+    "rawSteering": 0.5,
+    "steering": 0.3513553403530054,
+    "rawThrottle": 0.42,
+    "throttle": 0.39229355508240404,
+    "targetSteering": 0.3529816063491488,
+    "targetThrottle": 0.3929561986498509,
+    "preview": null,
+    "controller": {
+      "connected": true,
+      "id": "Xbox production fixture",
+      "index": 0,
+      "supported": true,
+      "armed": true,
+      "apiAvailable": true,
+      "rawSteering": 0.5,
+      "rawThrottle": 0.42
+    },
+    "touch": {
+      "steering": 0,
+      "throttle": 0
+    },
+    "steeringMode": "spring",
+    "throttleMode": "spring",
+    "smoothing": {
+      "steering": 0.025,
+      "throttle": 0.02
+    },
+    "ramp": {
+      "steering": 18,
+      "throttleUp": 10,
+      "throttleDown": 16
+    }
+  },
+  "touch": {
+    "device": "touch",
+    "rawSteering": -0.39999998068507714,
+    "steering": -0.3182364572106927,
+    "rawThrottle": 0.5499998393811678,
+    "throttle": 0.5417333313877477,
+    "targetSteering": -0.31964798774621617,
+    "targetThrottle": 0.5431470450570232,
+    "preview": null,
+    "controller": {
+      "connected": true,
+      "id": "Xbox production fixture",
+      "index": 0,
+      "supported": true,
+      "armed": true,
+      "apiAvailable": true,
+      "rawSteering": 0.5,
+      "rawThrottle": 0.42
+    },
+    "touch": {
+      "steering": -0.39999998068507714,
+      "throttle": 0.5499998393811678
+    },
+    "steeringMode": "spring",
+    "throttleMode": "spring",
+    "smoothing": {
+      "steering": 0.025,
+      "throttle": 0.02
+    },
+    "ramp": {
+      "steering": 18,
+      "throttleUp": 10,
+      "throttleDown": 16
+    }
+  },
+  "changed": {
+    "steerCurve": 1.85,
+    "steerSmoothing": 0.08,
+    "steerReturn": "hybrid",
+    "steerReturnDelay": 0.3,
+    "throttleReturn": "hold",
+    "throttleRampUp": 6.8,
+    "steerWidth": 230,
+    "padDeadzone": 0.18,
+    "priority": "gamepad",
+    "haptics": true
+  },
+  "preserved": {
+    "top": "106",
+    "drift": "71",
+    "waveScale": "222",
+    "masterVolume": "39"
+  },
+  "errors": [],
+  "failed": [],
+  "developerShortcutsExcluded": true,
+  "controllerConfirmationDialogs": true,
+  "liveDisarmedPreview": true,
+  "resultsFocusFixture": true,
+  "entry": "Unmodified compiled production JS; only Gamepad API hardware snapshots and manual frame clock injected. Actual CDP multitouch events."
+}

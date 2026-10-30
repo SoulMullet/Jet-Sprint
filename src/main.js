@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import './style.css';
 import './campaign.css';
+import './controls.css';
 import {loadGameFonts,setInstrumentText} from './typography.js';
 import {mountInterface} from './interface.js';
 import {SummerSettings} from './summer-settings.js';
@@ -38,7 +39,11 @@ import {createRaceSignal} from './race-signal.js';
 import {courseId,routeId,gameplayVersion} from './course.js';
 import {NavigationView,BigfootView} from './debug-views.js';
 import {RouteNavigator,mountNavigator} from './navigation.js';
-import {bindControls} from './controls.js';
+import {bindControls,editingInput} from './controls.js';
+import {ControlSettings} from './control-settings.js';
+import {mountControlLab} from './control-lab.js';
+import {navigateMenu} from './gamepad-menu.js';
+import {trapFocus} from './ui-components.js';
 import {createCampaignWorld} from './campaign-world.js';
 import {Campaign} from './campaign.js';
 import {CampaignProgress} from './campaign-progress.js';
@@ -129,7 +134,7 @@ $('resetWater').onclick=()=>fluid.reset();
 
 
 const audioSettings=new AudioSettings({getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)});
-const engine=new Engine({settings:audioSettings.values,workletURL});let playing=false,gameClock=0,last=performance.now();
+const engine=new Engine({settings:audioSettings.values,workletURL});let playing=false,paused=false,gameClock=0,last=performance.now();
 const startSequence=new RaceStart(),trackSignal=createRaceSignal(scene,start,startT);
 const doubleTap=createDoubleTap(()=>{if(startSequence.state==='RACING')bigfoot.provoke(b,()=>engine.vocal(true));});
 const race=new Race(venue.gates,channel.hullLimit,track1.laps);
@@ -148,20 +153,21 @@ function finish(){if(!campaign.finishRace(race))return;startSequence.finish();
  const list=document.createElement('ol');for(const t of result.laps){const item=document.createElement('li');item.textContent=format(t);list.append(item);}$('resultStats').append(list);
  $('saveScore').disabled=false;$('saveStatus').textContent='';board();$('notice').textContent='Three laps complete · Follow the exit gate to Willow Run';
 }
-$('continueJourney').onclick=()=>{$('results').hidden=true;release();};
+$('continueJourney').onclick=()=>{$('results').hidden=true;document.activeElement?.blur();release();};
 $('saveScore').onclick=()=>{if(!result)return;try{saveScore(scoreStorage,result,$('playerName').value);const rank=board();$('saveScore').disabled=true;$('saveStatus').textContent=rank?`Saved · local position ${rank}`:'Outside the fastest 10';}catch{$('saveStatus').textContent='Storage unavailable. Results remain visible for this race.';}};
 $('raceRestart').onclick=()=>{playing=true;restart();engine.start();};
-const controls=bindControls(Object.fromEntries(['left','right','throttle'].map(name=>[name,$(name)])),name=>{if(playing){engine.start();if(name==='throttle')doubleTap.press(performance.now());}else release();});
-const {input,setInput,release}=controls;
+const controlPreferences=new ControlSettings({getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)});
+function canDrive(){return playing&&!paused&&!document.hidden&&!document.body.classList.contains('pit-open')&&$('results').hidden&&!soundLab.testing&&!document.querySelector('.ui-dialog[open]');}
+const controls=bindControls({steering:$('steering'),throttle:$('throttle')},controlPreferences,{canDrive,onAction:controllerAction,onPress:name=>{if(playing){engine.start();if(name==='throttle')doubleTap.press(performance.now());}}});
+const {input,release}=controls;
 // Older Safari may still dispatch touch gestures: cancel only on play surfaces.
 for(const el of [$('game'),document.querySelector('.controls')]){
  for(const event of ['touchstart','touchmove','touchend','gesturestart','gesturechange','contextmenu'])el.addEventListener(event,e=>e.preventDefault(),{passive:false});
 }
-const keyMap={ArrowLeft:'left',a:'left',ArrowRight:'right',d:'right',ArrowUp:'throttle',w:'throttle',' ':'throttle'};
-window.addEventListener('keydown',e=>{if(e.target instanceof HTMLInputElement||e.target instanceof HTMLSelectElement||e.target instanceof HTMLTextAreaElement||e.target.closest?.('#pitConsole, .ui-dialog, #results')||e.target.isContentEditable||soundLab.testing)return;const k=e.key.length===1?e.key.toLowerCase():e.key;if(keyMap[k]&&playing){e.preventDefault();engine.start();setInput(keyMap[k],k,true);}if(k==='r'&&!e.repeat)restart();});window.addEventListener('keyup',e=>{const k=e.key.length===1?e.key.toLowerCase():e.key;if(keyMap[k])setInput(keyMap[k],k,false);});
+window.addEventListener('keydown',e=>{if(e.repeat)return;if(paused&&$('pitConsole').hidden&&['p','escape'].includes(e.key.toLowerCase())){e.preventDefault();setPaused(false);return;}if(editingInput(e.target)||soundLab.testing)return;const k=e.key.toLowerCase();if(k==='r')restart();if((k==='p'||k==='escape')&&playing){e.preventDefault();setPaused(!paused);}});
 window.addEventListener('blur',()=>{if(fluid?.solver)fluid.solver.accumulator=0;doubleTap.reset();release();engine.pause();});
-document.addEventListener('visibilitychange',()=>{doubleTap.reset();release();preferences.flush();audioSettings.flush();if(document.hidden)engine.pause();else last=performance.now();});
-window.addEventListener('pagehide',()=>{preferences.flush();audioSettings.flush();});
+document.addEventListener('visibilitychange',()=>{doubleTap.reset();release();preferences.flush();audioSettings.flush();controlPreferences.flush();if(document.hidden)engine.pause();else last=performance.now();});
+window.addEventListener('pagehide',()=>{preferences.flush();audioSettings.flush();controlPreferences.flush();});
 let cameraSyncReady=false;
 function applyPreferences(ids){const v=preferences.values;
  for(const id of ids)if(Object.hasOwn(settings,id))settings[id]=v[id];
@@ -194,11 +200,27 @@ mountCameraPanel(cameraPreferences,$('debug'),()=>{$('courseOverview').checked=f
 const soundLab=mountSoundLab(audioSettings,engine,{onTestChange:on=>{release();if(!on&&!playing)engine.pause();last=performance.now();}});
 soundLab.root.addEventListener('toggle',()=>{if(soundLab.root.open)release();});
 bigfootView.mount(settingsUI.groups['Debug Tools'],()=>b,()=>camera);
+const controlLab=mountControlLab(controlPreferences,controls);
 const interfaceUI=mountInterface({preferences,audioSettings,summerPreferences,cameraPreferences,release,soundLab});
+globalThis.__JET_SPRINT_INPUT__=Object.freeze({inspect:()=>controls.inspect()});
+trapFocus($('pauseMenu'));
+function setPaused(on){if(!playing)return;paused=!!on;release();$('pauseMenu').hidden=!paused;document.body.classList.toggle('paused',paused);$('pauseToggle').setAttribute('aria-expanded',String(paused));if(paused){engine.pause();$('resumeRace').focus();}else{engine.start();document.activeElement?.blur();}last=performance.now();}
+$('pauseToggle').onclick=()=>setPaused(!paused);$('resumeRace').onclick=()=>setPaused(false);
+$('pauseSetup').onclick=()=>interfaceUI.open('controls');
+$('pauseRestart').onclick=()=>{restart();engine.start();};
+$('pauseAudio').onclick=async()=>{await engine.start();$('pauseAudioStatus').textContent=engine.ctx?.state==='running'?'Audio enabled.':'This browser needs a tap/click or keyboard gesture to allow audio.';};
+function controllerAction(action){
+ const dialog=document.querySelector('.ui-dialog[open]'),pit=$('pitConsole'),pause=$('pauseMenu'),results=$('results');
+ if(action==='pause'){if(dialog){dialog.querySelector('[data-confirm="false"]')?.click();return;}if(!pit.hidden){interfaceUI.close();return;}setPaused(!paused);return;}
+ if(action==='view'){if(!dialog){cameraPreferences.cycle();controls.gamepad.haptic();}return;}
+ const root=dialog||(!pit.hidden?pit:!pause.hidden?pause:!results.hidden?results:!playing?$('intro'):null);
+ if(action==='back'){if(dialog)dialog.querySelector('[data-confirm="false"]')?.click();else if(!pit.hidden)interfaceUI.close();else if(!results.hidden)$('continueJourney').click();else if(paused)setPaused(false);return;}
+ if(root){if(action==='confirm'&&!playing&&!dialog&&pit.hidden&&!root.contains(document.activeElement)){$('start').click();return;}navigateMenu(action,root);controls.gamepad.haptic();}
+}
 const journeyUI=mountCampaignUI(campaign,campaignProgress,campaignWorld,()=>{if(result){release();$('results').hidden=false;$('continueJourney').focus();}});
 globalThis.__JET_SPRINT_CAMPAIGN__=Object.freeze({inspect:()=>({...campaign.inspect(),raceState:startSequence.state,laps:race.laps.length,lapTarget:race.lapCount,raceTime:race.total,streaming:campaignScenery.inspect(),progress:{...campaignProgress.values}})});
 let b,elapsed=0,lap=1,best=null;
-function restart(){cameraSystem.reset();campaign.reset();if(soundLab.testing)soundLab.setTesting(false);const now=performance.now();if(playing)gameClock+=Math.max(0,(now-last)/1000);last=now;startSequence.reset();playing=document.body.classList.contains('racing');if(playing)startSequence.begin(gameClock,preferences.values.countdownDuration);fluid?.reset();fluid?.disturb();race.reset();navigator.reset();race.modified=modified(settings);doubleTap.reset();$('results').hidden=true;result=null;release();engine.reset();b={x:start.x,z:start.z,angle:Math.atan2(startT.z,startT.x),vx:0,vz:0,pump:0,nozzle:0,yawRate:0};elapsed=0;lap=1;wakeTrail.reset();hfSpray.reset();hfWake.reset();boatPresentation.reset();$('notice').textContent='Follow your navigator. Three laps, then upstream.';}
+function restart(){cameraSystem.reset();campaign.reset();if(soundLab.testing)soundLab.setTesting(false);const now=performance.now();if(playing&&!paused)gameClock+=Math.max(0,(now-last)/1000);paused=false;$('pauseMenu').hidden=true;document.body.classList.remove('paused');if(document.activeElement?.closest('#pauseMenu,#results'))document.activeElement.blur();$('pauseToggle').setAttribute('aria-expanded','false');last=now;startSequence.reset();playing=document.body.classList.contains('racing');if(playing)startSequence.begin(gameClock,preferences.values.countdownDuration);fluid?.reset();fluid?.disturb();race.reset();navigator.reset();race.modified=modified(settings);doubleTap.reset();$('results').hidden=true;result=null;release();engine.reset();b={x:start.x,z:start.z,angle:Math.atan2(startT.z,startT.x),vx:0,vz:0,pump:0,nozzle:0,yawRate:0};elapsed=0;lap=1;wakeTrail.reset();hfSpray.reset();hfWake.reset();boatPresentation.reset();$('notice').textContent='Follow your navigator. Three laps, then upstream.';}
 restart();$('restart').onclick=()=>{if(document.body.classList.contains('racing'))playing=true;restart();if(playing)engine.start();};$('start').onclick=()=>{playing=true;document.body.classList.add('racing');engine.start();restart();};
 let lastEmissionRate=0;
 const hfEffectsOptions={density:1,distance:1,volume:1,effects:1,persistence:3,pose:boatPresentation.motion,impact:0,tuning:preferences.values,emit:true};
@@ -214,8 +236,9 @@ function effects(dt,speed){
 function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);cameraSystem.resize(w,h);summerLab?.apply();summerLab?.resize();}window.addEventListener('resize',resize);resize();
 const beforeStep={x:0,z:0};
 let vegetationClock=0;
-function frame(now){requestAnimationFrame(frame);const rawDt=Math.max(0,(now-last)/1000),dt=Math.min(rawDt,.05);last=Math.max(last,now);if(playing&&!document.hidden)graphics.sample(rawDt);waterTime.value=now*.001;let speed=Math.hypot(b.vx,b.vz);
- if(playing&&!document.hidden&&!soundLab.testing){
+function frame(now){requestAnimationFrame(frame);const rawDt=Math.max(0,(now-last)/1000),dt=Math.min(rawDt,.05);last=Math.max(last,now);if(playing&&!paused&&!document.hidden)graphics.sample(rawDt);waterTime.value=now*.001;let speed=Math.hypot(b.vx,b.vz);
+ controls.update(dt,speed/(settings.top/3.6));controlLab.update(dt);
+ if(playing&&!paused&&!document.hidden&&!soundLab.testing){
   gameClock+=rawDt;
   const transitions=startSequence.update(gameClock),latestSignal=transitions[transitions.length-1];
   if(latestSignal&&preferences.values.countdownAudio)engine.signal(latestSignal.kind);
@@ -227,14 +250,14 @@ function frame(now){requestAnimationFrame(frame);const rawDt=Math.max(0,(now-las
     elapsed=race.done?race.total:race.total-race.lapStart;lap=Math.min(track1.laps,race.laps.length+1);best=race.laps.length?Math.min(...race.laps):null;
    }
    speed=Math.hypot(b.vx,b.vz);effects(dt,speed);if(campaign.phase==='RACE')bigfoot.update(dt,b,camera,{speed,distance:settings.sprayDistance/100,volume:settings.waterVolume/100,throttle:input.throttle},()=>engine.vocal(false));engine.update(speed,input.throttle,dt,settings.top/3.6,false,campaign.airborne?0:b.engineLoad);
-  }else{b.vx=b.vz=0;speed=0;engine.update(0,input.throttle&&preferences.values.prestartRevving,dt,settings.top/3.6,true);}
+  }else{b.vx=b.vz=0;speed=0;engine.update(0,preferences.values.prestartRevving?input.throttle:0,dt,settings.top/3.6,true);}
   fluid.focus.x=b.x+Math.cos(b.angle)*7;fluid.focus.z=b.z+Math.sin(b.angle)*7;fluid.update(dt);
  }
  if(soundLab.testing&&!document.hidden){engine.update(0,soundLab.throttle,dt,settings.top/3.6,true);speed=0;}
  soundLab.update();
  if(!playing&&!soundLab.testing){effects(dt,0);}
  retroVenue.update(document.hidden?0:dt,b);
- const navigating=playing&&!document.hidden&&!soundLab.testing&&(startSequence.state==='RACING'||campaign.phase!=='RACE');
+ const navigating=playing&&!paused&&!document.hidden&&!soundLab.testing&&(startSequence.state==='RACING'||campaign.phase!=='RACE');
  if(!navigating&&preferences.values.bigfootDebug&&!document.hidden)bigfoot.update(dt,b,camera);
  let navigationCue=null;
  if(navigating){const cue=navigationCue=campaign.phase==='RACE'?navigator.update(b,race,dt,input):campaign.cue(b,dt,input);navigatorHUD.update(cue,!$('debug').open&&!soundLab.root.open&&(!preferences.values.startHud||gameClock>=startSequence.startAt+2));const notice=cue.notice||(campaign.phase==='RACE'?'Follow the arrows · Three laps':campaign.phase==='EXIT'?'Race clock stopped · Follow the exit gate':'Bonus: speed + clean gates · Side ramp optional');if($('notice').textContent!==notice)$('notice').textContent=notice;}else navigatorHUD.update(null,false);
@@ -263,7 +286,7 @@ function frame(now){requestAnimationFrame(frame);const rawDt=Math.max(0,(now-las
  setInstrumentText($('speed'),Math.round(speed*3.6));setInstrumentText($('time'),format(elapsed));setInstrumentText($('lap'),`${lap}/${track1.laps}`);setInstrumentText($('best'),best===null?'—':format(best));interfaceUI.update(dt,engine.rpm,audioSettings.values.maxRPM,speed*3.6,settings.top);summerLab.render(camera,dt);}
 requestAnimationFrame(frame);
 if(import.meta.env.DEV)import('./campaign-debug.js').then(({mountCampaignDebug})=>mountCampaignDebug({campaign,world:campaignWorld,scenery:campaignScenery,race,startSequence,getBoat:()=>b,getPlaying:()=>playing,getResult:()=>result,getFPS:()=>summerLab.fpsNode.textContent,parent:settingsUI.groups['Debug Tools'],jump:stage=>{
- release();campaign.reset();campaign.practice=true;campaign.phase=stage==='river'?'RIVER':'ARRIVED';campaign.gateOpen=1;playing=true;document.body.classList.add('racing');startSequence.finish();race.modified=true;
+ if(paused)setPaused(false);release();campaign.reset();campaign.practice=true;campaign.phase=stage==='river'?'RIVER':'ARRIVED';campaign.gateOpen=1;playing=true;document.body.classList.add('racing');startSequence.finish();race.modified=true;
  const p=stage==='river'?campaignWorld.river.sample(river1.gateDistance+2):campaignWorld.destination.sample(2);Object.assign(b,{x:p.x,z:p.z,angle:Math.atan2(p.tz,p.tx),vx:0,vz:0,pump:0,yawRate:0});
  cameraSystem.reset();boatPresentation.reset();hfSpray.reset();hfWake.reset();wakeTrail.reset();$('results').hidden=true;last=performance.now();
 }}));

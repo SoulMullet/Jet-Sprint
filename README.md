@@ -1,14 +1,32 @@
-# JET SPRINT v0.17.0 — Campaign Foundation / Phase 1
+# JET SPRINT v0.18.0 — Analog Controls / Gamepad
 
 A mobile-first, single-player 3D jet sprint prototype built with JavaScript, Vite, Three.js and Web Audio. Geometry and sound are procedural; licensed interface fonts are bundled locally. No paid assets, account, API keys or backend are required.
 
 The playable journey is **Kōwhai Sprint Park → Willow Run → Mātai Basin**. Track 1 replaces the figure-eight with a fictional New Zealand inspired three-island jetsprint park: tight spline bends, shared junctions, 17 directional race gates, and a separate staging inlet. After **three valid laps**, the race clock stops and a physical gate opens. Keep driving: the navigator leads to a narrower upstream bonus river, seven checkpoints and an optional side jump, then into a distinct Track 2 preview basin. There are no loading screens or forced relocations in normal progression. Track 2 is a free-cruise placeholder, not a second race yet.
 
-Open **Pit Control → RACE → Campaign overview** to see the connected footprint. Look for **CAMPAIGN-1 · v0.17.0 · commit** in the HUD. The MARINE-87 interface/fonts, boat force model, four cameras, V8, ballistic rooster tail and all tuning labs remain. See [campaign architecture, exact changed files, screenshots and verification](docs/campaign-phase1.md), [retained interface/spray notes](docs/marine-87.md), [physics audit](docs/boat-physics.md) and [rendering notes](docs/hf-graphics-v2.md).
+Open **Pit Control → RACE → Campaign overview** to see the connected footprint. Look for **CAMPAIGN-1 · v0.18.0 · commit** in the HUD. The MARINE-87 interface/fonts, boat force model, four cameras, V8, ballistic rooster tail and all tuning labs remain. See [campaign architecture, exact changed files, screenshots and verification](docs/campaign-phase1.md), [retained interface/spray notes](docs/marine-87.md), [physics audit](docs/boat-physics.md) and [rendering notes](docs/hf-graphics-v2.md).
 
 The rendering includes multi-frequency freshwater waves, animated normal textures, live planar scenery reflections on High/Ultra, a historical three-band foam wake, instanced spray/mist/droplets, physical sky lighting, wet clear-coated boat materials, cockpit/engine details, cutout fir foliage and instanced bank vegetation. Ultra adds depth-based contact occlusion. Art and textures are generated locally; licensed fonts are served with the site.
 
 The V8 Sound Lab, 32 live controls, independent presets/JSON and stationary tuning remain available; see [the earlier track and V8 notes](docs/track-v8-upgrade.md) for audio controls. That document describes the superseded Shelter course.
+
+## Analog controls and Control Lab
+
+**Touch:** drag the horizontal steering rail left/right and the vertical throttle rail from idle to full. Start a drag anywhere inside either housing; independent captured pointers support two fingers. The steering and throttle readouts show their physical positions. Default Arcade inputs spring back when released. Cancellation, capture loss, blur/backgrounding, pause, results, tuning panels and restart clear held inputs, including Hold modes.
+
+Open **Pit Control → INPUT** (also **Pause → Control Lab / setup**). Steering, Throttle, Calibration, Controller and Input behavior are collapsible. There are **35 numeric sliders**, each with a value and individual reset, plus mode selectors and toggles. Tune response curves, dead zones, smoothing in seconds, full-scale ramp rates per second, spring/hold/hybrid or gradual return, hybrid delay, speed-based input reduction, rail travel, housing dimensions and safe-screen positions. Sizes are clamped to the viewport and colliding touch regions are separated. Calibration trims the touch centre and throttle endpoints. **Centre steering / idle throttle now** clears latches immediately.
+
+**Arcade / Balanced / Simulation** are input presets, separate from the HULL physics profiles. They change command response only, retain layout/calibration/mapping choices, and remain customizable. Maximum speed, thrust, drag, drift and the waterjet force model are unchanged. The sole physics adapter change accepts signed `steering` from −1 to +1, retaining the old binary interface for existing callers. A stationary/dead-pump boat still cannot steer like a rudder.
+
+**Keyboard:** A/D or Left/Right steer; W/Up/Space accelerates. R restarts; P/Escape pauses/resumes. A real pause freezes physics and the logical race/countdown clock without resetting the run. Tuning opened directly from the toolbar still runs the clock; opening it from Pause keeps the run paused. Keyboard input never drives through an editing field or tuning/results dialog.
+
+**Xbox-compatible controllers:** connect by USB or pair in the operating system, focus the game, then press a controller button. The title LED and steering housing indicate connection; release RT and centre the stick to arm. Left stick X steers, RT accelerates, A starts/confirms, Menu pauses, View cycles cameras, and B goes back. D-pad up/down selects visible menu controls; left/right adjusts ranges/selects or changes tabs, and A activates buttons/disclosures. Text entry/file pickers still use browser/OS input. LT is unassigned: the current hull has no brake or reverse.
+
+Auto accepts the browser's **standard mapping**; older nonstandard drivers can select Standard buttons or Axis triggers, choose the RT axis and its rest convention. Trigger values stay proportional. Controller removal/API failure/focus loss clears input immediately; reconnection and leaving menus require neutral before throttle can resume. Neutral controllers cannot steal touch. Device priority defaults to most recent deliberate input; commands are never combined across devices, and a superseded held throttle cannot reopen automatically. Optional brief vibration/rumble uses supported APIs only. Some browsers need one real click, tap or keyboard gesture to enable Web Audio; **Pause → Enable / resume audio** exposes that action.
+
+Open **Live input / Raw → Command** for signals, dead-zone/response plots, raw pad values (even while disarmed), device status, return modes, filter targets and ramp/smoothing settings. Inside Control Lab, controller response is previewed live while boat commands stay zero; touch/keyboard signals are visible on course. The optional on-course overlay is hidden and collapsed by default. All control settings auto-save under **`jet-sprint-controls-v1`**, schema 1, with safe field validation/migration and page-hide flush. Group/reset-all controls affect only this store. **Portable control JSON** exports/downloads or imports JSON/files without replacing hull, water, audio, camera, graphics or campaign settings.
+
+See [controls architecture, changed files, verification and manual device checklist](docs/controls-v1.md). Physical Xbox hardware, Bluetooth/USB drivers, haptics and iPhone Safari require real-device testing; injected Gamepad API snapshots and Chromium touch/viewport checks do not establish those results.
 
 ## Campaign vertical slice
 
@@ -38,13 +56,13 @@ Open **Pit Control → SPRAY** for eight saved controls: launch speed, upward an
 
 ## Arcade interface
 
-The MARINE-87 identity uses rounded navy instrument housings, warm cream faces, burnt-orange switches, faded racing red and muted teal. Reusable tokens and components define substantial radii, restrained bevels, shadows, pressed/focus states, sliders, toggles, tabs, selects, dialogs and readouts. Open **PIT CONTROL** from the title screen or toolbar. Its **RACE / HULL / SPRAY / VIDEO / V8 / VIEW** tabs reuse the actual bound settings, physics, graphics, sound and camera panels, with the new spray panel integrated into the same console. The console scrolls above the driving buttons and applies changes live; opening it releases held inputs. It does not pause a race. Closing or leaving V8 ends a stationary engine test so a hidden test cannot leave the clock frozen.
+The MARINE-87 identity uses rounded navy instrument housings, warm cream faces, burnt-orange switches, faded racing red and muted teal. Reusable tokens and components define substantial radii, restrained bevels, shadows, pressed/focus states, sliders, toggles, tabs, selects, dialogs and readouts. Open **PIT CONTROL** from the title screen or toolbar. Its **RACE / HULL / SPRAY / VIDEO / V8 / VIEW / INPUT** tabs reuse the actual bound settings, physics, graphics, sound and camera panels, with the new spray panel integrated into the same console. The console scrolls above the driving buttons and applies changes live; opening it releases held inputs. It does not pause a race. Closing or leaving V8 ends a stationary engine test so a hidden test cannot leave the clock frozen.
 
 Every numeric tuning slider has its original live readout and an individual reset button. Existing category/factory resets, saved presets, file imports, JSON sharing, telemetry, debug tools and storage keys remain available. Arrow keys/Home/End navigate console tabs; Escape closes the console and restores focus. Destructive full-game preset operations use a styled confirmation dialog. Camera cycling remains one tap in the top toolbar.
 
-The HUD pairs a prominent rounded run timer and compact lap indicator with an analog-inspired speed needle, teal RPM arc and the engine's **actual RPM**, a minimal route cue and round starting lamps. Touch steering/throttle buttons share the rounded, tactile surfaces. Reduced-motion preferences disable transitions, route-cue animation and needle smoothing. Native input semantics, comfortable touch targets and safe-area spacing support keyboard and touch. Existing title/setup, countdown, results/leaderboard and all six labs receive the same treatment. No pause screen existed, so none was added.
+The HUD pairs a prominent rounded run timer and compact lap indicator with an analog-inspired speed needle, teal RPM arc and the engine's **actual RPM**, a minimal route cue and round starting lamps. Touch steering/throttle rails share the rounded, tactile surfaces. Reduced-motion preferences disable transitions, route-cue animation and needle smoothing. Native input semantics, comfortable touch targets and safe-area spacing support keyboard and touch. Existing title/setup, countdown, results/leaderboard and all seven tuning departments receive the same treatment. The input release/pause menu uses the retained housings and typography.
 
-See [current QA details and screenshots](docs/marine-87.md). No dependencies were added. Chromium checks cover 110 live sliders, preset workflows, phone-sized simultaneous touch, reload persistence, results using a completed-race fixture, and 320×568 through 1920×1080 layouts. Physical iPhone Safari and sustained mobile frame rates remain unverified.
+See [current QA details and screenshots](docs/marine-87.md). No dependencies were added. The earlier MARINE-87 Chromium checks covered 110 live sliders, preset workflows, phone-sized simultaneous touch, reload persistence, results using a completed-race fixture, and 320×568 through 1920×1080 layouts. Physical iPhone Safari and sustained mobile frame rates remain unverified.
 
 ## Boat Physics Lab
 
@@ -109,7 +127,9 @@ Every production build writes `dist/build-info.json` with the release identity, 
 
 ## Code map
 
-- `src/main.js`: course/boat rendering, pooled spray and wake, camera, controls, lap checkpoints and HUD.
+- `src/main.js`: course/boat rendering, pooled spray and wake, camera, input integration/pause, lap checkpoints and HUD.
+- `src/controls.js` / `src/control-input.js` / `src/control-gamepad.js`: physical device adapters, shared normalized commands and Gamepad profiles/safety.
+- `src/control-settings.js` / `src/control-lab.js` / `src/gamepad-menu.js` / `src/controls.css`: independent persistent input tuning, live diagnostics, controller menu navigation and analog hardware styling.
 - `src/physics.js` / `src/handling.js`: fixed-step waterjet dynamics and shared handling defaults.
 - `src/hull-motion.js` / `src/boat-presentation.js`: force-driven visual springs, water sampling and the hull/engine render transform.
 - `src/physics-lab.js`: six-section Lab, physics-only custom presets/JSON and optional telemetry, using the existing settings store.

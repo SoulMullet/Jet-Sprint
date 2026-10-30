@@ -35,6 +35,8 @@ export async function verifyDeployment(
         info.campaign !== "phase-1-kowhai-willow-matai"
       )
         throw Error("Wrong live interface or simulation identity.");
+      if (info.controls !== "analog-input-v1")
+        throw Error("Wrong live analog control system.");
       if (
         !info.fonts?.includes("Russo One") ||
         !info.fonts?.includes("Chakra Petch")
@@ -77,6 +79,7 @@ export async function verifyDeployment(
         identity: info.identity,
         simulation: info.simulation,
         campaign: info.campaign,
+        controls: info.controls,
       };
     } catch (error) {
       failure = error;
@@ -97,6 +100,6 @@ if (
   if (process.env.GITHUB_STEP_SUMMARY)
     await appendFile(
       process.env.GITHUB_STEP_SUMMARY,
-      `## Published build verified\n\nCommit: \`${result.commit}\`\n\n${result.files} actual live files fetched and SHA-256 verified, including HTML, JavaScript, CSS and all three font files.\n\nIdentity: ${result.identity}; simulation: ${result.simulation}.\n`,
+      `## Published build verified\n\nCommit: \`${result.commit}\`\n\n${result.files} actual live files fetched and SHA-256 verified, including HTML, JavaScript, CSS and all three font files.\n\nIdentity: ${result.identity}; simulation: ${result.simulation}; controls: ${result.controls}.\n`,
     );
 }

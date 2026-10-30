@@ -29,6 +29,7 @@ await writeFile(
       identity: "MARINE-87",
       simulation: "world-space-fixed-step",
       campaign: "phase-1-kowhai-willow-matai",
+      controls: "analog-input-v1",
       fonts: ["Russo One", "Chakra Petch"],
       assets,
     },
