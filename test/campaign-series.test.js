@@ -57,7 +57,7 @@ test("four distinct authored three-lap courses increase route complexity; Track 
     campaignDefinition.tracks.map((t) => t.laps),
     [3, 3, 3, 3],
   );
-  assert.equal(w.courses[0].length, 505.53518056060074);
+  assert.ok(Math.abs(w.courses[0].length - 505.53518056060074) < 1e-9);
   assert.equal(track1.waterWidth, 9);
   assert.deepEqual(track1.spline[0], [-80, 35]);
   assert.equal(new Set(w.courses.map((c) => JSON.stringify(c.line))).size, 4);

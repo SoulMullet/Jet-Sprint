@@ -3,13 +3,17 @@
   "automatedTests": {
     "passed": 187,
     "failed": 0,
-    "command": "npm test"
+    "command": "npm test",
+    "runtimeVersions": [
+      "Node.js 22",
+      "Node.js 24"
+    ]
   },
   "productionBuild": {
     "passed": true,
     "command": "npm run build",
     "servedFiles": 12,
-    "warning": "Existing Vite entry chunk above 500 kB, approximately 264 kB gzip"
+    "warning": "Existing Vite entry chunk above 500 kB, approximately 267 kB gzip"
   },
   "formatting": "Prettier check passed for new/rewritten campaign modules and new suites",
   "physicalDeviceTesting": false,

@@ -143,7 +143,7 @@ npm run build
 npm run preview
 ```
 
-Node tests cover the full seven-event continuous input/physics route, four three-lap courses, rewards/replays/idempotency, saved-data migration, checkpoint/start rules, worker lifecycle/disposal/tile seams, plus the existing controls, handling, cameras, V8, spray and fluid suites. Build output is in `dist/`. Vite reports its existing large-chunk advisory (about 264 KB compressed for the main module). Browser checks should cover launch/audio unlock, simultaneous steering/throttle, pointer cancellation, drift recovery, restart, background/resume and portrait/landscape. Test on an actual iPhone in Safari before claiming iPhone performance. Audio can depend on device mute and volume settings.
+Node tests cover the full seven-event continuous input/physics route, four three-lap courses, rewards/replays/idempotency, saved-data migration, checkpoint/start rules, worker lifecycle/disposal/tile seams, plus the existing controls, handling, cameras, V8, spray and fluid suites. Build output is in `dist/`. Vite reports its existing large-chunk advisory (about 267 KB compressed for the main module). Browser checks should cover launch/audio unlock, simultaneous steering/throttle, pointer cancellation, drift recovery, restart, background/resume and portrait/landscape. Test on an actual iPhone in Safari before claiming iPhone performance. Audio can depend on device mute and volume settings.
 
 ## GitHub Pages
 

@@ -1,17 +1,21 @@
 {
   "riverTimes": [
-    110.92500000003434,
-    161.0666666666845,
-    228.15000000290502
+    111.8750000000351,
+    162.18333333335016,
+    229.31666666958654
   ],
   "raceTimes": [
-    252.61666666659883,
-    255.98333333310057,
-    347.8000000024291,
-    512.2333333398556
+    283.7333333332372,
+    251.12499999977166,
+    327.27500000241355,
+    491.191666672921
   ],
   "wallet": 11150,
-  "runSeconds": 2008.8833333451068,
+  "runSeconds": 1986.8250000114926,
   "continuousInputPipeline": true,
-  "fixture": "Actual ControlInput shaping plus unchanged stepBoat, continuous seven-event controller drive; no browser rendering or device-FPS claim."
+  "runtimeVersions": [
+    "Node.js 22",
+    "Node.js 24"
+  ],
+  "fixture": "Proportional analog requests through actual ControlInput shaping plus unchanged stepBoat, continuous seven-event controller drive; no boat relocation, browser rendering or device-FPS claim."
 }

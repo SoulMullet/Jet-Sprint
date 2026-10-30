@@ -24,11 +24,7 @@ test("actual input pipeline drives the complete seven-event campaign without a t
     new ControlSettings({ getItem: () => null, setItem() {} }),
   );
   let now = 0;
-  const before = {},
-    durations = [],
-    entered = 0;
-  let oldEvent = tour.event.id,
-    eventStart = 0;
+  const before = {};
   for (let i = 0; i < 120 * 3500 && tour.phase !== "CHAMPION"; i++) {
     const dt = 1 / 120;
     now += dt;
@@ -82,15 +78,13 @@ test("actual input pipeline drives the complete seven-event campaign without a t
       ),
       speed = Math.hypot(b.vx, b.vz),
       steer = error - (b.yawRate || 0) * 0.3;
-    const input = {
-      throttle: speed < desired || (Math.abs(error) > 0.35 && speed < 12),
-      left: steer < -0.08,
-      right: steer > 0.08,
-    };
+    // Proportional analog steering avoids a bang-bang driver's unstable
+    // threshold loops at hairpins across V8 versions. The real input shaping
+    // and boat integrator remain active; no recovery ever repositions the boat.
     processor.set(
-      "keyboard",
-      Number(input.right) - Number(input.left),
-      Number(input.throttle),
+      "gamepad",
+      Math.max(-1, Math.min(1, steer * 4)),
+      Number(speed < desired || (Math.abs(error) > 0.35 && speed < 12)),
       true,
     );
     const processed = processor.update(dt, speed / (settings.top / 3.6));
@@ -104,14 +98,17 @@ test("actual input pipeline drives the complete seven-event campaign without a t
       throw Error(
         "Jump " + JSON.stringify({ i, phase: tour.phase, b, before }),
       );
-
-    if (oldEvent !== tour.event.id) {
-      durations.push({ id: oldEvent, seconds: now - eventStart });
-      oldEvent = tour.event.id;
-      eventStart = now;
-    }
   }
-  assert.equal(tour.phase, "CHAMPION", JSON.stringify(tour.inspect()));
+  assert.equal(
+    tour.phase,
+    "CHAMPION",
+    JSON.stringify({
+      ...tour.inspect(),
+      next: tour.race.next,
+      laps: tour.race.laps,
+      boat: b,
+    }),
+  );
   assert.equal(tour.results.length, 4);
   assert.equal(tour.completedRivers, 3);
   assert.ok(progress.values.wallet >= 10250 && progress.values.wallet <= 15400);
