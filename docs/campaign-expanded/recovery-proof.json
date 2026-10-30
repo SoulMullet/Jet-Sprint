@@ -1,0 +1,32 @@
+{
+  "injected": "One geometry worker module request returns HTTP 503",
+  "recovered": true,
+  "noSceneReset": true,
+  "wallet": 0,
+  "unlocked": 1,
+  "stream": {
+    "queued": 0,
+    "building": 0,
+    "ready": 30,
+    "fallback": 0,
+    "resident": 30,
+    "limit": 49,
+    "builds": 90,
+    "disposals": 0,
+    "failures": 2,
+    "maxJobMs": 0,
+    "nextVenue": "preparing",
+    "waterMeshes": 6,
+    "venues": [
+      "ready",
+      "ready",
+      "preparing",
+      "preparing"
+    ],
+    "local": "ready",
+    "worker": true,
+    "geometryBusy": false,
+    "warning": ""
+  },
+  "pageErrors": []
+}

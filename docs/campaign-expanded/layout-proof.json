@@ -1,0 +1,769 @@
+{
+  "layouts": [
+    {
+      "viewport": "320x568",
+      "rect": {
+        "#journeyHUD": {
+          "x": 160,
+          "y": 179,
+          "w": 148,
+          "h": 80.828125,
+          "right": 308,
+          "bottom": 259.828125,
+          "visible": true,
+          "scrollWidth": 144,
+          "clientWidth": 144
+        },
+        "#navigator": {
+          "x": 12,
+          "y": 174,
+          "w": 128,
+          "h": 52,
+          "right": 140,
+          "bottom": 226,
+          "visible": true,
+          "scrollWidth": 122,
+          "clientWidth": 122
+        },
+        ".speed": {
+          "x": 192,
+          "y": 274,
+          "w": 116,
+          "h": 116,
+          "right": 308,
+          "bottom": 390,
+          "visible": true,
+          "scrollWidth": 116,
+          "clientWidth": 116
+        },
+        "#steering": {
+          "x": 12,
+          "y": 456,
+          "w": 204,
+          "h": 88,
+          "right": 216,
+          "bottom": 544,
+          "visible": true,
+          "scrollWidth": 204,
+          "clientWidth": 204
+        },
+        "#throttle": {
+          "x": 230,
+          "y": 402,
+          "w": 78,
+          "h": 142,
+          "right": 308,
+          "bottom": 544,
+          "visible": true,
+          "scrollWidth": 78,
+          "clientWidth": 78
+        },
+        ".timing": {
+          "x": 12,
+          "y": 94,
+          "w": 296,
+          "h": 74.484375,
+          "right": 308,
+          "bottom": 168.484375,
+          "visible": true,
+          "scrollWidth": 292,
+          "clientWidth": 292
+        }
+      },
+      "reward": {
+        "#journeyHUD": {
+          "x": 160,
+          "y": 179,
+          "w": 148,
+          "h": 92.078125,
+          "right": 308,
+          "bottom": 271.078125,
+          "visible": true,
+          "scrollWidth": 144,
+          "clientWidth": 144
+        },
+        ".speed": {
+          "x": 192,
+          "y": 274,
+          "w": 116,
+          "h": 116,
+          "right": 308,
+          "bottom": 390,
+          "visible": true,
+          "scrollWidth": 116,
+          "clientWidth": 116
+        },
+        "#steering": {
+          "x": 12,
+          "y": 456,
+          "w": 204,
+          "h": 88,
+          "right": 216,
+          "bottom": 544,
+          "visible": true,
+          "scrollWidth": 204,
+          "clientWidth": 204
+        },
+        "#throttle": {
+          "x": 230,
+          "y": 402,
+          "w": 78,
+          "h": 142,
+          "right": 308,
+          "bottom": 544,
+          "visible": true,
+          "scrollWidth": 78,
+          "clientWidth": 78
+        }
+      },
+      "tabs": [
+        "race",
+        "physics",
+        "spray",
+        "graphics",
+        "audio",
+        "camera",
+        "controls"
+      ],
+      "recordRows": 7
+    },
+    {
+      "viewport": "375x667",
+      "rect": {
+        "#journeyHUD": {
+          "x": 179.25,
+          "y": 179,
+          "w": 183.75,
+          "h": 131.5,
+          "right": 363,
+          "bottom": 310.5,
+          "visible": true,
+          "scrollWidth": 180,
+          "clientWidth": 180
+        },
+        "#navigator": {
+          "x": 12,
+          "y": 174,
+          "w": 129,
+          "h": 52,
+          "right": 141,
+          "bottom": 226,
+          "visible": true,
+          "scrollWidth": 123,
+          "clientWidth": 123
+        },
+        ".speed": {
+          "x": 219,
+          "y": 331,
+          "w": 144,
+          "h": 144,
+          "right": 363,
+          "bottom": 475,
+          "visible": true,
+          "scrollWidth": 144,
+          "clientWidth": 144
+        },
+        "#steering": {
+          "x": 12,
+          "y": 555,
+          "w": 208,
+          "h": 88,
+          "right": 220,
+          "bottom": 643,
+          "visible": true,
+          "scrollWidth": 208,
+          "clientWidth": 208
+        },
+        "#throttle": {
+          "x": 285,
+          "y": 487,
+          "w": 78,
+          "h": 156,
+          "right": 363,
+          "bottom": 643,
+          "visible": true,
+          "scrollWidth": 78,
+          "clientWidth": 78
+        },
+        ".timing": {
+          "x": 12,
+          "y": 94,
+          "w": 351,
+          "h": 78.484375,
+          "right": 363,
+          "bottom": 172.484375,
+          "visible": true,
+          "scrollWidth": 347,
+          "clientWidth": 347
+        }
+      },
+      "reward": {
+        "#journeyHUD": {
+          "x": 179.25,
+          "y": 179,
+          "w": 183.75,
+          "h": 131.5,
+          "right": 363,
+          "bottom": 310.5,
+          "visible": true,
+          "scrollWidth": 180,
+          "clientWidth": 180
+        },
+        ".speed": {
+          "x": 219,
+          "y": 331,
+          "w": 144,
+          "h": 144,
+          "right": 363,
+          "bottom": 475,
+          "visible": true,
+          "scrollWidth": 144,
+          "clientWidth": 144
+        },
+        "#steering": {
+          "x": 12,
+          "y": 555,
+          "w": 208,
+          "h": 88,
+          "right": 220,
+          "bottom": 643,
+          "visible": true,
+          "scrollWidth": 208,
+          "clientWidth": 208
+        },
+        "#throttle": {
+          "x": 285,
+          "y": 487,
+          "w": 78,
+          "h": 156,
+          "right": 363,
+          "bottom": 643,
+          "visible": true,
+          "scrollWidth": 78,
+          "clientWidth": 78
+        }
+      },
+      "tabs": [
+        "race",
+        "physics",
+        "spray",
+        "graphics",
+        "audio",
+        "camera",
+        "controls"
+      ],
+      "recordRows": 7
+    },
+    {
+      "viewport": "390x844",
+      "rect": {
+        "#journeyHUD": {
+          "x": 186.90625,
+          "y": 179,
+          "w": 191.09375,
+          "h": 116.109375,
+          "right": 378,
+          "bottom": 295.109375,
+          "visible": true,
+          "scrollWidth": 187,
+          "clientWidth": 187
+        },
+        "#navigator": {
+          "x": 12,
+          "y": 174,
+          "w": 129,
+          "h": 52,
+          "right": 141,
+          "bottom": 226,
+          "visible": true,
+          "scrollWidth": 123,
+          "clientWidth": 123
+        },
+        ".speed": {
+          "x": 234,
+          "y": 508,
+          "w": 144,
+          "h": 144,
+          "right": 378,
+          "bottom": 652,
+          "visible": true,
+          "scrollWidth": 144,
+          "clientWidth": 144
+        },
+        "#steering": {
+          "x": 12,
+          "y": 732,
+          "w": 208,
+          "h": 88,
+          "right": 220,
+          "bottom": 820,
+          "visible": true,
+          "scrollWidth": 208,
+          "clientWidth": 208
+        },
+        "#throttle": {
+          "x": 300,
+          "y": 664,
+          "w": 78,
+          "h": 156,
+          "right": 378,
+          "bottom": 820,
+          "visible": true,
+          "scrollWidth": 78,
+          "clientWidth": 78
+        },
+        ".timing": {
+          "x": 12,
+          "y": 94,
+          "w": 366,
+          "h": 78.484375,
+          "right": 378,
+          "bottom": 172.484375,
+          "visible": true,
+          "scrollWidth": 362,
+          "clientWidth": 362
+        }
+      },
+      "reward": {
+        "#journeyHUD": {
+          "x": 186.90625,
+          "y": 179,
+          "w": 191.09375,
+          "h": 116.109375,
+          "right": 378,
+          "bottom": 295.109375,
+          "visible": true,
+          "scrollWidth": 187,
+          "clientWidth": 187
+        },
+        ".speed": {
+          "x": 234,
+          "y": 508,
+          "w": 144,
+          "h": 144,
+          "right": 378,
+          "bottom": 652,
+          "visible": true,
+          "scrollWidth": 144,
+          "clientWidth": 144
+        },
+        "#steering": {
+          "x": 12,
+          "y": 732,
+          "w": 208,
+          "h": 88,
+          "right": 220,
+          "bottom": 820,
+          "visible": true,
+          "scrollWidth": 208,
+          "clientWidth": 208
+        },
+        "#throttle": {
+          "x": 300,
+          "y": 664,
+          "w": 78,
+          "h": 156,
+          "right": 378,
+          "bottom": 820,
+          "visible": true,
+          "scrollWidth": 78,
+          "clientWidth": 78
+        }
+      },
+      "tabs": [
+        "race",
+        "physics",
+        "spray",
+        "graphics",
+        "audio",
+        "camera",
+        "controls"
+      ],
+      "recordRows": 7
+    },
+    {
+      "viewport": "667x375",
+      "rect": {
+        "#journeyHUD": {
+          "x": 16,
+          "y": 128,
+          "w": 178,
+          "h": 97.28125,
+          "right": 194,
+          "bottom": 225.28125,
+          "visible": true,
+          "scrollWidth": 174,
+          "clientWidth": 174
+        },
+        "#navigator": {
+          "x": 338.5,
+          "y": 64,
+          "w": 120,
+          "h": 45,
+          "right": 458.5,
+          "bottom": 109,
+          "visible": true,
+          "scrollWidth": 114,
+          "clientWidth": 114
+        },
+        ".speed": {
+          "x": 539,
+          "y": 127,
+          "w": 112,
+          "h": 112,
+          "right": 651,
+          "bottom": 239,
+          "visible": true,
+          "scrollWidth": 112,
+          "clientWidth": 112
+        },
+        "#steering": {
+          "x": 12,
+          "y": 264.75,
+          "w": 208,
+          "h": 86.25,
+          "right": 220,
+          "bottom": 351,
+          "visible": true,
+          "scrollWidth": 208,
+          "clientWidth": 208
+        },
+        "#throttle": {
+          "x": 577,
+          "y": 251,
+          "w": 78,
+          "h": 100,
+          "right": 655,
+          "bottom": 351,
+          "visible": true,
+          "scrollWidth": 78,
+          "clientWidth": 78
+        },
+        ".timing": {
+          "x": 16,
+          "y": 61,
+          "w": 292,
+          "h": 67.78125,
+          "right": 308,
+          "bottom": 128.78125,
+          "visible": true,
+          "scrollWidth": 288,
+          "clientWidth": 288
+        }
+      },
+      "reward": {
+        "#journeyHUD": {
+          "x": 16,
+          "y": 128,
+          "w": 178,
+          "h": 97.28125,
+          "right": 194,
+          "bottom": 225.28125,
+          "visible": true,
+          "scrollWidth": 174,
+          "clientWidth": 174
+        },
+        ".speed": {
+          "x": 539,
+          "y": 127,
+          "w": 112,
+          "h": 112,
+          "right": 651,
+          "bottom": 239,
+          "visible": true,
+          "scrollWidth": 112,
+          "clientWidth": 112
+        },
+        "#steering": {
+          "x": 12,
+          "y": 264.75,
+          "w": 208,
+          "h": 86.25,
+          "right": 220,
+          "bottom": 351,
+          "visible": true,
+          "scrollWidth": 208,
+          "clientWidth": 208
+        },
+        "#throttle": {
+          "x": 577,
+          "y": 251,
+          "w": 78,
+          "h": 100,
+          "right": 655,
+          "bottom": 351,
+          "visible": true,
+          "scrollWidth": 78,
+          "clientWidth": 78
+        }
+      },
+      "tabs": [
+        "race",
+        "physics",
+        "spray",
+        "graphics",
+        "audio",
+        "camera",
+        "controls"
+      ],
+      "recordRows": 7
+    },
+    {
+      "viewport": "844x390",
+      "rect": {
+        "#journeyHUD": {
+          "x": 16,
+          "y": 128,
+          "w": 178,
+          "h": 97.28125,
+          "right": 194,
+          "bottom": 225.28125,
+          "visible": true,
+          "scrollWidth": 174,
+          "clientWidth": 174
+        },
+        "#navigator": {
+          "x": 427,
+          "y": 64,
+          "w": 120,
+          "h": 45,
+          "right": 547,
+          "bottom": 109,
+          "visible": true,
+          "scrollWidth": 114,
+          "clientWidth": 114
+        },
+        ".speed": {
+          "x": 716,
+          "y": 142,
+          "w": 112,
+          "h": 112,
+          "right": 828,
+          "bottom": 254,
+          "visible": true,
+          "scrollWidth": 112,
+          "clientWidth": 112
+        },
+        "#steering": {
+          "x": 12,
+          "y": 278,
+          "w": 208,
+          "h": 88,
+          "right": 220,
+          "bottom": 366,
+          "visible": true,
+          "scrollWidth": 208,
+          "clientWidth": 208
+        },
+        "#throttle": {
+          "x": 754,
+          "y": 266,
+          "w": 78,
+          "h": 100,
+          "right": 832,
+          "bottom": 366,
+          "visible": true,
+          "scrollWidth": 78,
+          "clientWidth": 78
+        },
+        ".timing": {
+          "x": 16,
+          "y": 61,
+          "w": 292,
+          "h": 67.78125,
+          "right": 308,
+          "bottom": 128.78125,
+          "visible": true,
+          "scrollWidth": 288,
+          "clientWidth": 288
+        }
+      },
+      "reward": {
+        "#journeyHUD": {
+          "x": 16,
+          "y": 128,
+          "w": 178,
+          "h": 97.28125,
+          "right": 194,
+          "bottom": 225.28125,
+          "visible": true,
+          "scrollWidth": 174,
+          "clientWidth": 174
+        },
+        ".speed": {
+          "x": 716,
+          "y": 142,
+          "w": 112,
+          "h": 112,
+          "right": 828,
+          "bottom": 254,
+          "visible": true,
+          "scrollWidth": 112,
+          "clientWidth": 112
+        },
+        "#steering": {
+          "x": 12,
+          "y": 278,
+          "w": 208,
+          "h": 88,
+          "right": 220,
+          "bottom": 366,
+          "visible": true,
+          "scrollWidth": 208,
+          "clientWidth": 208
+        },
+        "#throttle": {
+          "x": 754,
+          "y": 266,
+          "w": 78,
+          "h": 100,
+          "right": 832,
+          "bottom": 366,
+          "visible": true,
+          "scrollWidth": 78,
+          "clientWidth": 78
+        }
+      },
+      "tabs": [
+        "race",
+        "physics",
+        "spray",
+        "graphics",
+        "audio",
+        "camera",
+        "controls"
+      ],
+      "recordRows": 7
+    },
+    {
+      "viewport": "1920x1080",
+      "rect": {
+        "#journeyHUD": {
+          "x": 1676,
+          "y": 174,
+          "w": 220,
+          "h": 160.15625,
+          "right": 1896,
+          "bottom": 334.15625,
+          "visible": true,
+          "scrollWidth": 216,
+          "clientWidth": 216
+        },
+        "#navigator": {
+          "x": 890,
+          "y": 112,
+          "w": 140,
+          "h": 62,
+          "right": 1030,
+          "bottom": 174,
+          "visible": true,
+          "scrollWidth": 134,
+          "clientWidth": 134
+        },
+        ".speed": {
+          "x": 1706,
+          "y": 698,
+          "w": 190,
+          "h": 190,
+          "right": 1896,
+          "bottom": 888,
+          "visible": true,
+          "scrollWidth": 190,
+          "clientWidth": 190
+        },
+        "#steering": {
+          "x": 12,
+          "y": 968,
+          "w": 208,
+          "h": 88,
+          "right": 220,
+          "bottom": 1056,
+          "visible": true,
+          "scrollWidth": 208,
+          "clientWidth": 208
+        },
+        "#throttle": {
+          "x": 1830,
+          "y": 900,
+          "w": 78,
+          "h": 156,
+          "right": 1908,
+          "bottom": 1056,
+          "visible": true,
+          "scrollWidth": 78,
+          "clientWidth": 78
+        },
+        ".timing": {
+          "x": 24,
+          "y": 107,
+          "w": 416,
+          "h": 92.390625,
+          "right": 440,
+          "bottom": 199.390625,
+          "visible": true,
+          "scrollWidth": 412,
+          "clientWidth": 412
+        }
+      },
+      "reward": {
+        "#journeyHUD": {
+          "x": 1676,
+          "y": 174,
+          "w": 220,
+          "h": 160.15625,
+          "right": 1896,
+          "bottom": 334.15625,
+          "visible": true,
+          "scrollWidth": 216,
+          "clientWidth": 216
+        },
+        ".speed": {
+          "x": 1706,
+          "y": 698,
+          "w": 190,
+          "h": 190,
+          "right": 1896,
+          "bottom": 888,
+          "visible": true,
+          "scrollWidth": 190,
+          "clientWidth": 190
+        },
+        "#steering": {
+          "x": 12,
+          "y": 968,
+          "w": 208,
+          "h": 88,
+          "right": 220,
+          "bottom": 1056,
+          "visible": true,
+          "scrollWidth": 208,
+          "clientWidth": 208
+        },
+        "#throttle": {
+          "x": 1830,
+          "y": 900,
+          "w": 78,
+          "h": 156,
+          "right": 1908,
+          "bottom": 1056,
+          "visible": true,
+          "scrollWidth": 78,
+          "clientWidth": 78
+        }
+      },
+      "tabs": [
+        "race",
+        "physics",
+        "spray",
+        "graphics",
+        "audio",
+        "camera",
+        "controls"
+      ],
+      "recordRows": 7
+    }
+  ],
+  "issues": [],
+  "errors": [],
+  "environment": "Chromium responsive emulation; not physical Safari"
+}

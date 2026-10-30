@@ -22,7 +22,7 @@ export function finishSummerWater(material,uniforms,{simulated=false}={}){
   shader.fragmentShader=common+'uniform sampler2D summerDepth;uniform vec3 summerBoat;uniform float summerStrength;\n'+shader.fragmentShader;
   shader.fragmentShader=shader.fragmentShader.replace('#include <roughnessmap_fragment>',`#include <roughnessmap_fragment>
    ${simulated?'if(fluidDebug==0){':''}
-   float summerD=texture2D(summerDepth,(summerWorld+125.)/250.).r;
+   float summerD=mix(summerEdge,texture2D(summerDepth,(summerWorld+125.)/250.).r,step(max(abs(summerWorld.x),abs(summerWorld.y)),124.));
    vec3 summerColor=mix(vec3(.065,.36,.25),vec3(.009,.18,.20),smoothstep(.05,.85,summerD));
    float summerT=summerTime*summerSpeed;
    float summerNoise=.65+.35*sin(summerWorld.x*5.7+sin(summerWorld.y*3.1)+summerT*1.6);

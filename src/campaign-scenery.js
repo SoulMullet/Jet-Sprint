@@ -177,71 +177,11 @@ export class CampaignScenery {
     this.destination.name = destination.name + " prepared destination";
     this.destination.visible = false;
     scene.add(this.destination);
-    this.jobs = [
-      () =>
-        this.sign(
-          destination.name.toUpperCase(),
-          `TRACK ${String(destination.number).padStart(2, "0")} / EXPLORATION PREVIEW`,
-          ...skin.welcome.position,
-          skin.welcome.angle,
-          skin.welcome.width,
-          this.destination,
-        ),
-      () => {
-        for (const x of skin.entrance.x)
-          this.mesh(
-            this.pole,
-            this.materials.gold,
-            x,
-            1.1,
-            skin.entrance.z,
-            1,
-            2,
-            1,
-            this.destination,
-          );
-      },
-      () => {
-        for (let i = 0; i < skin.stones.count; i++) {
-          const a = (i / skin.stones.count) * Math.PI * 2;
-          this.mesh(
-            new THREE.IcosahedronGeometry(1, 1),
-            this.materials.stone,
-            skin.stones.center[0] + Math.cos(a) * skin.stones.radius[0],
-            0.8,
-            skin.stones.center[1] + Math.sin(a) * skin.stones.radius[1],
-            1.4,
-            1.8,
-            1.2,
-            this.destination,
-          );
-        }
-      },
-      () => {
-        for (let i = 0; i < skin.dock.planks; i++)
-          this.mesh(
-            this.box,
-            this.materials.wood,
-            skin.dock.position[0],
-            skin.dock.position[1],
-            skin.dock.position[2] + i * 0.6,
-            3,
-            0.12,
-            0.52,
-            this.destination,
-          );
-      },
-      () =>
-        this.sign(
-          String(destination.number).padStart(2, "0"),
-          "END OF PHASE 1 / FREE CRUISE",
-          ...skin.finish.position,
-          skin.finish.angle,
-          skin.finish.width,
-          this.destination,
-        ),
-    ];
+    // Destination geometry/props now belong to the bounded world streamer.
+    this.jobs = [];
+    this.status = "ready";
   }
+
   mesh(g, m, x, y, z, sx = 1, sy = 1, sz = 1, parent = this.scene) {
     const o = new THREE.Mesh(g, m);
     o.position.set(x, y, z);
@@ -370,9 +310,16 @@ export class CampaignScenery {
         );
       this.flags.instanceColor.needsUpdate = true;
     }
+    const nearby = this.world.river.project(
+      boat,
+      0,
+      this.world.river.length,
+      this.sample,
+    ).distance;
     for (let i = 0; i < this.flow.count; i++) {
       this.world.river.sample(
-        (i * 8 -
+        (nearby +
+          (i - this.flow.count / 2) * 8 -
           time * this.river.current * 2 +
           100 * this.world.river.length) %
           this.world.river.length,

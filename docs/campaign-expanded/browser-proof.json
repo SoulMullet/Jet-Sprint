@@ -1,0 +1,312 @@
+{
+  "events": [
+    {
+      "id": "kowhai-sprint-park:1",
+      "eventId": "kowhai-sprint-park",
+      "name": "Rookie Run",
+      "kind": "race",
+      "time": 5.908333333333333,
+      "personalBest": true,
+      "clean": true,
+      "prize": 500,
+      "cleanBonus": 250,
+      "total": 750,
+      "wallet": 750,
+      "pending": false
+    },
+    {
+      "id": "kowhai-upstream:1",
+      "eventId": "kowhai-upstream",
+      "name": "River Rush 1",
+      "kind": "river",
+      "time": 4.558333333333418,
+      "personalBest": true,
+      "clean": true,
+      "prize": 250,
+      "cleanBonus": 150,
+      "total": 400,
+      "wallet": 1150,
+      "pending": false
+    },
+    {
+      "id": "matai-basin:1",
+      "eventId": "matai-basin",
+      "name": "Timberline",
+      "kind": "race",
+      "time": 17.400000000000002,
+      "personalBest": true,
+      "clean": true,
+      "prize": 1000,
+      "cleanBonus": 500,
+      "total": 1500,
+      "wallet": 2650,
+      "pending": false
+    },
+    {
+      "id": "river-rush-2:1",
+      "eventId": "river-rush-2",
+      "name": "River Rush 2",
+      "kind": "river",
+      "time": 5.608333333333402,
+      "personalBest": true,
+      "clean": true,
+      "prize": 500,
+      "cleanBonus": 250,
+      "total": 750,
+      "wallet": 3400,
+      "pending": false
+    },
+    {
+      "id": "devils-bend:1",
+      "eventId": "devils-bend",
+      "name": "Devil’s Bend",
+      "kind": "race",
+      "time": 22.94999999999871,
+      "personalBest": true,
+      "clean": true,
+      "prize": 2000,
+      "cleanBonus": 1000,
+      "total": 3000,
+      "wallet": 6400,
+      "pending": false
+    },
+    {
+      "id": "river-rush-3:1",
+      "eventId": "river-rush-3",
+      "name": "River Rush 3",
+      "kind": "river",
+      "time": 5.516666666666736,
+      "personalBest": true,
+      "clean": true,
+      "prize": 1000,
+      "cleanBonus": 500,
+      "total": 1500,
+      "wallet": 7900,
+      "pending": false
+    },
+    {
+      "id": "championship:1",
+      "eventId": "championship",
+      "name": "Championship",
+      "kind": "race",
+      "time": 8.049999999999542,
+      "personalBest": true,
+      "clean": true,
+      "prize": 5000,
+      "cleanBonus": 2500,
+      "total": 7500,
+      "wallet": 15400,
+      "pending": false
+    }
+  ],
+  "identity": {
+    "boat": true,
+    "ctx": true,
+    "scene": true,
+    "counts": {
+      "engine": 1,
+      "camera": 1,
+      "spray": 1,
+      "wake": 1
+    },
+    "beforeCounts": {
+      "engine": 1,
+      "camera": 1,
+      "spray": 1,
+      "wake": 1
+    }
+  },
+  "snapshots": [
+    {
+      "phase": "EXIT",
+      "index": 0,
+      "wallet": 750,
+      "stream": {
+        "queued": 3,
+        "building": 1,
+        "ready": 36,
+        "fallback": 0,
+        "resident": 40,
+        "limit": 49,
+        "builds": 110,
+        "disposals": 0,
+        "failures": 0,
+        "maxJobMs": 0,
+        "nextVenue": "ready",
+        "waterMeshes": 8,
+        "venues": [
+          "ready",
+          "ready",
+          "preparing",
+          "preparing"
+        ],
+        "local": "ready",
+        "worker": true,
+        "geometryBusy": false,
+        "warning": ""
+      },
+      "perf": {
+        "calls": 80,
+        "triangles": 202100,
+        "geometries": 90,
+        "textures": 9
+      }
+    },
+    {
+      "phase": "EXIT",
+      "index": 1,
+      "wallet": 2650,
+      "stream": {
+        "queued": 6,
+        "building": 3,
+        "ready": 35,
+        "fallback": 0,
+        "resident": 44,
+        "limit": 49,
+        "builds": 214,
+        "disposals": 47,
+        "failures": 0,
+        "maxJobMs": 0,
+        "nextVenue": "ready",
+        "waterMeshes": 16,
+        "venues": [
+          "ready",
+          "ready",
+          "ready",
+          "preparing"
+        ],
+        "local": "ready",
+        "worker": true,
+        "geometryBusy": false,
+        "warning": ""
+      },
+      "perf": {
+        "calls": 67,
+        "triangles": 92705,
+        "geometries": 135,
+        "textures": 9
+      }
+    },
+    {
+      "phase": "EXIT",
+      "index": 2,
+      "wallet": 6400,
+      "stream": {
+        "queued": 7,
+        "building": 1,
+        "ready": 38,
+        "fallback": 0,
+        "resident": 46,
+        "limit": 49,
+        "builds": 319,
+        "disposals": 116,
+        "failures": 0,
+        "maxJobMs": 0,
+        "nextVenue": "ready",
+        "waterMeshes": 19,
+        "venues": [
+          "ready",
+          "preparing",
+          "ready",
+          "ready"
+        ],
+        "local": "ready",
+        "worker": true,
+        "geometryBusy": false,
+        "warning": ""
+      },
+      "perf": {
+        "calls": 42,
+        "triangles": 78046,
+        "geometries": 173,
+        "textures": 9
+      }
+    },
+    {
+      "phase": "CHAMPION",
+      "index": 3,
+      "wallet": 15400,
+      "stream": {
+        "queued": 0,
+        "building": 0,
+        "ready": 34,
+        "fallback": 0,
+        "resident": 34,
+        "limit": 49,
+        "builds": 417,
+        "disposals": 215,
+        "failures": 0,
+        "maxJobMs": 0,
+        "nextVenue": "final venue",
+        "waterMeshes": 8,
+        "venues": [
+          "ready",
+          "preparing",
+          "preparing",
+          "ready"
+        ],
+        "local": "ready",
+        "worker": true,
+        "geometryBusy": false,
+        "warning": ""
+      },
+      "perf": {
+        "calls": 87,
+        "triangles": 94556,
+        "geometries": 209,
+        "textures": 9
+      }
+    }
+  ],
+  "fonts": [
+    {
+      "selector": "#journeyTitle",
+      "fonts": [
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 17
+        }
+      ]
+    },
+    {
+      "selector": "#journeyDetail",
+      "fonts": [
+        {
+          "familyName": "Chakra Petch",
+          "postScriptName": "ChakraPetch-Medium",
+          "isCustomFont": true,
+          "glyphCount": 29
+        }
+      ]
+    },
+    {
+      "selector": "#steering .analog-header",
+      "fonts": [
+        {
+          "familyName": "Chakra Petch",
+          "postScriptName": "ChakraPetch-SemiBold",
+          "isCustomFont": true,
+          "glyphCount": 19
+        },
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 2
+        }
+      ]
+    }
+  ],
+  "modes": [
+    "classic",
+    "chase",
+    "cockpit",
+    "overhead"
+  ],
+  "persistedWallet": 15400,
+  "errors": [],
+  "failed": [],
+  "fixture": "Actual entry/frame/physics/UI; test-only pose placements for ordered crossings, manual frame clock and suppressed repeated draws. Geometry worker is real and awaited. Continuous no-teleport driving is separately tested through the actual input pipeline."
+}

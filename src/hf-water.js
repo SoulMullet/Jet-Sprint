@@ -58,7 +58,7 @@ export function finishHFWater(material,uniforms,{simulated=false}={}){
    }`);
   shader.fragmentShader=shader.fragmentShader.replace('#include <metalnessmap_fragment>',`#include <metalnessmap_fragment>
    if(${guard}){
-    float d=texture2D(summerDepth,(summerWorld+125.)/250.).r;
+    float d=mix(summerEdge,texture2D(summerDepth,(summerWorld+125.)/250.).r,step(max(abs(summerWorld.x),abs(summerWorld.y)),124.));
     vec3 bed=vec3(.18,.25,.12),deep=vec3(.012,.135,.13);
     vec3 transmission=exp(-vec3(2.6,.65,.48)*(.3+d*2.5));
     diffuseColor.rgb=mix(deep,bed,transmission)*1.25;

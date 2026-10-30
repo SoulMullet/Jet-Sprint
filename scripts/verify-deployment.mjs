@@ -32,11 +32,15 @@ export async function verifyDeployment(
       if (
         info.identity !== "MARINE-87" ||
         info.simulation !== "world-space-fixed-step" ||
-        info.campaign !== "phase-1-kowhai-willow-matai"
+        info.campaign !== "four-track-1987"
       )
         throw Error("Wrong live interface or simulation identity.");
-      if (info.controls !== "analog-input-v1")
-        throw Error("Wrong live analog control system.");
+      if (
+        info.controls !== "analog-input-v1" ||
+        info.economy !== "wallet-v2" ||
+        info.streaming !== "worker-tiles-v1"
+      )
+        throw Error("Wrong live controls, wallet or streaming system.");
       if (
         !info.fonts?.includes("Russo One") ||
         !info.fonts?.includes("Chakra Petch")

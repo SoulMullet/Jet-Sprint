@@ -1,0 +1,34 @@
+{
+  "fixture": "Valid seven-completion ledger seeded through CampaignProgress before loading the unmodified production bundle; manual RAF clock only.",
+  "wallet": 15400,
+  "selected": 4,
+  "stage": "STAGING",
+  "attempt": null,
+  "elapsed": 0,
+  "streaming": {
+    "queued": 11,
+    "building": 1,
+    "ready": 34,
+    "fallback": 0,
+    "resident": 46,
+    "limit": 49,
+    "builds": 102,
+    "disposals": 9,
+    "failures": 0,
+    "maxJobMs": 0,
+    "nextVenue": "preparing",
+    "waterMeshes": 8,
+    "venues": [
+      "ready",
+      "preparing",
+      "preparing",
+      "ready"
+    ],
+    "local": "ready",
+    "worker": true,
+    "geometryBusy": true,
+    "warning": ""
+  },
+  "errors": [],
+  "failed": []
+}

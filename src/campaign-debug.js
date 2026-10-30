@@ -1,9 +1,10 @@
-// Dynamically imported in development only; this module is absent from dist.
+import { campaignEvents } from "./campaign-data.js";
+// Dynamically imported only in development; absent from production.
 export function mountCampaignDebug({
   campaign,
   world,
   scenery,
-  race,
+  getRace,
   startSequence,
   getBoat,
   getPlaying,
@@ -18,30 +19,46 @@ export function mountCampaignDebug({
   const summary = document.createElement("summary");
   summary.textContent = "Campaign diagnostics / DEV";
   root.append(summary);
+  const label = document.createElement("label");
+  label.textContent = "Practice event ";
+  const select = document.createElement("select");
+  select.id = "devCampaignStage";
+  campaignEvents.forEach((e, i) => {
+    const o = document.createElement("option");
+    o.value = i;
+    o.textContent = `${i + 1}. ${e.name}`;
+    select.append(o);
+  });
+  label.append(select);
+  root.append(label);
+  const b = document.createElement("button");
+  b.id = "devCampaignJump";
+  b.textContent = "Practice selected event";
+  b.onclick = () => jump(select.value);
+  root.append(b);
+  for (const [stage, id, text] of [
+    [1, "devRiver", "Practice: River Rush 1"],
+    [2, "devTrack2", "Practice: Timberline"],
+  ]) {
+    const button = document.createElement("button");
+    button.id = id;
+    button.textContent = text;
+    button.onclick = () => jump(stage);
+    root.append(button);
+  }
   const readout = document.createElement("pre");
   readout.id = "campaignDiagnosticReadout";
-  for (const [stage, label] of [
-    ["river", "Practice: bonus river"],
-    ["track2", "Practice: Track 2"],
-  ]) {
-    const b = document.createElement("button");
-    b.type = "button";
-    b.id = stage === "river" ? "devRiver" : "devTrack2";
-    b.textContent = label;
-    b.onclick = () => jump(stage);
-    root.append(b);
-  }
   root.append(readout);
   const note = document.createElement("p");
   note.textContent =
-    "Practice shortcuts relocate the boat and do not unlock campaign progress. Normal play has no teleport.";
+    "Practice relocates only for testing. No payouts, unlocks or clean achievements. Normal campaign transitions never relocate the boat.";
   root.append(note);
   parent.prepend(root);
   const inspect = () => ({
     ...campaign.inspect(),
-    laps: race.laps.length,
-    lapTarget: race.lapCount,
-    raceTime: race.total,
+    laps: getRace().laps.length,
+    lapTarget: getRace().lapCount,
+    raceTime: getRace().total,
     raceState: startSequence.state,
     playing: getPlaying(),
     boat: { ...getBoat() },

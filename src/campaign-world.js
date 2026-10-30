@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { createCourse } from "./course.js";
-import { track1, track2, river1 } from "./campaign-data.js";
+import { track1, track2, river1, campaignDefinition } from "./campaign-data.js";
 import { nearestOnTrack } from "./track.js";
 
 // Open routes clamp at their ends; they never wrap into a false return leg.
@@ -10,7 +10,9 @@ export function createJourneyPath(definition, closed = false) {
     closed,
     "centripetal",
   );
-  const samples = curve.getPoints(Math.ceil(curve.getLength() / 1.2));
+  const samples = curve.getPoints(
+    Math.ceil(curve.getLength() / (definition.sampleSpacing ?? 1.2)),
+  );
   let length = 0;
   const line = samples.map((p, i) => {
     if (i) length += p.distanceTo(samples[i - 1]);
@@ -87,17 +89,48 @@ export function createCampaignWorld({
   raceDefinition = track1,
   riverDefinition = river1,
   destinationDefinition = track2,
+  raceCourse = null,
+  destinationCourse = null,
 } = {}) {
-  const race = createCourse(raceDefinition.route, raceDefinition),
+  const race = raceCourse ?? createCourse(raceDefinition.route, raceDefinition),
     river = createJourneyPath(riverDefinition),
-    destination = createJourneyPath(destinationDefinition, true);
+    destination =
+      destinationCourse ?? createJourneyPath(destinationDefinition, true);
   for (const edge of race.edges)
     edge.points.waterWidth = raceDefinition.waterWidth;
+  const mouthDistance = 60,
+    mouth = river.points.filter(
+      (_, i) => river.line[i].distance < mouthDistance,
+    ),
+    tail = river.points.filter(
+      (_, i) => river.line[i].distance > mouthDistance,
+    ),
+    join = river.sample(mouthDistance);
+  mouth.push({ x: join.x, z: join.z });
+  tail.unshift({ x: join.x, z: join.z });
+  Object.assign(mouth, { id: river.id, waterWidth: raceDefinition.waterWidth });
+  Object.assign(tail, { id: river.id, waterWidth: riverDefinition.waterWidth });
+  const riverFootprint = [mouth, tail];
   const network = {
     baseWidth: raceDefinition.waterWidth,
     gradedFloodplain: true,
     bounds: { minX: -260, maxX: 260, minZ: -240, maxZ: 240 },
-    paths: [...race.network.paths, river.points, destination.points],
+    paths: [...race.network.paths, ...riverFootprint, destination.points],
+  };
+  const staging = destinationDefinition.staging
+    ? createJourneyPath({
+        id: destinationDefinition.id + ":staging",
+        name: destinationDefinition.name + " staging",
+        ...destinationDefinition.staging,
+      })
+    : null;
+  if (staging) network.paths.push(staging.points);
+  const all = network.paths.flat();
+  network.bounds = {
+    minX: Math.min(...all.map((p) => p.x)) - 45,
+    maxX: Math.max(...all.map((p) => p.x)) + 45,
+    minZ: Math.min(...all.map((p) => p.z)) - 45,
+    maxZ: Math.max(...all.map((p) => p.z)) + 45,
   };
   const gate = {
     ...river.sample(riverDefinition.gateDistance),
@@ -120,7 +153,9 @@ export function createCampaignWorld({
   return {
     race,
     river,
+    riverFootprint,
     destination,
+    staging,
     network,
     gate,
     checkpoints,
@@ -128,5 +163,110 @@ export function createCampaignWorld({
     riverDefinition,
     destinationDefinition,
     nearest: (x, z) => nearestOnTrack(network, x, z),
+  };
+}
+
+export function createCampaignAdventure(definition = campaignDefinition) {
+  const courses = definition.tracks.map((d) => createCourse(d.route, d));
+  const staging = definition.tracks.map((d) =>
+    d.staging
+      ? createJourneyPath({
+          id: d.id + ":staging",
+          name: d.name + " staging",
+          ...d.staging,
+        })
+      : null,
+  );
+  const legs = definition.rivers.map((d, i) =>
+    createCampaignWorld({
+      raceDefinition: definition.tracks[i],
+      riverDefinition: d,
+      destinationDefinition: definition.tracks[i + 1],
+      raceCourse: courses[i],
+      destinationCourse: courses[i + 1],
+    }),
+  );
+  const paths = [];
+  for (let i = 0; i < courses.length; i++) {
+    for (const edge of courses[i].edges) {
+      edge.points.waterWidth = definition.tracks[i].waterWidth;
+      paths.push(edge.points);
+    }
+    if (staging[i]) paths.push(staging[i].points);
+  }
+  for (const leg of legs) paths.push(...leg.riverFootprint);
+  const network = { paths, baseWidth: 9, gradedFloodplain: true };
+  const nearest = (x, z) => nearestOnTrack(network, x, z);
+  const rocks = [];
+  for (const leg of legs) {
+    leg.network = network;
+    leg.nearest = nearest;
+    const r = leg.riverDefinition;
+    if (!r.rockSpacing) continue;
+    let n = 0;
+    for (let d = 230; d < leg.river.length - 180; d += r.rockSpacing) {
+      const p = leg.river.sample(d),
+        side = n++ % 2 ? 1 : -1,
+        radius = r.number === 3 ? 2 : 1.35;
+      rocks.push({
+        id: `${r.id}:rock-${n}`,
+        riverId: r.id,
+        x: p.x - p.tz * side * (r.waterWidth - 3),
+        z: p.z + p.tx * side * (r.waterWidth - 3),
+        radius,
+      });
+    }
+  }
+  return {
+    definition,
+    courses,
+    staging,
+    legs,
+    network,
+    nearest,
+    rocks,
+    race: courses[0],
+    river: legs[0].river,
+    destination: courses[1],
+    raceDefinition: definition.tracks[0],
+  };
+}
+
+// Select whole intersecting line segments with a guard beyond the tile edge.
+// Geometry is clipped afterwards, so there are no artificial channel end caps.
+export function sliceCampaignNetwork(network, bounds, guard = 18) {
+  const paths = [];
+  for (const path of network.paths) {
+    let run = [];
+    const flush = () => {
+      if (run.length > 1) {
+        run.id = path.id;
+        run.waterWidth = path.waterWidth;
+        paths.push(run);
+      }
+      run = [];
+    };
+    for (let i = 0; i < path.length - 1; i++) {
+      const p = path[i],
+        q = path[i + 1],
+        r = (path.waterWidth ?? 9) + guard;
+      if (
+        Math.max(p.x, q.x) + r >= bounds.minX &&
+        Math.min(p.x, q.x) - r <= bounds.maxX &&
+        Math.max(p.z, q.z) + r >= bounds.minZ &&
+        Math.min(p.z, q.z) - r <= bounds.maxZ
+      ) {
+        if (!run.length) run.push(p);
+        run.push(q);
+      } else flush();
+    }
+    flush();
+  }
+  return {
+    paths,
+    baseWidth: 9,
+    gradedFloodplain: true,
+    bounds,
+    clipBounds: bounds,
   };
 }

@@ -1,0 +1,17 @@
+{
+  "riverTimes": [
+    110.92500000003434,
+    161.0666666666845,
+    228.15000000290502
+  ],
+  "raceTimes": [
+    252.61666666659883,
+    255.98333333310057,
+    347.8000000024291,
+    512.2333333398556
+  ],
+  "wallet": 11150,
+  "runSeconds": 2008.8833333451068,
+  "continuousInputPipeline": true,
+  "fixture": "Actual ControlInput shaping plus unchanged stepBoat, continuous seven-event controller drive; no browser rendering or device-FPS claim."
+}

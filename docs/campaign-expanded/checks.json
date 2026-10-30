@@ -1,0 +1,18 @@
+{
+  "version": "0.19.0",
+  "automatedTests": {
+    "passed": 187,
+    "failed": 0,
+    "command": "npm test"
+  },
+  "productionBuild": {
+    "passed": true,
+    "command": "npm run build",
+    "servedFiles": 12,
+    "warning": "Existing Vite entry chunk above 500 kB, approximately 264 kB gzip"
+  },
+  "formatting": "Prettier check passed for new/rewritten campaign modules and new suites",
+  "physicalDeviceTesting": false,
+  "humanFullCampaignPlaytest": false,
+  "evidence": "See browser-proof, production-proof, resume-proof, recovery-proof, layout-proof, continuous-driving-proof and local-build-proof in this directory."
+}

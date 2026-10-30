@@ -116,6 +116,7 @@ export class Campaign {
     return true;
   }
   step(before, b, dt) {
+    this.gateHit=0;
     if (this.phase !== "RACE")
       this.gateOpen = Math.min(1, this.gateOpen + dt * 1.25);
     const { gate, river, checkpoints } = this.world;
@@ -131,6 +132,7 @@ export class Campaign {
         b.x += (side * 1.25 - d) * gate.tx;
         b.z += (side * 1.25 - d) * gate.tz;
         const v = b.vx * gate.tx + b.vz * gate.tz;
+        this.gateHit=Math.abs(v);
         if (v * side < 0) {
           b.vx -= v * gate.tx * 1.2;
           b.vz -= v * gate.tz * 1.2;

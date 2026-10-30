@@ -3,8 +3,8 @@ import {mergeVertices} from 'three/addons/utils/BufferGeometryUtils.js';
 import {TessellateModifier} from 'three/addons/modifiers/TessellateModifier.js';
 // Subdivide the existing clipped channel, never the rectangular solver domain.
 // Midpoints stay on their original triangles, preserving shoreline and holes.
-export function renderGeometry(channel,nearest,width){
- const geometry=new TessellateModifier(1.4,18).modify(channel);
+export function renderGeometry(channel,nearest,width,maxEdge=1.4){
+ const geometry=new TessellateModifier(maxEdge,18).modify(channel);
  const pos=geometry.attributes.position,fade=new Float32Array(pos.count),gradient=new Float32Array(pos.count*2);
  for(let i=0;i<pos.count;i++){
   const x=pos.getX(i),z=pos.getZ(i),p=nearest(x,z),d=Math.hypot(x-p.x,z-p.z),t=THREE.MathUtils.clamp(((p.waterWidth??width)-d)/1.8,0,1);

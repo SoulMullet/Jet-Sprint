@@ -6,7 +6,10 @@ import {
   track2,
   river1,
 } from "../src/campaign-data.js";
-import { createCampaignWorld } from "../src/campaign-world.js";
+import {
+  createCampaignWorld,
+  sliceCampaignNetwork,
+} from "../src/campaign-world.js";
 import { Campaign, crossesGate } from "../src/campaign.js";
 import { CampaignProgress, campaignKey } from "../src/campaign-progress.js";
 import { CampaignScenery } from "../src/campaign-scenery.js";
@@ -56,41 +59,41 @@ function riverFixture() {
   return c;
 }
 
-test("campaign declares eight tracks and seven connected progressively harder rivers, with only the vertical slice available", () => {
+test("campaign declares four playable tracks and three connected progressively harder rivers", () => {
   const { tracks, rivers } = campaignDefinition;
-  assert.equal(tracks.length, 8);
-  assert.equal(rivers.length, 7);
-  assert.equal(new Set(tracks.map((t) => t.id)).size, 8);
-  for (let i = 0; i < 7; i++) {
+  assert.equal(tracks.length, 4);
+  assert.equal(rivers.length, 3);
+  assert.equal(new Set(tracks.map((t) => t.id)).size, 4);
+  for (let i = 0; i < 3; i++) {
     assert.equal(rivers[i].from, tracks[i].id);
     assert.equal(rivers[i].to, tracks[i + 1].id);
     assert.equal(rivers[i].difficulty, i + 1);
   }
   assert.equal(tracks[0].status, "playable");
-  assert.equal(tracks[1].status, "placeholder");
-  assert.ok(tracks.slice(2).every((t) => t.status === "planned"));
-  assert.ok(rivers.slice(1).every((r) => r.status === "planned"));
+  assert.equal(tracks[1].status, "playable");
+  assert.ok(tracks.slice(2).every((t) => t.status === "playable"));
+  assert.ok(rivers.slice(1).every((r) => r.status === "playable"));
   assert.deepEqual(
     JSON.parse(JSON.stringify(campaignDefinition)),
     campaignDefinition,
   );
 });
-test("one continuous footprint connects three island racing loops, the narrower open river and destination", () => {
+test("one continuous footprint connects the retained island race, expanded river, staging inlet and destination", () => {
   const polygons = channelPolygons(world.network, 9);
   assert.equal(polygons.length, 1);
   const start = world.river.sample(0),
     end = world.river.sample(world.river.length),
-    arrival = world.destination.sample(0);
+    arrival = world.staging.sample(0);
   near(world.race.project(start, 0, world.race.length).error, 0, 0.05);
   near(Math.hypot(end.x - arrival.x, end.z - arrival.z), 0);
   assert.deepEqual(world.river.sample(-100), world.river.sample(0));
   assert.deepEqual(world.river.sample(world.river.length + 100), end);
-  for (const path of world.network.paths)
-    for (const p of path) {
-      assert.ok(Math.abs(p.x) + path.waterWidth + 1.1 < 128);
-      assert.ok(Math.abs(p.z) + path.waterWidth + 1.1 < 128);
-    }
-  for (const d of [30, 70, 110]) {
+  assert.ok(world.river.length > 1500);
+  assert.ok(river1.waterWidth > 6.4);
+  const startAt = world.destination.sample(0),
+    stagingEnd = world.staging.sample(world.staging.length);
+  near(Math.hypot(startAt.x - stagingEnd.x, startAt.z - stagingEnd.z), 0, 0.01);
+  for (const d of [80, 110, 150]) {
     const p = world.river.sample(d),
       n = world.nearest(p.x, p.z);
     assert.equal(n.waterWidth, river1.waterWidth);
@@ -133,7 +136,13 @@ test("indexed queries match a brute-force clearance oracle at merges, banks and 
 });
 
 test("graded campaign terrain meets the banks without sliver folds or far-field subdivision cost", () => {
-  const ground = landGeometry(world.network, 10.1),
+  const local = sliceCampaignNetwork(world.network, {
+    minX: -160,
+    maxX: 160,
+    minZ: -160,
+    maxZ: 160,
+  });
+  const ground = landGeometry(local, 10.1),
     p = ground.attributes.position,
     n = ground.attributes.normal;
   assert.ok(
@@ -249,7 +258,11 @@ test("bonus checkpoints require order, direction and channel width; speed and cl
   assert.equal(c.phase, "RIVER");
   c.step(at(first, 1), at(first, -1), 0.05);
   assert.equal(c.checkpoint, 0);
-  c.step(at(first, -1, 8), at(first, 1, 8), 0.05);
+  c.step(
+    at(first, -1, first.halfWidth + 1),
+    at(first, 1, first.halfWidth + 1),
+    0.05,
+  );
   assert.equal(c.checkpoint, 0);
   c.step(at(first, -1), at(first, 1), 1);
   assert.equal(c.checkpoint, 1);
@@ -316,7 +329,7 @@ test("stage factory and progression take definitions rather than requiring new p
     "TRACK 07",
   );
 });
-test("destination preparation completes in bounded jobs, batches its props, and never grows on repeat visits", () => {
+test("fixed gate and checkpoint presentation does not duplicate assets on repeated updates", () => {
   const old = globalThis.document;
   globalThis.document = {
     createElement: () => ({
@@ -334,13 +347,13 @@ test("destination preparation completes in bounded jobs, batches its props, and 
         },
       },
       scenery = new CampaignScenery(scene, world);
-    assert.equal(scenery.inspect().status, "queued");
+    assert.equal(scenery.inspect().status, "ready");
     for (let i = 0; i < 5; i++) scenery.prepareOne();
     assert.equal(scenery.inspect().status, "ready");
     assert.ok(scenery.destination.children.length <= 6);
     const count = scenery.destination.children.length;
     for (let i = 0; i < 100; i++) scenery.prepareOne();
-    assert.equal(scenery.prepared, 5);
+    assert.equal(scenery.prepared, 0);
     assert.equal(scenery.destination.children.length, count);
   } finally {
     globalThis.document = old;

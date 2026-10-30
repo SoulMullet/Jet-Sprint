@@ -1,0 +1,10 @@
+{
+  "status": "verified",
+  "commit": "local",
+  "version": "0.19.0",
+  "files": 12,
+  "identity": "MARINE-87",
+  "simulation": "world-space-fixed-step",
+  "campaign": "four-track-1987",
+  "controls": "analog-input-v1"
+}

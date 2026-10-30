@@ -17,9 +17,9 @@ export function channelPolygons(points,width){
   for(let j=0;j<=16;j++){const t=a+Math.PI/2+j*Math.PI/16;ring.push([snap(p.x+radius*Math.cos(t)),snap(p.z+radius*Math.sin(t))]);}
   ring.push(ring[0]);return [ring];
  }));
- const polygons=polygonClipping.union(...capsules);cache.set(width,polygons);return polygons;
+ const polygons=capsules.length?polygonClipping.union(...capsules):[];cache.set(width,polygons);return polygons;
 }
-function geometryFromPolygons(polygons){
+export function geometryFromPolygons(polygons){
  const shapes=polygons.map(rings=>{
   const shape=new THREE.Shape(rings[0].map(([x,z])=>new THREE.Vector2(x,-z)));
   for(const ring of rings.slice(1))shape.holes.push(new THREE.Path(ring.map(([x,z])=>new THREE.Vector2(x,-z))));
@@ -27,8 +27,9 @@ function geometryFromPolygons(polygons){
  });
  const geometry=new THREE.ShapeGeometry(shapes);geometry.rotateX(-Math.PI/2);return geometry;
 }
-export function channelGeometry(points,width){return geometryFromPolygons(channelPolygons(points,width));}
-export function channelBankGeometry(points,outer,inner){return geometryFromPolygons(polygonClipping.difference(channelPolygons(points,outer),channelPolygons(points,inner)));}
+function clip(polygons,points){const b=points.clipBounds;return b?polygonClipping.intersection(polygons,[[[[b.minX,b.minZ],[b.maxX,b.minZ],[b.maxX,b.maxZ],[b.minX,b.maxZ],[b.minX,b.minZ]]]]):polygons;}
+export function channelGeometry(points,width){return geometryFromPolygons(clip(channelPolygons(points,width),points));}
+export function channelBankGeometry(points,outer,inner){return geometryFromPolygons(clip(polygonClipping.difference(channelPolygons(points,outer),channelPolygons(points,inner)),points));}
 // Clip land to the exact water network, so coarse terrain cells cannot appear as
 // square islands. The bank is a separate, smoothly rising continuous strip.
 export function shorelineGeometry(points,water,bank){

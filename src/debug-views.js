@@ -34,6 +34,7 @@ export class NavigationView {
   this.group.add(line(boundaries,'#e1efce',true));this.active=line([v(0,0,0),v(0,0,0)],'#e0ff3e');this.group.add(this.active);this.targetLine=line([v(0,0,0),v(0,0,0)],'#e0ff3e');this.group.add(this.targetLine);
  }
  setDebug(enabled){this.enabled=enabled;if(enabled)this.build();this.group.visible=enabled;this.status.hidden=!enabled;}
+ setCourse(course){if(this.course===course)return;this.group.traverse(o=>{o.geometry?.dispose();if(o.material){o.material.map?.dispose();o.material.dispose();}});this.group.clear();this.course=course;this.built=false;this.labels=[];this.labelGroups.clear();this.lastGate=null;if(this.enabled)this.build();}
  update(boat,race,cue,visible,dt){
   const gateIndex=race.done?0:race.next,g=this.course.gates[gateIndex];this.target.sprite.visible=visible;
   if(visible)this.target.sprite.position.set(cue?.targetX??g.x,1.8,cue?.targetZ??g.z);
