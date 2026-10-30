@@ -42,7 +42,7 @@ export class NavigationView {
   if(this.lastGate!==gateIndex){this.lastGate=gateIndex;for(const {label,indices} of this.labelGroups.values()){const active=indices.includes(gateIndex);label.sprite.material.color.set(active?'#f6ff55':'#ffffff');label.sprite.scale.set(active?3.3:2.4,active?1.65:1.2,1);}
    const p=this.active.geometry.attributes.position,w=g.halfWidth||7.1;p.setXYZ(0,g.x+g.tz*w,1,g.z-g.tx*w);p.setXYZ(1,g.x-g.tz*w,1,g.z+g.tx*w);p.needsUpdate=true;this.active.geometry.computeBoundingSphere();}
   this.age+=dt;if(this.age<.1)return;this.age=0;
-  const last=race.lastCrossing,reason=race.done?'Finished: all five laps accepted':race.check.gate!==race.next?'Approaching: previous gate accepted':reasons[race.check.code]||race.check.code;
+  const last=race.lastCrossing,reason=race.done?`Finished: all ${race.lapCount} laps accepted`:race.check.gate!==race.next?'Approaching: previous gate accepted':reasons[race.check.code]||race.check.code;
   this.status.textContent=`NAV DEBUG · Gate ${gateIndex}/${this.course.gates.length-1}\n${reason}\nTarget ${(cue?.targetX??g.x).toFixed(1)}, ${(cue?.targetZ??g.z).toFixed(1)} · side ${race.check.signed.toFixed(1)} m · offset ${race.check.lateral.toFixed(1)} m${cue?`\nRoute: ${cue.reason}`:''}${last?`\nLast: gate ${last.gate} · ${reasons[last.code]}`:''}`;
  }
 }

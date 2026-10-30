@@ -1,0 +1,57 @@
+{
+  "version": "0.17.0",
+  "campaign": "phase-1-kowhai-willow-matai",
+  "glyphs": [
+    {
+      "selector": "#intro h1 span",
+      "fonts": [
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 3
+        }
+      ]
+    },
+    {
+      "selector": ".intro-description",
+      "fonts": [
+        {
+          "familyName": "Chakra Petch",
+          "postScriptName": "ChakraPetch-Medium",
+          "isCustomFont": true,
+          "glyphCount": 61
+        }
+      ]
+    },
+    {
+      "selector": "#time .instrument-digit",
+      "fonts": [
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    }
+  ],
+  "modes": [
+    "chase",
+    "cockpit",
+    "overhead",
+    "classic"
+  ],
+  "persisted": {
+    "top": 112,
+    "waveScale": 215,
+    "sprayLaunchSpeed": 33,
+    "audio-idleRPM": 970,
+    "summer-resolutionScale": 0.85,
+    "camera-lag": 0.225,
+    "masterVolume": 41
+  },
+  "errors": [],
+  "failed": [],
+  "developerToolsExcluded": true
+}

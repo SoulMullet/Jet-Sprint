@@ -1,0 +1,200 @@
+{
+  "result": {
+    "playing": true,
+    "boat": {
+      "x": 41.79743482776022,
+      "z": -81.63474087983577,
+      "angle": -0.8458817448645788,
+      "vx": 6.85960063534961,
+      "vz": -7.6838514687809605,
+      "pump": 0,
+      "nozzle": 0,
+      "yawRate": 0,
+      "planing": 1,
+      "collisionImpulse": 0,
+      "throttle": 0,
+      "steering": 0,
+      "thrust": 0,
+      "jetPower": 0,
+      "forwardSpeed": 10.300199320109442,
+      "lateralSpeed": 0.03985268865601288,
+      "slipAngle": 0.0038690988934624157,
+      "forwardAcceleration": -1.9654545276450919,
+      "lateralAcceleration": -0.2123487230120985,
+      "engineLoad": 0
+    },
+    "campaign": {
+      "course": "kowhai-upstream",
+      "state": "RIVER",
+      "gate": "open",
+      "gateOpen": 1,
+      "checkpoints": 0,
+      "checkpointTotal": 7,
+      "riverTime": 1.2999999999999978,
+      "score": 150,
+      "airborne": false,
+      "jumpTaken": true,
+      "practice": true
+    },
+    "race": {
+      "total": 5.8750000000000355,
+      "laps": [
+        4.175000000000011,
+        0.8500000000000121,
+        0.8500000000000121
+      ],
+      "next": 1,
+      "done": true
+    },
+    "renderer": {
+      "frame": 98,
+      "calls": 33,
+      "triangles": 184676,
+      "points": 0,
+      "lines": 0
+    },
+    "memory": {
+      "geometries": 134,
+      "textures": 18
+    },
+    "stream": {
+      "status": "ready",
+      "prepared": 5,
+      "total": 5,
+      "maxPreparationMs": 0,
+      "visible": false
+    },
+    "jumpHeight": 0,
+    "result": {
+      "id": "60e9b6c3-44ab-4495-90f1-3bf2a969ecf8",
+      "course": "kowhai-sprint-park/club-route-1987",
+      "version": "0.14-waterjet-handling",
+      "modified": true,
+      "total": 5.8750000000000355,
+      "laps": [
+        4.175000000000011,
+        0.8500000000000121,
+        0.8500000000000121
+      ],
+      "lapCount": 3,
+      "date": "2026-10-29T23:41:11.841Z"
+    },
+    "gateRotation": [
+      1.5707963267948966,
+      -1.5707963267948966
+    ]
+  },
+  "fonts": [
+    {
+      "selector": "#intro h1 span",
+      "fonts": [
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 3
+        }
+      ]
+    },
+    {
+      "selector": ".intro-description",
+      "fonts": [
+        {
+          "familyName": "Chakra Petch",
+          "postScriptName": "ChakraPetch-Medium",
+          "isCustomFont": true,
+          "glyphCount": 61
+        }
+      ]
+    },
+    {
+      "selector": "#time .instrument-digit",
+      "fonts": [
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 1
+        }
+      ]
+    },
+    {
+      "selector": "#journeyTitle",
+      "fonts": [
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 11
+        }
+      ]
+    },
+    {
+      "selector": "#resultTitle",
+      "fonts": [
+        {
+          "familyName": "Russo One",
+          "postScriptName": "RussoOne-Regular",
+          "isCustomFont": true,
+          "glyphCount": 13
+        }
+      ]
+    }
+  ],
+  "diagnostics": {
+    "status": "ready",
+    "faces": [
+      {
+        "family": "Russo One",
+        "weight": "400",
+        "status": "loaded"
+      },
+      {
+        "family": "Chakra Petch",
+        "weight": "500",
+        "status": "loaded"
+      },
+      {
+        "family": "Chakra Petch",
+        "weight": "600",
+        "status": "loaded"
+      }
+    ],
+    "computed": {
+      "#intro h1": {
+        "family": "\"Russo One\", Impact, \"Arial Black\", sans-serif",
+        "weight": "400"
+      },
+      "#time": {
+        "family": "\"Russo One\", Impact, \"Arial Black\", sans-serif",
+        "weight": "400"
+      },
+      "#lap": {
+        "family": "\"Russo One\", Impact, \"Arial Black\", sans-serif",
+        "weight": "400"
+      },
+      "#speed": {
+        "family": "\"Russo One\", Impact, \"Arial Black\", sans-serif",
+        "weight": "400"
+      },
+      "#pitTitle": {
+        "family": "\"Russo One\", Impact, \"Arial Black\", sans-serif",
+        "weight": "400"
+      },
+      "button": {
+        "family": "\"Chakra Petch\", \"Trebuchet MS\", system-ui, sans-serif",
+        "weight": "600"
+      },
+      "label": {
+        "family": "\"Chakra Petch\", \"Trebuchet MS\", system-ui, sans-serif",
+        "weight": "600"
+      },
+      "select": {
+        "family": "\"Chakra Petch\", \"Trebuchet MS\", system-ui, sans-serif",
+        "weight": "500"
+      }
+    }
+  },
+  "raceTime": 5.8750000000000355,
+  "errors": []
+}

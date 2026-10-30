@@ -1,12 +1,32 @@
-# JET SPRINT v0.16.0 — MARINE-87
+# JET SPRINT v0.17.0 — Campaign Foundation / Phase 1
 
 A mobile-first, single-player 3D jet sprint prototype built with JavaScript, Vite, Three.js and Web Audio. Geometry and sound are procedural; licensed interface fonts are bundled locally. No paid assets, account, API keys or backend are required.
 
-The active course is **Cedar Creek Figure Eight**, a compact two-loop circuit with one flat diagonal crossover and a separate staging inlet. A rustic race-office cabin, dock and moored boat, old pickup, 24 animated spectators and original local racing signs establish a Pacific Northwest venue in summer 1987. Open **Pit Control → RACE → Figure-eight overview** to see the layout; the default follow camera is unchanged. Look for **MARINE-87 · v0.16.0 · commit** in the playable HUD. See the [current interface/spray implementation and verification](docs/marine-87.md), [physics audit](docs/boat-physics.md) and [retained HF rendering notes](docs/hf-graphics-v2.md).
+The playable journey is **Kōwhai Sprint Park → Willow Run → Mātai Basin**. Track 1 replaces the figure-eight with a fictional New Zealand inspired three-island jetsprint park: tight spline bends, shared junctions, 17 directional race gates, and a separate staging inlet. After **three valid laps**, the race clock stops and a physical gate opens. Keep driving: the navigator leads to a narrower upstream bonus river, seven checkpoints and an optional side jump, then into a distinct Track 2 preview basin. There are no loading screens or forced relocations in normal progression. Track 2 is a free-cruise placeholder, not a second race yet.
+
+Open **Pit Control → RACE → Campaign overview** to see the connected footprint. Look for **CAMPAIGN-1 · v0.17.0 · commit** in the HUD. The MARINE-87 interface/fonts, boat force model, four cameras, V8, ballistic rooster tail and all tuning labs remain. See [campaign architecture, exact changed files, screenshots and verification](docs/campaign-phase1.md), [retained interface/spray notes](docs/marine-87.md), [physics audit](docs/boat-physics.md) and [rendering notes](docs/hf-graphics-v2.md).
 
 The rendering includes multi-frequency freshwater waves, animated normal textures, live planar scenery reflections on High/Ultra, a historical three-band foam wake, instanced spray/mist/droplets, physical sky lighting, wet clear-coated boat materials, cockpit/engine details, cutout fir foliage and instanced bank vegetation. Ultra adds depth-based contact occlusion. Art and textures are generated locally; licensed fonts are served with the site.
 
 The V8 Sound Lab, 32 live controls, independent presets/JSON and stationary tuning remain available; see [the earlier track and V8 notes](docs/track-v8-upgrade.md) for audio controls. That document describes the superseded Shelter course.
+
+## Campaign vertical slice
+
+Finish three laps through every required gate, then follow the exit navigator. The gate opens in about 0.8 seconds; throttle, steering and momentum remain active. **Race results** opens the three-lap classification and local score saving; **Back to the boat** closes it. Viewing results releases held inputs while the boat coasts. Restart / R stages a new Track 1 race and retains tuning and saved records.
+
+**Willow Run** has a gentle downstream current opposing your ascent. Gold checkpoint flags turn teal as each forward crossing is accepted. Bonus points reward pace between checkpoints and clean navigation; a bank hit removes that leg's clean bonus. The small side ramp is optional, with an unobstructed central bypass. Its short ballistic hop retains horizontal momentum and awards a one-time landing bonus. Missing a gate shows a return cue; it does not teleport or reset the boat. At **Mātai Basin**, keep exploring the oval waterway. Further races, fuel, shops, economy and the remaining campaign are outside Phase 1.
+
+`campaign-data.js` declares **eight tracks and seven progressively harder river links**. Only Track 1 / River 1 / the Track 2 placeholder are authored/playable; other entries are explicitly planned. Course/river definitions use metres/seconds, stable IDs and a serializable graph. Reusable factories and a rendering-independent progression controller accept definitions; Three.js scenery and UI remain separate. This creates portable boundaries for future development without starting an Unreal migration.
+
+Destination water and collision topology are prepared at startup as part of one bounded world. During river travel, five incremental jobs prepare the destination's signs, dock, markers and island landmark, then batch them into at most six material meshes. Bends, riverside trees and distance culling conceal that preparation. This is bounded preparation of the first slice, not a full eight-zone streaming implementation.
+
+## Automatic tuning persistence and development tools
+
+All existing registered game/physics/water/spray knobs, V8 settings, graphics and per-mode camera tuning save through their original handlers. Their stable keys and versioned envelopes are retained: `jet-sprint-settings` (schema 3), `jet-sprint-v8-settings` (schema 1), `jet-sprint-summer-graphics-v1`, and `jet-sprint-cameras-v1`. Release metadata never selects defaults or a new key. Game/audio flush on page hide; graphics/cameras save on change. Category/factory resets and preset/JSON workflows remain. The stationary dyno's throttle is a transient input, not a stored tuning parameter.
+
+Campaign best times, bonus records and the Track 2 milestone use the separate `jet-sprint-campaign-v1` envelope. Restarting a run does not erase them. Same-origin GitHub Pages deployments replace files without clearing localStorage. Exports remain the portable backup if the host changes or site data is cleared.
+
+Run `npm run dev`, then open **Pit Control → RACE → Debug Tools → Campaign diagnostics / DEV** for course, state, laps, gate, river checkpoints, preparation status and FPS. **Practice: bonus river** / **Practice: Track 2** deliberately relocate the boat for testing and cannot unlock campaign progress. This panel and its shortcut API are excluded from production; the normal game contains no transition teleports. Physical iPhone Safari and sustained mobile FPS remain unverified.
 
 ## MARINE-87 interface and ballistic spray
 
@@ -67,7 +87,7 @@ Open the address Vite prints. On a phone on the same network, use the computer's
 
 Press **HIT THE WATER** to unlock audio and begin. Hold throttle and either steering button simultaneously. On desktop use **W / up arrow / space** for throttle, **A/D / left/right arrows** for steering, and **R** to restart. Release throttle to coast; reapply throttle to steer and recover a slide. Slide through bends and carry momentum. Bank contact slows and redirects the boat without ending the run. The setup panel adjusts top speed, drift retention and steering response; new-install defaults are 85 km/h, 65%, and 75%. Existing saved values are preserved.
 
-A READY stage and five-second lamp countdown hold the boat at the stripe while allowing engine revving. Green releases the boat and starts the timer together. Follow the navigator around both figure-eight loops and straight through the flat crossover on each diagonal; all ordered gates are required for each of five laps. Wrong turns require recovering the missed gate while the timer continues. Finish results and local leaderboards remain available. There is no reverse throttle, opponent AI, ghost, progression or network play.
+A READY stage and the saved lamp countdown hold the boat at the stripe while allowing engine revving. Green releases the boat and starts the timer together. Follow the prescribed route through all ordered gates for three laps. Wrong turns require recovering the missed gate while the clock continues. The three-lap finish freezes that clock and opens the upstream journey. Results/local leaderboards remain available, including backward-compatible reading of old five-lap records. There is no reverse throttle, opponent AI, ghost or network play.
 
 See [v0.7.1 navigation and Bigfoot notes](docs/v0.7.1.md) for the checkpoint fix, both debug systems and validation. See [v0.7.0 build notes](docs/v0.7.0.md) for recommended handling values, settings migrations, changed files, validation and the physical iPhone checklist. Older release sections below describe their historical behavior.
 
@@ -85,7 +105,7 @@ Node tests cover speed convergence, steering, drag, bank recovery, every physics
 
 Push this repository to GitHub, then select **Settings → Pages → Build and deployment → Source → GitHub Actions**. The included `Deploy GitHub Pages` workflow runs tests and builds on pushes to `main`; it can also be run manually. It uploads `dist/` and deploys with the official Pages actions. Relative Vite asset paths support a project subdirectory such as `/Jet-Sprint/`. No paid services or secrets are needed. Deployment requires repository Pages permissions.
 
-Every production build writes `dist/build-info.json` with the release identity, commit and SHA-256 hashes of all served assets. After deployment, **Verify actual published build and font files** fetches the real Pages manifest, requires the current commit, then downloads and hashes the actual HTML, JavaScript, CSS, icon, font and license files. A stale or mismatched publication fails the workflow. Review its deployment job/summary, not just the green build job. To check a served build yourself: `node scripts/verify-deployment.mjs https://soulmullet.github.io/Jet-Sprint/ FULL_COMMIT_SHA`. For a local preview built without `GITHUB_SHA`, use `local` as the expected commit.
+Every production build writes `dist/build-info.json` with the release identity, `phase-1-kowhai-willow-matai` campaign marker, commit and SHA-256 hashes of all served assets. After deployment, **Verify actual published build and font files** fetches the real Pages manifest, requires the current commit/campaign, then downloads and hashes the actual HTML, JavaScript, CSS, icon, font and license files. A stale or mismatched publication fails the workflow. Review its deployment job/summary, not just the green build job. To check a served build yourself: `node scripts/verify-deployment.mjs https://soulmullet.github.io/Jet-Sprint/ FULL_COMMIT_SHA`. For a local preview built without `GITHUB_SHA`, use `local` as the expected commit.
 
 ## Code map
 

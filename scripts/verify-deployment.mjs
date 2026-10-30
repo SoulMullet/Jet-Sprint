@@ -31,7 +31,8 @@ export async function verifyDeployment(
         throw Error(`Stale deployed commit: ${info.commit}`);
       if (
         info.identity !== "MARINE-87" ||
-        info.simulation !== "world-space-fixed-step"
+        info.simulation !== "world-space-fixed-step" ||
+        info.campaign !== "phase-1-kowhai-willow-matai"
       )
         throw Error("Wrong live interface or simulation identity.");
       if (
@@ -75,6 +76,7 @@ export async function verifyDeployment(
         files: info.assets.length,
         identity: info.identity,
         simulation: info.simulation,
+        campaign: info.campaign,
       };
     } catch (error) {
       failure = error;

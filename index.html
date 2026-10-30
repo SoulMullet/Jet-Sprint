@@ -35,7 +35,7 @@
         <span class="brand-jet">JET</span
         ><span class="brand-sprint">SPRINT</span
         ><small id="buildDebugHud" class="build-debug"
-          >MARINE-87 · v0.16.0</small
+          >CAMPAIGN-1 · v0.17.0</small
         >
       </div>
       <nav class="race-toolbar" aria-label="Race controls">
@@ -58,7 +58,7 @@
     </header>
     <section class="timing" aria-label="Race timing">
       <div class="lap-instrument">
-        <span class="instrument-label">LAP</span><strong id="lap">1/5</strong>
+        <span class="instrument-label">LAP</span><strong id="lap">1/3</strong>
       </div>
       <div class="time-instrument">
         <span class="instrument-label">RUN TIME</span
@@ -71,7 +71,7 @@
     </section>
     <aside class="course-name">
       <span class="course-index">01</span>
-      <div><b>CEDAR CREEK</b><span>WASHINGTON / SUMMER 1987</span></div>
+      <div><b>KŌWHAI SPRINT PARK</b><span>NEW ZEALAND INSPIRED / SUMMER 1987</span></div>
     </aside>
     <section class="speed" aria-label="Engine and speed instruments">
       <strong id="speed">0</strong><output id="hudRPM">900</output>
@@ -198,17 +198,16 @@
     <main id="intro">
       <div class="intro-card">
         <div class="entry-strap">
-          <span>CEDAR CREEK INVITATIONAL</span><b>’87</b>
+          <span>KŌWHAI PARK INVITATIONAL</span><b>’87</b>
         </div>
-        <p class="eyebrow">WASHINGTON STATE / SUMMER SERIES</p>
+        <p class="eyebrow">NEW ZEALAND INSPIRED / SUMMER SERIES</p>
         <h1 aria-label="Jet Sprint"><span>JET</span><em>SPRINT</em></h1>
         <div class="speed-stripes" aria-hidden="true">
           <i></i><i></i><i></i>
         </div>
         <p class="intro-tagline">BIG-BLOCK POWER.<br />TIGHT WATER.</p>
         <p class="intro-description">
-          Five laps. One winding river.<br />Keep the throttle open. Find your
-          flow.
+          Three laps. Open the river gate.<br />Race upstream to Mātai Basin.
         </p>
         <button id="start" class="button-primary">
           HIT THE WATER<svg viewBox="0 0 24 24" aria-hidden="true">
@@ -217,7 +216,7 @@
         </button>
         <div class="entry-specs">
           <div><b>V8</b><span>NATURALLY ASPIRATED</span></div>
-          <div><b>05</b><span>LAPS TO THE FLAG</span></div>
+          <div><b>03</b><span>LAPS TO THE RIVER</span></div>
           <div><b>85</b><span>KM/H · BASE SETUP</span></div>
         </div>
         <footer>
@@ -227,10 +226,10 @@
             Control.</small
           >
         </footer>
-        <div id="buildDebug" class="build-debug">MARINE-87 · v0.16.0</div>
+        <div id="buildDebug" class="build-debug">CAMPAIGN-1 · v0.17.0</div>
       </div>
       <aside class="entry-course" aria-hidden="true">
-        <span>COURSE 01 / CEDAR CREEK</span
+        <span>COURSE 01 / KŌWHAI PARK</span
         ><svg viewBox="0 0 240 140">
           <path
             class="map-bank"
@@ -241,8 +240,8 @@
             d="M70 28C13 28 13 112 70 112S170 28 192 28C245 28 245 112 192 112S110 28 70 28Z"
           />
           <path class="map-start" d="M39 35 54 50" /></svg
-        ><strong>THE FIGURE EIGHT</strong
-        ><span>RIVERSIDE MOTORSPORT / EST. 1987</span>
+        ><strong>THREE ISLAND SPRINT</strong
+        ><span>TRACK 01 → WILLOW RUN → TRACK 02</span>
       </aside>
     </main>
     <section
@@ -254,7 +253,7 @@
       tabindex="-1"
     >
       <div class="result-card">
-        <div class="finish-strap">CEDAR CREEK / OFFICIAL CLASSIFICATION</div>
+        <div class="finish-strap">KŌWHAI PARK / THREE-LAP CLASSIFICATION</div>
         <p class="eyebrow">CHEQUERED FLAG</p>
         <h2 id="resultTitle">RACE COMPLETE</h2>
         <div id="resultStats"></div>
@@ -271,7 +270,8 @@
           <summary>Local leaderboard · this device</summary>
           <div id="scores"></div>
         </details>
-        <button id="raceRestart" class="button-primary">RACE AGAIN</button>
+        <button id="continueJourney" class="button-primary">BACK TO THE BOAT</button>
+        <button id="raceRestart">RESTART TRACK 1</button>
       </div>
     </section>
     <script type="module" src="/src/main.js"></script>

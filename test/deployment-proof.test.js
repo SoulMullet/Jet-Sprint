@@ -17,6 +17,7 @@ function fixture() {
     version: "0.16.0",
     identity: "MARINE-87",
     simulation: "world-space-fixed-step",
+    campaign: "phase-1-kowhai-willow-matai",
     fonts: ["Russo One", "Chakra Petch"],
     assets: [...files].map(([path, text]) => ({
       path,

@@ -46,13 +46,13 @@ test('cockpit uses the real seat and hides only player driver batches',()=>{
 });
 test('camera updates during a complete real-physics race are isolated from collisions, gates and timing',()=>{
  const course=createCourse();
- for(const mode of cameraModes){const f=setup();f.prefs.select(mode);const race=new Race(course.gates,6.5),start=course.sample(0);Object.assign(f.boat,{x:start.x,z:start.z,angle:Math.atan2(start.tz,start.tx),vx:0,vz:0});const nearest=(x,z)=>nearestOnTrack(course.network,x,z);
+ for(const mode of cameraModes){const f=setup();f.prefs.select(mode);const race=new Race(course.gates,6.5,3),start=course.sample(0);Object.assign(f.boat,{x:start.x,z:start.z,angle:Math.atan2(start.tz,start.tx),vx:0,vz:0});const nearest=(x,z)=>nearestOnTrack(course.network,x,z);
   for(let i=0;i<120*300&&!race.done;i++){
    const prev=course.gates[(race.next+course.gates.length-1)%course.gates.length],end=race.next===0?course.length:course.gates[race.next].distance,d=course.project(f.boat,prev.distance-8,end+25).distance,target=course.sample(d+8),error=Math.atan2(Math.sin(Math.atan2(target.z-f.boat.z,target.x-f.boat.x)-f.boat.angle),Math.cos(Math.atan2(target.z-f.boat.z,target.x-f.boat.x)-f.boat.angle)),speed=Math.hypot(f.boat.vx,f.boat.vz),before={x:f.boat.x,z:f.boat.z};
    stepBoat(f.boat,{throttle:speed<9||Math.abs(error)>.35&&speed<12,left:error-(f.boat.yawRate||0)*.3<-.08,right:error-(f.boat.yawRate||0)*.3>.08},1/120,nearest);race.step(before,f.boat,1/120,defaults);
    if(i%4===0)update(f,1/30);
   }
-  assert.equal(race.done,true,mode);assert.equal(race.laps.length,5);
+  assert.equal(race.done,true,mode);assert.equal(race.laps.length,3);
   const finishTime=race.total;f.system.update(f.boat,f.model,course.sample(0),1/60,{playing:false});assert.equal(race.total,finishTime);assert.equal(race.done,true);
   // Explicit broadside collision, then follow and snap through the restart.
   const p=course.sample(20);Object.assign(f.boat,{x:p.x-p.tz*8,z:p.z+p.tx*8,vx:-p.tz*10,vz:p.tx*10});stepBoat(f.boat,{},1/120,nearest);update(f);const n=nearest(f.boat.x,f.boat.z);assert.ok(Math.hypot(f.boat.x-n.x,f.boat.z-n.z)<=6.5+1e-6);

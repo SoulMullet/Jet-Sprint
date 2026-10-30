@@ -48,7 +48,7 @@ export function createRetroVenue(scene,nearest){
  pole('metal',1.4,3.8,4.45,.18,.6,cabin);item(sphereGeo,'glass',1.4,3.65,4.5,.2,.26,.2,cabin);
  chair(-4.1,5.5,cabin);chair(3.8,5.6,cabin,'red');
  for(let i=0;i<12;i++){const log=pole('wood',-5.9,.3+Math.floor(i/4)*.4,-1+(i%4)*.45,.2,1.4,cabin);log.rotation.z=Math.PI/2;}
- sign('CEDAR CREEK','RACE OFFICE / EST. 1978',6,1.5,0,4.3,4.4,cabin);
+ sign('KOWHAI PARK','RACE OFFICE / EST. 1978',6,1.5,0,4.3,4.4,cabin);
  sign('SATURDAY HEATS','10:00 PRACTICE / 14:00 RACING',2.9,1.9,6.6,1.8,3,cabin,'#e9d7a9');
  // Old square-body pickup and a modest pile of maintenance equipment.
  const truck=group(venueLayout.pickup.x,venueLayout.pickup.z,.35);
@@ -56,15 +56,15 @@ export function createRetroVenue(scene,nearest){
  for(const side of [-1,1]){box('black',side*1.53,2.1,-.7,.06,.95,1.8,truck);for(const z of [-2.2,2.2]){const t=item(tireGeo,'black',side*1.65,.75,z,1.5,1.5,1.1,truck);t.rotation.y=Math.PI/2;}}
  box('black',0,1.3,-3.45,2.9,.4,.08,truck);for(let i=-5;i<=5;i++)box('metal',i*.21,1.3,-3.51,.035,.3,.035,truck);for(const side of [-1,1]){box('cream',side*1.24,1.4,-3.51,.42,.3,.07,truck);box('metal',side*1.75,2.2,-.3,.27,.24,.3,truck);box('rust',side*1.66,.9,2.6,.06,.1,.5,truck);}
  // Small timing booth, launch approach, dirt paths and a parked boat trailer.
- const booth=group(-21,-39,.1);box('wood',0,1.5,0,3,2.6,2.6,booth);roof(booth,3.8,3.8,2.9);box('glass',0,1.9,1.35,2.4,.8,.05,booth);sign('RACE CONTROL','CEDAR CREEK / SUMMER 87',3.2,.7,0,2.8,1.5,booth);
- const trailer=group(-49,-52,.35);box('metal',0,.7,0,2.7,.12,6.5,trailer);box('metal',0,.65,3.8,.12,.12,2,trailer);for(const side of [-1,1]){const tire=item(tireGeo,'black',side*1.45,.5,.7,1.2,1.2,1.2,trailer);tire.rotation.y=Math.PI/2;box('plank',side*.8,.9,0,.25,.15,5.5,trailer);}
+ const booth=group(-19,-59,.1);box('wood',0,1.5,0,3,2.6,2.6,booth);roof(booth,3.8,3.8,2.9);box('glass',0,1.9,1.35,2.4,.8,.05,booth);sign('RACE CONTROL','KOWHAI PARK / SUMMER 87',3.2,.7,0,2.8,1.5,booth);
+ const trailer=group(-88,-50,.35);box('metal',0,.7,0,2.7,.12,6.5,trailer);box('metal',0,.65,3.8,.12,.12,2,trailer);for(const side of [-1,1]){const tire=item(tireGeo,'black',side*1.45,.5,.7,1.2,1.2,1.2,trailer);tire.rotation.y=Math.PI/2;box('plank',side*.8,.9,0,.25,.15,5.5,trailer);}
 
  // Dock occupies only the dead-end staging inlet, well outside the lap route.
  const dock=group(venueLayout.dock.x,venueLayout.dock.z);
  for(let i=0;i<16;i++){box('plank',0,.18,-4+i*.5,2.8,.16,.46,dock);for(const side of [-1,1])pole('metal',side*1.15,.269,-4+i*.5,.024,.012,dock);}
  for(const x of [-1.3,1.3])for(const z of [-4,0,3.5]){pole('wood',x,-.1,z,.14,2.5,dock);box('metal',x,.42,z,.5,.07,.12,dock);}
  for(const z of [-2,1.8]){item(tireGeo,'black',1.65,.1,z,1,1,1,dock);}
- sign('JET SPRINT RACING','CEDAR CREEK / STAGING ONLY',6,1.6,-1.5,3,-4.3,dock);
+ sign('JET SPRINT RACING','KOWHAI PARK / STAGING ONLY',6,1.6,-1.5,3,-4.3,dock);
  for(const x of [-3,-4.4]){pole('rust',x,.6,-6.8,.5,1.2,dock);pole('cream',x,.65,-6.8,.51,.15,dock);}
  const parked=racingBoat(animated);parked.position.set(venueLayout.dock.x+3.5,.15,venueLayout.dock.z+.5);parked.rotation.y=Math.PI/2;parked.scale.setScalar(.85);
  // Fixed low-opacity rings at dock posts suggest small lapping ripples.
@@ -77,14 +77,14 @@ export function createRetroVenue(scene,nearest){
   for(const x of [-4,1.5])chair(x,-1,terrace,i%2?'red':'yellow');cooler(4,-1.5,terrace);
   pole('wood',-5,2,-2,.06,4,terrace);const umbrella=item(new THREE.ConeGeometry(2.5,1,8),'cream',-5,4,-2,1,1,1,terrace);umbrella.rotation.y=i;
   box('navy',3,1,-1.5,.9,.5,.4,terrace);pole('metal',3.4,1.7,-1.5,.015,1.1,terrace);
-  const banner=sign(i===0?'MOSSBACK MARINE':i===1?'CASCADE MOTOR OIL':'CEDAR COUNTY 87',i===0?'REPAIRS / PARTS / COFFEE':i===1?'BIG BLOCKS. SMALL TOWN.':'FIGURE EIGHT INVITATIONAL',8,1.3,0,1.4,2.15,terrace,i===1?'#de9777':'#dfc48b');banner.rotation.y=0;
+  const banner=sign(i===0?'MOSSBACK MARINE':i===1?'KAURI MOTOR OIL':'KOWHAI CLUB 87',i===0?'REPAIRS / PARTS / COFFEE':i===1?'BIG BLOCKS. SMALL TOWN.':'THREE ISLAND INVITATIONAL',8,1.3,0,1.4,2.15,terrace,i===1?'#de9777':'#dfc48b');banner.rotation.y=0;
  }
  const dockTerrace=group(venueLayout.dockViewing.x,venueLayout.dockViewing.z);cooler(2,-1,dockTerrace);fence(-4,2,4,dockTerrace);
  // Batched rocks/reeds along both banks, safely outside the hull corridor.
  let seed=1987;const random=()=>((seed=(seed*1664525+1013904223)>>>0)/4294967296);
  for(let i=0;i<130;i++){const x=(random()-.5)*150,z=(random()-.5)*90,n=nearest(x,z),d=Math.hypot(x-n.x,z-n.z);if(d<9.8||d>12)continue;for(let j=0;j<3;j++){const reed=box('roof',x+j*.12,.5,z+j*.13,.055,.7+random()*.6,.055);reed.rotation.z=(random()-.5)*.4;}}
  // Distant hills are closed low-poly masses; no expensive terrain LOD system.
- for(let i=0;i<13;i++){const hill=item(new THREE.SphereGeometry(1,24,12),'roof',-115+i*20,6+random()*6,-91-random()*12,18+random()*12,20+random()*18,13+random()*10);hill.rotation.y=random()*3;}
+ for(let i=0;i<13;i++){const hill=item(new THREE.SphereGeometry(1,24,12),'roof',-115+i*20,6+random()*6,-145-random()*12,18+random()*12,20+random()*18,13+random()*10);hill.rotation.y=random()*3;}
  const people=spectatorLocations();
  for(const p of people){const n=nearest(p.x,p.z);p.angle=Math.atan2(n.x-p.x,n.z-p.z);p.height=p.seated?1.5:1.65;if(p.seated){const seat=group(p.x,p.z,p.angle);seat.scale.setScalar(.7);chair(0,0,seat,'cream');}}
  staticRoot.updateMatrixWorld(true);const batches=new Map();staticRoot.traverse(o=>{if(!o.isMesh)return;const g=o.geometry.clone();g.applyMatrix4(o.matrixWorld);if(g.index){const flat=g.toNonIndexed();g.dispose();if(!batches.has(o.material))batches.set(o.material,[]);batches.get(o.material).push(flat);}else{if(!batches.has(o.material))batches.set(o.material,[]);batches.get(o.material).push(g);}});

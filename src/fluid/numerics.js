@@ -32,7 +32,7 @@ export function makeDomain(n,size,nearest,width){
  const dx=size/n,bed=new Float32Array(n*n),mask=new Uint8Array(n*n),initial=new Float32Array(n*n*4),terrain=new Float32Array(n*n*4);
  for(let y=0;y<n;y++)for(let x=0;x<n;x++){
   const i=y*n+x,wx=-size/2+(x+.5)*dx,wz=-size/2+(y+.5)*dx,p=nearest(wx,wz),d=Math.hypot(wx-p.x,wz-p.z);
-  mask[i]=d<=width?1:0;bed[i]=mask[i]?-(.18+.95*Math.max(0,1-(d/width)**2)):.2;
+  const localWidth=p.waterWidth??width;mask[i]=d<=localWidth?1:0;bed[i]=mask[i]?-(.18+.95*Math.max(0,1-(d/localWidth)**2)):.2;
   terrain.set([bed[i],mask[i],0,1],i*4);initial.set([mask[i]?Math.max(0,-bed[i]):0,0,0,0],i*4);
  }return {n,size,dx,bed,mask,initial,terrain};
 }

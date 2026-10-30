@@ -20,7 +20,7 @@ export function lighting(scene,renderer){
  return sun;
 }
 export function waterMaterial(points,width,time,boat,strength){
- const depth=texture((ctx,n)=>{ctx.fillStyle='#000';ctx.fillRect(0,0,n,n);ctx.lineJoin='round';ctx.lineCap='round';for(let i=0;i<24;i++){const f=i/24;ctx.strokeStyle=`rgb(${Math.round(30+f*225)},${Math.round(30+f*225)},${Math.round(30+f*225)})`;ctx.lineWidth=width*2*(1-f)*n/250;ctx.beginPath();for(const path of points.paths||[points])for(let j=0;j<path.length+(points.paths?0:1);j++){const p=path[j%path.length];j?ctx.lineTo((p.x+125)*n/250,(p.z+125)*n/250):ctx.moveTo((p.x+125)*n/250,(p.z+125)*n/250);}ctx.stroke();}},512);depth.colorSpace=THREE.NoColorSpace;depth.flipY=false;
+ const depth=texture((ctx,n)=>{ctx.fillStyle='#000';ctx.fillRect(0,0,n,n);ctx.lineJoin='round';ctx.lineCap='round';for(let i=0;i<24;i++){const f=i/24;ctx.strokeStyle=`rgb(${Math.round(30+f*225)},${Math.round(30+f*225)},${Math.round(30+f*225)})`;for(const path of points.paths||[points]){ctx.lineWidth=(path.waterWidth??width)*2*(1-f)*n/250;ctx.beginPath();for(let j=0;j<path.length+(points.paths?0:1);j++){const p=path[j%path.length];j?ctx.lineTo((p.x+125)*n/250,(p.z+125)*n/250):ctx.moveTo((p.x+125)*n/250,(p.z+125)*n/250);}ctx.stroke();}}},512);depth.colorSpace=THREE.NoColorSpace;depth.flipY=false;
  const quality={value:1},m=new THREE.MeshPhysicalMaterial({color:'#258f91',roughness:.16,metalness:.06,clearcoat:.5,clearcoatRoughness:.18,transparent:true,opacity:.88});m.envMapIntensity=1.1;
  const uniforms={...waterUniforms(time),summerDepth:{value:depth},summerBoat:boat,summerStrength:strength};
  finishSummerWater(m,uniforms);return {material:m,quality,uniforms};
@@ -45,7 +45,12 @@ export function terrain(scene,points,nearest,random,network=null){
  float needleDetail=sin(dot(needleWorld,vec3(43.8,39.1,37.3)))*sin(needleWorld.y*71.6+cos(needleWorld.x*27.1));
  float needleLod=1.-smoothstep(.025,.13,length(fwidth(needleWorld)));diffuseColor.rgb*=.9+needleDetail*.13*needleLod;`);};
  const trees=[],details=[],matrix=new THREE.Matrix4(),q=new THREE.Quaternion(),scale=new THREE.Vector3(),v=new THREE.Vector3();
- for(let i=0;i<280;i++){const x=(random()-.5)*190,z=(random()-.5)*160,p=nearest(x,z);if(Math.hypot(x-p.x,z-p.z)>13&&!inSceneryClearing(x,z,2))trees.push({x,z,size:1+random()*1.4,type:i%3,rotation:random()*6.28});}
+ for(let i=0;i<360;i++){const x=(random()-.5)*238,z=(random()-.5)*206,p=nearest(x,z);if(Math.hypot(x-p.x,z-p.z)>(p.waterWidth??9)+4&&!inSceneryClearing(x,z,2))trees.push({x,z,size:1+random()*1.4,type:i%3,rotation:random()*6.28});}
+ // Riparian stands conceal the next bend and the destination's preparation.
+ for(const path of network?.paths||[])if(path.waterWidth<9)for(let i=4;i<path.length-1;i+=10){
+  const p=path[i],q=path[i+1],length=Math.hypot(q.x-p.x,q.z-p.z),nx=-(q.z-p.z)/length,nz=(q.x-p.x)/length;
+  for(const side of [-1,1]){const d=path.waterWidth+5+random()*3,x=p.x+nx*side*d,z=p.z+nz*side*d,n=nearest(x,z);if(Math.hypot(x-n.x,z-n.z)>(n.waterWidth??9)+2&&!inSceneryClearing(x,z,2))trees.push({x,z,size:1+random()*.8,type:1,rotation:random()*6.28});}
+ }
  const trunks=new THREE.InstancedMesh(new THREE.CylinderGeometry(.16,.32,5,7),bark,trees.length);const crowns=new THREE.InstancedMesh(pineCrown(),leaf,trees.length*3);scene.add(trunks,crowns);trunks.castShadow=crowns.castShadow=true;trunks.receiveShadow=crowns.receiveShadow=true;
  trees.forEach((t,i)=>{q.setFromAxisAngle(THREE.Object3D.DEFAULT_UP,t.rotation);matrix.compose(v.set(t.x,2.2*t.size,t.z),q,scale.set(1,t.size,1));trunks.setMatrixAt(i,matrix);for(let j=0;j<3;j++){const taper=1-j*.22;matrix.compose(v.set(t.x,(3+j*1.4)*t.size,t.z),q,scale.set(t.size*taper*(t.type===1?.8:1),t.size*(t.type===2?.8:1),t.size*taper));crowns.setMatrixAt(i*3+j,matrix);crowns.setColorAt(i*3+j,new THREE.Color().setHSL(.32+t.type*.02,.35,.19-j*.012));}});
  const rocks=[],shrubs=[];for(let i=0;i<450;i++){const p=points[Math.floor(random()*points.length)],a=random()*Math.PI*2,d=9+random()*17,x=p.x+Math.cos(a)*d,z=p.z+Math.sin(a)*d,n=nearest(x,z);if(Math.hypot(x-n.x,z-n.z)<10.2||inSceneryClearing(x,z,1))continue;(i%3?shrubs:rocks).push({x,z,s:.3+random()*1.3});}
@@ -55,7 +60,7 @@ export function terrain(scene,points,nearest,random,network=null){
  for(let i=0;i<trees.length;i+=15){const t=trees[i],log=add(scene,i%2?logGeo:stumpGeo,bark,t.x+2,.4,t.z);if(i%2)log.rotation.z=Math.PI/2;}
  trunks.computeBoundingSphere();crowns.computeBoundingSphere();
  const trunkMatrices=trunks.instanceMatrix.array.slice(),crownMatrices=crowns.instanceMatrix.array.slice(),crownColors=crowns.instanceColor.array.slice();
- const result={trees,trunks,crowns,ground,details,drawDistance:160,visibleTrees:trees.length,update(camera,fraction){
+ const result={trees,trunks,crowns,ground,details,gradedFloodplain:!!network?.gradedFloodplain,drawDistance:160,visibleTrees:trees.length,update(camera,fraction){
   for(const mesh of details)mesh.visible=fraction>.5;
   let count=0;const radius=Math.min(result.drawDistance,45+fraction*80);
   for(let i=0;i<trees.length;i++){

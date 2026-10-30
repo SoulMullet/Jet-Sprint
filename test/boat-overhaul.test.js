@@ -9,6 +9,7 @@ import {modified} from '../src/race.js';
 import {Race,defaults} from '../src/race.js';
 import {createCourse} from '../src/course.js';
 import {nearestOnTrack} from '../src/track.js';
+import {RouteNavigator} from '../src/navigation.js';
 const open=(x,z)=>({x,z,index:0}),fresh=()=>({x:0,z:0,angle:0,vx:0,vz:0});
 const run=(b,input,seconds,hz=120)=>{for(let i=0;i<Math.round(seconds*hz);i++)stepBoat(b,input,1/hz,open);return b;};
 const memory=seed=>{const data=new Map(Object.entries(seed||{}));return {getItem:k=>data.get(k)||null,setItem:(k,v)=>data.set(k,v),data};};
@@ -74,14 +75,15 @@ test('existing V8 tuning stays intact while propulsion load affects live engine 
 test('maximum thrust remains a force ceiling at high acceleration and speed targets',()=>{
  const saved={...settings};try{Object.assign(settings,{maxThrust:9000,acceleration:28,top:180});const b=run(fresh(),{throttle:true},3);assert.ok(b.thrust>8990&&b.thrust<=9000);assert.ok(b.vx>10);}finally{Object.assign(settings,saved);}
 });
-test('Arcade, Balanced and Simulation-Inspired each complete five ordered laps on the existing course',()=>{
+test('Arcade, Balanced and Simulation-Inspired each complete three ordered laps with navigator recovery',()=>{
  const c=createCourse(),saved={...settings},nearest=(x,z)=>nearestOnTrack(c.network,x,z);
  try{for(const [name,profile] of Object.entries(handlingProfiles)){
-  Object.assign(settings,profile);const race=new Race(c.gates,channel.hullLimit),start=c.sample(0),b={...fresh(),x:start.x,z:start.z,angle:Math.atan2(start.tz,start.tx)},before={x:0,z:0};
+  Object.assign(settings,profile);const race=new Race(c.gates,channel.hullLimit,3),nav=new RouteNavigator(c,6.5),start=c.sample(0),b={...fresh(),x:start.x,z:start.z,angle:Math.atan2(start.tz,start.tx)},before={x:0,z:0};
   for(let i=0;i<120*600&&!race.done;i++){
-   const prev=c.gates[(race.next+c.gates.length-1)%c.gates.length],end=race.next===0?c.length:c.gates[race.next].distance,d=c.project(b,prev.distance-8,end+25).distance,target=c.sample(d+8),error=Math.atan2(Math.sin(Math.atan2(target.z-b.z,target.x-b.x)-b.angle),Math.cos(Math.atan2(target.z-b.z,target.x-b.x)-b.angle)),speed=Math.hypot(b.vx,b.vz);before.x=b.x;before.z=b.z;
-   stepBoat(b,{throttle:speed<9||Math.abs(error)>.35&&speed<12,left:error-(b.yawRate||0)*.3<-.08,right:error-(b.yawRate||0)*.3>.08},1/120,nearest);race.step(before,b,1/120,defaults);
+   const targetSpeed=name==='simulation'?7:9,lookAhead=name==='simulation'?5:8;
+   const prev=c.gates[(race.next+c.gates.length-1)%c.gates.length],end=race.next===0?c.length:c.gates[race.next].distance,d=c.project(b,prev.distance-8,end+25).distance,cue=nav.update(b,race,1/120),target=cue.wrong?{x:cue.targetX,z:cue.targetZ}:c.sample(d+lookAhead),error=Math.atan2(Math.sin(Math.atan2(target.z-b.z,target.x-b.x)-b.angle),Math.cos(Math.atan2(target.z-b.z,target.x-b.x)-b.angle)),speed=Math.hypot(b.vx,b.vz);before.x=b.x;before.z=b.z;
+   stepBoat(b,{throttle:speed<targetSpeed||Math.abs(error)>.35&&speed<targetSpeed+3,left:error-(b.yawRate||0)*.3<-.08,right:error-(b.yawRate||0)*.3>.08},1/120,nearest);race.step(before,b,1/120,defaults);
   }
-  assert.equal(race.done,true,name+' gate '+race.next);assert.equal(race.laps.length,5);
+  assert.equal(race.done,true,name+' gate '+race.next);assert.equal(race.laps.length,3);
  }}finally{Object.assign(settings,saved);}
 });

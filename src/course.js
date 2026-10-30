@@ -4,17 +4,18 @@ import {projectRoute} from './route-math.js';
 import {trackConfig} from './track-layout.js';
 
 export const courseId=trackConfig.id;
-export const routeId='figure-eight-1988';
+export const routeId=trackConfig.routeId;
 export const gameplayVersion='0.14-waterjet-handling';
 export const prescribedRoute=trackConfig.route;
-export function createCourse(route=prescribedRoute){
- const nodes=Object.fromEntries(Object.entries(trackConfig.nodes).map(([id,[x,z]])=>[id,new THREE.Vector3(x,0,z)]));
- const spline=new THREE.CatmullRomCurve3(trackConfig.spline.map(([x,z])=>new THREE.Vector3(x,0,z)),true,'centripetal');
- const edges=trackConfig.edges.map(({id,from,to,via,start,end})=>{
+export function createCourse(route=prescribedRoute,config=trackConfig){
+ const gateWidth=(config.waterWidth??9)-1.9;
+ const nodes=Object.fromEntries(Object.entries(config.nodes).map(([id,[x,z]])=>[id,new THREE.Vector3(x,0,z)]));
+ const spline=new THREE.CatmullRomCurve3(config.spline.map(([x,z])=>new THREE.Vector3(x,0,z)),true,'centripetal');
+ const edges=config.edges.map(({id,from,to,via,start,end})=>{
   const main=start!==undefined;
   const c=main?spline:new THREE.CatmullRomCurve3([nodes[from],...via.map(([x,z])=>new THREE.Vector3(x,0,z)),nodes[to]],false,'centripetal');
-  const t0=main?start/trackConfig.spline.length:0,t1=main?end/trackConfig.spline.length:1;
-  const n=Math.ceil(c.getLength()*(t1-t0)/trackConfig.sampleSpacing);
+  const t0=main?start/config.spline.length:0,t1=main?end/config.spline.length:1;
+  const n=Math.ceil(c.getLength()*(t1-t0)/config.sampleSpacing);
   return {id,from,to,points:Array.from({length:n+1},(_,i)=>c.getPoint(t0+(t1-t0)*i/n))};
  });
  const lookup=new Map(edges.map(e=>[e.id,e]));
@@ -47,7 +48,7 @@ export function createCourse(route=prescribedRoute){
  for(const j of junctions){
   const first=j.startDistance+12,last=j.distance-12,own={paths:[lookup.get(j.edgeId).points]},candidates=[];
   for(let d=first;d<=last;d+=.5){
-   const g=sample(d),clear=[-7.1,-4,0,4,7.1].every(offset=>{
+   const g=sample(d),clear=[-1,-.56,0,.56,1].map(f=>f*gateWidth).every(offset=>{
     const x=g.x-g.tz*offset,z=g.z+g.tx*offset,p=nearestOnTrack(own,x,z),n=nearestOnTrack(network,x,z),a=Math.hypot(x-p.x,z-p.z),b=Math.hypot(x-n.x,z-n.z);
     return n.segmentId===g.edgeId||a<=b+.6;
    });
@@ -63,9 +64,9 @@ export function createCourse(route=prescribedRoute){
   gateDistances.push(...selected.sort((a,b)=>a-b));
  }
  const gates=gateDistances.map(distance=>{
-  const g={...sample(distance),halfWidth:7.1};
+  const g={...sample(distance),halfWidth:gateWidth};
   const edge=lookup.get(g.edgeId),own={paths:[edge.points]};
-  g.accept=(x,z)=>{const p=nearestOnTrack(own,x,z),n=nearestOnTrack(network,x,z),d=Math.hypot(x-p.x,z-p.z),other=Math.hypot(x-n.x,z-n.z);return d<=7.3&&(n.segmentId===g.edgeId||d<=other+.6);};
+  g.accept=(x,z)=>{const p=nearestOnTrack(own,x,z),n=nearestOnTrack(network,x,z),d=Math.hypot(x-p.x,z-p.z),other=Math.hypot(x-n.x,z-n.z);return d<=gateWidth+.2&&(n.segmentId===g.edgeId||d<=other+.6);};
   return g;
  });
  const cues=junctions.map((j,i)=>{
@@ -85,5 +86,5 @@ export function createCourse(route=prescribedRoute){
   const direction=bend.angle>0?'right':'left';if(previous?.kind.includes(direction))continue;
   cues.push({id:`bend-${bend.distance}`,node:null,distance:bend.distance,releaseAt:bend.distance+2,angle:bend.angle,kind:`${Math.abs(bend.angle)>1.45?'sharp-':''}${direction}`});}
  cues.sort((a,b)=>a.distance-b.distance);
- return {id:courseId,version:trackConfig.version,seed:trackConfig.seed,routeId,network,nodes,edges,legs,points,gates,cues,length,sample,line,junctions,project:(point,min,max,out)=>projectRoute(line,length,point,min,max,out)};
+ return {id:config.id,name:config.name,version:config.version,seed:config.seed,routeId:config.routeId,network,nodes,edges,legs,points,gates,cues,length,sample,line,junctions,project:(point,min,max,out)=>projectRoute(line,length,point,min,max,out)};
 }

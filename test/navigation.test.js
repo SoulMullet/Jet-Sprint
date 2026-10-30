@@ -6,9 +6,10 @@ import {Race,defaults} from '../src/race.js';
 import {nearestOnTrack,channelGeometry,channelBankGeometry} from '../src/track.js';
 import {channel} from '../src/physics.js';
 import {makeDomain} from '../src/fluid/numerics.js';
+import {trackConfig} from '../src/track-layout.js';
 const venue=createCourse();
 test('network has a shared crossover and a separately validated closed race walk',()=>{
- assert.equal(venue.network.paths.length,6);assert.ok(venue.gates.length>=12&&venue.gates.length<40);
+ assert.equal(venue.network.paths.length,8);assert.ok(venue.gates.length>=12&&venue.gates.length<40);
  const alternate=createCourse([...prescribedRoute,...prescribedRoute]);assert.notEqual(alternate.length,venue.length);assert.deepEqual(alternate.edges.map(e=>e.points.map(p=>[p.x,p.z])),venue.edges.map(e=>e.points.map(p=>[p.x,p.z])));
  assert.throws(()=>createCourse([...prescribedRoute,'S-W']));
  for(const p of venue.gates){const q=nearestOnTrack(venue.network,p.x,p.z);assert.ok(Math.hypot(q.x-p.x,q.z-p.z)<.03);}
@@ -37,7 +38,7 @@ test('navigator handles left cues and tutorial cooldown without changing race st
 test('merged channel rendering and solver mask share every branch with no rectangular bridges',()=>{
  const water=channelGeometry(venue.network,channel.water),bank=channelBankGeometry(venue.network,channel.bank,channel.water);
  for(const geo of [water,bank]){const p=geo.attributes.position,n=geo.attributes.normal;for(let i=0;i<p.count;i++){const q=nearestOnTrack(venue.network,p.getX(i),p.getZ(i)),d=Math.hypot(q.x-p.getX(i),q.z-p.getZ(i));assert.ok(d<=channel.bank+.05);assert.ok(n.getY(i)>.99);if(geo===bank)assert.ok(d>channel.water-.05);}}
- const domain=makeDomain(96,192,(x,z)=>nearestOnTrack(venue.network,x,z),channel.water);for(const e of venue.edges)for(const p of e.points){const x=Math.floor((p.x+96)/domain.dx),y=Math.floor((p.z+96)/domain.dx);assert.equal(domain.mask[y*96+x],1);}
+ const half=trackConfig.fluidSize/2,domain=makeDomain(128,trackConfig.fluidSize,(x,z)=>nearestOnTrack(venue.network,x,z),channel.water);for(const e of venue.edges)for(const p of e.points){const x=Math.floor((p.x+half)/domain.dx),y=Math.floor((p.z+half)/domain.dx);assert.equal(domain.mask[y*domain.n+x],1);}
  water.dispose();bank.dispose();
 });
 
@@ -74,4 +75,11 @@ test('shared intersection approaches retain intended instructions before a genui
  const b=venue.sample(junction.distance-3);b.angle=Math.atan2(b.tz,b.tx);
  for(let i=0;i<90;i++)assert.equal(n.update(b,r,1/60).wrong,false);
  assert.equal(r.next,venue.gates.findIndex(g=>g.distance>junction.distance));
+});
+
+test('a rejected crossing just beyond its plane triggers recovery even before the route projection advances five metres',()=>{
+ const r=new Race(venue.gates,6.5),n=new RouteNavigator(venue,6.5),g=venue.gates[2];r.next=2;
+ const point=d=>({x:g.x+g.tx*d-g.tz*8,z:g.z+g.tz*d+g.tx*8,angle:Math.atan2(g.tz,g.tx)}),before=point(-.5),after=point(.2);
+ n.update(before,r,.01);r.step(before,after,.01,defaults);assert.equal(r.lastCrossing.code,'outside-width');
+ const cue=n.update(after,r,.5);assert.equal(cue.wrong,true);assert.equal(cue.reason,'rejected-active-gate');assert.ok((cue.targetX-g.x)*g.tx+(cue.targetZ-g.z)*g.tz<0);
 });

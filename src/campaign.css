@@ -1,0 +1,152 @@
+/* Journey instruments reuse the MARINE-87 materials and type tokens. */
+#journeyHUD {
+  position: fixed;
+  z-index: 5;
+  top: 174px;
+  right: max(24px, env(safe-area-inset-right));
+  width: 220px;
+  padding: 14px;
+  border: var(--border);
+  border-radius: 22px;
+  color: var(--cream);
+  background: var(--navy);
+  box-shadow: var(--bevel), var(--shadow);
+}
+#journeyHUD strong {
+  display: block;
+  font: 400 17px/1.3 var(--font-display);
+  margin: 7px 0;
+}
+#journeyHUD p {
+  font: 500 13px/1.4 var(--font-label);
+  margin: 6px 0;
+}
+#journeyHUD output {
+  display: block;
+  color: var(--gold);
+  font: 400 18px/1.4 var(--font-display);
+}
+#journeyHUD button {
+  width: 100%;
+  margin-top: 10px;
+}
+#campaignDiagnosticReadout {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: 500 12px/1.5 var(--font-label);
+}
+@media (max-width: 600px) {
+  #journeyHUD {
+    top: 179px;
+    right: max(12px, env(safe-area-inset-right));
+    width: min(49vw, 196px);
+    padding: 10px;
+    border-radius: 18px;
+  }
+  #journeyHUD .instrument-label {
+    font-size: 8px;
+  }
+  #journeyHUD strong {
+    font-size: 13px;
+    margin: 5px 0;
+  }
+  #journeyHUD p {
+    font-size: 11px;
+  }
+  #journeyHUD output {
+    font-size: 15px;
+  }
+  #journeyHUD button {
+    padding: 6px;
+    font-size: 11px;
+    margin-top: 7px;
+  }
+  body.pit-open #journeyHUD {
+    visibility: hidden;
+  }
+}
+@media (max-height: 500px) and (min-width: 600px) {
+  #navigator {
+    left: calc(50% + 65px);
+  }
+  #journeyHUD {
+    top: 128px;
+    left: max(16px, env(safe-area-inset-left));
+    right: auto;
+    width: 178px;
+    padding: 8px 10px;
+  }
+  #journeyHUD .instrument-label {
+    display: none;
+  }
+  #journeyHUD strong {
+    font-size: 12px;
+    margin: 3px 0;
+  }
+  #journeyHUD p {
+    font-size: 10px;
+    margin: 4px 0;
+  }
+  #journeyHUD output {
+    font-size: 13px;
+  }
+  #journeyHUD button {
+    min-height: 44px;
+    padding: 5px;
+    font-size: 10px;
+    margin-top: 5px;
+  }
+  body.pit-open #journeyHUD {
+    visibility: hidden;
+  }
+  body.journey-active .course-name {
+    visibility: hidden;
+  }
+}
+@media (max-width: 600px) and (max-height: 650px) {
+  #navigator {
+    width: 128px;
+    min-width: 0;
+    max-width: 128px;
+    gap: 6px;
+    padding: 8px 6px;
+  }
+  #navigator svg {
+    width: 24px;
+    min-width: 24px;
+  }
+  #navigator div {
+    min-width: 0;
+  }
+  #navigator strong {
+    font-size: 10px;
+    white-space: normal;
+  }
+  #journeyHUD {
+    padding: 8px;
+  }
+  #journeyHUD .instrument-label {
+    display: none;
+  }
+  #journeyHUD strong {
+    font-size: 11px;
+    margin: 3px 0;
+  }
+  #journeyHUD p {
+    font-size: 10px;
+    margin: 3px 0;
+  }
+  #journeyHUD output {
+    font-size: 13px;
+  }
+  #journeyHUD button {
+    position: fixed;
+    left: max(12px, env(safe-area-inset-left));
+    bottom: max(144px, calc(env(safe-area-inset-bottom) + 135px));
+    width: 126px;
+    margin: 0;
+  }
+  body.journey-active .course-name {
+    visibility: hidden;
+  }
+}

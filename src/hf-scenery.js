@@ -44,9 +44,9 @@ export class HFScenery {
   this.matrix=new THREE.Matrix4();this.position=new THREE.Vector3();this.rotation=new THREE.Quaternion();this.scale=new THREE.Vector3();this.axis=new THREE.Vector3(0,1,0);
   this.grassPositions=[];this.rockPositions=[];let seed=8917;const random=()=>((seed=(seed*1664525+1013904223)>>>0)/4294967296);
   for(let i=0;i<6500;i++){
-   const x=(random()-.5)*165,z=(random()-.5)*110,p=nearest(x,z),d=Math.hypot(x-p.x,z-p.z);if(d<9.45||d>19||inSceneryClearing(x,z,.8))continue;
-   const t=THREE.MathUtils.clamp((d-10.1)/12,0,1),height=d<10.1?-.06+.41*((d-9)/1.1)**2*(3-2*(d-9)/1.1):.35+t*t*(3-2*t)*(.65+Math.sin(x*.08)*Math.cos(z*.09)*.4);
-   const r={x,z,y:height,scale:.4+random()*.8,angle:random()*6.28,reed:d<10.8};if(i%9===0)this.rockPositions.push(r);else this.grassPositions.push(r);
+   const x=(random()-.5)*238,z=(random()-.5)*206,p=nearest(x,z),d=Math.hypot(x-p.x,z-p.z),w=p.waterWidth??9;if(d<w+.45||d>w+10||inSceneryClearing(x,z,.8))continue;
+   const t=THREE.MathUtils.clamp((d-w-1.1)/12,0,1),height=d<w+1.1?-.06+.41*((d-w)/1.1)**2*(3-2*(d-w)/1.1):(environment.gradedFloodplain ? .35 : .35+t*t*(3-2*t)*(.65+Math.sin(x*.08)*Math.cos(z*.09)*.4));
+   const r={x,z,y:height,scale:.4+random()*.8,angle:random()*6.28,reed:d<w+1.8};if(i%9===0)this.rockPositions.push(r);else this.grassPositions.push(r);
   }
   const blade=new THREE.BufferGeometry(),p=[],uv=[],idx=[];
   for(let j=0;j<7;j++){const a=j*2.39996,h=.45+(j%3)*.2,w=.035,dx=Math.cos(a),dz=Math.sin(a),base=p.length/3;p.push(-dx*w,0,-dz*w,dx*w,0,dz*w,dx*.12+dx*w,h*.65,dz*.12+dz*w,dx*.23,h,dz*.23);uv.push(0,0,1,0,1,.6,.5,1);idx.push(base,base+1,base+2,base,base+2,base+3);}

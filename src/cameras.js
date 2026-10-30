@@ -88,7 +88,7 @@ export class RacingCameras {
    if(snap)camera.position.copy(this.desiredPosition);else camera.position.lerp(this.desiredPosition,alpha);
    this.up.set(0,0,-1);this.updateOrtho();
   }
-  if(overview){this.camera=this.perspective;this.perspective.layers.enable(1);this.perspective.position.set(-6,137,86);this.perspective.lookAt(-6,0,-1);this.perspective.fov=43;this.perspective.near=1;this.perspective.updateProjectionMatrix();return this.camera;}
+  if(overview){this.camera=this.perspective;this.perspective.layers.enable(1);const p=this.overviewCenter;this.perspective.position.set(p?.x??-6,p?(this.aspect<1?p.height/this.aspect:p.height):137,p?p.z+100:86);this.perspective.lookAt(p?.x??-6,0,p?.z??-1);this.perspective.fov=43;this.perspective.near=1;this.perspective.updateProjectionMatrix();return this.camera;}
   this.lookMatrix.lookAt(camera.position,this.target,this.up);this.lookRotation.setFromRotationMatrix(this.lookMatrix);
   if(snap||mode==='classic'||changed&&mode==='cockpit')camera.quaternion.copy(this.lookRotation);else camera.quaternion.slerp(this.lookRotation,alpha);
   if(camera.isPerspectiveCamera){

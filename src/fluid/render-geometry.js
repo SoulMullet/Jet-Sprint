@@ -7,7 +7,7 @@ export function renderGeometry(channel,nearest,width){
  const geometry=new TessellateModifier(1.4,18).modify(channel);
  const pos=geometry.attributes.position,fade=new Float32Array(pos.count),gradient=new Float32Array(pos.count*2);
  for(let i=0;i<pos.count;i++){
-  const x=pos.getX(i),z=pos.getZ(i),p=nearest(x,z),d=Math.hypot(x-p.x,z-p.z),t=THREE.MathUtils.clamp((width-d)/1.8,0,1);
+  const x=pos.getX(i),z=pos.getZ(i),p=nearest(x,z),d=Math.hypot(x-p.x,z-p.z),t=THREE.MathUtils.clamp(((p.waterWidth??width)-d)/1.8,0,1);
   fade[i]=t*t*(3-2*t);const derivative=-6*t*(1-t)/1.8;
   gradient[i*2]=d>1e-6?derivative*(x-p.x)/d:0;gradient[i*2+1]=d>1e-6?derivative*(z-p.z)/d:0;
  }
