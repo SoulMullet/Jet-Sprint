@@ -55,9 +55,9 @@ function integrate(b,input,dt,nearest){
  const magnitude=Math.hypot(b.vx,b.vz),limit=max*1.6;
  if(magnitude>limit){b.vx*=limit/magnitude;b.vz*=limit/magnitude;}
  b.x+=b.vx*dt;b.z+=b.vz*dt;
- const p=nearest(b.x,b.z),dx=b.x-p.x,dz=b.z-p.z,d=Math.hypot(dx,dz),hullLimit=p.hullLimit??channel.hullLimit;b.collisionImpulse=0;
+ const p=nearest(b.x,b.z),c=p.collision??p,dx=b.x-c.x,dz=b.z-c.z,d=Math.hypot(dx,dz),hullLimit=c.hullLimit??channel.hullLimit;b.collisionImpulse=0;b.bankDepth=0;
  if(d>hullLimit){
-  const nx=dx/d,nz=dz/d;b.x=p.x+nx*hullLimit;b.z=p.z+nz*hullLimit;
+  const nx=dx/d,nz=dz/d;b.bankDepth=d-hullLimit;b.bankNX=nx;b.bankNZ=nz;b.x=c.x+nx*hullLimit;b.z=c.z+nz*hullLimit;
   const outward=b.vx*nx+b.vz*nz;if(outward>0){b.collisionImpulse=outward*1.35;b.vx-=b.collisionImpulse*nx;b.vz-=b.collisionImpulse*nz;}b.vx*=.98;b.vz*=.98;
  }
  b.throttle=throttle;b.steering=steering;b.thrust=thrust;b.jetPower=thrust/13650;

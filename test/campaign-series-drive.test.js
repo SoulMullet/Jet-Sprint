@@ -23,7 +23,11 @@ test("actual input pipeline drives the complete seven-event campaign without a t
   const processor = new ControlInput(
     new ControlSettings({ getItem: () => null, setItem() {} }),
   );
-  let now = 0;
+  let now = 0,
+    bankTime = 0,
+    escapeHeading = null,
+    lastToken = "",
+    progressAt = 0;
   const before = {};
   for (let i = 0; i < 120 * 3500 && tour.phase !== "CHAMPION"; i++) {
     const dt = 1 / 120;
@@ -31,6 +35,21 @@ test("actual input pipeline drives the complete seven-event campaign without a t
     start.update(now);
     if (tour.index === 0 && tour.phase === "RACE" && start.state !== "RACING")
       continue;
+    // A stalled gate also catches a slow orbit beside a real bank.
+    const token =
+      tour.index +
+      ":" +
+      tour.phase +
+      ":" +
+      tour.race.next +
+      ":" +
+      tour.race.laps.length +
+      ":" +
+      tour.checkpoint;
+    if (token !== lastToken) {
+      lastToken = token;
+      progressAt = now;
+    }
     const cue = tour.cue(b, dt, {});
     let target,
       desired = tour.index >= 2 ? 7 : 9;
@@ -39,10 +58,10 @@ test("actual input pipeline drives the complete seven-event campaign without a t
         r = tour.race,
         prev = c.gates[(r.next + c.gates.length - 1) % c.gates.length],
         end = r.next === 0 ? c.length : c.gates[r.next].distance,
-        d = c.project(b, prev.distance - 8, end + 25).distance;
+        d = c.project(b, prev.distance - 35, end + 5).distance;
       target = cue.wrong
         ? { x: cue.targetX, z: cue.targetZ }
-        : c.sample(d + (tour.index >= 2 ? 5 : 8));
+        : c.sample(Math.min(end + 2, d + 8));
     } else if (tour.phase === "EXIT") {
       if (!tour.leaf.exitApproach) target = { x: cue.targetX, z: cue.targetZ };
       else {
@@ -72,6 +91,28 @@ test("actual input pipeline drives the complete seven-event campaign without a t
         : tour.stagingPath.sample(p.distance + 10);
       desired = 10;
     }
+    // Once pinned on a real bank, turn back into the channel with normal
+    // throttle/steering. The old toy pilot held its bow against the bank
+    // indefinitely when the next route point lay across an island.
+    const velocity = Math.hypot(b.vx, b.vz);
+    bankTime =
+      b.bankDepth > 0.0001 &&
+      (velocity < 2 || (now - progressAt > 25 && velocity < 4))
+        ? bankTime + dt
+        : 0;
+    if (escapeHeading === null && bankTime > 0.6)
+      escapeHeading = Math.atan2(-b.bankNZ, -b.bankNX);
+    if (escapeHeading !== null) {
+      target = {
+        x: b.x + Math.cos(escapeHeading) * 20,
+        z: b.z + Math.sin(escapeHeading) * 20,
+      };
+      desired = 14;
+      if (!b.bankDepth && velocity > 4) {
+        escapeHeading = null;
+        bankTime = 0;
+      }
+    }
     const error = Math.atan2(
         Math.sin(Math.atan2(target.z - b.z, target.x - b.x) - b.angle),
         Math.cos(Math.atan2(target.z - b.z, target.x - b.x) - b.angle),
@@ -90,7 +131,8 @@ test("actual input pipeline drives the complete seven-event campaign without a t
     const processed = processor.update(dt, speed / (settings.top / 3.6));
     before.x = b.x;
     before.z = b.z;
-    if (tour.beforePhysics(b, dt)) stepBoat(b, processed, dt, w.nearest);
+    if (tour.beforePhysics(b, dt))
+      stepBoat(b, processed, dt, w.collisionNearest);
     const change = tour.step(before, b, dt, settings, now, start);
     if (change === "race-complete") start.finish();
     if (change === "arrival") start.begin(now, 2);

@@ -21,6 +21,8 @@ export function mountCampaignUI(
     next = $("journeyNext"),
     results = $("journeyResults");
   results.onclick = showResults;
+  results.classList.add("tool-button");
+  document.querySelector(".race-toolbar").append(results);
   $("retryCampaignSave").onclick = () => progress.retry();
   const summary = document.createElement("p");
   summary.id = "campaignSummary";
@@ -177,8 +179,11 @@ export function mountCampaignUI(
             ? `NEXT / ${campaign.river.name}`
             : "SERIES FINALE";
       results.hidden = !result;
-      results.textContent =
-        campaign.phase === "CHAMPION" ? "Championship results" : "Race results";
+      results.textContent = "RESULTS";
+      results.setAttribute(
+        "aria-label",
+        campaign.phase === "CHAMPION" ? "Championship results" : "Race results",
+      );
       $("retryCampaignSave").hidden = !progress.warning;
       if (progress.warning) next.textContent = progress.warning;
       const stream = globalThis.__JET_SPRINT_CAMPAIGN__?.inspect().streaming;

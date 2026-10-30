@@ -1,0 +1,150 @@
+#game,
+#game canvas,
+#arcadeControls,
+#arcadeControls * {
+  touch-action: none;
+  overscroll-behavior: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+/* Developer panels retain native range, selection, scrolling and zoom behavior. */
+#pitConsole {
+  touch-action: pan-y pinch-zoom;
+}
+#pitConsole input[type="range"] {
+  touch-action: pan-y;
+}
+#game canvas {
+  -webkit-user-drag: none;
+}
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+/* Compact instruments keep the centre of the racing surface open. */
+body.racing .timing {
+  width: 258px;
+  right: auto;
+  grid-template-columns: 40px 132px 70px;
+  padding: 3px;
+  gap: 3px;
+  transform: translate(var(--race-hud-x, 0px), var(--race-hud-y, 0px))
+    scale(var(--race-hud-scale, 0.85));
+  transform-origin: top left;
+  opacity: var(--race-hud-opacity, 0.9);
+}
+body.racing .timing > div {
+  padding: 5px;
+}
+body.racing .timing .time-instrument strong {
+  font-size: 21px;
+}
+body.racing .timing .instrument-label {
+  font-size: 8px;
+}
+body.racing #journeyHUD {
+  top: 122px;
+  width: 156px;
+  padding: 6px 8px;
+  border-radius: 14px;
+  transform: translate(var(--race-hud-x, 0px), var(--race-hud-y, 0px))
+    scale(var(--race-hud-scale, 0.85));
+  transform-origin: top left;
+  opacity: var(--race-hud-opacity, 0.9);
+  max-height: 95px;
+}
+body.racing #journeyHUD strong {
+  font-size: 10px;
+  margin: 2px 0;
+}
+body.racing #journeyHUD p,
+body.racing #journeyNext {
+  font-size: 8px;
+  margin: 2px 0;
+}
+body.racing #journeyHUD output {
+  font-size: 11px;
+}
+body.racing .speed {
+  width: 96px !important;
+  bottom: 115px !important;
+  opacity: var(--race-hud-opacity, 0.9);
+  transform: scale(var(--race-hud-scale, 0.85));
+  transform-origin: bottom right;
+}
+body.racing .course-name {
+  display: none;
+}
+body.racing #navigator {
+  min-width: 0;
+  max-width: 126px;
+  padding: 6px 8px;
+  border-radius: 14px;
+  opacity: 0.8;
+}
+body.racing #navigator svg {
+  width: 24px;
+  min-width: 24px;
+}
+body.racing #navigator strong {
+  font-size: 10px;
+}
+body.racing #navigator small {
+  display: none;
+}
+body.racing #journeyResults {
+  position: static;
+  min-width: 44px;
+  width: 46px !important;
+  max-width: 46px;
+  min-height: 44px !important;
+  margin: 0;
+  font-size: 8px !important;
+}
+#hudSafeZones {
+  position: fixed;
+  inset: 0;
+  z-index: 24;
+  pointer-events: none;
+}
+.hud-safe-box {
+  position: absolute;
+  border: 1px dashed #e65c28;
+  background: #e65c2812;
+  box-sizing: border-box;
+}
+.safe-zone-summary {
+  position: absolute;
+  left: 25%;
+  bottom: 105px;
+  max-width: 50%;
+  font: 600 11px var(--font-label);
+  color: #e8d9b5;
+  background: #11191ddd;
+  padding: 7px;
+}
+#startSignal.leaving {
+  animation: lamps-leave 240ms ease-in forwards;
+}
+@keyframes lamps-leave {
+  to {
+    opacity: 0;
+    transform: translate(-50%, -75%) scale(0.9);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #startSignal.leaving {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+#courseValidationReport {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: 500 11px var(--font-label);
+}

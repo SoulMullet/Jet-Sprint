@@ -1,0 +1,70 @@
+{
+  "tests": {
+    "node22": {
+      "runtime": "v22.23.4",
+      "command": "node --test",
+      "passed": 204,
+      "failed": 0,
+      "campaign": {
+        "riverTimes": [
+          111.88333333336844,
+          162.1666666666835,
+          229.33333333625342
+        ],
+        "raceTimes": [
+          298.8083333332235,
+          328.97499999970086,
+          396.1916666713845,
+          645.4583333337475
+        ],
+        "wallet": 11150,
+        "runSeconds": 2334.025000008109,
+        "continuousInputPipeline": true
+      }
+    },
+    "node24": {
+      "runtime": "v24.19.0",
+      "command": "npm test",
+      "passed": 204,
+      "failed": 0,
+      "campaign": {
+        "riverTimes": [
+          111.88333333336844,
+          162.1666666666835,
+          229.34166666958686
+        ],
+        "raceTimes": [
+          298.8083333332235,
+          328.97499999970086,
+          336.9500000039635,
+          634.4416666692568
+        ],
+        "wallet": 11150,
+        "runSeconds": 2249.133333342678,
+        "continuousInputPipeline": true
+      }
+    }
+  },
+  "build": {
+    "command": "npm run build",
+    "passed": true,
+    "version": "0.21.0",
+    "files": 14,
+    "advisory": "Existing main chunk exceeds 500 kB."
+  },
+  "localDeployment": {
+    "status": "verified",
+    "commit": "local",
+    "version": "0.21.0",
+    "files": 14,
+    "identity": "MARINE-87",
+    "simulation": "world-space-fixed-step",
+    "campaign": "four-track-1987",
+    "controls": "analog-input-v1"
+  },
+  "deviceLimits": [
+    "No physical iPhone Safari",
+    "No physical Xbox controller",
+    "No sustained mobile frame-rate or thermal benchmark"
+  ]
+}

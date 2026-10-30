@@ -36,7 +36,7 @@ export class NavigationView {
  setDebug(enabled){this.enabled=enabled;if(enabled)this.build();this.group.visible=enabled;this.status.hidden=!enabled;}
  setCourse(course){if(this.course===course)return;this.group.traverse(o=>{o.geometry?.dispose();if(o.material){o.material.map?.dispose();o.material.dispose();}});this.group.clear();this.course=course;this.built=false;this.labels=[];this.labelGroups.clear();this.lastGate=null;if(this.enabled)this.build();}
  update(boat,race,cue,visible,dt){
-  const gateIndex=race.done?0:race.next,g=this.course.gates[gateIndex];this.target.sprite.visible=visible;
+  const gateIndex=race.done?0:race.next,g=this.course.gates[gateIndex];this.target.sprite.visible=visible&&this.enabled;
   if(visible)this.target.sprite.position.set(cue?.targetX??g.x,1.8,cue?.targetZ??g.z);
   if(!this.enabled)return;
   const link=this.targetLine.geometry.attributes.position;link.setXYZ(0,boat.x,.65,boat.z);link.setXYZ(1,cue?.targetX??g.x,.65,cue?.targetZ??g.z);link.needsUpdate=true;this.targetLine.geometry.computeBoundingSphere();

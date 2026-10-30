@@ -1,3 +1,4 @@
+import {createShoreContact} from "./shore-contact.js";
 import * as THREE from "three";
 import { createCourse } from "./course.js";
 import { track1, track2, river1, campaignDefinition } from "./campaign-data.js";
@@ -224,6 +225,7 @@ export function createCampaignAdventure(definition = campaignDefinition) {
     legs,
     network,
     nearest,
+    collisionNearest:createShoreContact(network),
     rocks,
     race: courses[0],
     river: legs[0].river,

@@ -123,9 +123,10 @@ export class CampaignTour {
         b.collisionImpulse = Math.max(b.collisionImpulse || 0, -v * 1.25);
       }
     }
-    const n = this.world.nearest(b.x, b.z);
+    const raw = (this.world.collisionNearest??this.world.nearest)(b.x, b.z),n=raw.collision??raw;
     if (
       (b.collisionImpulse || 0) > 1.5 ||
+      (b.bankDepth || 0) > .7 ||
       Math.hypot(b.x - n.x, b.z - n.z) > (n.hullLimit ?? 6.5) + 0.7
     )
       this.eventClean = false;

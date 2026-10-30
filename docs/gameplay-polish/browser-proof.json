@@ -1,0 +1,80 @@
+{
+  "metrics": {
+    "scale": 1,
+    "x": 0,
+    "y": 0,
+    "selection": ""
+  },
+  "buttons": {
+    "#steerLeft": {
+      "x": 16,
+      "y": 288,
+      "width": 92,
+      "height": 82
+    },
+    "#steerRight": {
+      "x": 122,
+      "y": 288,
+      "width": 92,
+      "height": 82
+    },
+    "#arcadeThrottle": {
+      "x": 703,
+      "y": 288,
+      "width": 125,
+      "height": 82
+    }
+  },
+  "fit": 165.57416638203304,
+  "zoom": 91.98564799001835,
+  "manual": 50,
+  "report": [
+    {
+      "course": "kowhai-sprint-park",
+      "valid": true,
+      "gates": 17,
+      "issues": [],
+      "collisionJoins": {
+        "tested": 7,
+        "excludedInternal": 7
+      }
+    },
+    {
+      "course": "matai-basin",
+      "valid": true,
+      "gates": 21,
+      "issues": [],
+      "collisionJoins": {
+        "tested": 1,
+        "excludedInternal": 1
+      }
+    },
+    {
+      "course": "devils-bend",
+      "valid": true,
+      "gates": 34,
+      "issues": [],
+      "collisionJoins": {
+        "tested": 5,
+        "excludedInternal": 5
+      }
+    },
+    {
+      "course": "championship",
+      "valid": true,
+      "gates": 44,
+      "issues": [],
+      "collisionJoins": {
+        "tested": 6,
+        "excludedInternal": 6
+      }
+    }
+  ],
+  "errors": [],
+  "labGesturesUnblocked": true,
+  "simultaneousTouch": true,
+  "independentRelease": true,
+  "rotatePreservesState": true,
+  "engine": "Chromium mobile emulation; not physical iPhone Safari",
+  "fixture": "Actual entry with manual frame clock and suppressed repeated draws; screenshots rendered."
+}

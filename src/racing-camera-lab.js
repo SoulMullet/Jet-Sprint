@@ -86,10 +86,11 @@ export function mountRacingCameraLab(store, manager, parent, world) {
       return s;
     };
     if (group === "flat") {
+      choice("framing", "Framing mode", ["auto", "manual"]);
       choice("projection", "Projection", ["perspective", "orthographic"]);
       const b = document.createElement("button");
       b.id = "racingAutoFit";
-      b.textContent = "Auto-Fit Course";
+      b.textContent = "Auto-Fit Active Track";
       b.onclick = () => {
         edit(() => store.autoFit());
         manager.debug = false;
@@ -203,6 +204,7 @@ export function mountRacingCameraLab(store, manager, parent, world) {
       updateRange(input);
     }
     root.querySelector("#racing-flat-projection").value = p.flat.projection;
+    root.querySelector("#racing-flat-framing").value = p.flat.framing;
     root.querySelector("#racing-transition-easing").value = p.transition.easing;
     status.textContent = store.warning;
   }

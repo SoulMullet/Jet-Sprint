@@ -1,3 +1,4 @@
+import { protectGameplayGestures } from "./gameplay-gestures.js";
 /** Pointer sets permit two thumbs and multiple contacts without latching. */
 export function mountArcadeTouch({ set, release, onPress, canDrive }) {
   const root = document.createElement("nav");
@@ -6,6 +7,7 @@ export function mountArcadeTouch({ set, release, onPress, canDrive }) {
   root.innerHTML =
     '<div class="arcade-steering"><button id="steerLeft" aria-label="Steer left" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 3 6 12 18 21Z" fill="currentColor"/></svg>LEFT</button><button id="steerRight" aria-label="Steer right" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3 18 12 6 21Z" fill="currentColor"/></svg>RIGHT</button></div><button id="arcadeThrottle" aria-label="Hold throttle" aria-pressed="false"><span>JET</span>THROTTLE</button>';
   document.body.append(root);
+  protectGameplayGestures(root);
   const held = { left: new Set(), right: new Set(), throttle: new Set() };
   const paint = () => {
     for (const [name, id] of [

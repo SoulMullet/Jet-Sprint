@@ -1,12 +1,14 @@
-# JET SPRINT v0.20.0 — Arcade View / River Sweep
+# JET SPRINT v0.21.0 — Clear Water / Clear View
 
 A mobile-first, single-player 3D jet sprint prototype built with JavaScript, Vite, Three.js and Web Audio. Geometry and sound are procedural; licensed interface fonts are bundled locally. No paid assets, account, API keys or backend are required.
+
+This build tightens active-track camera framing, adds saved per-course manual zoom, water-route chevrons, compact HUD controls, and Navigation / Collision Debug Labs under **Pit Control → RACE**. Gameplay surfaces suppress Safari double-tap/gesture zoom without disabling accessibility zoom in menus. The shoreline query excludes false internal banks at merged waterways; ordinary bank restitution and boat handling remain unchanged. See [implementation, exact file inventory, browser evidence and device limitations](docs/gameplay-polish.md).
 
 The playable campaign is **Rookie Run → River Rush 1 → Timberline → River Rush 2 → Devil’s Bend → River Rush 3 → Championship**. Rookie Run retains the existing Kōwhai Sprint Park geometry, handling and three-lap format. Three new racing courses add progressively tighter lines, hairpins and shared junctions. Every race has three valid laps. Finishing opens a physical river gate and freezes the race clock while you keep driving; the Championship ends with series results.
 
 The rivers are approximately **1.69 km / 2.43 km / 3.45 km**, with 21 / 22.8 / 24.6 m channels, downstream current, increasingly strong standing crests and later river rocks. Ordered checkpoints, pace/navigation scoring and optional side jumps remain. Normal progression uses one continuous world and scene: boat momentum, controls, camera, audio and airborne spray continue through every boundary. At the next venue, drive through the staging inlet, wait for green and cross the start line to start timing. No interstage loading screen or automatic boat relocation is used.
 
-Look for **CAMPAIGN-4 · v0.20.0 · commit** in the HUD. The MARINE-87 fonts, original boat integrator, arcade touch buttons, retained keyboard/gamepad adapters, automatic course/river cameras, V8 and tuning labs are available. See [current camera/control architecture, changed files, screenshots and verification](docs/arcade-river-camera.md), [campaign architecture](docs/campaign-expanded.md), [retained interface/spray notes](docs/marine-87.md), [physics audit](docs/boat-physics.md) and [rendering notes](docs/hf-graphics-v2.md). [Phase 1 notes](docs/campaign-phase1.md) describe the superseded short river and preview basin.
+Look for **CAMPAIGN-4 · v0.21.0 · commit** in the HUD. The MARINE-87 fonts, original boat integrator, arcade touch buttons, retained keyboard/gamepad adapters, automatic course/river cameras, V8 and tuning labs are available. See [current camera/control architecture, changed files, screenshots and verification](docs/arcade-river-camera.md), [campaign architecture](docs/campaign-expanded.md), [retained interface/spray notes](docs/marine-87.md), [physics audit](docs/boat-physics.md) and [rendering notes](docs/hf-graphics-v2.md). [Phase 1 notes](docs/campaign-phase1.md) describe the superseded short river and preview basin.
 
 ## Prizes, progress and world preparation
 

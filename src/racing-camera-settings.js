@@ -2,9 +2,10 @@
 export const racingCameraKey = "jet-sprint-racing-cameras-v2";
 export const cameraSpecs = {
   flat: {
+    zoom: ["Zoom", 1, 0.35, 5, 0.01, "×"],
     yaw: ["Yaw", 20, -180, 180, 1, "°"],
     pitch: ["Pitch", 55, 30, 80, 1, "°"],
-    distance: ["Camera distance (auto-fit minimum)", 60, 40, 800, 1, " m"],
+    distance: ["Manual camera distance", 160, 10, 1000, 1, " m"],
     fov: ["Field of view", 43, 25, 80, 1, "°"],
     offsetX: ["Target X offset", 0, -100, 100, 1, " m"],
     offsetY: ["Target map Y offset (world Z)", 0, -100, 100, 1, " m"],
@@ -57,6 +58,7 @@ export function sanitizeCameraPreset(raw = {}) {
       if (typeof v === "number" && Number.isFinite(v))
         p[group][k] = Math.max(s[2], Math.min(s[3], v));
     }
+  p.flat.framing = raw.flat?.framing === "manual" ? "manual" : "auto";
   p.flat.projection =
     raw.flat?.projection === "orthographic" ? "orthographic" : "perspective";
   p.transition.easing = ["smooth", "smoother", "cosine"].includes(
@@ -126,6 +128,7 @@ export class RacingCameraSettings {
   set(group, key, value) {
     const raw = structuredClone(this.values);
     raw[group][key] = value;
+    if (group === "flat" && key === "distance") raw.flat.framing = "manual";
     this.values = sanitizeCameraPreset(raw);
     this.save();
   }
@@ -153,7 +156,9 @@ export class RacingCameraSettings {
   }
   autoFit() {
     Object.assign(this.values.flat, {
-      distance: 40,
+      distance: 160,
+      zoom: 1,
+      framing: "auto",
       offsetX: 0,
       offsetY: 0,
       targetHeight: 0,

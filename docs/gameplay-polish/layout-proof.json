@@ -1,0 +1,218 @@
+[
+  {
+    "width": 568,
+    "height": 320,
+    "rects": {
+      ".race-toolbar": {
+        "x": 364,
+        "y": 10,
+        "width": 188,
+        "height": 44,
+        "right": 552,
+        "bottom": 54
+      },
+      "#steerLeft": {
+        "x": 16,
+        "y": 234,
+        "width": 78,
+        "height": 66,
+        "right": 94,
+        "bottom": 300
+      },
+      "#steerRight": {
+        "x": 108,
+        "y": 234,
+        "width": 78,
+        "height": 66,
+        "right": 186,
+        "bottom": 300
+      },
+      "#arcadeThrottle": {
+        "x": 447,
+        "y": 234,
+        "width": 105,
+        "height": 66,
+        "right": 552,
+        "bottom": 300
+      },
+      ".timing": {
+        "x": 16,
+        "y": 61,
+        "width": 219.3000030517578,
+        "height": 53.111724853515625,
+        "right": 235.3000030517578,
+        "bottom": 114.11172485351562
+      },
+      "#journeyHUD": {
+        "x": 408,
+        "y": 122,
+        "width": 125.79998779296875,
+        "height": 67.64141845703125,
+        "right": 533.7999877929688,
+        "bottom": 189.64141845703125
+      }
+    }
+  },
+  {
+    "width": 667,
+    "height": 375,
+    "rects": {
+      ".race-toolbar": {
+        "x": 440,
+        "y": 10,
+        "width": 211,
+        "height": 46,
+        "right": 651,
+        "bottom": 56
+      },
+      "#steerLeft": {
+        "x": 16,
+        "y": 273,
+        "width": 92,
+        "height": 82,
+        "right": 108,
+        "bottom": 355
+      },
+      "#steerRight": {
+        "x": 122,
+        "y": 273,
+        "width": 92,
+        "height": 82,
+        "right": 214,
+        "bottom": 355
+      },
+      "#arcadeThrottle": {
+        "x": 526,
+        "y": 273,
+        "width": 125,
+        "height": 82,
+        "right": 651,
+        "bottom": 355
+      },
+      ".timing": {
+        "x": 16,
+        "y": 61,
+        "width": 219.3000030517578,
+        "height": 53.111724853515625,
+        "right": 235.3000030517578,
+        "bottom": 114.11172485351562
+      },
+      "#journeyHUD": {
+        "x": 16,
+        "y": 122,
+        "width": 132.60000610351562,
+        "height": 69.84609985351562,
+        "right": 148.60000610351562,
+        "bottom": 191.84609985351562
+      }
+    }
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "rects": {
+      ".race-toolbar": {
+        "x": 617,
+        "y": 10,
+        "width": 211,
+        "height": 46,
+        "right": 828,
+        "bottom": 56
+      },
+      "#steerLeft": {
+        "x": 16,
+        "y": 288,
+        "width": 92,
+        "height": 82,
+        "right": 108,
+        "bottom": 370
+      },
+      "#steerRight": {
+        "x": 122,
+        "y": 288,
+        "width": 92,
+        "height": 82,
+        "right": 214,
+        "bottom": 370
+      },
+      "#arcadeThrottle": {
+        "x": 703,
+        "y": 288,
+        "width": 125,
+        "height": 82,
+        "right": 828,
+        "bottom": 370
+      },
+      ".timing": {
+        "x": 16,
+        "y": 61,
+        "width": 219.3000030517578,
+        "height": 53.111724853515625,
+        "right": 235.3000030517578,
+        "bottom": 114.11172485351562
+      },
+      "#journeyHUD": {
+        "x": 16,
+        "y": 122,
+        "width": 132.60000610351562,
+        "height": 69.84609985351562,
+        "right": 148.60000610351562,
+        "bottom": 191.84609985351562
+      }
+    }
+  },
+  {
+    "width": 1024,
+    "height": 768,
+    "rects": {
+      ".race-toolbar": {
+        "x": 789,
+        "y": 20,
+        "width": 211,
+        "height": 46,
+        "right": 1000,
+        "bottom": 66
+      },
+      "#steerLeft": {
+        "x": 16,
+        "y": 666,
+        "width": 92,
+        "height": 82,
+        "right": 108,
+        "bottom": 748
+      },
+      "#steerRight": {
+        "x": 122,
+        "y": 666,
+        "width": 92,
+        "height": 82,
+        "right": 214,
+        "bottom": 748
+      },
+      "#arcadeThrottle": {
+        "x": 883,
+        "y": 666,
+        "width": 125,
+        "height": 82,
+        "right": 1008,
+        "bottom": 748
+      },
+      ".timing": {
+        "x": 24,
+        "y": 107,
+        "width": 219.3000030517578,
+        "height": 55.31640625,
+        "right": 243.3000030517578,
+        "bottom": 162.31640625
+      },
+      "#journeyHUD": {
+        "x": 844,
+        "y": 122,
+        "width": 132.5999755859375,
+        "height": 72.39608764648438,
+        "right": 976.5999755859375,
+        "bottom": 194.39608764648438
+      }
+    }
+  }
+]

@@ -89,7 +89,7 @@ function indexNetwork(points){
  }
  const cache={segments,columns,minX,maxX,minZ,maxZ,stamp:0};queryCache.set(points,cache);return cache;
 }
-export function nearestOnTrack(points,x,z){
+export function nearestOnTrack(points,x,z,out={}){
  const cache=queryCache.get(points)||indexNetwork(points),stamp=++cache.stamp,cx=Math.floor(x/cellSize),cz=Math.floor(z/cellSize);
  let best=Infinity,px=0,pz=0,index=0,segmentId=null,along=0,waterWidth;
  const consider=segment=>{
@@ -109,5 +109,5 @@ export function nearestOnTrack(points,x,z){
    if(best<=(points.baseWidth===undefined?boundary*boundary:boundary))break;
   }
  }
- const out={x:px,z:pz,index,segmentId,t:along};if(waterWidth!==undefined){out.waterWidth=waterWidth;out.hullLimit=waterWidth-2.5;}return out;
+ Object.assign(out,{x:px,z:pz,index,segmentId,t:along});if(waterWidth!==undefined){out.waterWidth=waterWidth;out.hullLimit=waterWidth-2.5;}return out;
 }

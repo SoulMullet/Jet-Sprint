@@ -36,6 +36,8 @@ export class CampaignCameras {
     this.orthoProjection = new THREE.Matrix4();
     this.perspProjection = new THREE.Matrix4();
     this.sourceProjection = new THREE.Matrix4();
+    this.sourceRotation = new THREE.Quaternion();
+    this.desiredRotation = new THREE.Quaternion();
     this.projectionPoint = new THREE.Vector3();
     this.aspect = 1;
     this.width = 1;
@@ -113,25 +115,32 @@ export class CampaignCameras {
     let distance = 0,
       halfHeight = 0;
     const tan = Math.tan(rad(p.fov / 2));
-    for (const x of [minX, maxX])
-      for (const z of [minZ, maxZ])
-        for (const y of [0, 5]) {
-          this.corner.set(x, y, z).sub(this.flatTarget);
-          const cx = Math.abs(this.corner.dot(right)) * p.padding,
-            cy = Math.abs(this.corner.dot(up)) * p.padding,
-            depth = this.corner.dot(this.v);
-          distance = Math.max(
-            distance,
-            depth + cy / tan,
-            depth + cx / (tan * this.aspect),
-          );
-          halfHeight = Math.max(halfHeight, cy, cx / this.aspect);
-        }
-    this.fitDistance = Math.max(p.distance, distance);
+    // Fit the occupied racing contour, not unused corners of its bounding box.
+    // Only the prescribed course participates; rivers/scenery never enter this fit.
+    const horizontalDepth = Math.hypot(this.v.x, this.v.z),
+      verticalGround = Math.hypot(up.x, up.z);
+    for (const point of course.points) {
+      this.corner.set(point.x, 0, point.z).sub(this.flatTarget);
+      const cx = (Math.abs(this.corner.dot(right)) + margin) * p.padding;
+      const cy =
+        (Math.abs(this.corner.dot(up)) + margin * verticalGround + 3) *
+        p.padding;
+      const depth = this.corner.dot(this.v) + margin * horizontalDepth;
+      distance = Math.max(
+        distance,
+        depth + cy / tan,
+        depth + cx / (tan * this.aspect),
+      );
+      halfHeight = Math.max(halfHeight, cy, cx / this.aspect);
+    }
+    this.fitDistance =
+      (p.framing === "manual" ? p.distance : distance) / p.zoom;
     this.flatPosition
       .copy(this.flatTarget)
       .addScaledVector(this.v, this.fitDistance);
-    this.halfHeight = halfHeight * p.scale;
+    this.halfHeight =
+      (p.framing === "manual" ? this.fitDistance * tan : halfHeight / p.zoom) *
+      p.scale;
     this.ortho.left = -this.halfHeight * this.aspect;
     this.ortho.right = -this.ortho.left;
     this.ortho.top = this.halfHeight;
@@ -194,6 +203,7 @@ export class CampaignCameras {
   }
   startSweep(toRiver, preview = false) {
     this.sourcePosition.copy(this.camera.position);
+    this.sourceRotation.copy(this.camera.quaternion);
     this.sourceTarget.copy(this.target);
     this.sourceFov = this.camera.isPerspectiveCamera
       ? this.camera.fov
@@ -208,6 +218,7 @@ export class CampaignCameras {
     this.debug = false;
   }
   testTransition() {
+    this.debug = false;
     this.testRequested = true;
   }
   skip() {
@@ -253,6 +264,7 @@ export class CampaignCameras {
         else this.preview = false;
       }
     }
+    let rotationBlend = null;
     let fov = p.flat.fov,
       ortho = false,
       roll = 0,
@@ -279,6 +291,7 @@ export class CampaignCameras {
           1 - t,
           1 + (1 - p.transition.rotation) * 3 + p.transition.focus * 2,
         );
+      rotationBlend = rotation;
       const takeover = easeCamera(
         clamp(
           (u - p.transition.takeover) /
@@ -331,6 +344,12 @@ export class CampaignCameras {
     camera.position.copy(this.position);
     camera.up.set(0, 1, 0);
     camera.lookAt(this.target);
+    if (rotationBlend !== null) {
+      this.desiredRotation.copy(camera.quaternion);
+      camera.quaternion
+        .copy(this.sourceRotation)
+        .slerp(this.desiredRotation, rotationBlend);
+    }
     if (roll) {
       this.q.setFromAxisAngle(this.up.set(0, 0, 1), roll);
       camera.quaternion.multiply(this.q);

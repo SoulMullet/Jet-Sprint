@@ -1,0 +1,122 @@
+{
+  "version": "0.21.0",
+  "loadedAssets": [
+    {
+      "path": "assets/index-DmhvkXPf.css",
+      "sha256": "316a8caa30f31f354b1b7d8b17562130ddf3239f20f4678d2be5cd93fef8df58"
+    },
+    {
+      "path": "assets/campaign-data-Ba_vg-Lq.js",
+      "sha256": "f0d7ca08bdd90f81de0fceb4ceb599d86115608faaff84796122522178bd5e40"
+    },
+    {
+      "path": "assets/index-DkkG0-N7.js",
+      "sha256": "12cfb7cdea4e209900a7efcd1fcc6418fd5e6509fc734288dbe37ff623f12d01"
+    },
+    {
+      "path": "assets/campaign-debug-BbIffbCU.js",
+      "sha256": "3074802c01128e4c43d0de67de4d9a6c8f407e4710669dd2fb24855ce2ba972c"
+    },
+    {
+      "path": "assets/campaign-chunk-worker-CmiNPddZ.js",
+      "sha256": "780e8e54a91bd470c050bb4f4ae3ce884a60884c7ecea40cd53723c3316445c4"
+    },
+    {
+      "path": "assets/index-DmhvkXPf.css",
+      "sha256": "316a8caa30f31f354b1b7d8b17562130ddf3239f20f4678d2be5cd93fef8df58"
+    },
+    {
+      "path": "assets/campaign-data-Ba_vg-Lq.js",
+      "sha256": "f0d7ca08bdd90f81de0fceb4ceb599d86115608faaff84796122522178bd5e40"
+    },
+    {
+      "path": "assets/index-DkkG0-N7.js",
+      "sha256": "12cfb7cdea4e209900a7efcd1fcc6418fd5e6509fc734288dbe37ff623f12d01"
+    },
+    {
+      "path": "assets/campaign-debug-BbIffbCU.js",
+      "sha256": "3074802c01128e4c43d0de67de4d9a6c8f407e4710669dd2fb24855ce2ba972c"
+    },
+    {
+      "path": "assets/campaign-chunk-worker-CmiNPddZ.js",
+      "sha256": "780e8e54a91bd470c050bb4f4ae3ce884a60884c7ecea40cd53723c3316445c4"
+    }
+  ],
+  "touch": {
+    "device": "touch",
+    "rawSteering": 1,
+    "steering": 1,
+    "rawThrottle": 1,
+    "throttle": 1,
+    "targetSteering": 1,
+    "targetThrottle": 1,
+    "preview": null,
+    "controller": {
+      "connected": false,
+      "id": "",
+      "index": -1,
+      "supported": false,
+      "armed": false,
+      "apiAvailable": true,
+      "rawSteering": 0,
+      "rawThrottle": 0
+    },
+    "touch": {
+      "steering": 1,
+      "throttle": 1
+    },
+    "steeringMode": "spring",
+    "throttleMode": "spring",
+    "smoothing": {
+      "steering": 0.025,
+      "throttle": 0.02
+    },
+    "ramp": {
+      "steering": 18,
+      "throttleUp": 10,
+      "throttleDown": 16
+    }
+  },
+  "pad": {
+    "device": "gamepad",
+    "rawSteering": 0.5,
+    "steering": 0.41183618974260083,
+    "rawThrottle": 0.42,
+    "throttle": 0.3929561986498509,
+    "targetSteering": 0.4117422711732276,
+    "targetThrottle": 0.3929561986498509,
+    "preview": null,
+    "controller": {
+      "connected": true,
+      "id": "Xbox fixture",
+      "index": 0,
+      "supported": true,
+      "armed": true,
+      "apiAvailable": true,
+      "rawSteering": 0.5,
+      "rawThrottle": 0.42
+    },
+    "touch": {
+      "steering": 0,
+      "throttle": 0
+    },
+    "steeringMode": "spring",
+    "throttleMode": "spring",
+    "smoothing": {
+      "steering": 0.025,
+      "throttle": 0.02
+    },
+    "ramp": {
+      "steering": 18,
+      "throttleUp": 10,
+      "throttleDown": 16
+    }
+  },
+  "values": {
+    "racing-flat-yaw": 28,
+    "racing-river-height": 42,
+    "racing-transition-duration": 2.5
+  },
+  "errors": [],
+  "fixture": "Unmodified compiled production bundle; manual RAF clock, CDP touch events and Gamepad API snapshots. No physical hardware or FPS validation."
+}
