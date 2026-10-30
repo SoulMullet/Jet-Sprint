@@ -1,0 +1,275 @@
+{
+  "samples": [
+    {
+      "state": "RIVER_TRANSITION",
+      "course": "kowhai-sprint-park",
+      "transitionCount": 1,
+      "transitionTime": 0.03333333333333394,
+      "preview": false,
+      "legacyComparison": false,
+      "boatPixels": 9.600880638602831,
+      "warning": "",
+      "fitDistance": 233.3346314002607,
+      "projection": "perspective",
+      "position": [
+        -0.586365145191422,
+        191.13222624231898,
+        120.16822181981394
+      ],
+      "target": [
+        -46.349054559167094,
+        0.00008125911957840293,
+        -5.601407398235891
+      ]
+    },
+    {
+      "state": "RIVER_TRANSITION",
+      "course": "kowhai-sprint-park",
+      "transitionCount": 1,
+      "transitionTime": 0.36666666666667314,
+      "preview": false,
+      "legacyComparison": false,
+      "boatPixels": 9.412864822703071,
+      "warning": "",
+      "fitDistance": 233.3346314002607,
+      "projection": "perspective",
+      "position": [
+        0.364495340812081,
+        186.76980464748885,
+        113.47260807581239
+      ],
+      "target": [
+        -36.625698331879256,
+        0.07783770627194697,
+        -15.558654107322578
+      ]
+    },
+    {
+      "state": "RIVER_TRANSITION",
+      "course": "kowhai-sprint-park",
+      "transitionCount": 1,
+      "transitionTime": 0.700000000000012,
+      "preview": false,
+      "legacyComparison": false,
+      "boatPixels": 9.574318670222235,
+      "warning": "",
+      "fitDistance": 233.3346314002607,
+      "projection": "perspective",
+      "position": [
+        5.611396225074946,
+        167.80314559927717,
+        81.547023929051
+      ],
+      "target": [
+        -4.470644118352034,
+        0.309539476229893,
+        -46.50857788673618
+      ]
+    },
+    {
+      "state": "RIVER_TRANSITION",
+      "course": "kowhai-sprint-park",
+      "transitionCount": 1,
+      "transitionTime": 1.033333333333351,
+      "preview": false,
+      "legacyComparison": false,
+      "boatPixels": 12.106799161509066,
+      "warning": "",
+      "fitDistance": 233.3346314002607,
+      "projection": "perspective",
+      "position": [
+        9.063240053436598,
+        129.11682058176976,
+        26.792544975027415
+      ],
+      "target": [
+        22.751275409127864,
+        0.4673084286942788,
+        -68.14480228627097
+      ]
+    },
+    {
+      "state": "RIVER_TRANSITION",
+      "course": "kowhai-sprint-park",
+      "transitionCount": 1,
+      "transitionTime": 1.366666666666692,
+      "preview": false,
+      "legacyComparison": false,
+      "boatPixels": 21.38297653818702,
+      "warning": "",
+      "fitDistance": 233.3346314002607,
+      "projection": "perspective",
+      "position": [
+        7.505335454813283,
+        78.26096244303606,
+        -29.982920225440083
+      ],
+      "target": [
+        33.9962653256272,
+        0.498831356964682,
+        -74.70566722125511
+      ]
+    },
+    {
+      "state": "RIVER_TRANSITION",
+      "course": "kowhai-sprint-park",
+      "transitionCount": 1,
+      "transitionTime": 1.700000000000033,
+      "preview": false,
+      "legacyComparison": false,
+      "boatPixels": 39.01857519612844,
+      "warning": "",
+      "fitDistance": 233.3346314002607,
+      "projection": "perspective",
+      "position": [
+        7.840867624476864,
+        43.25224008356456,
+        -68.17132012868096
+      ],
+      "target": [
+        37.80577431599058,
+        0.49999893034995513,
+        -79.48248558419667
+      ]
+    },
+    {
+      "state": "RIVER_FOLLOW",
+      "course": "kowhai-sprint-park",
+      "transitionCount": 1,
+      "transitionTime": 2.0000000000000293,
+      "preview": false,
+      "legacyComparison": false,
+      "boatPixels": 43.83192572269465,
+      "warning": "",
+      "fitDistance": 233.3346314002607,
+      "projection": "perspective",
+      "position": [
+        11.342650159257994,
+        37.04078541995406,
+        -81.58329006723254
+      ],
+      "target": [
+        39.03800852133942,
+        0.5,
+        -80.37810061534226
+      ]
+    },
+    {
+      "state": "RIVER_FOLLOW",
+      "course": "kowhai-sprint-park",
+      "transitionCount": 1,
+      "transitionTime": 2.0000000000000293,
+      "preview": false,
+      "legacyComparison": false,
+      "boatPixels": 43.53117253089439,
+      "warning": "",
+      "fitDistance": 233.3346314002607,
+      "projection": "perspective",
+      "position": [
+        17.58742789143705,
+        37.55324273156507,
+        -88.76871624327973
+      ],
+      "target": [
+        38.51814455053901,
+        0.5,
+        -79.63760269377765
+      ]
+    }
+  ],
+  "saved": {
+    "type": "jet-sprint-racing-cameras",
+    "schema": 2,
+    "courses": {
+      "kowhai-sprint-park": {
+        "flat": {
+          "yaw": 35,
+          "pitch": 55,
+          "distance": 60,
+          "fov": 43,
+          "offsetX": 0,
+          "offsetY": 0,
+          "targetHeight": 0,
+          "scale": 1,
+          "padding": 1.12,
+          "marker": 1,
+          "projection": "perspective"
+        },
+        "river": {
+          "height": 36,
+          "distance": 24,
+          "pitch": 58,
+          "yaw": 0,
+          "lag": 0.22,
+          "rotationLag": 0.45,
+          "lookAhead": 12,
+          "speedZoom": 1,
+          "speedIntensity": 0.18,
+          "anticipation": 0.35,
+          "bank": 0.05,
+          "bankLag": 0.5,
+          "targetHeight": 0.5
+        },
+        "transition": {
+          "duration": 3,
+          "height": 18,
+          "arc": 0.25,
+          "rotation": 0.6,
+          "zoom": 0.65,
+          "takeover": 0.35,
+          "focus": 0.7,
+          "easing": "smoother"
+        }
+      },
+      "matai-basin": {
+        "flat": {
+          "yaw": -25,
+          "pitch": 55,
+          "distance": 60,
+          "fov": 43,
+          "offsetX": 0,
+          "offsetY": 0,
+          "targetHeight": 0,
+          "scale": 1,
+          "padding": 1.12,
+          "marker": 1,
+          "projection": "perspective"
+        },
+        "river": {
+          "height": 36,
+          "distance": 24,
+          "pitch": 58,
+          "yaw": 0,
+          "lag": 0.22,
+          "rotationLag": 0.45,
+          "lookAhead": 12,
+          "speedZoom": 1,
+          "speedIntensity": 0.18,
+          "anticipation": 0.35,
+          "bank": 0.05,
+          "bankLag": 0.5,
+          "targetHeight": 0.5
+        },
+        "transition": {
+          "duration": 2,
+          "height": 18,
+          "arc": 0.25,
+          "rotation": 0.6,
+          "zoom": 0.65,
+          "takeover": 0.35,
+          "focus": 0.7,
+          "easing": "smoother"
+        }
+      }
+    }
+  },
+  "errors": [],
+  "touch": {
+    "simultaneous": true,
+    "releaseImmediate": true,
+    "cancel": true
+  },
+  "stationaryCamera": true,
+  "orientationStatePreserved": true,
+  "fixture": "Real main loop with manual frame clock, repeated draws suppressed and controlled gate-approach placements. Screenshots rendered. No hardware/FPS claim."
+}

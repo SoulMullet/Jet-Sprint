@@ -1,4 +1,5 @@
 import { ControlInput, clamp, returnInput } from "./control-input.js";
+import { mountArcadeTouch } from "./arcade-touch.js";
 import { GamepadSource } from "./control-gamepad.js";
 
 const keyMap = {
@@ -20,6 +21,7 @@ export function bindControls(
   elements,
   store,
   {
+    arcade = false,
     onPress = () => {},
     onAction = () => {},
     canDrive = () => true,
@@ -51,6 +53,8 @@ export function bindControls(
       store.values.padRightAxis,
       store.values.padTriggerRest,
     ].join("/");
+  let buttons = null;
+  pipeline.arcadeTouch = arcade;
   let monitoring = false;
   const gamepad = new GamepadSource(store, {
     onAction,
@@ -68,6 +72,7 @@ export function bindControls(
       }
   }
   function release() {
+    buttons?.clear();
     for (const name of Object.keys(pointers)) {
       const id = pointers[name];
       pointers[name] = null;
@@ -201,6 +206,7 @@ export function bindControls(
     if (e.gamepad.index === gamepad.index) release();
   });
   function layout() {
+    if (arcade) return;
     const v = store.values,
       root = elements.steering.parentElement,
       css = getComputedStyle(root);
@@ -342,7 +348,7 @@ export function bindControls(
       enabled = true;
       const v = store.values;
       for (const name of axes)
-        if (pointers[name] === null) {
+        if (!arcade && pointers[name] === null) {
           released[name] += dt;
           touch[name] = returnInput(
             touch[name],
@@ -354,15 +360,16 @@ export function bindControls(
             v.steerReturnDelay,
           );
         }
-      pipeline.set(
-        "touch",
-        touch.steering,
-        touch.throttle,
-        pointers.steering !== null ||
-          pointers.throttle !== null ||
-          Math.abs(touch.steering) + touch.throttle > 0.0001,
-        touchIntent,
-      );
+      if (!arcade)
+        pipeline.set(
+          "touch",
+          touch.steering,
+          touch.throttle,
+          pointers.steering !== null ||
+            pointers.throttle !== null ||
+            Math.abs(touch.steering) + touch.throttle > 0.0001,
+          touchIntent,
+        );
       touchIntent = false;
       pipeline.set(
         "gamepad",
@@ -419,6 +426,20 @@ export function bindControls(
     layout();
   });
   window.visualViewport?.addEventListener("resize", layout);
+  if (arcade) {
+    elements.steering.parentElement.hidden = true;
+    buttons = mountArcadeTouch({
+      canDrive,
+      onPress,
+      release,
+      set: (steer, throttle, engaged) => {
+        pipeline.set("touch", steer, throttle, engaged, true);
+        touch.steering = steer;
+        touch.throttle = throttle;
+        pipeline.update(0);
+      },
+    });
+  }
   layout();
   paint();
   return {

@@ -80,13 +80,13 @@ export function mountCampaignUI(
     age = 0,
     displayWallet = progress.values.wallet;
   return {
-    update(dt, result) {
+    update(dt, result, force = false) {
       age += dt;
       displayWallet +=
         (progress.values.wallet - displayWallet) *
         (reduced ? 1 : 1 - Math.exp(-dt * 7));
       clock += dt;
-      if (clock < 0.1) return;
+      if (clock < 0.1 && !force) return;
       clock = 0;
       root.hidden = !document.body.classList.contains("racing");
       document.body.classList.toggle("journey-active", !root.hidden);

@@ -1,0 +1,430 @@
+{
+  "layouts": [
+    {
+      "viewport": [
+        568,
+        320
+      ],
+      "rows": {
+        "#steerLeft": {
+          "x": 16,
+          "y": 234,
+          "w": 78,
+          "h": 66,
+          "right": 94,
+          "bottom": 300,
+          "visible": true
+        },
+        "#steerRight": {
+          "x": 108,
+          "y": 234,
+          "w": 78,
+          "h": 66,
+          "right": 186,
+          "bottom": 300,
+          "visible": true
+        },
+        "#arcadeThrottle": {
+          "x": 447,
+          "y": 234,
+          "w": 105,
+          "h": 66,
+          "right": 552,
+          "bottom": 300,
+          "visible": true
+        },
+        "#navigator": {
+          "x": 288.15625,
+          "y": 136,
+          "w": 128,
+          "h": 50,
+          "right": 416.15625,
+          "bottom": 186,
+          "visible": true
+        },
+        ".timing": {
+          "x": 16,
+          "y": 61,
+          "w": 292,
+          "h": 67.78125,
+          "right": 308,
+          "bottom": 128.78125,
+          "visible": true
+        },
+        ".speed": {
+          "x": 440,
+          "y": 92,
+          "w": 112,
+          "h": 112,
+          "right": 552,
+          "bottom": 204,
+          "visible": true
+        },
+        "#journeyHUD": {
+          "x": 408,
+          "y": 126,
+          "w": 148,
+          "h": 80.828125,
+          "right": 556,
+          "bottom": 206.828125,
+          "visible": true
+        }
+      }
+    },
+    {
+      "viewport": [
+        667,
+        375
+      ],
+      "rows": {
+        "#steerLeft": {
+          "x": 16,
+          "y": 273,
+          "w": 92,
+          "h": 82,
+          "right": 108,
+          "bottom": 355,
+          "visible": true
+        },
+        "#steerRight": {
+          "x": 122,
+          "y": 273,
+          "w": 92,
+          "h": 82,
+          "right": 214,
+          "bottom": 355,
+          "visible": true
+        },
+        "#arcadeThrottle": {
+          "x": 526,
+          "y": 273,
+          "w": 125,
+          "h": 82,
+          "right": 651,
+          "bottom": 355,
+          "visible": true
+        },
+        "#navigator": {
+          "x": 338.5,
+          "y": 64,
+          "w": 120,
+          "h": 45,
+          "right": 458.5,
+          "bottom": 109,
+          "visible": true
+        },
+        ".timing": {
+          "x": 16,
+          "y": 61,
+          "w": 292,
+          "h": 67.78125,
+          "right": 308,
+          "bottom": 128.78125,
+          "visible": true
+        },
+        ".speed": {
+          "x": 539,
+          "y": 147,
+          "w": 112,
+          "h": 112,
+          "right": 651,
+          "bottom": 259,
+          "visible": true
+        },
+        "#journeyHUD": {
+          "x": 16,
+          "y": 128,
+          "w": 178,
+          "h": 97.28125,
+          "right": 194,
+          "bottom": 225.28125,
+          "visible": true
+        }
+      }
+    },
+    {
+      "viewport": [
+        844,
+        390
+      ],
+      "rows": {
+        "#steerLeft": {
+          "x": 16,
+          "y": 288,
+          "w": 92,
+          "h": 82,
+          "right": 108,
+          "bottom": 370,
+          "visible": true
+        },
+        "#steerRight": {
+          "x": 122,
+          "y": 288,
+          "w": 92,
+          "h": 82,
+          "right": 214,
+          "bottom": 370,
+          "visible": true
+        },
+        "#arcadeThrottle": {
+          "x": 703,
+          "y": 288,
+          "w": 125,
+          "h": 82,
+          "right": 828,
+          "bottom": 370,
+          "visible": true
+        },
+        "#navigator": {
+          "x": 427,
+          "y": 64,
+          "w": 120,
+          "h": 45,
+          "right": 547,
+          "bottom": 109,
+          "visible": true
+        },
+        ".timing": {
+          "x": 16,
+          "y": 61,
+          "w": 292,
+          "h": 67.78125,
+          "right": 308,
+          "bottom": 128.78125,
+          "visible": true
+        },
+        ".speed": {
+          "x": 716,
+          "y": 162,
+          "w": 112,
+          "h": 112,
+          "right": 828,
+          "bottom": 274,
+          "visible": true
+        },
+        "#journeyHUD": {
+          "x": 16,
+          "y": 128,
+          "w": 178,
+          "h": 97.28125,
+          "right": 194,
+          "bottom": 225.28125,
+          "visible": true
+        }
+      }
+    },
+    {
+      "viewport": [
+        1024,
+        768
+      ],
+      "rows": {
+        "#steerLeft": {
+          "x": 16,
+          "y": 666,
+          "w": 92,
+          "h": 82,
+          "right": 108,
+          "bottom": 748,
+          "visible": true
+        },
+        "#steerRight": {
+          "x": 122,
+          "y": 666,
+          "w": 92,
+          "h": 82,
+          "right": 214,
+          "bottom": 748,
+          "visible": true
+        },
+        "#arcadeThrottle": {
+          "x": 883,
+          "y": 666,
+          "w": 125,
+          "h": 82,
+          "right": 1008,
+          "bottom": 748,
+          "visible": true
+        },
+        "#navigator": {
+          "x": 860,
+          "y": 112,
+          "w": 140,
+          "h": 62,
+          "right": 1000,
+          "bottom": 174,
+          "visible": true
+        },
+        ".timing": {
+          "x": 24,
+          "y": 107,
+          "w": 416,
+          "h": 92.390625,
+          "right": 440,
+          "bottom": 199.390625,
+          "visible": true
+        },
+        ".speed": {
+          "x": 810,
+          "y": 398,
+          "w": 190,
+          "h": 190,
+          "right": 1000,
+          "bottom": 588,
+          "visible": true
+        },
+        "#journeyHUD": {
+          "x": 780,
+          "y": 174,
+          "w": 220,
+          "h": 141.96875,
+          "right": 1000,
+          "bottom": 315.96875,
+          "visible": true
+        }
+      }
+    },
+    {
+      "viewport": [
+        1920,
+        1080
+      ],
+      "rows": {
+        "#steerLeft": {
+          "x": 16,
+          "y": 978,
+          "w": 92,
+          "h": 82,
+          "right": 108,
+          "bottom": 1060,
+          "visible": true
+        },
+        "#steerRight": {
+          "x": 122,
+          "y": 978,
+          "w": 92,
+          "h": 82,
+          "right": 214,
+          "bottom": 1060,
+          "visible": true
+        },
+        "#arcadeThrottle": {
+          "x": 1779,
+          "y": 978,
+          "w": 125,
+          "h": 82,
+          "right": 1904,
+          "bottom": 1060,
+          "visible": true
+        },
+        "#navigator": {
+          "x": 890,
+          "y": 112,
+          "w": 140,
+          "h": 62,
+          "right": 1030,
+          "bottom": 174,
+          "visible": true
+        },
+        ".timing": {
+          "x": 24,
+          "y": 107,
+          "w": 416,
+          "h": 92.390625,
+          "right": 440,
+          "bottom": 199.390625,
+          "visible": true
+        },
+        ".speed": {
+          "x": 1706,
+          "y": 710,
+          "w": 190,
+          "h": 190,
+          "right": 1896,
+          "bottom": 900,
+          "visible": true
+        },
+        "#journeyHUD": {
+          "x": 1676,
+          "y": 174,
+          "w": 220,
+          "h": 141.96875,
+          "right": 1896,
+          "bottom": 315.96875,
+          "visible": true
+        }
+      }
+    }
+  ],
+  "issues": [],
+  "tracks": [
+    {
+      "state": "FLAT_TRACK_FIXED",
+      "course": "matai-basin",
+      "transitionCount": 0,
+      "transitionTime": 0,
+      "preview": false,
+      "legacyComparison": false,
+      "boatPixels": 10.004623295782082,
+      "warning": "",
+      "fitDistance": 268.503427076898,
+      "projection": "perspective",
+      "position": [
+        108.75341257483934,
+        219.94513118864123,
+        -1192.4960844605007
+      ],
+      "target": [
+        56.079834669894765,
+        0,
+        -1337.2155503562199
+      ]
+    },
+    {
+      "state": "FLAT_TRACK_FIXED",
+      "course": "devils-bend",
+      "transitionCount": 0,
+      "transitionTime": 0,
+      "preview": false,
+      "legacyComparison": false,
+      "boatPixels": 7.7997544461197545,
+      "warning": "Boat below 9 px: use the visibility marker or reduce course padding.",
+      "fitDistance": 329.6160693737808,
+      "projection": "perspective",
+      "position": [
+        -153.51027051347927,
+        270.0056770580347,
+        -2985.724341818828
+      ],
+      "target": [
+        -218.17260237976512,
+        0,
+        -3163.3826385107295
+      ]
+    },
+    {
+      "state": "FLAT_TRACK_FIXED",
+      "course": "championship",
+      "transitionCount": 0,
+      "transitionTime": 0,
+      "preview": false,
+      "legacyComparison": false,
+      "boatPixels": 7.598121719732863,
+      "warning": "Boat below 9 px: use the visibility marker or reduce course padding.",
+      "fitDistance": 341.10863400028177,
+      "projection": "perspective",
+      "position": [
+        176.71973282608727,
+        279.4198348659563,
+        -5565.23335418983
+      ],
+      "target": [
+        109.80285059978594,
+        0,
+        -5749.085977086897
+      ]
+    }
+  ],
+  "errors": [],
+  "previewUnchangedProgress": true
+}

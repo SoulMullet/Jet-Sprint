@@ -1,4 +1,4 @@
-# JET SPRINT v0.19.1 — Summer Series ’87
+# JET SPRINT v0.20.0 — Arcade View / River Sweep
 
 A mobile-first, single-player 3D jet sprint prototype built with JavaScript, Vite, Three.js and Web Audio. Geometry and sound are procedural; licensed interface fonts are bundled locally. No paid assets, account, API keys or backend are required.
 
@@ -36,13 +36,13 @@ The rendering includes multi-frequency freshwater waves, animated normal texture
 
 The V8 Sound Lab, 32 live controls, independent presets/JSON and stationary tuning remain available; see [the earlier track and V8 notes](docs/track-v8-upgrade.md) for audio controls. That document describes the superseded Shelter course.
 
-## Analog controls and Control Lab
+## Arcade touch controls and retained Control Lab
 
-**Touch:** drag the horizontal steering rail left/right and the vertical throttle rail from idle to full. Start a drag anywhere inside either housing; independent captured pointers support two fingers. The steering and throttle readouts show their physical positions. Default Arcade inputs spring back when released. Cancellation, capture loss, blur/backgrounding, pause, results, tuning panels and restart clear held inputs, including Hold modes.
+**Touch:** hold LEFT or RIGHT at the lower left and THROTTLE at the lower right. Independent pointer sets support simultaneous inputs and release/cancellation immediately clears that button. Steering still depends on waterjet thrust. The old analog rails and their tuning code remain available but hidden in gameplay. Their layout, calibration and Hold/Hybrid touch options are archived; they do not latch the new buttons. Existing keyboard/gamepad input processing and controller configuration are retained.
 
-Open **Pit Control → INPUT** (also **Pause → Control Lab / setup**). Steering, Throttle, Calibration, Controller and Input behavior are collapsible. There are **35 numeric sliders**, each with a value and individual reset, plus mode selectors and toggles. Tune response curves, dead zones, smoothing in seconds, full-scale ramp rates per second, spring/hold/hybrid or gradual return, hybrid delay, speed-based input reduction, rail travel, housing dimensions and safe-screen positions. Sizes are clamped to the viewport and colliding touch regions are separated. Calibration trims the touch centre and throttle endpoints. **Centre steering / idle throttle now** clears latches immediately.
+Open **Pit Control → INPUT** for the existing controller and command-response lab. Its saved values, presets, mappings, dead zones, curves and JSON remain intact. These still tune keyboard and controller input; arcade touch buttons request discrete commands directly. **Centre steering / idle throttle now** clears held input.
 
-**Arcade / Balanced / Simulation** are input presets, separate from the HULL physics profiles. They change command response only, retain layout/calibration/mapping choices, and remain customizable. Maximum speed, thrust, drag, drift and the waterjet force model are unchanged. The sole physics adapter change accepts signed `steering` from −1 to +1, retaining the old binary interface for existing callers. A stationary/dead-pump boat still cannot steer like a rudder.
+Landscape is the primary phone layout. Coarse-pointer phones in portrait display a rotate prompt and hold the boat/race clock until landscape returns. Touch input releases safely; the run is preserved. Fullscreen/orientation lock is attempted only from the prompt’s button on browsers that support it. iPhone Safari can rotate naturally without those APIs.
 
 **Keyboard:** A/D or Left/Right steer; W/Up/Space accelerates. R restarts; P/Escape pauses/resumes. A real pause freezes physics and the logical race/countdown clock without resetting the run. Tuning opened directly from the toolbar still runs the clock; opening it from Pause keeps the run paused. Keyboard input never drives through an editing field or tuning/results dialog.
 
@@ -110,13 +110,17 @@ The Lab saves separately from gameplay, audio and camera preferences. **Copy set
 
 New sessions default to the lightweight procedural water renderer. Existing saved water-mode and diagnostic-wave choices are respected. Simulated water remains available under Water Physics; it allocates GPU resources only when selected, and releases them when you return to procedural/legacy water. Both renderers share HF water appearance controls. Older wave-height, spray-distance and water-volume controls still apply alongside the Lab.
 
-## Racing cameras
+## Racing cameras and Camera Lab
 
-Use the compact **camera** button to cycle **Classic Arcade → Chase → Cockpit → Overhead**. Classic retains the original elevated follow view. Chase follows low behind the boat; Cockpit uses the existing driver seat and boat model; Overhead is an orthographic, north-up view.
+Standard courses default to **FLAT_TRACK_FIXED**: a stationary three-quarter camera fitted to the actual racing-course bounds, with channel/bank margins. The boat moves through the course. An optional ring improves visibility; Camera Lab warns when the boat projects below 9 pixels. The camera does not automatically chase or zoom during normal flat racing.
 
-Open **PIT CONTROL → VIEW** to select a mode and tune its distance/height, FOV or zoom, lag, and look-ahead where applicable. Higher lag softens following. Each mode saves independently on this device. **Reset Cameras to Defaults** resets only camera preferences and returns to Classic. The legacy **Camera response** control still sets Classic's lag. Camera preferences are stored separately from the existing gameplay/audio settings and their JSON presets.
+Crossing a valid river gate triggers **RIVER_TRANSITION**, a live two-second crane sweep into **RIVER_FOLLOW**. The river view tracks from above/behind with smoothed heading, bend anticipation, speed pullback and a longer view ahead. Boat input, physics, audio, spray and race progression continue. Arrival sweeps back to the next course’s fixed view. Restart/practice selection restores the appropriate camera. Normal motion never resets the boat.
 
-The **Campaign overview** remains a diagnostic camera override and follows the active area. Switching camera or resetting cameras exits that overview. See [camera implementation and verification](docs/cameras.md) for retained camera behavior and limits.
+**Pit Control → VIEW → Camera Lab** has Flat-Track, River Follow and Cinematic Transition sections. All numeric controls have readouts/units/resets. Compare perspective and true orthographic flat projections, auto-fit the course, tune the river boom/lag/banking and sweep duration/arc/easing/focus. **Test Transition** previews without altering progression, **Skip Transition** finishes the sweep, and **Reset Transition** restores only its tune. Per-course presets automatically save under **`jet-sprint-racing-cameras-v2`**, schema 2. The selected course owns its outgoing river/sweep settings. Copy/export, file download, text/file import and course reset are available. Existing `jet-sprint-cameras-v1` values remain intact.
+
+The existing camera-cycle button and Xbox View action opt into the retained legacy comparison modes. **Use automatic gameplay cameras** or Restart returns to the new primary system. The lab’s course dropdown edits that preset; use the level selector under RACE to preview another venue live. The Campaign overview remains a diagnostic override.
+
+See [implementation, screenshots, changed files and verification](docs/arcade-river-camera.md). Physical iPhone Safari, real Xbox hardware and sustained 60 FPS remain unverified.
 
 ## Local development
 
@@ -127,9 +131,9 @@ npm ci
 npm run dev
 ```
 
-Open the address Vite prints. On a phone on the same network, use the computer's LAN address and port 5173. Allow access through your local firewall. Rotate the device to landscape for the widest course view; both orientations use a closer fixed-angle follow camera with velocity and course lookahead.
+Open the address Vite prints. On a phone on the same network, use the computer's LAN address and port 5173. Allow access through your local firewall. Rotate the device to landscape for the widest course view; portrait phones show a rotate prompt, and landscape uses the new course/river cameras.
 
-Press **HIT THE WATER** to unlock audio and begin. Hold throttle and either steering button simultaneously. On desktop use **W / up arrow / space** for throttle, **A/D / left/right arrows** for steering, and **R** to restart. Release throttle to coast; reapply throttle to steer and recover a slide. Slide through bends and carry momentum. Bank contact slows and redirects the boat without ending the run. The setup panel adjusts top speed, drift retention and steering response; new-install defaults are 85 km/h, 65%, and 75%. Existing saved values are preserved.
+Press **HIT THE WATER** to unlock audio and begin. Hold THROTTLE and either steering button simultaneously. On desktop use **W / up arrow / space** for throttle, **A/D / left/right arrows** for steering, and **R** to restart. Release throttle to coast; reapply throttle to steer and recover a slide. Slide through bends and carry momentum. Bank contact slows and redirects the boat without ending the run. The setup panel adjusts top speed, drift retention and steering response; new-install defaults are 85 km/h, 65%, and 75%. Existing saved values are preserved.
 
 A READY stage and the saved lamp countdown hold the boat at Rookie Run’s stripe while allowing engine revving. Green releases the boat and starts the timer together. Later venue staging retains boat control and momentum; timing starts only after green and a forward start-line crossing. Follow the prescribed route through all ordered gates for three laps. Wrong turns require recovering the missed gate while the clock continues. Results/local leaderboards remain available, including backward-compatible reading of old five-lap records. There is no reverse throttle, opponent AI, ghost or network play.
 

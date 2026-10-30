@@ -1,0 +1,166 @@
+/* Landscape MARINE-87 controls. The original analog rails remain archived/hidden. */
+.controls[hidden] {
+  display: none !important;
+}
+#arcadeControls {
+  position: fixed;
+  inset: 0;
+  z-index: 12;
+  pointer-events: none;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+#arcadeControls button {
+  pointer-events: auto;
+  touch-action: none;
+  width: 92px;
+  height: 82px;
+  border-radius: 22px;
+  border: 2px solid #9bb7b2;
+  background: #214856;
+  color: var(--cream);
+  box-shadow:
+    inset 0 3px #ffffff28,
+    0 5px #081c28,
+    0 8px 10px #0005;
+  font: 700 13px var(--font-label);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+#arcadeControls button span {
+  font: 400 23px var(--font-display);
+}
+#arcadeControls button.active {
+  background: #4d858b;
+  transform: translateY(4px);
+  box-shadow:
+    inset 0 3px 5px #0004,
+    0 1px #081c28;
+}
+#arcadeControls .arcade-steering {
+  display: flex;
+  gap: 14px;
+  position: absolute;
+  left: max(16px, env(safe-area-inset-left));
+  bottom: max(20px, env(safe-area-inset-bottom));
+}
+#arcadeControls #arcadeThrottle {
+  position: absolute;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(20px, env(safe-area-inset-bottom));
+  width: 125px;
+  background: #b5542e;
+  border-color: #efb778;
+}
+#arcadeControls #arcadeThrottle.active {
+  background: #e4773a;
+}
+#racingCameraLab textarea {
+  width: 100%;
+  min-height: 90px;
+  box-sizing: border-box;
+  font: 500 12px var(--font-label);
+}
+#racingCameraLab button {
+  margin: 5px 4px 5px 0;
+}
+#rotateDevice {
+  position: fixed;
+  z-index: 90;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #0b1b26f7;
+  color: var(--cream);
+  text-align: center;
+}
+.rotate-card {
+  max-width: 320px;
+  border: 3px solid var(--gold);
+  border-radius: 28px;
+  padding: 28px;
+  background: var(--navy);
+  box-shadow: var(--shadow);
+}
+.rotate-card svg {
+  width: 92px;
+  height: 72px;
+  stroke: var(--gold);
+  fill: none;
+  stroke-width: 3;
+}
+.rotate-card h2 {
+  font: 400 24px var(--font-display);
+  color: var(--orange);
+}
+.rotate-card p {
+  font: 600 16px/1.5 var(--font-label);
+}
+.rotate-card button {
+  min-height: 48px;
+}
+@media (max-height: 500px) and (orientation: landscape) {
+  .speed {
+    width: 112px !important;
+    bottom: 116px !important;
+  }
+  #journeyHUD {
+    max-height: 100px;
+    overflow: auto;
+    width: 178px;
+  }
+  #journeyResults {
+    top: 132px;
+  }
+  .course-name {
+    display: none;
+  }
+  .pit-scroll {
+    padding-bottom: 20px;
+  }
+}
+@media (pointer: coarse) and (orientation: portrait) and (max-width: 700px) {
+  #rotateDevice {
+    display: flex;
+  }
+}
+@media (max-height: 360px) {
+  #arcadeControls button {
+    height: 66px;
+    width: 78px;
+  }
+  #arcadeControls #arcadeThrottle {
+    height: 66px;
+    width: 105px;
+  }
+  #journeyHUD {
+    top: 126px;
+    max-height: 90px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #arcadeControls button {
+    transition: none;
+  }
+}
+
+#arcadeControls svg {
+  width: 23px;
+  height: 23px;
+}
+
+@media (orientation: landscape) and (max-width: 620px) {
+  #navigator {
+    left: 62%;
+    top: 136px;
+    min-width: 0;
+    max-width: 130px;
+  }
+}

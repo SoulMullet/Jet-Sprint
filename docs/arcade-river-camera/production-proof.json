@@ -1,0 +1,80 @@
+{
+  "version": "0.20.0",
+  "touch": {
+    "device": "touch",
+    "rawSteering": 1,
+    "steering": 1,
+    "rawThrottle": 1,
+    "throttle": 1,
+    "targetSteering": 1,
+    "targetThrottle": 1,
+    "preview": null,
+    "controller": {
+      "connected": false,
+      "id": "",
+      "index": -1,
+      "supported": false,
+      "armed": false,
+      "apiAvailable": true,
+      "rawSteering": 0,
+      "rawThrottle": 0
+    },
+    "touch": {
+      "steering": 1,
+      "throttle": 1
+    },
+    "steeringMode": "spring",
+    "throttleMode": "spring",
+    "smoothing": {
+      "steering": 0.025,
+      "throttle": 0.02
+    },
+    "ramp": {
+      "steering": 18,
+      "throttleUp": 10,
+      "throttleDown": 16
+    }
+  },
+  "pad": {
+    "device": "gamepad",
+    "rawSteering": 0.5,
+    "steering": 0.41183618974260083,
+    "rawThrottle": 0.42,
+    "throttle": 0.3929561986498509,
+    "targetSteering": 0.4117422711732276,
+    "targetThrottle": 0.3929561986498509,
+    "preview": null,
+    "controller": {
+      "connected": true,
+      "id": "Xbox fixture",
+      "index": 0,
+      "supported": true,
+      "armed": true,
+      "apiAvailable": true,
+      "rawSteering": 0.5,
+      "rawThrottle": 0.42
+    },
+    "touch": {
+      "steering": 0,
+      "throttle": 0
+    },
+    "steeringMode": "spring",
+    "throttleMode": "spring",
+    "smoothing": {
+      "steering": 0.025,
+      "throttle": 0.02
+    },
+    "ramp": {
+      "steering": 18,
+      "throttleUp": 10,
+      "throttleDown": 16
+    }
+  },
+  "values": {
+    "racing-flat-yaw": 28,
+    "racing-river-height": 42,
+    "racing-transition-duration": 2.5
+  },
+  "errors": [],
+  "fixture": "Unmodified compiled production bundle; manual RAF clock, CDP touch events and Gamepad API snapshots. No physical hardware or FPS validation."
+}

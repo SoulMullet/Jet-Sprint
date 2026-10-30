@@ -1,0 +1,35 @@
+Changes from aae4c52678d04aaf566abb493a1a6affc30ec975 (v0.19.1)
+A = added; M = modified
+
+M README.md
+A docs/arcade-river-camera.md
+A docs/arcade-river-camera/browser-proof.json
+A docs/arcade-river-camera/camera-lab.png
+A docs/arcade-river-camera/changed-files.txt
+A docs/arcade-river-camera/checks.json
+A docs/arcade-river-camera/fixed-course.png
+A docs/arcade-river-camera/layout-proof.json
+A docs/arcade-river-camera/orthographic.png
+A docs/arcade-river-camera/production-landscape.png
+A docs/arcade-river-camera/production-proof.json
+A docs/arcade-river-camera/river-follow.png
+A docs/arcade-river-camera/rotate-prompt.png
+A docs/arcade-river-camera/sweep-preview.png
+A docs/arcade-river-camera/track-2-fixed.png
+A docs/arcade-river-camera/track-3-fixed.png
+A docs/arcade-river-camera/track-4-fixed.png
+M index.html
+M package-lock.json
+M package.json
+A src/arcade-layout.css
+A src/arcade-touch.js
+M src/campaign-ui.js
+M src/control-input.js
+M src/controls.js
+M src/main.js
+A src/mobile-orientation.js
+A src/racing-camera-lab.js
+A src/racing-camera-manager.js
+A src/racing-camera-settings.js
+M src/settings.js
+A test/racing-camera-manager.test.js

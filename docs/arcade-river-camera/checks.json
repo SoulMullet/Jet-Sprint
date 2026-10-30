@@ -1,0 +1,14 @@
+{
+  "version": "0.20.0",
+  "tests": 195,
+  "failed": 0,
+  "nodeVersions": [
+    22,
+    24
+  ],
+  "build": "passed; existing large chunk advisory remains",
+  "browser": "Headless Chromium, software WebGL, landscape viewport checks; actual source and compiled production inspected",
+  "physicalDevices": false,
+  "manualFullCampaign": false,
+  "productionFilesVerifiedLocally": 14
+}

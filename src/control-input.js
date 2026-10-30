@@ -115,6 +115,13 @@ export class ControlInput {
     this.rawThrottle = source?.throttle ?? 0;
     let steer = this.rawSteering,
       throttle = this.rawThrottle;
+    if (selected === "touch" && this.arcadeTouch) {
+      this.targetSteering = this.input.steering = steer;
+      this.targetThrottle = this.input.throttle = throttle;
+      this.input.left = steer < 0;
+      this.input.right = steer > 0;
+      return this.input;
+    }
     if (selected === "touch") {
       // Only calibrate a live/non-zero axis: an idle released control must remain zero.
       if (steer !== 0) {
