@@ -1,3 +1,4 @@
+import { riverJumpSites, safeJumpFlight, jumpDefaults } from "./river-jumps.js";
 import { Race } from "./race.js";
 import { RouteNavigator } from "./navigation.js";
 
@@ -22,6 +23,15 @@ export class Campaign {
     this.progress = progress;
     this.projection = {};
     this.target = {};
+    this.jumpSites = riverJumpSites(world).map((j) => ({
+      ...j,
+      point: world.river.sample(j.distance),
+      gate: {
+        ...world.river.sample(j.distance),
+        halfWidth: this.river.waterWidth,
+      },
+    }));
+    this.jumpTuning = jumpDefaults;
     this.jumpPoint = world.river.sample(this.river.jump.distance);
     this.jumpGate = { ...this.jumpPoint, halfWidth: this.river.waterWidth };
     this.exitAt = world.race.project(
@@ -46,6 +56,10 @@ export class Campaign {
     this.practice = false;
     this.exitApproach = false;
     this.jumpTaken = false;
+    this.takenJumps = new Set();
+    this.awardedJumps = new Set();
+    this.activeJump = null;
+    this.landingSpeed = 0;
     this.jumpAwarded = false;
     this.height = this.verticalVelocity = 0;
     this.airborne = false;
@@ -78,16 +92,37 @@ export class Campaign {
       b.z += b.vz * dt;
       b.angle += (b.yawRate || 0) * dt;
       b.yawRate *= Math.exp(-dt * 0.4);
-      this.verticalVelocity -= 9.8 * dt;
+      this.verticalVelocity -=
+        9.8 * (this.jumpTuning.jumpGravityScale ?? 1) * dt;
       this.height += this.verticalVelocity * dt;
+      const bank = this.world.nearest(b.x, b.z),
+        dx = b.x - bank.x,
+        dz = b.z - bank.z,
+        d = Math.hypot(dx, dz),
+        limit = bank.hullLimit ?? 6.5;
+      if (d > limit) {
+        const nx = dx / d,
+          nz = dz / d,
+          v = b.vx * nx + b.vz * nz;
+        b.x = bank.x + nx * limit;
+        b.z = bank.z + nz * limit;
+        if (v > 0) {
+          b.collisionImpulse = v * 1.35;
+          b.vx -= b.collisionImpulse * nx;
+          b.vz -= b.collisionImpulse * nz;
+        }
+        this.clean = false;
+      }
       if (this.height <= 0) {
+        this.landingSpeed = Math.abs(this.verticalVelocity);
         this.height = 0;
         this.airborne = false;
         this.landed = true;
         const n = this.world.nearest(b.x, b.z),
           inWater = Math.hypot(b.x - n.x, b.z - n.z) < (n.hullLimit ?? 6.5);
-        if (inWater && !this.jumpAwarded) {
-          this.score += this.river.jump.bonus;
+        if (inWater && !this.awardedJumps.has(this.activeJump?.id)) {
+          this.score += this.activeJump?.bonus ?? this.river.jump.bonus;
+          this.awardedJumps.add(this.activeJump?.id);
           this.jumpAwarded = true;
         } else if (!inWater) this.clean = false;
       }
@@ -116,7 +151,7 @@ export class Campaign {
     return true;
   }
   step(before, b, dt) {
-    this.gateHit=0;
+    this.gateHit = 0;
     if (this.phase !== "RACE")
       this.gateOpen = Math.min(1, this.gateOpen + dt * 1.25);
     const { gate, river, checkpoints } = this.world;
@@ -132,7 +167,7 @@ export class Campaign {
         b.x += (side * 1.25 - d) * gate.tx;
         b.z += (side * 1.25 - d) * gate.tz;
         const v = b.vx * gate.tx + b.vz * gate.tz;
-        this.gateHit=Math.abs(v);
+        this.gateHit = Math.abs(v);
         if (v * side < 0) {
           b.vx -= v * gate.tx * 1.2;
           b.vz -= v * gate.tz * 1.2;
@@ -186,21 +221,30 @@ export class Campaign {
           this.progress?.arrive(this.score, this.river.id, this.destination.id);
       }
     }
-    if (this.phase !== "RIVER" || this.jumpTaken || this.airborne) return;
-    const j = this.river.jump,
-      p = this.jumpPoint,
-      lateral = -(b.x - p.x) * p.tz + (b.z - p.z) * p.tx;
-    if (
-      crossesGate(before, b, this.jumpGate) &&
-      Math.abs(lateral - j.side * j.offset) < j.halfWidth &&
-      Math.hypot(b.vx, b.vz) >= j.minSpeed
-    ) {
-      this.jumpTaken = true;
-      this.airborne = true;
-      this.height = 0.02;
-      this.verticalVelocity = j.launch;
+    if (this.phase !== "RIVER" || this.airborne) return;
+    for (const j of this.jumpSites) {
+      if (this.takenJumps.has(j.id)) continue;
+      const p = j.point,
+        lateral = -(b.x - p.x) * p.tz + (b.z - p.z) * p.tx;
+      const launch = j.launch * (this.jumpTuning.jumpLaunchScale ?? 1),
+        gravity = 9.8 * (this.jumpTuning.jumpGravityScale ?? 1);
+      if (
+        crossesGate(before, b, j.gate) &&
+        Math.abs(lateral - j.side * j.offset) < j.halfWidth &&
+        Math.hypot(b.vx, b.vz) >= j.minSpeed &&
+        safeJumpFlight(this.world, b, launch, gravity)
+      ) {
+        this.takenJumps.add(j.id);
+        this.activeJump = j;
+        this.jumpTaken = true;
+        this.airborne = true;
+        this.height = 0.02;
+        this.verticalVelocity = launch;
+        break;
+      }
     }
   }
+
   cue(b, dt, input) {
     if (this.phase === "RACE") return null;
     if (this.phase === "EXIT" && !this.exitApproach) {

@@ -4,7 +4,7 @@ export function mountSettings(store,apply){
  const root=document.getElementById('debug'),status=document.createElement('p');status.id='settingsStatus';status.setAttribute('role','status');
  const message=text=>status.textContent=text;
  const section=name=>{const d=document.createElement('details'),s=document.createElement('summary');s.textContent=name;d.append(s);d.className='settings-section';root.append(d);return d;};
- const groups=Object.fromEntries(['Boat Handling','Water Physics','Spray Effects','Graphics','Audio','Race Start','Debug Tools','Saved Presets'].map(name=>[name,section(name)]));
+ const groups=Object.fromEntries(['Boat Handling','River Jumps','Water Physics','Spray Effects','Graphics','Audio','Race Start','Debug Tools','Saved Presets'].map(name=>[name,section(name)]));
  groups['Boat Handling'].open=true;
  for(const [id,s] of Object.entries(registry)){
   let el=document.getElementById(id),label=el?.closest('label');

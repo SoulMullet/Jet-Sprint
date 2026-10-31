@@ -1,3 +1,4 @@
+import {flightPitch} from './river-jumps.js';
 import * as THREE from 'three';
 import {HullMotion} from './hull-motion.js';
 import {handlingDefaults} from './handling.js';
@@ -12,10 +13,11 @@ export class BoatPresentation {
   }
  }
  reset(){this.roll=this.pitch=this.lastSpeed=0;this.motion.reset();}
+ land(speed){this.motion.heaveVelocity-=Math.min(1,speed*.08);this.motion.pitchVelocity-=Math.min(.2,speed*.02);}
  step(b,dt,time){this.motion.update(b,dt,time);}
- update(b,input,dt,time,rpm,top){
+ update(b,input,dt,time,rpm,top,flight=null){
   if(!this.fixedStep)this.motion.update(b,dt,time);this.roll=this.motion.roll;this.pitch=this.motion.pitch;
-  this.boat.position.set(b.x,-.12+this.motion.heave,b.z);this.boat.rotation.set(this.roll,-b.angle,this.pitch);this.uniforms.engineClock.value=time;this.uniforms.engineRPM.value=rpm;
+  this.boat.position.set(b.x,-.12+this.motion.heave+Math.max(0,flight?.height??0),b.z);this.boat.rotation.set(this.roll,-b.angle,this.pitch+flightPitch(flight?.verticalVelocity,Math.hypot(b.vx,b.vz),flight?.airborne));this.uniforms.engineClock.value=time;this.uniforms.engineRPM.value=rpm;
  }
  // Future GLTFLoader integrations can supply a resolved scene here. Keep the
  // root/seat coordinates/camera contract; normalize the model to the current hull.

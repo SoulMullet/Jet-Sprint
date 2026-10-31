@@ -1,0 +1,369 @@
+{
+  "checks": [
+    {
+      "level": 1,
+      "jump": 1,
+      "mode": "river",
+      "flightFrames": 41,
+      "peak": 0.5954583333333342,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 1,
+      "jump": 1,
+      "mode": "classic",
+      "flightFrames": 42,
+      "peak": 0.5954583333333339,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 1,
+      "jump": 1,
+      "mode": "chase",
+      "flightFrames": 41,
+      "peak": 0.5954583333333339,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 1,
+      "jump": 1,
+      "mode": "cockpit",
+      "flightFrames": 41,
+      "peak": 0.5954583333333342,
+      "minVisibleMeshes": 6
+    },
+    {
+      "level": 1,
+      "jump": 1,
+      "mode": "overhead",
+      "flightFrames": 41,
+      "peak": 0.5954583333333342,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 1,
+      "jump": 2,
+      "mode": "river",
+      "flightFrames": 47,
+      "peak": 0.7409861111111119,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 1,
+      "jump": 2,
+      "mode": "classic",
+      "flightFrames": 47,
+      "peak": 0.7409861111111119,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 1,
+      "jump": 2,
+      "mode": "chase",
+      "flightFrames": 47,
+      "peak": 0.7409861111111119,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 1,
+      "jump": 2,
+      "mode": "cockpit",
+      "flightFrames": 47,
+      "peak": 0.7409861111111119,
+      "minVisibleMeshes": 6
+    },
+    {
+      "level": 1,
+      "jump": 2,
+      "mode": "overhead",
+      "flightFrames": 47,
+      "peak": 0.7409861111111119,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 1,
+      "jump": 3,
+      "mode": "river",
+      "flightFrames": 47,
+      "peak": 0.7409861111111119,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 1,
+      "jump": 3,
+      "mode": "classic",
+      "flightFrames": 47,
+      "peak": 0.7409861111111119,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 1,
+      "jump": 3,
+      "mode": "chase",
+      "flightFrames": 47,
+      "peak": 0.7409861111111119,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 1,
+      "jump": 3,
+      "mode": "cockpit",
+      "flightFrames": 47,
+      "peak": 0.7409861111111119,
+      "minVisibleMeshes": 6
+    },
+    {
+      "level": 1,
+      "jump": 3,
+      "mode": "overhead",
+      "flightFrames": 47,
+      "peak": 0.7409861111111119,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 2,
+      "jump": 1,
+      "mode": "river",
+      "flightFrames": 42,
+      "peak": 0.5954583333333342,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 2,
+      "jump": 1,
+      "mode": "classic",
+      "flightFrames": 42,
+      "peak": 0.5954583333333342,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 2,
+      "jump": 1,
+      "mode": "chase",
+      "flightFrames": 42,
+      "peak": 0.5954583333333342,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 2,
+      "jump": 1,
+      "mode": "cockpit",
+      "flightFrames": 42,
+      "peak": 0.5954583333333342,
+      "minVisibleMeshes": 6
+    },
+    {
+      "level": 2,
+      "jump": 1,
+      "mode": "overhead",
+      "flightFrames": 42,
+      "peak": 0.5954583333333342,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 2,
+      "jump": 2,
+      "mode": "river",
+      "flightFrames": 47,
+      "peak": 0.7409861111111119,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 2,
+      "jump": 2,
+      "mode": "classic",
+      "flightFrames": 47,
+      "peak": 0.7409861111111119,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 2,
+      "jump": 2,
+      "mode": "chase",
+      "flightFrames": 47,
+      "peak": 0.7409861111111119,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 2,
+      "jump": 2,
+      "mode": "cockpit",
+      "flightFrames": 47,
+      "peak": 0.7409861111111119,
+      "minVisibleMeshes": 6
+    },
+    {
+      "level": 2,
+      "jump": 2,
+      "mode": "overhead",
+      "flightFrames": 47,
+      "peak": 0.7409861111111119,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 2,
+      "jump": 3,
+      "mode": "river",
+      "flightFrames": 47,
+      "peak": 0.7409861111111131,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 2,
+      "jump": 3,
+      "mode": "classic",
+      "flightFrames": 47,
+      "peak": 0.7409861111111131,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 2,
+      "jump": 3,
+      "mode": "chase",
+      "flightFrames": 47,
+      "peak": 0.7409861111111131,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 2,
+      "jump": 3,
+      "mode": "cockpit",
+      "flightFrames": 47,
+      "peak": 0.7409861111111131,
+      "minVisibleMeshes": 6
+    },
+    {
+      "level": 2,
+      "jump": 3,
+      "mode": "overhead",
+      "flightFrames": 47,
+      "peak": 0.7409861111111131,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 3,
+      "jump": 1,
+      "mode": "river",
+      "flightFrames": 42,
+      "peak": 0.5954583333333392,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 3,
+      "jump": 1,
+      "mode": "classic",
+      "flightFrames": 42,
+      "peak": 0.5954583333333392,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 3,
+      "jump": 1,
+      "mode": "chase",
+      "flightFrames": 42,
+      "peak": 0.5954583333333392,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 3,
+      "jump": 1,
+      "mode": "cockpit",
+      "flightFrames": 42,
+      "peak": 0.5954583333333392,
+      "minVisibleMeshes": 6
+    },
+    {
+      "level": 3,
+      "jump": 1,
+      "mode": "overhead",
+      "flightFrames": 42,
+      "peak": 0.5954583333333392,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 3,
+      "jump": 2,
+      "mode": "river",
+      "flightFrames": 47,
+      "peak": 0.7409861111111131,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 3,
+      "jump": 2,
+      "mode": "classic",
+      "flightFrames": 47,
+      "peak": 0.7409861111111131,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 3,
+      "jump": 2,
+      "mode": "chase",
+      "flightFrames": 47,
+      "peak": 0.7409861111111131,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 3,
+      "jump": 2,
+      "mode": "cockpit",
+      "flightFrames": 47,
+      "peak": 0.7409861111111131,
+      "minVisibleMeshes": 6
+    },
+    {
+      "level": 3,
+      "jump": 2,
+      "mode": "overhead",
+      "flightFrames": 47,
+      "peak": 0.7409861111111131,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 3,
+      "jump": 3,
+      "mode": "river",
+      "flightFrames": 47,
+      "peak": 0.7409861111111122,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 3,
+      "jump": 3,
+      "mode": "classic",
+      "flightFrames": 47,
+      "peak": 0.7409861111111119,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 3,
+      "jump": 3,
+      "mode": "chase",
+      "flightFrames": 47,
+      "peak": 0.7409861111111119,
+      "minVisibleMeshes": 10
+    },
+    {
+      "level": 3,
+      "jump": 3,
+      "mode": "cockpit",
+      "flightFrames": 47,
+      "peak": 0.7409861111111119,
+      "minVisibleMeshes": 6
+    },
+    {
+      "level": 3,
+      "jump": 3,
+      "mode": "overhead",
+      "flightFrames": 47,
+      "peak": 0.7409861111111119,
+      "minVisibleMeshes": 10
+    }
+  ],
+  "lowAndHighAndFluidShadersRender": true,
+  "wildlifeDisablePersists": true,
+  "jumpTuningPersists": true,
+  "errors": [],
+  "fixture": "Actual game main-loop development browser with controlled 60Hz clock. Explicit practice placement 3m before each shared ramp; 45 combinations of 9 jumps and 5 cameras. No boat teleports during each flight. Frustum and finite-transform checks every frame, inspected rendered screenshots. No physical Safari/Xbox, audio listening or sustained FPS claim."
+}

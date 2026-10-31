@@ -218,6 +218,7 @@ export function createCampaignAdventure(definition = campaignDefinition) {
       });
     }
   }
+  for(const leg of legs)leg.rocks=rocks;
   return {
     definition,
     courses,

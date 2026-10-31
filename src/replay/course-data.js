@@ -1,3 +1,4 @@
+import { flightPitch, jumpDefaults } from "../river-jumps.js";
 import { forceKeys, handlingKeys } from "../handling.js";
 import { S, wrapAngle } from "./model.js";
 export const BOAT_CONFIG = "sprint-boat-1987-v1",
@@ -12,7 +13,13 @@ export function fingerprint(value) {
   return (h >>> 0).toString(16).padStart(8, "0");
 }
 export const tuneIdentifier = (tuning) =>
-  "forces-" + fingerprint(forceKeys.map((k) => [k, tuning[k]]));
+  "forces-" +
+  fingerprint([
+    ...forceKeys.map((k) => [k, tuning[k]]),
+    ...["jumpLaunchScale", "jumpGravityScale"]
+      .filter((k) => (tuning[k] ?? 1) !== 1)
+      .map((k) => [k, tuning[k]]),
+  ]);
 export const recordKey = (meta) =>
   [meta.course.kind, meta.course.id, meta.course.revision, meta.tuneId].join(
     "/",
@@ -48,7 +55,12 @@ export function createReplayMeta(course, tuning, build, sessionId, id) {
     boatConfig: BOAT_CONFIG,
     physicsVersion: PHYSICS_VERSION,
     tuneId: tuneIdentifier(tuning),
-    tuning: Object.fromEntries(handlingKeys.map((k) => [k, tuning[k]])),
+    tuning: Object.fromEntries(
+      [...handlingKeys, "jumpLaunchScale", "jumpGravityScale"].map((k) => [
+        k,
+        tuning[k] ?? jumpDefaults[k],
+      ]),
+    ),
   };
 }
 export function orderedProgress(tour, b, out = {}) {
@@ -109,10 +121,7 @@ export function captureRow(
 ) {
   const pitch =
       (motion.pitch || 0) +
-      (airborne
-        ? Math.atan2(verticalVelocity, Math.max(1, Math.hypot(b.vx, b.vz))) *
-          0.35
-        : 0),
+      flightPitch(verticalVelocity, Math.hypot(b.vx, b.vz), airborne),
     x = motion.roll || 0,
     y = -b.angle,
     z = pitch,

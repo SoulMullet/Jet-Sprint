@@ -41,7 +41,7 @@ export class RiverSurface {
       leg = this.world.legs.find((l) => l.river.id === n.segmentId),
       power = leg
         ? leg.riverDefinition.rapids.strength *
-          0.75 *
+          0.04 *
           this.water.uniforms.summerWaves.value
         : 0;
     this.uniforms.riverPower.value +=

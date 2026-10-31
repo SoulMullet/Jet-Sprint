@@ -113,6 +113,11 @@ export class BallisticSpray {
     this.age[i] = 0;
     return i;
   }
+  landingBurst(b,intensity){
+    this.impact(b.x,0,b.z,intensity);
+    const launch=this.launch;
+    for(let i=0;i<Math.min(96,Math.round(intensity*20));i++){const a=this.random()*Math.PI*2,speed=1+this.random()*intensity;Object.assign(launch,{px:b.x+Math.cos(a)*.8,py:.08,pz:b.z+Math.sin(a)*.8,vx:Math.cos(a)*speed+(b.vx||0)*.12,vy:1.5+this.random()*2.2,vz:Math.sin(a)*speed+(b.vz||0)*.12});this.emit(launch,.55+this.random()*.5,2,.09+this.random()*.12,2);}
+  }
   impact(x, y, z, intensity) {
     if (intensity <= 0 || !this.isWater(x, z)) return;
     const j = (this.splashCursor++ % this.splashCapacity) * 5;

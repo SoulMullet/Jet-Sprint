@@ -1,0 +1,12 @@
+{
+  "state": {
+    "version": "river-dressing-1987-v1",
+    "logs": 30,
+    "boulders": 10,
+    "seals": 6,
+    "active": -1,
+    "age": 0
+  },
+  "errors": [],
+  "fixture": "Rendered practice placement near a real seeded debris cluster. Existing cockpit camera, real environment animation and High water reflections. No collision or progression interaction."
+}

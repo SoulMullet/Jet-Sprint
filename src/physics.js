@@ -1,8 +1,9 @@
+import {jumpDefaults} from './river-jumps.js';
 import {handlingDefaults,planingFactor} from './handling.js';
 import {outerSpline} from './track-layout.js';
 import {BOAT_MASS,REFERENCE_YAW_INERTIA,channelParameters,PHYSICS_STEP} from './physics-parameters.js';
 export {BOAT_MASS,REFERENCE_YAW_INERTIA,PHYSICS_STEP} from './physics-parameters.js';
-export const settings={...handlingDefaults,cameraResponse:8,effects:1,sprayDistance:100,waterVolume:100};
+export const settings={...handlingDefaults,...jumpDefaults,cameraResponse:8,effects:1,sprayDistance:100,waterVolume:100};
 export const channel=channelParameters;
 export const course=outerSpline;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));

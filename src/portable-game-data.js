@@ -1,3 +1,5 @@
+import { riverJumpSites } from "./river-jumps.js";
+import { riverEnvironmentData } from "./river-environment-data.js";
 import {
   garageEconomy,
   maintenanceSpecs,
@@ -88,6 +90,7 @@ export function portableGameData(world, tuning = {}, build = "local") {
       presets: handlingProfiles,
     },
     campaign: world.definition,
+    riverDressing: riverEnvironmentData(world),
     courses: world.courses.map((c, i) => ({
       descriptor: courseDescriptor(world, i),
       nodes: c.nodes,
@@ -119,6 +122,7 @@ export function portableGameData(world, tuning = {}, build = "local") {
     })),
     rivers: world.legs.map((l, i) => ({
       descriptor: courseDescriptor(world, i, "river"),
+      jumps: riverJumpSites(world.legs[i]),
       points: l.river.points.map((p) => [p.x, p.z]),
       checkpoints: l.checkpoints.map((g) => ({
         x: g.x,

@@ -9,7 +9,7 @@ export class WaterReflections {
   this.position=new THREE.Vector3();this.look=new THREE.Vector3();this.up=new THREE.Vector3();this.normal=new THREE.Vector3(0,1,0);this.plane=new THREE.Plane(this.normal,0);this.clip=new THREE.Vector4();this.corner=new THREE.Vector4();this.size=new THREE.Vector2();
  }
  configure(quality){
-  const sizes={off:0,low:256,medium:512,high:1024},size=sizes[quality]||0;this.interval=quality==='high'?1/30:1/20;
+  const sizes={off:0,low:256,medium:512,high:1024},size=sizes[quality]||0;this.interval=quality==='high'?1/20:quality==='low'?1/8:1/12;
   if(size===this.sizePx)return;this.disposeTarget();this.sizePx=size;this.elapsed=1;
   if(size&&this.available){const type=this.renderer.extensions.has('EXT_color_buffer_float')?THREE.HalfFloatType:THREE.UnsignedByteType;this.target=new THREE.WebGLRenderTarget(size,size,{type,generateMipmaps:false});this.target.texture.name='HF freshwater planar reflection';this.uniforms.hfReflection.value=this.target.texture;this.validated=false;}
  }

@@ -16,15 +16,8 @@ uniform float hfEnabled,hfDetail;
 uniform vec4 hfWake[24];
 float hfHash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
 float hfNoise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hfHash(i),hfHash(i+vec2(1.,0.)),f.x),mix(hfHash(i+vec2(0.,1.)),hfHash(i+vec2(1.)),f.x),f.y);}
-vec3 hfWaves(vec2 p,float t){
- vec3 w=vec3(0.);
- for(int i=0;i<6;i++){
-  if(float(i)>1.+hfDetail*1.5)break;
-  float k=float(i),f=.55+k*.51,a=k*2.39996;vec2 d=vec2(cos(a),sin(a));
-  float phase=dot(p,d)*f+t*(.75+k*.24),amp=.032/(1.+k*.8);
-  w+=vec3(sin(phase),cos(phase)*f*d)*amp;
- }return w;
-}
+vec3 summerWave(vec2 p);
+vec3 hfWaves(vec2 p,float t){return summerWave(p);}
 float hfTurbulence(vec2 p){float f=0.;for(int i=0;i<24;i++){
  if(float(i)>3.+hfDetail*7.)break;
  vec4 w=hfWake[i];float age=w.z,r=.6+age*1.2;
@@ -39,7 +32,7 @@ export function finishHFWater(material,uniforms,{simulated=false}={}){
   previous(shader);Object.assign(shader.uniforms,uniforms);
   shader.vertexShader=common+'uniform mat4 hfReflectionMatrix;varying vec4 hfReflectCoord;\n'+shader.vertexShader;
   shader.vertexShader=shader.vertexShader.replace('#include <project_vertex>',`
-   if(hfEnabled>.5){vec3 hfW=hfWaves(position.xz,summerTime*summerSpeed);float hfT=hfTurbulence(position.xz);transformed.y+=(hfW.x*summerWaves+sin(length(position.xz-summerBoat.xz)*5.-summerTime*7.)*hfT*.025)*shoreFade;}
+   if(hfEnabled>.5){vec3 hfW=hfWaves(position.xz,summerTime*summerSpeed);float hfT=hfTurbulence(position.xz);transformed.y+=sin(length(position.xz-summerBoat.xz)*5.-summerTime*7.)*hfT*.025*shoreFade;}
    hfReflectCoord=hfReflectionMatrix*vec4(transformed,1.);
    #include <project_vertex>`);
   // summerBoat is shared by the vertex wake displacement and the fragment finish.
@@ -48,18 +41,18 @@ export function finishHFWater(material,uniforms,{simulated=false}={}){
   const guard=simulated?'hfEnabled>.5&&fluidDebug==0':'hfEnabled>.5';
   shader.fragmentShader=shader.fragmentShader.replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
    if(${guard}){
-    float t=summerTime*summerSpeed;vec2 p=summerWorld;
-    vec3 n1=texture2D(hfNormal,p*.083+vec2(t*.009,t*.003)).xyz*2.-1.;
+    float t=summerTime*summerSpeed*.12;vec2 p=summerWorld;
+    vec3 n1=texture2D(hfNormal,p*.013+vec2(t*.009,t*.003)).xyz*2.-1.;
     vec2 rotated=mat2(.8,-.6,.6,.8)*p;
-    vec3 n2=texture2D(hfNormal,rotated*.151+vec2(-t*.006,t*.011)).xyz*2.-1.;
-    vec3 n3=vec3(0.,1.,0.);if(hfDetail>1.5)n3=texture2D(hfNormal,p*.317+vec2(t*.017,-t*.008)).xyz*2.-1.;
-    vec3 w=hfWaves(p,t);vec2 slope=(n1.xz*.42+n2.xz*.23+n3.xz*.12+vec2(-w.y,-w.z))*summerWaves;
+    vec3 n2=texture2D(hfNormal,rotated*.023+vec2(-t*.006,t*.011)).xyz*2.-1.;
+    vec3 n3=vec3(0.,1.,0.);if(hfDetail>1.5)n3=texture2D(hfNormal,p*.037+vec2(t*.017,-t*.008)).xyz*2.-1.;
+    vec3 w=hfWaves(p,t);vec2 slope=(n1.xz*.018+n2.xz*.009+n3.xz*.004+vec2(-w.y,-w.z))*summerWaves;
     normal=normalize(normal+(viewMatrix*vec4(slope.x,0.,slope.y,0.)).xyz*summerEdge);
    }`);
   shader.fragmentShader=shader.fragmentShader.replace('#include <metalnessmap_fragment>',`#include <metalnessmap_fragment>
    if(${guard}){
-    float d=mix(summerEdge,texture2D(summerDepth,(summerWorld+125.)/250.).r,step(max(abs(summerWorld.x),abs(summerWorld.y)),124.));
-    vec3 bed=vec3(.18,.25,.12),deep=vec3(.012,.135,.13);
+    float d=mix(summerEdge,texture2D(summerDepth,(summerWorld+125.)/250.).r,(1.-smoothstep(100.,124.,max(abs(summerWorld.x),abs(summerWorld.y)))));
+    vec3 bed=vec3(.12,.20,.16),deep=vec3(.015,.095,.10);
     vec3 transmission=exp(-vec3(2.6,.65,.48)*(.3+d*2.5));
     diffuseColor.rgb=mix(deep,bed,transmission)*1.25;
     float t=summerTime*summerSpeed,n=hfNoise(summerWorld*2.7+vec2(t*.08,-t*.06));
@@ -67,7 +60,7 @@ export function finishHFWater(material,uniforms,{simulated=false}={}){
     float shore=(1.-smoothstep(.04,.4,summerEdge))*(.25+.75*n);
     float foam=smoothstep(.32,.75,turbulent*(.5+n))*summerFoam;
     diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.78,.89,.84),clamp((shore*.3+foam*.8)*summerFoam,0.,.88));
-    roughnessFactor=mix(.105,.38,foam);metalnessFactor=0.;
+    roughnessFactor=mix(.045,.30,foam);metalnessFactor=0.;
    }`);
   shader.fragmentShader=shader.fragmentShader.replace('#include <opaque_fragment>',`
    if(${guard}&&hfReflectionActive>.5){
@@ -81,5 +74,5 @@ export function finishHFWater(material,uniforms,{simulated=false}={}){
    #include <opaque_fragment>`);
   material.hfShader=shader;
  };
- material.customProgramCacheKey=()=>simulated?'HF-GRAPHICS-V2-fluid':'HF-GRAPHICS-V2-water';
+ material.customProgramCacheKey=()=>simulated?'calm-fluid-v1':'calm-water-v1';
 }

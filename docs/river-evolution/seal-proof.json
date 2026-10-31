@@ -1,0 +1,12 @@
+{
+  "state": {
+    "version": "river-dressing-1987-v1",
+    "logs": 30,
+    "boulders": 10,
+    "seals": 6,
+    "active": 0,
+    "age": 2
+  },
+  "errors": [],
+  "fixture": "Rendered practice placement near a real seeded seal site. Existing cockpit camera, real environment animation and High water reflections. No collision or progression interaction."
+}

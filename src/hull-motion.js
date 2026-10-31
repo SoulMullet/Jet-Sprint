@@ -1,3 +1,4 @@
+import {calmHeight} from './calm-water.js';
 import {handlingDefaults,planingFactor} from './handling.js';
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),rad=Math.PI/180;
 const flat=(_x,_z,_time,out)=>{out.height=out.wake=0;};
@@ -7,10 +8,7 @@ const flat=(_x,_z,_time,out)=>{out.height=out.wake=0;};
 export function createWaterSampler(uniforms){
  return (x,z,time,out)=>{
   const t=time*uniforms.summerSpeed.value,amplitude=uniforms.summerWaves.value;
-  let h=Math.sin(x*.48+z*.23+t*1.15)*.055+Math.sin(x*-.27+z*.63-t*.9)*.035;
-  if(uniforms.hfEnabled.value>.5){
-   for(let i=0;i<6;i++){if(i>1+uniforms.hfDetail.value*1.5)break;const f=.55+i*.51,a=i*2.39996;h+=Math.sin((x*Math.cos(a)+z*Math.sin(a))*f+t*(.75+i*.24))*.032/(1+i*.8);}
-  }
+  const h=calmHeight(x,z,t);
   out.height=h*amplitude;out.wake=0;
   if(uniforms.hfEnabled.value>.5){let turbulence=0;const wakes=uniforms.hfWake.value;
    for(let i=0;i<wakes.length;i++){if(i>3+uniforms.hfDetail.value*7)break;const w=wakes[i],r=.6+w.z*1.2;const dx=x-w.x,dz=z-w.y;turbulence+=Math.exp(-(dx*dx+dz*dz)/(r*r))*w.w*Math.max(0,1-w.z/5);}

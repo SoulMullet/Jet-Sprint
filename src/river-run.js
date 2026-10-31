@@ -88,6 +88,12 @@ export class RiverRunTour {
   get height() {
     return this.leaf.height;
   }
+  get verticalVelocity() {
+    return this.leaf?.verticalVelocity ?? 0;
+  }
+  get landingSpeed() {
+    return this.leaf?.landingSpeed ?? 0;
+  }
   get airborne() {
     return this.leaf.airborne;
   }
@@ -239,6 +245,10 @@ export class RiverRunTour {
       completed: this.done,
       practice: this.practice,
       airborne: this.airborne,
+      height: this.height,
+      verticalVelocity: this.verticalVelocity,
+      landingSpeed: this.landingSpeed,
+      jumps: this.leaf.takenJumps.size,
       clean: this.eventClean,
       best: this.progress.best(this.level.id),
     };

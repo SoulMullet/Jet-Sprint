@@ -1,13 +1,14 @@
 import {sprayControls,sprayDefaults} from './spray-settings.js';
 import {handlingDefaults,physicsControls,handlingKeys,handlingProfiles,identifyHandling} from './handling.js';
 export const SETTINGS_SCHEMA=3;
-export const GAME_VERSION='0.24.0';
+export const GAME_VERSION='0.25.0';
 export const settingsKey='jet-sprint-settings';
 export const presetsKey='jet-sprint-presets';
 const number=(category,label,defaultValue,min,max,step=1,unit='')=>({category,label,type:'number',default:defaultValue,min,max,step,unit});
 const choice=(category,label,defaultValue,options)=>({category,label,type:'enum',default:defaultValue,options});
 const bool=(category,label,defaultValue)=>({category,label,type:'boolean',default:defaultValue});
 export const registry={
+ jumpLaunchScale:number('River Jumps','Jump launch scale',1,.6,1.6,.05,'×'),jumpGravityScale:number('River Jumps','Jump gravity scale',1,.6,1.5,.05,'×'),landingSplash:number('River Jumps','Landing splash intensity',1,0,2,.1,'×'),
  ...Object.fromEntries(Object.entries(sprayControls).map(([id,s])=>[id,{...number('Spray Effects',s.label,s.value,s.min,s.max,s.step,s.unit),description:s.description}])),
  ...Object.fromEntries(Object.entries(physicsControls).map(([id,s])=>[id,{...number('Boat Handling',s.label,s.value,s.min,s.max,s.step,s.unit),description:s.description}])),
  invertBank:bool('Boat Handling','Invert banking direction',false),physicsPreset:choice('Boat Handling','Physics preset','balanced',['balanced','arcade','simulation','custom']),physicsTelemetry:bool('Boat Handling','Show live physics telemetry',false),

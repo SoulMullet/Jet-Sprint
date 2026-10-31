@@ -84,7 +84,7 @@ export class TourPresentation {
       new THREE.MeshBasicMaterial({
         color: "#e0e8cd",
         transparent: true,
-        opacity: 0.32,
+        opacity: 0.025,
         depthWrite: false,
         side: THREE.DoubleSide,
       }),

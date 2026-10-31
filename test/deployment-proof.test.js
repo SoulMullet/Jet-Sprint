@@ -14,12 +14,13 @@ function fixture() {
   ]);
   const info = {
     commit: sha,
-    version: "0.24.0",
+    version: "0.25.0",
     identity: "MARINE-87",
     simulation: "world-space-fixed-step",
     campaign: "four-track-1987",
     gameplay: "river-runs-v1",
     garage: "persistent-career-v1",
+    environment: "glassy-jumps-v1",
     controls: "analog-input-v1",
     economy: "wallet-v2",
     streaming: "worker-tiles-v1",

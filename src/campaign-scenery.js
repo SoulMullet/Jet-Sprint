@@ -1,3 +1,4 @@
+import { riverJumpSites } from "./river-jumps.js";
 import * as THREE from "three";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import { displayFont, interfaceFont, repaintAfterFonts } from "./typography.js";
@@ -110,48 +111,49 @@ export class CampaignScenery {
       }
     scene.add(this.posts, this.flags);
     this.lastCheckpoint = -1;
-    const j = river1.jump,
-      p = world.river.sample(j.distance),
-      x = p.x - p.tz * j.side * j.offset,
-      z = p.z + p.tx * j.side * j.offset;
-    const ramp = new THREE.Group();
-    ramp.position.set(x, 0.04, z);
-    ramp.rotation.y = -Math.atan2(p.tz, p.tx);
-    scene.add(ramp);
-    // A small side ramp leaves the central channel unobstructed.
-    const deck = this.mesh(
-      this.box,
-      this.materials.wood,
-      -1,
-      0.16,
-      0,
-      3,
-      0.12,
-      j.halfWidth * 2,
-      ramp,
-    );
-    deck.rotation.z = 0.14;
-    for (const side of [-1, 1])
-      this.mesh(
+    for (const j of riverJumpSites(world)) {
+      const p = world.river.sample(j.distance),
+        x = p.x - p.tz * j.side * j.offset,
+        z = p.z + p.tx * j.side * j.offset;
+      const ramp = new THREE.Group();
+      ramp.position.set(x, 0.04, z);
+      ramp.rotation.y = -Math.atan2(p.tz, p.tx);
+      scene.add(ramp);
+      // A small side ramp leaves the central channel unobstructed.
+      const deck = this.mesh(
         this.box,
-        this.materials.gold,
+        this.materials.wood,
         -1,
-        0.26,
-        side * j.halfWidth,
+        0.16,
+        0,
         3,
-        0.07,
-        0.08,
+        0.12,
+        j.halfWidth * 2,
         ramp,
-      ).rotation.z = 0.14;
-    this.sign(
-      "OPTIONAL JUMP",
-      "CENTRE CHANNEL = BYPASS",
-      p.x - p.tz * j.side * (river1.waterWidth + 2),
-      2.4,
-      p.z + p.tx * j.side * (river1.waterWidth + 2),
-      -Math.atan2(p.tz, p.tx) + Math.PI / 2,
-      3,
-    );
+      );
+      deck.rotation.z = 0.14;
+      for (const side of [-1, 1])
+        this.mesh(
+          this.box,
+          this.materials.gold,
+          -1,
+          0.26,
+          side * j.halfWidth,
+          3,
+          0.07,
+          0.08,
+          ramp,
+        ).rotation.z = 0.14;
+      this.sign(
+        "OPTIONAL JUMP",
+        "CENTRE CHANNEL = BYPASS",
+        p.x - p.tz * j.side * (river1.waterWidth + 2),
+        2.4,
+        p.z + p.tx * j.side * (river1.waterWidth + 2),
+        -Math.atan2(p.tz, p.tx) + Math.PI / 2,
+        3,
+      );
+    }
     const arrow = new THREE.BufferGeometry();
     arrow.setAttribute(
       "position",

@@ -1,6 +1,8 @@
-# JET SPRINT v0.24.0 — Persistent Garage & Career
+# JET SPRINT v0.25.0 — Glassy Rivers & Reliable Jumps
 
 A mobile-first, single-player 3D jetboat game built with JavaScript, Vite, Three.js and Web Audio. Geometry and sound are procedural; licensed interface fonts are bundled locally. No paid assets, account, API keys or backend are required.
+
+This release fixes the disappearing boat at jumps, adds two optional ramps per river (nine total), and replaces the exaggerated ambient water motion with low-amplitude glassy ripples. High/Ultra retain shoreline/sky reflections at bounded update rates; Low/Medium retain environment reflections without a live scene pass. Shoreline logs/debris, clear-water boulders and occasional decorative seals add variety. **VIDEO → Environment → Seal wildlife effects** disables wildlife and persists. **HULL → River Jumps** exposes saved launch/gravity/splash tuning. [Root cause, geometry audit, exact files, screenshots and verification](docs/GLASSY_RIVERS.md).
 
 Race the **three existing River Rush levels** with one persistent jetboat. Open **GARAGE / YOUR BOAT** on the title screen, **Pause → Garage / fuel & repairs**, or **RETURN TO GARAGE** in results. Earn finish prizes, burn fuel, carry impact damage, buy refuelling/repairs and return to racing. The garage displays the real boat model using the existing renderer. It pauses the run and consumes no fuel. No account, cloud backend, Unreal integration, new boat or purchasable upgrades is included.
 

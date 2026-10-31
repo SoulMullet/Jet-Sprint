@@ -1,3 +1,4 @@
+import { resolveLogContacts } from "./river-environment-data.js";
 import { Campaign, crossesGate } from "./campaign.js";
 import { Race } from "./race.js";
 import { RouteNavigator } from "./navigation.js";
@@ -74,6 +75,12 @@ export class CampaignTour {
   get height() {
     return this.leaf?.height ?? 0;
   }
+  get verticalVelocity() {
+    return this.leaf?.verticalVelocity ?? 0;
+  }
+  get landingSpeed() {
+    return this.leaf?.landingSpeed ?? 0;
+  }
   get airborne() {
     return this.leaf?.airborne ?? false;
   }
@@ -106,6 +113,7 @@ export class CampaignTour {
     return true;
   }
   contact(b) {
+    resolveLogContacts(b, this.world.debris || []);
     for (const rock of this.world.rocks) {
       const dx = b.x - rock.x,
         dz = b.z - rock.z,
@@ -123,10 +131,11 @@ export class CampaignTour {
         b.collisionImpulse = Math.max(b.collisionImpulse || 0, -v * 1.25);
       }
     }
-    const raw = (this.world.collisionNearest??this.world.nearest)(b.x, b.z),n=raw.collision??raw;
+    const raw = (this.world.collisionNearest ?? this.world.nearest)(b.x, b.z),
+      n = raw.collision ?? raw;
     if (
       (b.collisionImpulse || 0) > 1.5 ||
-      (b.bankDepth || 0) > .7 ||
+      (b.bankDepth || 0) > 0.7 ||
       Math.hypot(b.x - n.x, b.z - n.z) > (n.hullLimit ?? 6.5) + 0.7
     )
       this.eventClean = false;

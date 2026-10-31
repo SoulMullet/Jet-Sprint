@@ -31,6 +31,7 @@ await writeFile(
       campaign: "four-track-1987",
       gameplay: "river-runs-v1",
       garage: "persistent-career-v1",
+      environment: "glassy-jumps-v1",
       controls: "analog-input-v1",
       economy: "wallet-v2",
       streaming: "worker-tiles-v1",

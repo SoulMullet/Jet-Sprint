@@ -6,8 +6,8 @@ export const summerControls={
  vegetation:n('Environment','Vegetation density',.85,.2,1),spectators:n('Environment','Spectator density',1,.25,1),drawDistance:n('Environment','Object draw distance (m)',160,60,220,10),particleQuality:n('Environment','Particle quality',.9,.25,1),
  resolutionScale:n('Performance','Resolution scale',1,.5,1),pixelRatioCap:n('Performance','Pixel ratio cap',1.7,1,2,.1),shadowResolution:n('Performance','Shadow resolution',1024,256,2048,256)
 };
-export const summerOptions={waterDetail:['low','medium','high','ultra'],reflectionQuality:['off','low','medium','high'],postQuality:['off','low','high']};
-export const summerDefaults=()=>({...Object.fromEntries(Object.entries(summerControls).map(([k,v])=>[k,v.value])),shadows:'soft',showFPS:false,baseQuality:'high',preset:'high',waterDetail:'high',reflectionQuality:'medium',postQuality:'low'});
+export const summerOptions={waterDetail:['low','medium','high','ultra'],reflectionQuality:['off','low','medium','high'],postQuality:['off','low','high'],wildlife:['on','off']};
+export const summerDefaults=()=>({...Object.fromEntries(Object.entries(summerControls).map(([k,v])=>[k,v.value])),shadows:'soft',showFPS:false,baseQuality:'high',preset:'high',waterDetail:'high',reflectionQuality:'medium',postQuality:'low',wildlife:'on'});
 export const summerProfiles={
  low:{baseQuality:'low',waterDetail:'low',reflectionQuality:'off',postQuality:'off',resolutionScale:.8,pixelRatioCap:1,shadowResolution:256,shadows:'off',bloom:0,saturation:1,vegetation:.4,spectators:.5,drawDistance:95,particleQuality:.4,sprayCount:256},
  medium:{baseQuality:'medium',waterDetail:'medium',reflectionQuality:'off',postQuality:'off',resolutionScale:.9,pixelRatioCap:1.35,shadowResolution:512,bloom:0,saturation:1,vegetation:.65,spectators:.75,drawDistance:125,particleQuality:.65,sprayCount:640},
