@@ -1,3 +1,4 @@
+import {clearShoreRock} from './scenery-clearance.js';
 import * as THREE from 'three';
 import {displayFont,interfaceFont,repaintAfterFonts} from './typography.js';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
@@ -84,7 +85,8 @@ export function createRetroVenue(scene,nearest){
  let seed=1987;const random=()=>((seed=(seed*1664525+1013904223)>>>0)/4294967296);
  for(let i=0;i<130;i++){const x=(random()-.5)*150,z=(random()-.5)*90,n=nearest(x,z),d=Math.hypot(x-n.x,z-n.z);if(d<9.8||d>12)continue;for(let j=0;j<3;j++){const reed=box('roof',x+j*.12,.5,z+j*.13,.055,.7+random()*.6,.055);reed.rotation.z=(random()-.5)*.4;}}
  // Distant hills are closed low-poly masses; no expensive terrain LOD system.
- for(let i=0;i<13;i++){const hill=item(new THREE.SphereGeometry(1,24,12),'roof',-115+i*20,6+random()*6,-145-random()*12,18+random()*12,20+random()*18,13+random()*10);hill.rotation.y=random()*3;}
+ const shoreRocks=[];
+ for(let i=0;i<13;i++){const x=-115+i*20,y=6+random()*6,z=-145-random()*12,sx=18+random()*12,sy=20+random()*18,sz=13+random()*10,clear=clearShoreRock(x,z,Math.max(sx,sz),nearest);shoreRocks.push({originalX:x,originalZ:z,x:clear.x,z:clear.z,radius:Math.max(sx,sz)});const hill=item(new THREE.SphereGeometry(1,24,12),'roof',clear.x,y,clear.z,sx,sy,sz);hill.rotation.y=random()*3;}
  const people=spectatorLocations();
  for(const p of people){const n=nearest(p.x,p.z);p.angle=Math.atan2(n.x-p.x,n.z-p.z);p.height=p.seated?1.5:1.65;if(p.seated){const seat=group(p.x,p.z,p.angle);seat.scale.setScalar(.7);chair(0,0,seat,'cream');}}
  staticRoot.updateMatrixWorld(true);const batches=new Map();staticRoot.traverse(o=>{if(!o.isMesh)return;const g=o.geometry.clone();g.applyMatrix4(o.matrixWorld);if(g.index){const flat=g.toNonIndexed();g.dispose();if(!batches.has(o.material))batches.set(o.material,[]);batches.get(o.material).push(flat);}else{if(!batches.has(o.material))batches.set(o.material,[]);batches.get(o.material).push(g);}});
@@ -104,7 +106,7 @@ export function createRetroVenue(scene,nearest){
  for(let i=0;i<48;i++)arms.setColorAt(i,new THREE.Color(shirtColors[Math.floor(i/2)%shirtColors.length]));
  const armRoot=new THREE.Matrix4(),armRotation=new THREE.Matrix4(),armOffset=new THREE.Matrix4().makeTranslation(0,-.3,0);
  let age=0,activePeople=24;
- return {people,staticMeshes,animated,setDrawDistance(distance,focus){for(const m of staticMeshes){if(!m.geometry.boundingSphere)m.geometry.computeBoundingSphere();const s=m.geometry.boundingSphere;m.visible=s.center.distanceTo(focus)-s.radius<distance;}},getSpectatorCount:()=>activePeople,setDensity(fraction){activePeople=Math.round(24*fraction);torso.count=heads.count=caps.count=activePeople;legs.count=arms.count=activePeople*2;},update(dt,boat){
+ return {people,staticMeshes,animated,shoreRocks,setDrawDistance(distance,focus){for(const m of staticMeshes){if(!m.geometry.boundingSphere)m.geometry.computeBoundingSphere();const s=m.geometry.boundingSphere;m.visible=s.center.distanceTo(focus)-s.radius<distance;}},getSpectatorCount:()=>activePeople,setDensity(fraction){activePeople=Math.round(24*fraction);torso.count=heads.count=caps.count=activePeople;legs.count=arms.count=activePeople*2;},update(dt,boat){
   age+=dt;parked.position.y=.15+Math.sin(age*1.7)*.025;parked.rotation.z=Math.sin(age*1.3)*.008;
   for(let i=0;i<ripples.length;i++)ripples[i].scale.setScalar(1+(Math.sin(age*1.4+i)+1)*.3);
   // A nearby passing boat triggers a short wave/clap, otherwise gentle arm sway.

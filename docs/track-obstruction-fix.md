@@ -1,0 +1,9 @@
+# First-course obstruction and turn-popup fix
+
+The large obstruction comes from the original venue's oversized landscape rock/hill meshes. Those predate the expanded river network and had no water-clearance check. Four of the original thirteen meshes overlap water in the current world. Their geometry, material, size, random sequence and count are preserved; obstructing placements now move deterministically onto clear shoreline, checking again after relocation so a neighboring bend cannot receive the obstruction. Safe existing scenery stays in place. Streamed rocks, gameplay rock colliders, course geometry and other course definitions are unchanged.
+
+The player-facing `#navigator` popup, DOM updater and its animation were removed. RouteNavigator, river cues, water arrows, checkpoint validation, recovery notices, race timing and camera look-ahead remain active. No other HUD element was removed.
+
+Changed: `src/retro-venue.js`, new `src/scenery-clearance.js`, `src/main.js`, `src/navigation.js`, `index.html`, `test/retro-venue.test.js`, new `test/scenery-clearance.test.js`, and this report.
+
+Verification: 256 Node tests pass, including complete real-input/physics runs through the three river levels and archived circuit tests. New tests confirm large origin scenery clears the water plus its full horizontal radius, streamed first-course/river rocks remain clear across deterministic rebuilds, and relocation rechecks neighboring channels. Production build and local published-file hash verification pass. A compiled Chromium startup check confirms the popup is absent and no page errors occur. This is geometry/automated-route verification, not a claimed manual iPhone playthrough or mobile performance benchmark. GitHub Pages publication is reported separately after exact-commit deployment verification.

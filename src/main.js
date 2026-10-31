@@ -61,7 +61,7 @@ import {RaceStart} from './race-start.js';
 import {createRaceSignal} from './race-signal.js';
 import {courseId,routeId,gameplayVersion} from './course.js';
 import {NavigationView,BigfootView} from './debug-views.js';
-import {RouteNavigator,mountNavigator} from './navigation.js';
+import {RouteNavigator} from './navigation.js';
 import {bindControls,editingInput} from './controls.js';
 import {ControlSettings} from './control-settings.js';
 import {mountControlLab} from './control-lab.js';
@@ -180,7 +180,7 @@ const engine=new Engine({settings:audioSettings.values,workletURL});let playing=
 const startSequence=new RaceStart(),trackSignals=riverLevels.map(l=>createRaceSignal(scene,l.start,l.start));createRiverRunMarkers(scene,riverLevels);
 const doubleTap=createDoubleTap(()=>{if(startSequence.state==='RACING')bigfoot.provoke(b,()=>engine.vocal(true));});
 let race=campaign.race;
-let navigator=campaign.navigator;const navigatorHUD=mountNavigator($('navigator'));
+let navigator=campaign.navigator;
 const navigationView=new NavigationView(scene,venue),bigfootView=new BigfootView(scene,bigfoot);
 let result=null;
 const scoreStorage={getItem(key){try{return localStorage.getItem(key);}catch{return null;}},setItem(key,value){localStorage.setItem(key,value);}};
@@ -318,7 +318,7 @@ function frame(now){requestAnimationFrame(frame);const rawDt=Math.max(0,(now-las
  const navigating=playing&&!paused&&!document.hidden&&!soundLab.testing&&!viewing&&(startSequence.state==='RACING'||campaign.done);
  if(!navigating&&preferences.values.bigfootDebug&&!document.hidden)bigfoot.update(dt,b,camera);
  let navigationCue=null;
- if(navigating){const cue=navigationCue=campaign.cue(b,dt,input);navigatorHUD.update(cue,!$('debug').open&&!soundLab.root.open&&(campaign.phase==='STAGING'||!preferences.values.startHud||gameClock>=startSequence.startAt+2));const notice=cue.notice||(campaign.done?'Run complete · Clock stopped':'Follow the river arrows · Start to finish');if($('notice').textContent!==notice)$('notice').textContent=notice;}else navigatorHUD.update(null,false);
+ if(navigating){const cue=navigationCue=campaign.cue(b,dt,input);const notice=cue.notice||(campaign.done?'Run complete · Clock stopped':'Follow the river arrows · Start to finish');if($('notice').textContent!==notice)$('notice').textContent=notice;}
  waterGuidance.update(paused?0:dt,campaign,b,navigationCue,waterTime.value,playing&&!viewing);
  navigationView.update(b,race,navigationCue,navigating,dt);bigfootView.update(b,dt);
  const lamps=startSequence.lamps(gameClock);trackSignals.forEach((signal,i)=>signal.update(i===campaign.index?lamps:{upper:false,lower:false,green:false}));
