@@ -1,0 +1,59 @@
+{
+  "version": "0.22.0",
+  "ghost": {
+    "time": 1.899999999999992,
+    "position": [
+      -92.67792574047274,
+      -0.12,
+      25.591653475163888
+    ],
+    "quaternion": [
+      0,
+      0.9533419536180516,
+      0,
+      0.30189256279629795
+    ],
+    "visible": true,
+    "samples": 39
+  },
+  "viewerRects": [
+    {
+      "x": 14,
+      "y": 12,
+      "right": 554,
+      "bottom": 66
+    },
+    {
+      "x": 14,
+      "y": 205,
+      "right": 554,
+      "bottom": 308
+    }
+  ],
+  "positionToleranceMetres": 1e-9,
+  "storedAfterReload": 3,
+  "importDoesNotAwardRecords": true,
+  "exportRoundTrip": true,
+  "invalidImportRejected": true,
+  "liveBoatClockWalletCameraFrozen": true,
+  "playbackSpeeds": [
+    0.25,
+    0.5,
+    1,
+    2
+  ],
+  "seek": 73.12,
+  "telemetryGraphs": true,
+  "telemetryCSV": true,
+  "foundationExport": {
+    "courses": 4,
+    "rivers": 3,
+    "massKg": 650
+  },
+  "simultaneousTouch": true,
+  "rapidTapsKeepScaleOne": true,
+  "settingsSurviveReload": true,
+  "riverReplay": true,
+  "errors": [],
+  "fixture": "Chromium mobile emulation, actual rendered frames with manual clock/suppressed repeated drawing. Real processed-input campaign recordings seed the isolated browser database; previous-run copy changes only its ID. Results button uses a completed-run fixture. No physical iPhone/Xbox or sustained FPS claim."
+}

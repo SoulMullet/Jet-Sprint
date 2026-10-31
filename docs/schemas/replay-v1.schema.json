@@ -1,0 +1,433 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jet-sprint:replay:v1",
+  "title": "JET SPRINT world-pose replay v1",
+  "description": "UTF-8 JSON, at most 8 MiB. RH Y-up, boat local +X forward. The runtime validator additionally checks quaternion norms, fixed sample cadence, increasing times, exact start/finish, checkpoint sequence, final split and lap sums. Import never awards official records. Each file is one completed race or river bonus; sessionId/previousEventId link campaign events.",
+  "type": "object",
+  "required": [
+    "type",
+    "version",
+    "coordinates",
+    "fields",
+    "meta",
+    "interval",
+    "complete",
+    "eligible",
+    "eligibilityNote",
+    "official",
+    "events",
+    "samples"
+  ],
+  "properties": {
+    "type": {
+      "const": "jet-sprint-replay"
+    },
+    "version": {
+      "const": 1
+    },
+    "coordinates": {
+      "const": "RH_Y_UP_X_FORWARD"
+    },
+    "fields": {
+      "const": [
+        "t",
+        "x",
+        "y",
+        "z",
+        "qx",
+        "qy",
+        "qz",
+        "qw",
+        "vx",
+        "vy",
+        "vz",
+        "wx",
+        "wy",
+        "wz",
+        "throttle",
+        "steering",
+        "speed",
+        "slip",
+        "heading",
+        "progress",
+        "lap",
+        "checkpoint"
+      ]
+    },
+    "interval": {
+      "type": "number",
+      "minimum": 0.05,
+      "maximum": 0.1
+    },
+    "complete": {
+      "const": true
+    },
+    "eligible": {
+      "type": "boolean"
+    },
+    "eligibilityNote": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "meta": {
+      "type": "object",
+      "required": [
+        "id",
+        "sessionId",
+        "build",
+        "createdAt",
+        "name",
+        "course",
+        "boatConfig",
+        "physicsVersion",
+        "tuneId",
+        "tuning"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_:-]{1,100}$"
+        },
+        "sessionId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "previousEventId": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "build": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "maxLength": 40
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "course": {
+          "$ref": "#/$defs/course"
+        },
+        "boatConfig": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "physicsVersion": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "tuneId": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "tuning": {
+          "type": "object",
+          "maxProperties": 128,
+          "additionalProperties": {
+            "type": [
+              "number",
+              "boolean"
+            ]
+          }
+        }
+      }
+    },
+    "official": {
+      "type": "object",
+      "required": [
+        "total",
+        "laps",
+        "splits"
+      ],
+      "properties": {
+        "total": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1800
+        },
+        "laps": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        },
+        "splits": {
+          "type": "array",
+          "maxItems": 1024,
+          "items": {
+            "type": "object",
+            "required": [
+              "t",
+              "lap",
+              "checkpoint",
+              "progress"
+            ],
+            "properties": {
+              "t": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1800
+              },
+              "lap": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 10
+              },
+              "checkpoint": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 128
+              },
+              "progress": {
+                "type": "number",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    "events": {
+      "type": "array",
+      "maxItems": 1024,
+      "items": {
+        "type": "object",
+        "required": [
+          "t",
+          "type"
+        ],
+        "properties": {
+          "t": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1800
+          },
+          "type": {
+            "enum": [
+              "start",
+              "checkpoint",
+              "lap",
+              "race-complete",
+              "river-start",
+              "river-complete",
+              "transition"
+            ]
+          },
+          "from": {
+            "type": "string",
+            "maxLength": 20
+          },
+          "to": {
+            "type": "string",
+            "maxLength": 20
+          },
+          "lap": {
+            "type": "integer"
+          },
+          "checkpoint": {
+            "type": "integer"
+          },
+          "progress": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "samples": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 36002,
+      "items": {
+        "type": "array",
+        "minItems": 22,
+        "maxItems": 22,
+        "prefixItems": [
+          {
+            "type": "number",
+            "title": "t",
+            "description": "seconds"
+          },
+          {
+            "type": "number",
+            "title": "x",
+            "description": "metres"
+          },
+          {
+            "type": "number",
+            "title": "y",
+            "description": "metres, world up"
+          },
+          {
+            "type": "number",
+            "title": "z",
+            "description": "metres"
+          },
+          {
+            "type": "number",
+            "title": "qx",
+            "description": "quaternion xyzw"
+          },
+          {
+            "type": "number",
+            "title": "qy",
+            "description": "quaternion xyzw"
+          },
+          {
+            "type": "number",
+            "title": "qz",
+            "description": "quaternion xyzw"
+          },
+          {
+            "type": "number",
+            "title": "qw",
+            "description": "quaternion xyzw"
+          },
+          {
+            "type": "number",
+            "title": "vx",
+            "description": "m/s"
+          },
+          {
+            "type": "number",
+            "title": "vy",
+            "description": "m/s"
+          },
+          {
+            "type": "number",
+            "title": "vz",
+            "description": "m/s"
+          },
+          {
+            "type": "number",
+            "title": "wx",
+            "description": "rad/s, world X"
+          },
+          {
+            "type": "number",
+            "title": "wy",
+            "description": "rad/s, world Y"
+          },
+          {
+            "type": "number",
+            "title": "wz",
+            "description": "rad/s, world Z"
+          },
+          {
+            "type": "number",
+            "title": "throttle",
+            "description": "0..1"
+          },
+          {
+            "type": "number",
+            "title": "steering",
+            "description": "-1..1"
+          },
+          {
+            "type": "number",
+            "title": "speed",
+            "description": "m/s, horizontal"
+          },
+          {
+            "type": "number",
+            "title": "slip",
+            "description": "radians"
+          },
+          {
+            "type": "number",
+            "title": "heading",
+            "description": "radians"
+          },
+          {
+            "type": "number",
+            "title": "progress",
+            "description": "metres, ordered/unwrapped across laps"
+          },
+          {
+            "type": "integer",
+            "title": "lap",
+            "description": "completed lap count, zero-based"
+          },
+          {
+            "type": "integer",
+            "title": "checkpoint",
+            "description": "next checkpoint index, zero-based"
+          }
+        ],
+        "items": false
+      }
+    }
+  },
+  "$defs": {
+    "course": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "kind",
+        "index",
+        "revision",
+        "routeId",
+        "length",
+        "gateCount",
+        "lapCount"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 96
+        },
+        "kind": {
+          "enum": [
+            "race",
+            "river"
+          ]
+        },
+        "index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        },
+        "revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "routeId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "length": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "gateCount": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128
+        },
+        "lapCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        }
+      }
+    }
+  }
+}

@@ -1,3 +1,7 @@
+import { ReplaySession } from "../src/replay/session.js";
+import { ReplayRepository } from "../src/replay/storage.js";
+import { ReplaySettings } from "../src/replay/settings.js";
+import { validateReplay, sampleReplay, S } from "../src/replay/model.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createCampaignAdventure } from "../src/campaign-world.js";
@@ -7,7 +11,7 @@ import { RaceStart } from "../src/race-start.js";
 import { stepBoat, settings } from "../src/physics.js";
 import { ControlInput } from "../src/control-input.js";
 import { ControlSettings } from "../src/control-settings.js";
-test("actual input pipeline drives the complete seven-event campaign without a transition teleport", (t) => {
+test("actual input pipeline drives the complete seven-event campaign without a transition teleport", async (t) => {
   const w = createCampaignAdventure(),
     map = new Map(),
     progress = new CampaignProgress({
@@ -23,6 +27,21 @@ test("actual input pipeline drives the complete seven-event campaign without a t
   const processor = new ControlInput(
     new ControlSettings({ getItem: () => null, setItem() {} }),
   );
+  const replayRepo = new ReplayRepository(null),
+    replayPrefs = new ReplaySettings({ getItem: () => null, setItem() {} }),
+    replays = new ReplaySession({
+      world: w,
+      repository: replayRepo,
+      preferences: replayPrefs,
+      getTuning: () => settings,
+      build: "integration-test",
+    }),
+    recorded = new Map(),
+    motion = { roll: 0, pitch: 0, heave: 0 };
+  replays.subscribe(() => {
+    if (replays.lastCompleted)
+      recorded.set(replays.lastCompleted.meta.id, replays.lastCompleted);
+  });
   let now = 0,
     bankTime = 0,
     escapeHeading = null,
@@ -131,9 +150,11 @@ test("actual input pipeline drives the complete seven-event campaign without a t
     const processed = processor.update(dt, speed / (settings.top / 3.6));
     before.x = b.x;
     before.z = b.z;
+    replays.beforeStep(tour, b, motion, processed, start);
     if (tour.beforePhysics(b, dt))
       stepBoat(b, processed, dt, w.collisionNearest);
     const change = tour.step(before, b, dt, settings, now, start);
+    replays.afterStep(tour, b, motion, processed, change, dt);
     if (change === "race-complete") start.finish();
     if (change === "arrival") start.begin(now, 2);
     if (Math.hypot(b.x - before.x, b.z - before.z) > 1)
@@ -151,6 +172,22 @@ test("actual input pipeline drives the complete seven-event campaign without a t
       boat: b,
     }),
   );
+  await replays.flush();
+  assert.equal(recorded.size, 7, replays.status);
+  assert.equal((await replayRepo.records()).length, 7);
+  for (const replay of recorded.values()) {
+    validateReplay(replay);
+    assert.equal(
+      replay.official.total,
+      progress.values.events[replay.meta.course.id].bestTime,
+    );
+    assert.deepEqual(
+      sampleReplay(replay, replay.official.total),
+      replay.samples.at(-1),
+    );
+    assert.ok(replay.samples.length > 1000);
+    assert.equal(replay.samples.at(-1)[S.t], replay.official.total);
+  }
   assert.equal(tour.results.length, 4);
   assert.equal(tour.completedRivers, 3);
   assert.ok(progress.values.wallet >= 10250 && progress.values.wallet <= 15400);

@@ -32,6 +32,8 @@ await writeFile(
       controls: "analog-input-v1",
       economy: "wallet-v2",
       streaming: "worker-tiles-v1",
+      replays: "recorded-world-poses-v1",
+      foundation: "portable-data-v1",
       fonts: ["Russo One", "Chakra Petch"],
       assets,
     },

@@ -42,6 +42,11 @@ export async function verifyDeployment(
       )
         throw Error("Wrong live controls, wallet or streaming system.");
       if (
+        info.replays !== "recorded-world-poses-v1" ||
+        info.foundation !== "portable-data-v1"
+      )
+        throw Error("Wrong live replay/foundation build.");
+      if (
         !info.fonts?.includes("Russo One") ||
         !info.fonts?.includes("Chakra Petch")
       )

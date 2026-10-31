@@ -19,6 +19,7 @@ const panelDefinitions = [
   ["audio", "V8", "V8 / SOUND LAB", "soundLab"],
   ["camera", "VIEW", "VIEW / CAMERAS", "cameraSettings"],
   ["controls", "INPUT", "CONTROL LAB / ANALOG", "controlLab"],
+  ["replays", "GHOST", "GHOST / REPLAY LAB", "ghostReplayLab"],
 ];
 
 /** Presentation only: existing panels and handlers are reparented, never cloned. */

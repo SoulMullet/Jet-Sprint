@@ -1,9 +1,10 @@
 import {handlingDefaults,planingFactor} from './handling.js';
 import {outerSpline} from './track-layout.js';
+import {BOAT_MASS,REFERENCE_YAW_INERTIA,channelParameters,PHYSICS_STEP} from './physics-parameters.js';
+export {BOAT_MASS,REFERENCE_YAW_INERTIA,PHYSICS_STEP} from './physics-parameters.js';
 export const settings={...handlingDefaults,cameraResponse:8,effects:1,sprayDistance:100,waterVolume:100};
-export const channel={water:9,bank:10.1,hullLimit:6.5};
+export const channel=channelParameters;
 export const course=outerSpline;
-export const BOAT_MASS=650,REFERENCE_YAW_INERTIA=1500;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const smooth=(v,a,b)=>{const t=clamp((v-a)/(b-a),0,1);return t*t*(3-2*t);};
 const stateKeys=['x','z','vx','vz','angle','pump','nozzle','yawRate'];
@@ -13,7 +14,7 @@ export function stepBoat(b,input,dt,nearest){
  for(const k of stateKeys)if(!Number.isFinite(b[k]))b[k]=0;
  if(!Number.isFinite(dt)||dt<=0)return nearest(b.x,b.z);
  let remaining=Math.min(dt,.1),p;
- while(remaining>1e-10){const step=Math.min(1/120,remaining);p=integrate(b,input,step,nearest);remaining-=step;}
+ while(remaining>1e-10){const step=Math.min(PHYSICS_STEP,remaining);p=integrate(b,input,step,nearest);remaining-=step;}
  return p;
 }
 function integrate(b,input,dt,nearest){

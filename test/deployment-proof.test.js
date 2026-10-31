@@ -14,13 +14,15 @@ function fixture() {
   ]);
   const info = {
     commit: sha,
-    version: "0.19.0",
+    version: "0.22.0",
     identity: "MARINE-87",
     simulation: "world-space-fixed-step",
     campaign: "four-track-1987",
     controls: "analog-input-v1",
     economy: "wallet-v2",
     streaming: "worker-tiles-v1",
+    replays: "recorded-world-poses-v1",
+    foundation: "portable-data-v1",
     fonts: ["Russo One", "Chakra Petch"],
     assets: [...files].map(([path, text]) => ({
       path,

@@ -1,0 +1,129 @@
+{
+  "version": "0.22.0",
+  "loadedAssets": [
+    {
+      "path": "assets/index-Bdb0FDln.css",
+      "sha256": "604710e393a630d7871a9f631763e074c3cfe76cc95d6d9b75e7773553dc5627"
+    },
+    {
+      "path": "assets/campaign-data-Ba_vg-Lq.js",
+      "sha256": "f0d7ca08bdd90f81de0fceb4ceb599d86115608faaff84796122522178bd5e40"
+    },
+    {
+      "path": "assets/index-DP5PzJyr.js",
+      "sha256": "44bfbc24bce702fb65cc021b60ff14a3f92237b7d1fb0e5f5d66008d3765c820"
+    },
+    {
+      "path": "assets/campaign-debug-BbIffbCU.js",
+      "sha256": "3074802c01128e4c43d0de67de4d9a6c8f407e4710669dd2fb24855ce2ba972c"
+    },
+    {
+      "path": "assets/campaign-chunk-worker-CmiNPddZ.js",
+      "sha256": "780e8e54a91bd470c050bb4f4ae3ce884a60884c7ecea40cd53723c3316445c4"
+    },
+    {
+      "path": "assets/index-Bdb0FDln.css",
+      "sha256": "604710e393a630d7871a9f631763e074c3cfe76cc95d6d9b75e7773553dc5627"
+    },
+    {
+      "path": "assets/campaign-data-Ba_vg-Lq.js",
+      "sha256": "f0d7ca08bdd90f81de0fceb4ceb599d86115608faaff84796122522178bd5e40"
+    },
+    {
+      "path": "assets/index-DP5PzJyr.js",
+      "sha256": "44bfbc24bce702fb65cc021b60ff14a3f92237b7d1fb0e5f5d66008d3765c820"
+    },
+    {
+      "path": "assets/campaign-debug-BbIffbCU.js",
+      "sha256": "3074802c01128e4c43d0de67de4d9a6c8f407e4710669dd2fb24855ce2ba972c"
+    },
+    {
+      "path": "assets/campaign-chunk-worker-CmiNPddZ.js",
+      "sha256": "780e8e54a91bd470c050bb4f4ae3ce884a60884c7ecea40cd53723c3316445c4"
+    }
+  ],
+  "touch": {
+    "device": "touch",
+    "rawSteering": -1,
+    "steering": -1,
+    "rawThrottle": 1,
+    "throttle": 1,
+    "targetSteering": -1,
+    "targetThrottle": 1,
+    "preview": null,
+    "controller": {
+      "connected": false,
+      "id": "",
+      "index": -1,
+      "supported": false,
+      "armed": false,
+      "apiAvailable": true,
+      "rawSteering": 0,
+      "rawThrottle": 0
+    },
+    "touch": {
+      "steering": -1,
+      "throttle": 1
+    },
+    "steeringMode": "spring",
+    "throttleMode": "spring",
+    "smoothing": {
+      "steering": 0.025,
+      "throttle": 0.02
+    },
+    "ramp": {
+      "steering": 18,
+      "throttleUp": 10,
+      "throttleDown": 16
+    }
+  },
+  "gamepad": {
+    "device": "gamepad",
+    "rawSteering": 0.5,
+    "steering": 0.4133938908195565,
+    "rawThrottle": 0.42,
+    "throttle": 0.3929561986498509,
+    "targetSteering": 0.41329567347006796,
+    "targetThrottle": 0.3929561986498509,
+    "preview": null,
+    "controller": {
+      "connected": true,
+      "id": "Xbox standard test snapshot",
+      "index": 0,
+      "supported": true,
+      "armed": true,
+      "apiAvailable": true,
+      "rawSteering": 0.5,
+      "rawThrottle": 0.42
+    },
+    "touch": {
+      "steering": 0,
+      "throttle": 0
+    },
+    "steeringMode": "spring",
+    "throttleMode": "spring",
+    "smoothing": {
+      "steering": 0.025,
+      "throttle": 0.02
+    },
+    "ramp": {
+      "steering": 18,
+      "throttleUp": 10,
+      "throttleDown": 16
+    }
+  },
+  "viewerTime": 60.12,
+  "positionToleranceMetres": 1e-8,
+  "liveStateUnchangedDuringViewer": true,
+  "originalSprayVisibilityRestored": true,
+  "nativePointerButtons": true,
+  "keyboardInput": true,
+  "safariGestureEmulation": true,
+  "recordingToggleAndNextInterval": true,
+  "settingsResetPreservesFiles": true,
+  "deleteCancelAndConfirm": true,
+  "replaySurvivesReload": true,
+  "labRangeInsideScrollablePanel": true,
+  "errors": [],
+  "fixture": "Unmodified compiled bundle under /Jet-Sprint/. Manual frame clock, native Playwright pointers, CDP multitouch and Gamepad API snapshots. An actual processed-input campaign-driver replay is imported through the UI. No physical iPhone/Xbox, audio listening or sustained mobile FPS test."
+}

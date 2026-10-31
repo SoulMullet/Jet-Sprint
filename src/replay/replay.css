@@ -1,0 +1,433 @@
+/* MARINE-87 tape deck: shared fonts, colors and tactile component tokens. */
+#pitConsole {
+  touch-action: auto;
+}
+.pit-tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  touch-action: pan-x pinch-zoom;
+  scrollbar-width: thin;
+}
+.pit-tabs button {
+  flex: 0 0 auto;
+  min-width: 44px;
+}
+.pit-scroll {
+  touch-action: pan-y pinch-zoom;
+}
+#openReplayLibrary {
+  margin: 9px 0 0;
+  min-height: 44px;
+  font-size: 12px;
+  width: 100%;
+}
+.replay-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 16px;
+}
+.replay-options label {
+  min-width: 0;
+}
+.replay-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.replay-actions button {
+  min-height: 44px;
+  flex: 1 1 125px;
+  font-size: 12px;
+}
+.replay-diagnostics {
+  display: block;
+  background: var(--navy);
+  color: var(--cream);
+  border: 1px solid var(--teal);
+  border-radius: 12px;
+  padding: 10px;
+  font: 600 12px/1.5 var(--font-label);
+}
+#ghostStatus,
+#replayStorageStatus {
+  font: 600 13px/1.4 var(--font-label);
+  overflow-wrap: anywhere;
+}
+#replayRecords p {
+  font: 600 12px/1.4 var(--font-label);
+  border-bottom: 1px solid #4d858b55;
+  padding: 5px 0;
+  margin: 0;
+}
+.telemetry-graph svg {
+  width: 100%;
+  height: auto;
+  max-height: 180px;
+  background: var(--navy);
+  border: 1px solid var(--teal);
+  border-radius: 12px;
+}
+.telemetry-graph path {
+  fill: none;
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+.telemetry-graph .graph-grid {
+  stroke: #4d858b66;
+  stroke-width: 1;
+}
+.telemetry-graph .graph-primary {
+  stroke: var(--cream);
+}
+.telemetry-graph .graph-reference {
+  stroke: var(--gold);
+  stroke-dasharray: 5 4;
+}
+.telemetry-graph .graph-playhead {
+  stroke: var(--orange);
+  stroke-width: 1;
+}
+.telemetry-graph output,
+.graph-legend {
+  display: block;
+  font: 600 11px/1.4 var(--font-label);
+  color: var(--cream);
+  margin: 4px 0;
+}
+.telemetry-graph label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: 600 12px var(--font-label);
+  margin: 4px 0;
+}
+.telemetry-graph select {
+  min-height: 36px;
+  margin: 0;
+  flex: 1;
+}
+#ghostDelta {
+  position: fixed;
+  z-index: 11;
+  right: max(16px, env(safe-area-inset-right));
+  top: 64px;
+  min-width: 92px;
+  padding: 5px 10px;
+  background: #183237ee;
+  border: 1px solid var(--gold);
+  border-radius: 13px;
+  text-align: right;
+  pointer-events: none;
+}
+#ghostDelta span {
+  display: block;
+  font: 600 8px var(--font-label);
+  letter-spacing: 0.7px;
+  color: var(--cream);
+}
+#ghostDelta strong {
+  font: 400 16px var(--font-display);
+  color: var(--orange);
+  font-variant-numeric: tabular-nums;
+}
+#ghostDelta.ahead strong {
+  color: #94d2ba;
+}
+#courseRecordCelebration {
+  position: fixed;
+  z-index: 22;
+  left: 50%;
+  top: 68px;
+  transform: translateX(-50%);
+  max-width: 60vw;
+  background: var(--cream);
+  color: var(--navy);
+  border: 3px solid var(--gold);
+  border-radius: 19px;
+  padding: 10px 17px;
+  box-shadow: var(--shadow);
+  text-align: center;
+  pointer-events: none;
+  animation: record-flash 450ms ease-out;
+}
+#courseRecordCelebration span,
+#courseRecordCelebration output {
+  display: block;
+  font: 700 11px var(--font-label);
+}
+#courseRecordCelebration strong {
+  display: block;
+  font: 400 clamp(14px, 2.6vw, 25px) var(--font-display);
+  color: var(--orange);
+}
+@keyframes record-flash {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -12px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+body.replay-open #intro,
+body.replay-open #results,
+body.replay-open #pauseMenu,
+body.replay-open #pitConsole,
+body.replay-open .race-toolbar,
+body.replay-open .timing,
+body.replay-open #journeyHUD,
+body.replay-open .speed,
+body.replay-open #navigator,
+body.replay-open #arcadeControls,
+body.replay-open #notice,
+body.replay-open #startSignal,
+body.replay-open #ghostDelta,
+body.replay-open #hudSafeZones,
+body.replay-open #rotateDevice,
+body.replay-open .course-name {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+#replayViewer {
+  box-sizing: border-box;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 12px max(14px, env(safe-area-inset-right))
+    max(12px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--cream);
+  box-shadow: none;
+  overflow: hidden;
+  pointer-events: none;
+}
+#replayViewer::backdrop {
+  background: #071b2215;
+}
+.replay-heading,
+.replay-transport,
+.replay-telemetry {
+  pointer-events: auto;
+  background: #183237f2;
+  border: 2px solid #819fa0;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+.replay-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  max-width: 960px;
+  margin: auto;
+}
+.replay-heading h2 {
+  font: 400 clamp(16px, 3vw, 25px) var(--font-display);
+  margin: 2px 0;
+  color: var(--cream);
+}
+.replay-heading p {
+  font: 600 11px var(--font-label);
+  margin: 3px 0;
+}
+.replay-heading button {
+  min-height: 44px;
+  font-size: 12px;
+}
+.replay-transport {
+  position: absolute;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(
+    100% - 28px - env(safe-area-inset-left) - env(safe-area-inset-right)
+  );
+  box-sizing: border-box;
+  max-width: 960px;
+  padding: 8px 12px;
+}
+.replay-transport-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+.replay-transport label {
+  margin: 0;
+  font: 600 12px var(--font-label);
+}
+.replay-transport-row label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.replay-transport button,
+.replay-transport select {
+  min-height: 44px;
+  font-size: 12px;
+  padding: 6px 10px;
+  margin: 0;
+}
+.replay-timeline-label {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  margin-top: 6px !important;
+}
+.replay-timeline-label input {
+  grid-column: 1/-1;
+  width: 100%;
+  min-height: 32px;
+  margin: 0;
+  touch-action: pan-y;
+}
+#replayTime {
+  font: 400 14px var(--font-display);
+}
+#replayPoseReadout {
+  display: block;
+  font: 600 11px var(--font-label);
+  margin-top: 3px;
+}
+.replay-telemetry {
+  position: absolute;
+  right: max(14px, env(safe-area-inset-right));
+  top: 110px;
+  width: min(420px, 45vw);
+  padding: 8px;
+}
+.replay-telemetry .telemetry-graph svg {
+  max-height: 130px;
+}
+@media (max-width: 620px), (max-height: 360px) {
+  .replay-heading {
+    padding: 5px 9px;
+  }
+  .replay-heading p {
+    font-size: 9px;
+  }
+  .replay-transport {
+    padding: 5px 9px;
+  }
+  .replay-transport-row {
+    gap: 4px;
+  }
+  .replay-transport button,
+  .replay-transport select {
+    padding: 5px;
+    font-size: 10px;
+  }
+  .replay-transport-row label {
+    font-size: 10px;
+    gap: 3px;
+  }
+  .replay-telemetry {
+    top: 88px;
+    width: 42vw;
+    padding: 5px;
+  }
+  .replay-telemetry svg {
+    max-height: 70px !important;
+  }
+  .replay-telemetry .graph-legend {
+    display: none;
+  }
+  .replay-telemetry output {
+    font-size: 9px;
+  }
+  #courseRecordCelebration {
+    top: 60px;
+    padding: 7px 10px;
+  }
+  .replay-options {
+    grid-template-columns: 1fr;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #courseRecordCelebration {
+    animation: none;
+  }
+}
+@media (max-height: 500px) {
+  .replay-heading {
+    padding: 3px 8px;
+    min-height: 44px;
+  }
+  .replay-heading .instrument-label {
+    display: none;
+  }
+  .replay-heading h2 {
+    font-size: 16px;
+    margin: 0;
+  }
+  .replay-heading p {
+    font-size: 9px;
+    margin: 2px 0;
+  }
+  .replay-heading button {
+    height: 44px;
+    min-height: 44px;
+    padding: 5px 9px;
+    margin: 0;
+  }
+  .replay-transport {
+    padding: 4px 8px;
+  }
+  .replay-transport-row {
+    gap: 4px;
+  }
+  .replay-transport-row > button {
+    width: 66px;
+  }
+  .replay-transport label {
+    font-size: 10px;
+    line-height: 1.1;
+  }
+  .replay-transport button,
+  .replay-transport select {
+    min-height: 44px;
+    height: 44px;
+    padding: 5px 7px;
+  }
+  .replay-timeline-label {
+    margin-top: 2px !important;
+    gap: 0;
+  }
+  .replay-timeline-label input {
+    height: 28px;
+    min-height: 28px;
+    padding: 0 !important;
+  }
+  #replayPoseReadout {
+    display: none;
+  }
+  .replay-telemetry {
+    top: 76px;
+    padding: 5px;
+  }
+  .replay-telemetry select {
+    min-height: 36px;
+    height: 36px;
+    padding: 3px 5px;
+  }
+  .replay-telemetry .telemetry-graph svg {
+    max-height: 62px;
+  }
+  .replay-telemetry .graph-legend {
+    display: none;
+  }
+  .replay-telemetry output {
+    font-size: 9px;
+  }
+}

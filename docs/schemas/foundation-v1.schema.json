@@ -1,0 +1,234 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jet-sprint:foundation:v1",
+  "title": "JET SPRINT migration foundation pack v1",
+  "description": "Data export, not an Unreal project or portable executable. Parameter registries retain their declared units (including degree-valued knobs). Course coordinates are metres in RH Y-up; path arrays are [x,z]. Reimplement the documented acceptance, physics and collision algorithms in the target engine.",
+  "type": "object",
+  "required": [
+    "type",
+    "version",
+    "build",
+    "coordinates",
+    "boat",
+    "campaign",
+    "courses",
+    "rivers",
+    "boundaries",
+    "raceRules",
+    "input",
+    "cameras",
+    "audio",
+    "labs",
+    "replay",
+    "tuning"
+  ],
+  "properties": {
+    "type": {
+      "const": "jet-sprint-foundation"
+    },
+    "version": {
+      "const": 1
+    },
+    "build": {
+      "type": "string"
+    },
+    "coordinates": {
+      "type": "object",
+      "required": [
+        "convention",
+        "distance",
+        "time",
+        "angle",
+        "quaternion",
+        "unrealPosition",
+        "unrealQuaternion",
+        "unrealAngularVelocity"
+      ],
+      "properties": {
+        "convention": {
+          "const": "RH_Y_UP_X_FORWARD"
+        },
+        "distance": {
+          "const": "metres"
+        },
+        "time": {
+          "const": "seconds"
+        },
+        "angle": {
+          "const": "radians"
+        },
+        "quaternion": {
+          "const": "xyzw"
+        }
+      }
+    },
+    "boat": {
+      "type": "object",
+      "required": [
+        "id",
+        "massKg",
+        "referenceYawInertiaKgM2",
+        "physicsVersion",
+        "fixedStep",
+        "defaults",
+        "controls",
+        "presets"
+      ]
+    },
+    "campaign": {
+      "type": "object"
+    },
+    "courses": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "required": [
+          "descriptor",
+          "nodes",
+          "route",
+          "edges",
+          "routeSamples",
+          "checkpoints",
+          "checkpointAcceptance"
+        ]
+      }
+    },
+    "rivers": {
+      "type": "array",
+      "maxItems": 7,
+      "items": {
+        "type": "object",
+        "required": [
+          "descriptor",
+          "points",
+          "checkpoints",
+          "entry"
+        ]
+      }
+    },
+    "boundaries": {
+      "type": "object",
+      "required": [
+        "representation",
+        "paths",
+        "hullRadius",
+        "rockHullPadding",
+        "ambiguousJoinSupportDirections",
+        "channel",
+        "rocks"
+      ],
+      "properties": {
+        "representation": {
+          "const": "union-of-swept-discs"
+        },
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "waterHalfWidth",
+              "points"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "waterHalfWidth": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "points": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 50000,
+                "items": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "raceRules": {
+      "type": "object"
+    },
+    "input": {
+      "type": "object",
+      "required": [
+        "actions",
+        "controls",
+        "presets"
+      ]
+    },
+    "cameras": {
+      "type": "object",
+      "required": [
+        "controls",
+        "states"
+      ]
+    },
+    "audio": {
+      "type": "object",
+      "required": [
+        "controls",
+        "defaults",
+        "presets",
+        "implementation"
+      ]
+    },
+    "labs": {
+      "type": "object"
+    },
+    "replay": {
+      "type": "object",
+      "required": [
+        "version",
+        "fields",
+        "limits",
+        "playback"
+      ],
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "fields": {
+          "const": [
+            "t",
+            "x",
+            "y",
+            "z",
+            "qx",
+            "qy",
+            "qz",
+            "qw",
+            "vx",
+            "vy",
+            "vz",
+            "wx",
+            "wy",
+            "wz",
+            "throttle",
+            "steering",
+            "speed",
+            "slip",
+            "heading",
+            "progress",
+            "lap",
+            "checkpoint"
+          ]
+        }
+      }
+    },
+    "tuning": {
+      "type": "object"
+    }
+  }
+}
