@@ -67,7 +67,11 @@ export class ReplayCameras {
       getItem: () => this.source.export(),
       setItem() {},
     });
-    store.use(c.kind === "race" ? c.id : this.world.courses[index].id);
+    store.use(
+      c.kind === "race" || this.world.riverRunLevels?.some((l) => l.id === c.id)
+        ? c.id
+        : this.world.courses[index].id,
+    );
     store.autoFit();
     const legacy = { overviewCenter: { x: 0, z: 0 }, resize() {}, reset() {} };
     this.manager = new CampaignCameras(
@@ -131,6 +135,7 @@ export class ReplayCameras {
     }
     const camera = this.manager.update(this.b, model, this.b, dt, {
       playing: true,
+      top: this.replay.meta.tuning.top || 85,
       tour: this.tour,
     });
     // Map the existing projection into the clear area between tape-deck panels.

@@ -4,6 +4,8 @@ This release remains a JavaScript/Vite/Three.js browser game. It contains **no U
 
 Open **Pit Control → GHOST → Development / portable data → Export Unreal-ready game data** for a snapshot of authored and cooked courses, collision descriptions, parameter registries, factory presets and current tuning. Replay JSON is exported separately from the library. Schemas are [foundation v1](schemas/foundation-v1.schema.json) and [replay v1](schemas/replay-v1.schema.json).
 
+The active v0.23 entry mode is standalone River Runs. The export now includes `activeMode` and `primaryRiverLevels`: stable IDs, original environment IDs, rest-start poses, finish planes, revisions, unlock requirements and standalone replay descriptors. Archived circuit/bonus data remains in `courses`, `rivers` and `campaign`; it does not describe the current entry progression.
+
 ## 1. Current architecture
 
 | Boundary | Current owner | Migration significance |
@@ -11,12 +13,13 @@ Open **Pit Control → GHOST → Development / portable data → Export Unreal-r
 | Device input | `controls.js`, `control-gamepad.js`, `control-input.js` | Touch/keyboard/Gamepad adapters produce normalized steering −1…1 and throttle 0…1. The processing kernel is independent of Three.js. |
 | Boat dynamics | `physics.js`, `handling.js`, `physics-parameters.js` | SI force model and central parameter registry, normally stepped at 120 Hz. Thrust-dependent nozzle steering, yaw inertia, lateral grip/drag and bank response remain intact. |
 | Official race | `race.js`, `race-start.js` | Ordered directional gate acceptance, original lap times, monotonic logical race clock and start sequence. |
-| Campaign | `campaign-data.js`, `campaign.js`, `campaign-tour.js`, `campaign-progress.js` | Authored definitions, continuous world crossings, river current/jumps, event lifecycle and independently persisted rewards. |
+| Primary river lifecycle | `river-levels.js`, `river-run.js`, `river-run-ui.js` | Reuses original river forces/checkpoints through a lifecycle adapter; independent rest-start timing, level bests, results and restart. |
+| Archived campaign | `campaign-data.js`, `campaign.js`, `campaign-tour.js`, `campaign-progress.js` | Original topology, river current/jumps, circuits and rewards retained. No currency transactions in normal river play. |
 | Course construction | `course.js`, `campaign-world.js`, `track.js` | Uses Three.js spline helpers and polygon clipping. Exports of its resulting numeric data are portable; these construction modules are not drop-in Unreal code. |
 | Replays | `replay/model.js`, `replay/course-data.js`, `replay/session.js` | Fixed-interval recording, explicit world-pose interpolation, official event/split observations and route-progress comparison. No ghost physics resimulation. |
 | Storage | `replay/storage.js`, existing settings/progress stores | IndexedDB for replay payloads/catalog/records; localStorage for small preferences. Replace browser adapters in Unreal. |
 | Rendering | `visuals.js`, `boat-presentation.js`, `graphics-lab.js`, `fluid/*`, `hf-*`, campaign presentation/streaming | Three.js geometry, materials, instancing, render targets and GLSL. Requires new Unreal rendering implementations. |
-| Camera | `racing-camera-manager.js`, `cameras.js`, camera settings | Existing fixed course, river follow and cinematic sweep. Replays use a separate instance of this same controller. |
+| Camera | `racing-camera-manager.js`, `cameras.js`, camera settings | Existing river follow, archived fixed course/cinematic sweep, and comparison modes. `speed-framing.js` uses measured speed and exact response filters. Replays use a separate instance of this same controller. |
 | Audio | `audio-settings.js`, `audio.js`, `v8-dsp.js`, `v8-worklet.js` | Parameter registry and presets are data. Web Audio/AudioWorklet wiring is browser-specific; DSP math is a reference implementation. |
 | Interface | `interface.js`, labs, `replay/feature.js`, CSS | Native DOM controls and MARINE-87 design tokens. Reimplement screens in UMG; retain the interaction and tuning contracts. |
 

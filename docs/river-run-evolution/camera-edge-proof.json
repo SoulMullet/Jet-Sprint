@@ -1,0 +1,78 @@
+{
+  "checks": [
+    {
+      "level": 1,
+      "mode": "chase",
+      "finiteCamera": true,
+      "boatUnchanged": true
+    },
+    {
+      "level": 1,
+      "mode": "cockpit",
+      "finiteCamera": true,
+      "boatUnchanged": true
+    },
+    {
+      "level": 1,
+      "mode": "overhead",
+      "finiteCamera": true,
+      "boatUnchanged": true
+    },
+    {
+      "level": 1,
+      "mode": "classic",
+      "finiteCamera": true,
+      "boatUnchanged": true
+    },
+    {
+      "level": 2,
+      "mode": "chase",
+      "finiteCamera": true,
+      "boatUnchanged": true
+    },
+    {
+      "level": 2,
+      "mode": "cockpit",
+      "finiteCamera": true,
+      "boatUnchanged": true
+    },
+    {
+      "level": 2,
+      "mode": "overhead",
+      "finiteCamera": true,
+      "boatUnchanged": true
+    },
+    {
+      "level": 2,
+      "mode": "classic",
+      "finiteCamera": true,
+      "boatUnchanged": true
+    },
+    {
+      "level": 3,
+      "mode": "chase",
+      "finiteCamera": true,
+      "boatUnchanged": true
+    },
+    {
+      "level": 3,
+      "mode": "cockpit",
+      "finiteCamera": true,
+      "boatUnchanged": true
+    },
+    {
+      "level": 3,
+      "mode": "overhead",
+      "finiteCamera": true,
+      "boatUnchanged": true
+    },
+    {
+      "level": 3,
+      "mode": "classic",
+      "finiteCamera": true,
+      "boatUnchanged": true
+    }
+  ],
+  "errors": [],
+  "fixture": "Development browser fixture places the boat one metre before each river finish, pauses it, and invokes the actual camera button for all four legacy modes. This is a camera-boundary test with explicit fixture relocation, not a complete race or physical-device test."
+}

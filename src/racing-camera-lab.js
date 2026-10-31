@@ -12,7 +12,7 @@ export function mountRacingCameraLab(store, manager, parent, world) {
   label.textContent = "Course preset ";
   const course = document.createElement("select");
   course.id = "racingCameraCourse";
-  for (const c of world.courses) {
+  for (const c of [...(world.riverRunLevels || []), ...world.courses]) {
     const o = document.createElement("option");
     o.value = c.id;
     o.textContent = c.name;
@@ -22,7 +22,7 @@ export function mountRacingCameraLab(store, manager, parent, world) {
   root.append(label);
   const note = document.createElement("p");
   note.textContent =
-    "Each venue stores its flat camera, outgoing river and sweep separately. Select a level in RACE to preview that venue live. Xbox input settings remain in INPUT.";
+    "Each river stores its follow camera and speed framing independently. Existing circuit camera presets and cinematic comparisons remain available below. Xbox settings remain in INPUT.";
   root.append(note);
   const ranges = [];
   let editing = store.course,
@@ -44,7 +44,7 @@ export function mountRacingCameraLab(store, manager, parent, world) {
   ]) {
     const section = document.createElement("details");
     section.className = "settings-section";
-    section.open = group === "flat";
+    section.open = group === (world.riverRunLevels ? "river" : "flat");
     const caption = document.createElement("summary");
     caption.textContent = heading;
     section.append(caption);

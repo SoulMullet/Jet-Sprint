@@ -17,18 +17,24 @@ export function mountCampaignDebug({
   root.id = "campaignDiagnostics";
   root.className = "settings-section";
   const summary = document.createElement("summary");
-  summary.textContent = "Level debug / select track or river";
+  summary.textContent =
+    campaign.mode === "river-run"
+      ? "Level debug / select river"
+      : "Level debug / select track or river";
   root.append(summary);
   const label = document.createElement("label");
-  label.textContent = "Level or bonus river ";
+  label.textContent =
+    campaign.mode === "river-run" ? "River level " : "Level or bonus river ";
   const select = document.createElement("select");
   select.id = "devCampaignStage";
-  campaignEvents.forEach((e, i) => {
-    const o = document.createElement("option");
-    o.value = i;
-    o.textContent = `${e.kind === "river" ? "BONUS" : "TRACK"} / ${e.name}`;
-    select.append(o);
-  });
+  (campaign.mode === "river-run" ? campaign.levels : campaignEvents).forEach(
+    (e, i) => {
+      const o = document.createElement("option");
+      o.value = i;
+      o.textContent = `${campaign.mode === "river-run" ? "RUN" : e.kind === "river" ? "BONUS" : "TRACK"} / ${e.name}`;
+      select.append(o);
+    },
+  );
   label.append(select);
   root.append(label);
   const b = document.createElement("button");
@@ -36,10 +42,15 @@ export function mountCampaignDebug({
   b.textContent = "Go to selected level";
   b.onclick = () => jump(select.value);
   root.append(b);
-  for (const [stage, id, text] of [
-    [1, "devRiver", "Practice: River Rush 1"],
-    [2, "devTrack2", "Practice: Timberline"],
-  ]) {
+  for (const [stage, id, text] of campaign.mode === "river-run"
+    ? [
+        [0, "devRiver", "Practice: River Rush 1"],
+        [1, "devRiver2", "Practice: River Rush 2"],
+      ]
+    : [
+        [1, "devRiver", "Practice: River Rush 1"],
+        [2, "devTrack2", "Practice: Timberline"],
+      ]) {
     const button = document.createElement("button");
     button.id = id;
     button.textContent = text;
@@ -51,7 +62,9 @@ export function mountCampaignDebug({
   root.append(readout);
   const note = document.createElement("p");
   note.textContent =
-    "Practice relocates only for testing. No payouts, unlocks or clean achievements. Normal campaign transitions never relocate the boat.";
+    campaign.mode === "river-run"
+      ? "Practice selects an existing river start without saving a personal record. All three main river runs are available from the title menu."
+      : "Practice relocates only for testing. No payouts, unlocks or clean achievements. Normal campaign transitions never relocate the boat.";
   root.append(note);
   parent.prepend(root);
   const inspect = () => ({

@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {SpeedFraming} from './speed-framing.js';
 const clamp=THREE.MathUtils.clamp;
 const angleDelta=(a,b)=>Math.atan2(Math.sin(a-b),Math.cos(a-b));
 
@@ -21,6 +22,7 @@ export class RacingCameras {
   this.target=new THREE.Vector3();this.desiredTarget=new THREE.Vector3();this.desiredPosition=new THREE.Vector3();this.eye=new THREE.Vector3();
   this.lastQueryTarget=new THREE.Vector3();this.lastQueryPosition=new THREE.Vector3();
   this.lookMatrix=new THREE.Matrix4();this.lookRotation=new THREE.Quaternion();this.up=new THREE.Vector3(0,1,0);
+  this.speedFraming=new SpeedFraming();
   this.overhead.up.set(0,0,-1);this.overhead.layers.enable(1);this.perspective.layers.enable(1);
  }
  resize(width,height){
@@ -35,11 +37,13 @@ export class RacingCameras {
   const horizontal=this.aspect<1?half:half*this.aspect,vertical=this.aspect<1?half/this.aspect:half;
   const c=this.overhead;c.left=-horizontal;c.right=horizontal;c.top=vertical;c.bottom=-vertical;c.zoom=p.zoom;c.updateProjectionMatrix();
  }
- reset(){this.ready=false;this.obstructionClock=1;this.boomLimit=Infinity;}
- update(boat,model,ahead,dt,{playing=true,top=85,effects=1,overview=false}={}){
+ reset(){this.ready=false;this.obstructionClock=1;this.boomLimit=Infinity;this.speedFraming.reset();}
+ update(boat,model,ahead,dt,{playing=true,top=85,effects=1,overview=false,speedFraming=null}={}){
   dt=clamp(dt,0,.05);
   const mode=this.preferences.mode,p=this.preferences.modes[mode],speed=Math.hypot(boat.vx,boat.vz);
   const changed=mode!==this.mode;this.mode=mode;
+  if(changed)this.speedFraming.reset();
+  const speedFrame=mode==='chase'&&speedFraming?this.speedFraming.update(speed,top,dt,speedFraming):null;
   this.camera=mode==='overhead'?this.overhead:this.perspective;const camera=this.camera;
   camera.layers.set(0);if(mode!=='cockpit')camera.layers.enable(1);
   // A restart is a teleport. Rebase the camera rather than sweep across land.
@@ -65,7 +69,8 @@ export class RacingCameras {
    const lookAhead=Math.min(p.lookAhead,p.distance*.6),lead=Math.min(1,lookAhead/10);
    this.desiredTarget.set(boat.x+fx*lookAhead+(ahead.x-boat.x)*.12*lead,model.position.y+.7,boat.z+fz*lookAhead+(ahead.z-boat.z)*.12*lead);
    if(snap)this.target.copy(this.desiredTarget);else this.target.lerp(this.desiredTarget,alpha);
-   this.desiredPosition.set(boat.x-fx*p.distance,model.position.y+p.height,boat.z-fz*p.distance);
+   const scale=speedFrame?.distanceScale||1;
+   this.desiredPosition.set(boat.x-fx*p.distance*scale,model.position.y+p.height*scale,boat.z-fz*p.distance*scale);
    if(snap)camera.position.copy(this.desiredPosition);else camera.position.lerp(this.desiredPosition,alpha);
    // Check at 15 Hz or after 0.8 m of movement, within the 1.2 m safety margin.
    this.obstructionClock+=dt;
@@ -92,7 +97,7 @@ export class RacingCameras {
   this.lookMatrix.lookAt(camera.position,this.target,this.up);this.lookRotation.setFromRotationMatrix(this.lookMatrix);
   if(snap||mode==='classic'||changed&&mode==='cockpit')camera.quaternion.copy(this.lookRotation);else camera.quaternion.slerp(this.lookRotation,alpha);
   if(camera.isPerspectiveCamera){
-   const desiredFov=p.fov+(mode==='classic'?Math.min(1,speed/50)*2:0),fov=snap?desiredFov:camera.fov+(desiredFov-camera.fov)*(1-Math.exp(-dt*3)),near=mode==='cockpit'?.06:mode==='classic'?1:.2;
+   const desiredFov=p.fov+(mode==='classic'?Math.min(1,speed/50)*2:speedFrame?.fovExtra||0),fov=snap?desiredFov:camera.fov+(desiredFov-camera.fov)*(1-Math.exp(-dt*3)),near=mode==='cockpit'?.06:mode==='classic'?1:.2;
    if(Math.abs(camera.fov-fov)>.001||camera.near!==near){camera.fov=fov;camera.near=near;camera.updateProjectionMatrix();}
   }
   camera.updateMatrixWorld();return camera;

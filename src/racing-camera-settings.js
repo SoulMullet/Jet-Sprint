@@ -23,7 +23,12 @@ export const cameraSpecs = {
     rotationLag: ["Rotation smoothing", 0.45, 0.05, 2, 0.01, " s"],
     lookAhead: ["Look-ahead", 12, 0, 35, 0.5, " m"],
     speedZoom: ["Speed-sensitive zoom", 1, 0, 1, 1, ""],
-    speedIntensity: ["Speed zoom intensity", 0.18, 0, 0.6, 0.01, "×"],
+    speedPullback: ["Speed Pullback Intensity", 20, 0, 50, 1, "%"],
+    speedFovIncrease: ["High-Speed FOV Increase", 8, 0, 20, 0.5, "°"],
+    pullbackResponse: ["Pullback Response Speed", 2.5, 0.2, 8, 0.1, " /s"],
+    returnResponse: ["Return Response Speed", 1.8, 0.2, 8, 0.1, " /s"],
+    speedThreshold: ["Speed Threshold for Pullback", 20, 0, 80, 1, " km/h"],
+    distanceSmoothing: ["Camera Distance Smoothing", 0.35, 0.02, 2, 0.01, " s"],
     anticipation: ["Corner anticipation", 0.35, 0, 1, 0.01, "×"],
     bank: ["Camera banking intensity", 0.05, 0, 0.3, 0.01, "×"],
     bankLag: ["Banking smoothing", 0.5, 0.05, 2, 0.01, " s"],
@@ -66,6 +71,15 @@ export function sanitizeCameraPreset(raw = {}) {
   )
     ? raw.transition.easing
     : "smoother";
+  if (
+    !Number.isFinite(raw.river?.speedPullback) &&
+    Number.isFinite(raw.river?.speedIntensity)
+  )
+    p.river.speedPullback = Math.max(
+      0,
+      Math.min(50, raw.river.speedIntensity * 100),
+    );
+  p.river.speedIntensity = p.river.speedPullback / 100; // Readable by archived camera exports.
   return p;
 }
 export class RacingCameraSettings {
@@ -126,11 +140,19 @@ export class RacingCameraSettings {
     this.emit();
   }
   set(group, key, value) {
+    if (group === "river" && key === "speedIntensity") {
+      key = "speedPullback";
+      value *= 100;
+    }
     const raw = structuredClone(this.values);
     raw[group][key] = value;
     if (group === "flat" && key === "distance") raw.flat.framing = "manual";
     this.values = sanitizeCameraPreset(raw);
     this.save();
+  }
+  inherit(from, to) {
+    if (!this.presets[to] && this.presets[from])
+      this.presets[to] = structuredClone(this.presets[from]);
   }
   reset(group) {
     if (group) this.values[group] = sanitizeCameraPreset()[group];

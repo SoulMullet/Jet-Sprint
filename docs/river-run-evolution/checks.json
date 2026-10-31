@@ -1,0 +1,83 @@
+{
+  "version": "0.23.0",
+  "tests": {
+    "node22": {
+      "runtime": "v22.23.4",
+      "command": "node --test",
+      "passed": 236,
+      "failed": 0,
+      "finalFrozenSource": true
+    },
+    "node24": {
+      "runtime": "v24.19.0",
+      "command": "npm test",
+      "passed": 236,
+      "failed": 0,
+      "finalFrozenSource": true
+    }
+  },
+  "build": {
+    "command": "npm run build",
+    "passed": true,
+    "files": 14,
+    "advisory": "Existing main chunk exceeds 500 kB; approximately 298 kB gzip."
+  },
+  "localDeployment": {
+    "status": "verified",
+    "commit": "local",
+    "version": "0.23.0",
+    "files": 14,
+    "identity": "MARINE-87",
+    "simulation": "world-space-fixed-step",
+    "campaign": "four-track-1987",
+    "controls": "analog-input-v1"
+  },
+  "sourceEnvironmentIdentity": "The primary routes and checkpoints are the original three world.legs river objects.",
+  "deviceLimits": [
+    "No physical iPhone Safari",
+    "No physical Xbox controller",
+    "No audio listening or sustained mobile FPS/thermal test"
+  ],
+  "deployment": "Publication is checked in the GitHub Actions deployment job for the exact final commit; see final task response.",
+  "cameraEdgeChecks": 12,
+  "finalBuildLog": "npm run build: 14 files, v0.23.0, no errors.",
+  "changedFilesInRiverPhase": [
+    "README.md",
+    "docs/UNREAL_MIGRATION.md",
+    "docs/schemas/foundation-v1.schema.json",
+    "index.html",
+    "package-lock.json",
+    "package.json",
+    "scripts/build-proof.mjs",
+    "scripts/verify-deployment.mjs",
+    "src/cameras.js",
+    "src/campaign-debug.js",
+    "src/debug-views.js",
+    "src/gameplay-diagnostics.js",
+    "src/main.js",
+    "src/portable-game-data.js",
+    "src/racing-camera-lab.js",
+    "src/racing-camera-manager.js",
+    "src/racing-camera-settings.js",
+    "src/replay/feature.js",
+    "src/replay/session.js",
+    "src/replay/visual.js",
+    "src/settings.js",
+    "test/deployment-proof.test.js",
+    "docs/RIVER_RUN_EVOLUTION.md",
+    "docs/river-run-evolution/browser-proof.json",
+    "docs/river-run-evolution/camera-edge-proof.json",
+    "docs/river-run-evolution/checks.json",
+    "docs/river-run-evolution/production-proof.json",
+    "docs/river-run-evolution/production-viewer.png",
+    "docs/river-run-evolution/river-results.png",
+    "docs/river-run-evolution/river-start.png",
+    "docs/river-run-evolution/river-title.png",
+    "src/river-levels.js",
+    "src/river-run-ui.js",
+    "src/river-run.css",
+    "src/river-run.js",
+    "src/speed-framing.js",
+    "test/river-run.test.js"
+  ]
+}

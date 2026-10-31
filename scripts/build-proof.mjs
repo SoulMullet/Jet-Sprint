@@ -29,6 +29,7 @@ await writeFile(
       identity: "MARINE-87",
       simulation: "world-space-fixed-step",
       campaign: "four-track-1987",
+      gameplay: "river-runs-v1",
       controls: "analog-input-v1",
       economy: "wallet-v2",
       streaming: "worker-tiles-v1",

@@ -1,0 +1,22 @@
+body.river-run .lap-instrument {
+  display: none;
+}
+body.river-run.racing .timing {
+  width: 215px;
+  grid-template-columns: 132px 70px;
+}
+body.river-run .entry-course .map-start {
+  display: none;
+}
+body.river-run #journeyHUD {
+  max-height: 104px;
+}
+body.river-run #nextRiverLevel {
+  margin-top: 8px;
+}
+body.river-run #journeyResults {
+  width: 46px;
+  min-width: 44px;
+  min-height: 44px;
+  font-size: 8px;
+}

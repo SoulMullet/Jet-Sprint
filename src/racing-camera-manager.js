@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { SpeedFraming } from "./speed-framing.js";
 const rad = THREE.MathUtils.degToRad,
   clamp = THREE.MathUtils.clamp;
 const delta = (a, b) => Math.atan2(Math.sin(a - b), Math.cos(a - b));
@@ -44,6 +45,7 @@ export class CampaignCameras {
     this.height = 1;
     this.ready = false;
     this.debug = false;
+    this.legacyFrame = {};
     this.camera = perspective;
     this.state = cameraStates.flat;
     this.transitionCount = 0;
@@ -52,6 +54,8 @@ export class CampaignCameras {
     this.previewHold = 0;
     this.sample = {};
     this.heading = 0;
+    this.speedFraming = new SpeedFraming();
+    this.speedFrame = this.speedFraming.output;
     this.roll = 0;
     this.followReady = false;
     this.overviewCenter = legacy.overviewCenter;
@@ -64,6 +68,7 @@ export class CampaignCameras {
     this.flatKey = "";
   }
   reset() {
+    this.speedFraming.reset();
     this.ready = false;
     this.followReady = false;
     this.preview = false;
@@ -147,7 +152,7 @@ export class CampaignCameras {
     this.ortho.bottom = -this.halfHeight;
     this.ortho.updateProjectionMatrix();
   }
-  follow(b, dt, path) {
+  follow(b, dt, path, top = 85) {
     const p = this.store.values.river,
       speed = Math.hypot(b.vx, b.vz);
     let heading = b.angle,
@@ -176,8 +181,9 @@ export class CampaignCameras {
       -1.5 * dt,
       1.5 * dt,
     );
+    this.speedFrame = this.speedFraming.update(speed, top, dt, p);
     const a = this.heading + rad(p.yaw),
-      zoom = 1 + (p.speedZoom ? p.speedIntensity * Math.min(1, speed / 24) : 0),
+      zoom = this.speedFrame.distanceScale,
       height = (p.height * Math.tan(rad(p.pitch))) / Math.tan(rad(58));
     this.v.set(b.x + ax * p.lookAhead, p.targetHeight, b.z + az * p.lookAhead);
     this.corner.set(
@@ -234,14 +240,21 @@ export class CampaignCameras {
     this.store.use(course.id);
     this.fit(course);
     if (this.debug || frame.overview) {
-      this.camera = this.legacy.update(b, model, ahead, dt, frame);
+      Object.assign(this.legacyFrame, {
+        playing: frame.playing,
+        top: frame.top,
+        effects: frame.effects,
+        overview: frame.overview,
+        speedFraming: this.store.values.river,
+      });
+      this.camera = this.legacy.update(b, model, ahead, dt, this.legacyFrame);
       this.target.copy(this.legacy.target);
       return this.camera;
     }
     const river = tour.phase === "RIVER",
       p = this.store.values,
       changed = this.course !== course.id;
-    this.follow(b, dt, tour.leaf?.world.river);
+    this.follow(b, dt, tour.done?null:tour.leaf?.world.river, frame.top || 85);
     if (!this.ready) {
       this.state = river ? cameraStates.river : cameraStates.flat;
       this.ready = true;
@@ -313,7 +326,7 @@ export class CampaignCameras {
       );
       fov = THREE.MathUtils.lerp(
         this.sourceFov,
-        this.toRiver ? 55 : p.flat.fov,
+        this.toRiver ? 55 + this.speedFrame.fovExtra : p.flat.fov,
         z,
       );
       if (
@@ -332,7 +345,7 @@ export class CampaignCameras {
     } else if (this.state === cameraStates.river) {
       this.target.copy(this.followTarget);
       this.position.copy(this.followPosition);
-      fov = 55;
+      fov = 55 + this.speedFrame.fovExtra;
       roll = this.roll;
     } else {
       this.target.copy(this.flatTarget);
@@ -401,6 +414,12 @@ export class CampaignCameras {
       preview: this.preview,
       legacyComparison: this.debug,
       boatPixels: this.boatPixels,
+      dynamicFraming: {
+        ...(this.debug && this.legacy.mode === "chase"
+          ? this.legacy.speedFraming.output
+          : this.speedFrame),
+        fov: this.camera.fov,
+      },
       warning: this.warning,
       fitDistance: this.fitDistance,
       projection: this.camera === this.ortho ? "orthographic" : "perspective",

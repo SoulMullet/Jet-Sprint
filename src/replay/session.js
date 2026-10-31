@@ -24,7 +24,11 @@ export class ReplaySession {
   constructor({ world, repository, preferences, getTuning, build }) {
     Object.assign(this, { world, repository, preferences, getTuning, build });
     this.courses = world.courses.map((_, i) => courseDescriptor(world, i));
-    this.rivers = world.legs.map((_, i) => courseDescriptor(world, i, "river"));
+    this.legacyRivers = world.legs.map((_, i) =>
+      courseDescriptor(world, i, "river"),
+    );
+    this.rivers =
+      world.riverRunLevels?.map((l) => l.replayDescriptor) || this.legacyRivers;
     this.listeners = new Set();
     this.pendingSaves = new Set();
     this.catalog = [];
@@ -199,7 +203,10 @@ export class ReplaySession {
         (pre.phase === "RIVER" || transition === "river-start");
     if (!raceEvent && !riverEvent) return;
     const clock = raceEvent ? pre.race.total : pre.leaf.elapsed,
-      done = transition === "race-complete" || transition === "arrival";
+      done =
+        transition === "race-complete" ||
+        transition === "arrival" ||
+        transition === "river-complete";
     let progress,
       valid = true,
       lap = 0,
@@ -267,7 +274,7 @@ export class ReplaySession {
         t: 0,
         type: "transition",
         from: pre.phase,
-        to: tour.phase,
+        to: tour.done ? "FINISHED" : tour.phase,
       });
     const accepted = raceEvent
       ? pre.race.next !== pre.next || pre.race.laps.length !== pre.laps
@@ -299,7 +306,7 @@ export class ReplaySession {
         t: clock,
         type: "transition",
         from: pre.phase,
-        to: tour.phase,
+        to: tour.done ? "FINISHED" : tour.phase,
       });
       const official = {
         total: clock,

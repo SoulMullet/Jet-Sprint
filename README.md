@@ -1,44 +1,37 @@
-# JET SPRINT v0.22.0 — Ghost Racing / Tape Deck
+# JET SPRINT v0.23.0 — River Run Evolution 01
 
-A mobile-first, single-player 3D jet sprint prototype built with JavaScript, Vite, Three.js and Web Audio. Geometry and sound are procedural; licensed interface fonts are bundled locally. No paid assets, account, API keys or backend are required.
+A mobile-first, single-player 3D jetboat game built with JavaScript, Vite, Three.js and Web Audio. Geometry and sound are procedural; licensed interface fonts are bundled locally. No paid assets, account, API keys or backend are required.
 
-This build records completed races and bonus rivers as fixed-interval world-pose replays, adds Personal Best / Previous Run / saved ghosts, per-course force-class records and route-based time delta. Open **Pit Control → GHOST**, **REPLAYS / PERSONAL RECORDS** on the title screen, or **WATCH RACE REPLAY** in results for playback, seeking, camera choice, telemetry and portable import/export. IndexedDB stores replays; older tuning/progress keys remain intact. Ghosts never resimulate physics or affect water, timing or prizes. See [controls, storage limits, exact changed files and verification](docs/GHOST_RACING.md), and [Unreal migration contracts/plan](docs/UNREAL_MIGRATION.md). This remains a browser game; no Unreal port or dependencies are included.
+Play the **three actual River Rush environments as standalone point-to-point levels**. Choose River Rush 1, 2 or 3 on the title screen, wait for green, and follow the ordered checkpoints to FINISH. No circuit laps or exit-gate requirement. Results show your completion time and level best, with **WATCH RUN REPLAY**, **RESTART THIS RIVER**, and **NEXT RIVER**. All three existing rivers are selectable immediately. The four circuits, original campaign/reward implementation and their saved records remain archived in the repository; they are outside normal progression.
 
-The prior camera/HUD/navigation and touch-gesture polish is retained; see [that implementation report](docs/gameplay-polish.md).
+The rivers retain their authored bends, rapids, rocks, current, optional jumps, navigation, collision and bounded scenery streaming. Their original lengths are approximately **1.69 / 2.43 / 3.45 km**, with **18 / 23 / 29** ordered checkpoints. Starts are just beyond the original entrance gates. See [implementation, changed files and verification](docs/RIVER_RUN_EVOLUTION.md).
 
-The playable campaign is **Rookie Run → River Rush 1 → Timberline → River Rush 2 → Devil’s Bend → River Rush 3 → Championship**. Rookie Run retains the existing Kōwhai Sprint Park geometry, handling and three-lap format. Three new racing courses add progressively tighter lines, hairpins and shared junctions. Every race has three valid laps. Finishing opens a physical river gate and freezes the race clock while you keep driving; the Championship ends with series results.
+Speed-dependent camera framing preserves the low-speed view, then smoothly adds approximately **20% boom distance and 8° FOV** at top speed. It uses measured speed, including drift, rather than throttle. Six live saved controls are under **Pit Control → VIEW → River Follow**. Existing custom camera preferences migrate; an old custom pullback can therefore differ from the new-install default.
 
-The rivers are approximately **1.69 km / 2.43 km / 3.45 km**, with 21 / 22.8 / 24.6 m channels, downstream current, increasingly strong standing crests and later river rocks. Ordered checkpoints, pace/navigation scoring and optional side jumps remain. Normal progression uses one continuous world and scene: boat momentum, controls, camera, audio and airborne spray continue through every boundary. At the next venue, drive through the staging inlet, wait for green and cross the start line to start timing. No interstage loading screen or automatic boat relocation is used.
+Ghost Racing / Tape Deck is included: completed runs record fixed-interval world poses; Personal Best, Previous Run and selected-file ghosts never resimulate physics. Open **Pit Control → GHOST**, **REPLAYS / PERSONAL RECORDS**, or results playback for timeline seeking, cameras, telemetry and JSON import/export. See [replay formats, limits and prior verification](docs/GHOST_RACING.md) and [Unreal migration contracts](docs/UNREAL_MIGRATION.md). No Unreal engine port or dependency is included.
 
-Look for **CAMPAIGN-4 · v0.22.0 · commit** in the HUD. The MARINE-87 fonts, original boat integrator, arcade touch buttons, retained keyboard/gamepad adapters, automatic course/river cameras, V8 and tuning labs are available. See [current camera/control architecture, changed files, screenshots and verification](docs/arcade-river-camera.md), [campaign architecture](docs/campaign-expanded.md), [retained interface/spray notes](docs/marine-87.md), [physics audit](docs/boat-physics.md) and [rendering notes](docs/hf-graphics-v2.md). [Phase 1 notes](docs/campaign-phase1.md) describe the superseded short river and preview basin.
+## Local development
 
-## Prizes, progress and world preparation
+Use Node.js **22.12+ or 24** and npm:
 
-| Event | Completion prize | First clean achievement |
-| --- | ---: | ---: |
-| Rookie Run | $500 | $250 |
-| River Rush 1 | $250 | $150 |
-| Timberline | $1,000 | $500 |
-| River Rush 2 | $500 | $250 |
-| Devil’s Bend | $2,000 | $1,000 |
-| River Rush 3 | $1,000 | $500 |
-| Championship | $5,000 | $2,500 |
+```sh
+npm ci
+npm run dev
+```
 
-Base prizes pay on valid replays. The clean achievement pays once per event: avoid significant impacts, grounding and respawns for the entire event. A completely clean first campaign earns **$15,400**. Compact rewards show the actual solo finishing time, personal-best status and wallet; there are no invented opponent positions. Open **Pit Control → RACE → Series record / wallet** for lifetime earnings, all seven best times and claimed clean bonuses.
+Open Vite's printed address. For a phone on the same network, use the computer's LAN address on port 5173 and permit access through its firewall. Landscape provides the intended racing view; portrait shows a rotate prompt.
 
-Wallet, lifetime earnings, event records, paid attempt sequences and unlocked venues save under **`jet-sprint-campaign-v2`**, schema 2. The previous `jet-sprint-campaign-v1` record migrates additively without retroactive rewards and remains intact, so an older open build cannot overwrite the new wallet. Existing tuning/preset/score keys are unchanged. Duplicate or stale completion callbacks cannot pay again; explicit restart creates a new attempt. Storage failures retain the active in-memory result, show a warning and offer **Retry wallet save**. Same-origin deployments preserve saves; clearing site data, private-session expiry or changing origins does not.
+Press **HIT THE WATER** to unlock audio and begin the selected river. Countdown holds the boat while allowing engine revving; green starts movement and timing together. Follow every checkpoint in order and cross forward through FINISH. A missed checkpoint gives recovery cues without teleporting. Pause suspends the logical game clock; Restart resets the current river, timer, checkpoints and transient water effects while keeping saves and tuning. There is no reverse throttle or opponent AI.
 
-The title screen lets you begin a new run at an unlocked venue. That initial selection prepares before Start becomes available; later transitions keep the player in control. Explicit Restart begins again at the current venue’s staging area (Rookie Run starts at its stripe), rather than restoring a midriver snapshot. Progress and prizes already earned remain saved.
+## Saves, level selection and streaming
 
-Environment geometry is prepared on one module worker and installed in small jobs, using bounded 160 m tiles: at most 49 on Low/Medium, 64 on High/Ultra, plus the retained origin scene. The next venue prepares during the current race and river journey; distant unneeded chunks dispose their owned GPU resources. Grass/water/banks share exact clipped tile boundaries. A failed worker produces an explicitly labelled simplified-water fallback while navigation, collisions and progress continue. Use **RACE → Debug Tools → Retry scenery preparation** to recover. This fallback preserves play/progress but is visibly degraded scenery.
+Standalone completion/PB records use **`jet-sprint-river-runs-v1`**, schema 1, indexed by stable level ID and course revision. Old campaign/wallet keys are untouched and earn no new currency in normal river play. Replay files use new standalone route IDs because a rest-start run is not comparable to an old moving-entry bonus run. Historical campaign/bonus replays remain viewable. Replay storage uses IndexedDB; preferences use localStorage.
 
-Open **Pit Control → RACE → Debug Tools → Level debug / select track or river** in the published game or local development. Choose any of the four tracks or three bonus rivers and press **Go to selected level**. This starts a practice visit and closes the panel; distant scenery prepares around the selected location. Practice awards no prizes or unlocks, and Restart returns to normal Rookie Run. The panel also shows gate/checkpoint/stream status and FPS.
+Physics/water/spray (`jet-sprint-settings`, schema 3), V8 (`jet-sprint-v8-settings`, schema 1), graphics, input and legacy camera stores keep their original handlers, values and keys. Primary river camera presets inherit the associated old venue preset once, then save independently under **`jet-sprint-racing-cameras-v2`**, schema 2. The six new fields have validated defaults; old fractional speed-intensity values migrate without discarding custom pullback. Individual and group resets remain available. A same-origin GitHub Pages update does not clear browser storage. Clearing site data, private-session expiry or changing origins can remove local saves; use JSON exports for backups.
 
-River duration targets are 90–120 / 120–180 / 180–240 seconds, rather than imposed timers. The continuous automated driver meets these ranges; human pace and subjective course difficulty still need playtesting. Physical iPhone Safari, real Xbox hardware, sustained mobile FPS and thermal behavior have not been tested. Use Low on constrained devices. The optional GPU water diagnostic grid remains at Rookie Run; later waterways use procedural/HF waves, the new standing crests and environmental current, rather than a streamed hydrology solver. The existing large Three.js bundle advisory remains.
+**Pit Control → RACE → Debug Tools → Level debug** offers the same three rivers for practice. Practice does not save a level best or competitive ghost. Diagnostics show state, checkpoints, scenery preparation and frame rate. Normal results restart the selected river; no circuit is needed to enter it.
 
-The rendering includes multi-frequency freshwater waves, animated normal textures, live planar scenery reflections on High/Ultra, a historical three-band foam wake, instanced spray/mist/droplets, physical sky lighting, wet clear-coated boat materials, cockpit/engine details, cutout fir foliage and instanced bank vegetation. Ultra adds depth-based contact occlusion. Art and textures are generated locally; licensed fonts are served with the site.
-
-The V8 Sound Lab, 32 live controls, independent presets/JSON and stationary tuning remain available; see [the earlier track and V8 notes](docs/track-v8-upgrade.md) for audio controls. That document describes the superseded Shelter course.
+Scenery uses the existing module worker, bounded 160 m tiles and incremental installation. Distant tile resources are disposed. A failed worker provides a labelled simplified-water fallback with navigation/collisions still active; **Retry scenery preparation** retries it. The retained optional diagnostic GPU-water grid covers the old origin course, not the whole river network; procedural/HF waves and the real authored river current/crests drive normal river presentation.
 
 ## Arcade touch controls and retained Control Lab
 
@@ -58,23 +51,13 @@ Open **Live input / Raw → Command** for signals, dead-zone/response plots, raw
 
 See [controls architecture, changed files, verification and manual device checklist](docs/controls-v1.md). Physical Xbox hardware, Bluetooth/USB drivers, haptics and iPhone Safari require real-device testing; injected Gamepad API snapshots and Chromium touch/viewport checks do not establish those results.
 
-## Campaign vertical slice
+## Racing cameras and Camera Lab
 
-Finish three laps through every required gate, then follow the exit navigator. The gate opens in about 0.8 seconds; throttle, steering and momentum remain active. **Race results** opens the three-lap classification and local score saving; **Back to the boat** closes it. Viewing results releases held inputs while the boat coasts. Restart / R stages a new Track 1 race and retains tuning and saved records.
+Primary gameplay begins directly in **RIVER_FOLLOW**, using the existing smoothed heading, bend anticipation and look-ahead. The camera-cycle button and gamepad View retain Classic Arcade, Chase, Cockpit and Overhead. The low Chase mode also receives the speed framing; the other comparison modes retain their own behavior. Terrain/solid clearance and resize handling remain in the existing controllers.
 
-**Willow Run** has a gentle downstream current opposing your ascent. Gold checkpoint flags turn teal as each forward crossing is accepted. Bonus points reward pace between checkpoints and clean navigation; a bank hit removes that leg's clean bonus. The small side ramp is optional, with an unobstructed central bypass. Its short ballistic hop retains horizontal momentum and awards a one-time landing bonus. Missing a gate shows a return cue; it does not teleport or reset the boat. At **Mātai Basin**, keep exploring the oval waterway. Further races, fuel, shops, economy and the remaining campaign are outside Phase 1.
+**Pit Control → VIEW → River Follow** exposes Speed Pullback Intensity (0–50%, default 20%), High-Speed FOV Increase (0–20°, default 8°), Pullback Response Speed (2.5/s), Return Response Speed (1.8/s), Speed Threshold (20 km/h), and Camera Distance Smoothing (0.35 s). Changes apply live, save automatically, and have individual/group resets. Existing speed-zoom disable is respected. Low-speed FOV and distance come from each preset. The speed filter uses frame-rate-independent exponential response and a separate boom-smoothing stage.
 
-`campaign-data.js` declares **eight tracks and seven progressively harder river links**. Only Track 1 / River 1 / the Track 2 placeholder are authored/playable; other entries are explicitly planned. Course/river definitions use metres/seconds, stable IDs and a serializable graph. Reusable factories and a rendering-independent progression controller accept definitions; Three.js scenery and UI remain separate. This creates portable boundaries for future development without starting an Unreal migration.
-
-Destination water and collision topology are prepared at startup as part of one bounded world. During river travel, five incremental jobs prepare the destination's signs, dock, markers and island landmark, then batch them into at most six material meshes. Bends, riverside trees and distance culling conceal that preparation. This is bounded preparation of the first slice, not a full eight-zone streaming implementation.
-
-## Automatic tuning persistence and development tools
-
-All existing registered game/physics/water/spray knobs, V8 settings, graphics and per-mode camera tuning save through their original handlers. Their stable keys and versioned envelopes are retained: `jet-sprint-settings` (schema 3), `jet-sprint-v8-settings` (schema 1), `jet-sprint-summer-graphics-v1`, and `jet-sprint-cameras-v1`. Release metadata never selects defaults or a new key. Game/audio flush on page hide; graphics/cameras save on change. Category/factory resets and preset/JSON workflows remain. The stationary dyno's throttle is a transient input, not a stored tuning parameter.
-
-Campaign best times, bonus records and the Track 2 milestone use the separate `jet-sprint-campaign-v1` envelope. Restarting a run does not erase them. Same-origin GitHub Pages deployments replace files without clearing localStorage. Exports remain the portable backup if the host changes or site data is cleared.
-
-Run `npm run dev`, then open **Pit Control → RACE → Debug Tools → Campaign diagnostics / DEV** for course, state, laps, gate, river checkpoints, preparation status and FPS. **Practice: bonus river** / **Practice: Track 2** deliberately relocate the boat for testing and cannot unlock campaign progress. This panel and its shortcut API are excluded from production; the normal game contains no transition teleports. Physical iPhone Safari and sustained mobile FPS remain unverified.
+The lab lists primary river presets first, followed by archived course presets for future reuse. Flat-track and cinematic transition tools remain available as diagnostics; they do not restore circuit progression. Old per-mode camera settings and JSON exports remain readable.
 
 ## MARINE-87 interface and ballistic spray
 
@@ -114,35 +97,6 @@ The Lab saves separately from gameplay, audio and camera preferences. **Copy set
 
 New sessions default to the lightweight procedural water renderer. Existing saved water-mode and diagnostic-wave choices are respected. Simulated water remains available under Water Physics; it allocates GPU resources only when selected, and releases them when you return to procedural/legacy water. Both renderers share HF water appearance controls. Older wave-height, spray-distance and water-volume controls still apply alongside the Lab.
 
-## Racing cameras and Camera Lab
-
-Standard courses default to **FLAT_TRACK_FIXED**: a stationary three-quarter camera fitted to the actual racing-course bounds, with channel/bank margins. The boat moves through the course. An optional ring improves visibility; Camera Lab warns when the boat projects below 9 pixels. The camera does not automatically chase or zoom during normal flat racing.
-
-Crossing a valid river gate triggers **RIVER_TRANSITION**, a live two-second crane sweep into **RIVER_FOLLOW**. The river view tracks from above/behind with smoothed heading, bend anticipation, speed pullback and a longer view ahead. Boat input, physics, audio, spray and race progression continue. Arrival sweeps back to the next course’s fixed view. Restart/practice selection restores the appropriate camera. Normal motion never resets the boat.
-
-**Pit Control → VIEW → Camera Lab** has Flat-Track, River Follow and Cinematic Transition sections. All numeric controls have readouts/units/resets. Compare perspective and true orthographic flat projections, auto-fit the course, tune the river boom/lag/banking and sweep duration/arc/easing/focus. **Test Transition** previews without altering progression, **Skip Transition** finishes the sweep, and **Reset Transition** restores only its tune. Per-course presets automatically save under **`jet-sprint-racing-cameras-v2`**, schema 2. The selected course owns its outgoing river/sweep settings. Copy/export, file download, text/file import and course reset are available. Existing `jet-sprint-cameras-v1` values remain intact.
-
-The existing camera-cycle button and Xbox View action opt into the retained legacy comparison modes. **Use automatic gameplay cameras** or Restart returns to the new primary system. The lab’s course dropdown edits that preset; use the level selector under RACE to preview another venue live. The Campaign overview remains a diagnostic override.
-
-See [implementation, screenshots, changed files and verification](docs/arcade-river-camera.md). Physical iPhone Safari, real Xbox hardware and sustained 60 FPS remain unverified.
-
-## Local development
-
-Use Node.js 22.12+ (or 24) and npm:
-
-```sh
-npm ci
-npm run dev
-```
-
-Open the address Vite prints. On a phone on the same network, use the computer's LAN address and port 5173. Allow access through your local firewall. Rotate the device to landscape for the widest course view; portrait phones show a rotate prompt, and landscape uses the new course/river cameras.
-
-Press **HIT THE WATER** to unlock audio and begin. Hold THROTTLE and either steering button simultaneously. On desktop use **W / up arrow / space** for throttle, **A/D / left/right arrows** for steering, and **R** to restart. Release throttle to coast; reapply throttle to steer and recover a slide. Slide through bends and carry momentum. Bank contact slows and redirects the boat without ending the run. The setup panel adjusts top speed, drift retention and steering response; new-install defaults are 85 km/h, 65%, and 75%. Existing saved values are preserved.
-
-A READY stage and the saved lamp countdown hold the boat at Rookie Run’s stripe while allowing engine revving. Green releases the boat and starts the timer together. Later venue staging retains boat control and momentum; timing starts only after green and a forward start-line crossing. Follow the prescribed route through all ordered gates for three laps. Wrong turns require recovering the missed gate while the clock continues. Results/local leaderboards remain available, including backward-compatible reading of old five-lap records. There is no reverse throttle, opponent AI, ghost or network play.
-
-See [v0.7.1 navigation and Bigfoot notes](docs/v0.7.1.md) for the checkpoint fix, both debug systems and validation. See [v0.7.0 build notes](docs/v0.7.0.md) for recommended handling values, settings migrations, changed files, validation and the physical iPhone checklist. Older release sections below describe their historical behavior.
-
 ## Checks
 
 ```sh
@@ -151,39 +105,41 @@ npm run build
 npm run preview
 ```
 
-Node tests cover the full seven-event continuous input/physics route, four three-lap courses, rewards/replays/idempotency, saved-data migration, checkpoint/start rules, worker lifecycle/disposal/tile seams, plus the existing controls, handling, cameras, V8, spray and fluid suites. Build output is in `dist/`. Vite reports its existing large-chunk advisory (about 267 KB compressed for the main module). Browser checks should cover launch/audio unlock, simultaneous steering/throttle, pointer cancellation, drift recovery, restart, background/resume and portrait/landscape. Test on an actual iPhone in Safari before claiming iPhone performance. Audio can depend on device mute and volume settings.
+Node tests cover all three primary rivers driven from rest through the real input/physics/checkpoint pipeline, timer/reset/records, camera convergence and frame-rate independence, plus retained campaign, controls, water, V8, spray and replay suites. Build output is in `dist/`. There is no separate lint/type-check script configured. Vite retains a large-main-chunk advisory (about 298 KB compressed).
+
+[Current QA evidence](docs/river-run-evolution/) distinguishes controlled browser fixtures from the unmodified production bundle. Chromium mobile emulation covers all three completed river runs, results/replays, saved settings, touch gestures and layout. **Physical iPhone Safari, real Xbox hardware, audio listening, sustained mobile FPS and thermal behavior remain unverified.** Use Low on constrained devices.
 
 ## GitHub Pages
 
-Push this repository to GitHub, then select **Settings → Pages → Build and deployment → Source → GitHub Actions**. The included `Deploy GitHub Pages` workflow runs tests and builds on pushes to `main`; it can also be run manually. It uploads `dist/` and deploys with the official Pages actions. Relative Vite asset paths support a project subdirectory such as `/Jet-Sprint/`. No paid services or secrets are needed. Deployment requires repository Pages permissions.
+The included **Deploy GitHub Pages** workflow tests and builds on pushes to `main`. Repository **Settings → Pages → Source** must be **GitHub Actions**. The workflow uploads `dist/` and deploys using official Pages actions. Relative Vite paths support `/Jet-Sprint/`; no paid service or secret is needed.
 
-Every production build writes `dist/build-info.json` with the release identity, **`four-track-1987`**, **`wallet-v2`**, **`worker-tiles-v1`**, retained **`analog-input-v1`**, commit and SHA-256 hashes of all served assets. After deployment, **Verify actual published build and font files** fetches the real Pages manifest, requires the current commit/markers, requires **`recorded-world-poses-v1`** and **`portable-data-v1`**, then downloads and hashes the actual HTML, JavaScript (including the worker), CSS, icon, font and license files. A stale or mismatched publication fails the workflow. Review its deployment job/summary, not just the green build job. To check a served build yourself: `node scripts/verify-deployment.mjs https://soulmullet.github.io/Jet-Sprint/ FULL_COMMIT_SHA`. For a local preview built without `GITHUB_SHA`, use `local` as the expected commit.
+Every production build writes `build-info.json` with its version/commit, active gameplay **`river-runs-v1`**, replay/foundation markers, retained architecture markers, and SHA-256 hashes of all served files. After deployment, **Verify actual published build and font files** fetches the actual Pages manifest and hashes the HTML, JavaScript/worker, CSS, fonts and licences. A stale publication fails that step. Check the deploy job, rather than only its build job.
+
+```sh
+node scripts/verify-deployment.mjs https://soulmullet.github.io/Jet-Sprint/ FULL_COMMIT_SHA
+```
+
+For a local preview built without `GITHUB_SHA`, pass `local` instead. Once a new deployment is verified, refresh any already-open game tab to load it; no save reset is required.
 
 ## Code map
 
-- `src/main.js`: course/boat rendering, pooled spray and wake, camera, input integration/pause, lap checkpoints and HUD.
-- `src/campaign-data.js` / `src/campaign-world.js`: serializable courses/rivers and shared world-space topology, sampling, collision and staging paths.
-- `src/campaign-tour.js` / `src/campaign.js`: seven-event lifecycle, original gate/checkpoint/jump behavior and isolated river forces.
-- `src/campaign-rewards.js` / `src/campaign-progress.js`: validated reward transactions, versioned wallet, migrations and milestones.
-- `src/campaign-streaming.js` / `src/campaign-chunk-{geometry,worker}.js`: bounded incremental scenery lifecycle and off-thread triangulation.
-- `src/campaign-{presentation,scenery,whitewater,ui}.js` / `src/campaign.css`: gates/markers/scenery, standing crests, progress/rewards and series records.
-- `src/controls.js` / `src/control-input.js` / `src/control-gamepad.js`: physical device adapters, shared normalized commands and Gamepad profiles/safety.
-- `src/control-settings.js` / `src/control-lab.js` / `src/gamepad-menu.js` / `src/controls.css`: independent persistent input tuning, live diagnostics, controller menu navigation and analog hardware styling.
-- `src/physics.js` / `src/handling.js`: fixed-step waterjet dynamics and shared handling defaults.
-- `src/hull-motion.js` / `src/boat-presentation.js`: force-driven visual springs, water sampling and the hull/engine render transform.
-- `src/physics-lab.js`: six-section Lab, physics-only custom presets/JSON and optional telemetry, using the existing settings store.
-- `src/course.js` / `src/track.js`: independent waterway graph, prescribed route, directional gates and shared clipped channel geometry.
-- `src/navigation.js` / `src/route-math.js`: turn instructions, scoped route projection, recovery and HUD.
-- `src/debug-views.js`: optional numbered gates/route diagnostics, Bigfoot marker/path/status and trigger/reset controls.
-- `src/audio.js`: interaction-unlocked harmonic V8 synthesis (an approximation, not a recording).
-- `src/design-system.css` / `src/style.css` / `src/typography.js`: shared font loading, canvas typography, stable numeric glyph cells and responsive interface styling.
-- `src/spray-frame.js`: reused boat-local nozzle/chine transforms and airborne launch calculations.
-- `src/interface.js` / `src/ui-components.js`: shared Pit Control shell, range resets, tabs, tooltips, confirmation dialog and focus handling.
-- `public/fonts`: three locally bundled OFL fonts and their attribution/licenses.
-- `src/hf-{water,reflections,effects,wake,scenery,boat-details,venue-materials}.js`: active HF rendering components.
-- `src/graphics-lab.js` / `src/summer-settings.js` / `src/summer-post.js`: quality/persistence/UI, live renderer settings and optional postprocessing.
+- `river-levels.js`: existing-environment descriptors and isolated versioned level records.
+- `river-run.js`: point-to-point lifecycle adapter over the original River Rush simulation.
+- `river-run-ui.js` / `river-run.css`: start/finish markers, level HUD, selection and results.
+- `speed-framing.js`, `racing-camera-*`, `cameras.js`: independent camera filtering, settings and original camera integration.
+- `campaign-data.js`, `campaign-world.js`, `campaign.js`, `campaign-tour.js`: original authored topology, river forces/checkpoints and archived circuit progression.
+- `campaign-streaming.js`, `campaign-chunk-*`: worker-backed bounded scenery preparation.
+- `controls.js`, `control-input.js`, `control-gamepad.js`: device adapters and normalized commands.
+- `physics.js`, `handling.js`, `physics-parameters.js`: fixed-step jetboat dynamics and parameter registry.
+- `replay/*`: recording, validation, playback, persistent library, ghost rendering and UI.
+- `portable-game-data.js`: numeric migration export; no browser-engine objects.
+- `audio.js`, `v8-dsp.js`, `v8-worklet.js`: interaction-unlocked procedural V8.
+- `hf-*`, `spray-frame.js`, `fluid/*`: retained water, ballistic spray, wake and optional diagnostic solver.
+- `design-system.css`, `style.css`, `typography.js`, labs: MARINE-87 interface and locally served licensed fonts.
 
-The renderer uses preset-dependent pixel density (up to 2 on Ultra), bounded GPU particle pools, instancing, foliage LOD and optional shadows/reflections/postprocessing. Physics runs at 120 Hz with bounded catch-up after pauses. No real-device frame-rate benchmark or physical iPhone test has been performed. Historical release sections below describe previous rendering behavior.
+## Historical releases
+
+The sections below describe earlier builds. Their lap counts, course names, camera rules and limitations are historical; the current entry flow is the standalone river mode described above. Prior reports: [campaign](docs/campaign-expanded.md), [camera/controls](docs/arcade-river-camera.md), [navigation/touch polish](docs/gameplay-polish.md), [Phase 1](docs/campaign-phase1.md).
 
 ## v0.2 changes and validation
 

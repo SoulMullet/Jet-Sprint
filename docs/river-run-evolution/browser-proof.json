@@ -1,0 +1,76 @@
+{
+  "version": "0.23.0",
+  "initial": {
+    "mode": "river-run",
+    "phase": "RIVER",
+    "time": 0,
+    "start": {
+      "x": 14.44189375580919,
+      "z": -68.54717247469091,
+      "tx": 0.8878457424303705,
+      "tz": -0.4601412148985016,
+      "heading": -0.4781542453809278
+    }
+  },
+  "runs": [
+    {
+      "level": "River Rush 1",
+      "id": "river-run-kowhai-upstream",
+      "environment": "kowhai-upstream",
+      "time": 112.2583333333701,
+      "checkpoints": 18,
+      "snapshots": 2247,
+      "recordId": "12437f50-c279-42ca-9b48-690ca788c088"
+    },
+    {
+      "level": "River Rush 2",
+      "id": "river-run-river-rush-2",
+      "environment": "river-rush-2",
+      "time": 162.0666666667005,
+      "checkpoints": 23,
+      "snapshots": 3243,
+      "recordId": "7bdc7b8e-7a63-47e3-a6f6-9937837a6219"
+    },
+    {
+      "level": "River Rush 3",
+      "id": "river-run-river-rush-3",
+      "environment": "river-rush-3",
+      "time": 229.30000000005214,
+      "checkpoints": 29,
+      "snapshots": 4587,
+      "recordId": "a466a642-665e-4950-8cfc-eb0da0819a08"
+    }
+  ],
+  "cameraBench": {
+    "high": {
+      "distanceScale": 1.199999999978326,
+      "fovExtra": 7.999999999888892,
+      "normalizedSpeed": 0.9999999999861116,
+      "fov": 62.99999999988889
+    },
+    "low": {
+      "distanceScale": 1.0000000082322884,
+      "fovExtra": 1.218398379560088e-7,
+      "normalizedSpeed": 1.52299797445011e-8,
+      "fov": 55.00000012183984
+    },
+    "controlledActualVelocity": true,
+    "throttleNotUsed": true
+  },
+  "timerHeldBeforeGreen": true,
+  "pauseHeldClock": true,
+  "noLaps": true,
+  "noTeleportDuringDriving": true,
+  "restartSelectedRiver": true,
+  "replaysCompleteAndCompatible": true,
+  "viewerPositionTolerance": 1e-8,
+  "legacyCampaignSaveUnchanged": true,
+  "allBestTimesSurviveReload": true,
+  "sixCameraSlidersSurviveReload": true,
+  "physicsAndV8SettingsPreserved": true,
+  "multitouch": true,
+  "rapidDoubleTapsKeepScaleOne": true,
+  "portraitHoldsRun": true,
+  "errors": [],
+  "fixture": "Rendered Chromium mobile emulation with manual frame clock and suppressed repeated drawing. All three runs are driven through the actual GamepadSource/ControlInput and live game loop, using injected standard-controller signals; no stage/boat-position teleports. A separate title-menu velocity fixture measures camera framing. No physical iPhone/Xbox, audio listening or sustained FPS claim."
+}

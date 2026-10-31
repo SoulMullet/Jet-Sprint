@@ -19,7 +19,7 @@ export class NavigationView {
  }
  build(){
   if(this.built)return;this.built=true;
-  const route=this.course.line.map(p=>v(p.x,.45,p.z));route.push(route[0].clone());this.group.add(line(route,'#4ce5ff'));
+  const route=this.course.line.map(p=>v(p.x,.45,p.z));if(this.course.closed!==false)route.push(route[0].clone());this.group.add(line(route,'#4ce5ff'));
   const boundaries=[];
   this.course.gates.forEach((g,i)=>{
    const key=`${g.x.toFixed(2)},${g.z.toFixed(2)}`,shared=this.labelGroups.get(key);
@@ -29,21 +29,21 @@ export class NavigationView {
    // Arrow points in the required direction of crossing, not toward a waypoint.
    boundaries.push(v(g.x-g.tx*2,.8,g.z-g.tz*2),v(g.x+g.tx*2,.8,g.z+g.tz*2));
    for(const side of [-1,1])boundaries.push(v(g.x+g.tx*.6+nx*side,.8,g.z+g.tz*.6+nz*side),v(g.x+g.tx*2,.8,g.z+g.tz*2));
-   const label=spriteLabel(i===0?'0 · FINISH':String(i),'#e7faf3',128,64);label.sprite.position.set(g.x,2.2,g.z);label.sprite.scale.set(2.4,1.2,1);this.group.add(label.sprite);this.labels.push(label.sprite);this.labelGroups.set(key,{label,indices:[i]});
+   const label=spriteLabel(this.course.closed===false?(i===this.course.gates.length-1?'FINISH':String(i+1)):i===0?'0 · FINISH':String(i),'#e7faf3',128,64);label.sprite.position.set(g.x,2.2,g.z);label.sprite.scale.set(2.4,1.2,1);this.group.add(label.sprite);this.labels.push(label.sprite);this.labelGroups.set(key,{label,indices:[i]});
   });
   this.group.add(line(boundaries,'#e1efce',true));this.active=line([v(0,0,0),v(0,0,0)],'#e0ff3e');this.group.add(this.active);this.targetLine=line([v(0,0,0),v(0,0,0)],'#e0ff3e');this.group.add(this.targetLine);
  }
  setDebug(enabled){this.enabled=enabled;if(enabled)this.build();this.group.visible=enabled;this.status.hidden=!enabled;}
  setCourse(course){if(this.course===course)return;this.group.traverse(o=>{o.geometry?.dispose();if(o.material){o.material.map?.dispose();o.material.dispose();}});this.group.clear();this.course=course;this.built=false;this.labels=[];this.labelGroups.clear();this.lastGate=null;if(this.enabled)this.build();}
  update(boat,race,cue,visible,dt){
-  const gateIndex=race.done?0:race.next,g=this.course.gates[gateIndex];this.target.sprite.visible=visible&&this.enabled;
+  const gateIndex=race.done?(this.course.closed===false?this.course.gates.length-1:0):race.next,g=this.course.gates[gateIndex];this.target.sprite.visible=visible&&this.enabled;
   if(visible)this.target.sprite.position.set(cue?.targetX??g.x,1.8,cue?.targetZ??g.z);
   if(!this.enabled)return;
   const link=this.targetLine.geometry.attributes.position;link.setXYZ(0,boat.x,.65,boat.z);link.setXYZ(1,cue?.targetX??g.x,.65,cue?.targetZ??g.z);link.needsUpdate=true;this.targetLine.geometry.computeBoundingSphere();
   if(this.lastGate!==gateIndex){this.lastGate=gateIndex;for(const {label,indices} of this.labelGroups.values()){const active=indices.includes(gateIndex);label.sprite.material.color.set(active?'#f6ff55':'#ffffff');label.sprite.scale.set(active?3.3:2.4,active?1.65:1.2,1);}
    const p=this.active.geometry.attributes.position,w=g.halfWidth||7.1;p.setXYZ(0,g.x+g.tz*w,1,g.z-g.tx*w);p.setXYZ(1,g.x-g.tz*w,1,g.z+g.tx*w);p.needsUpdate=true;this.active.geometry.computeBoundingSphere();}
   this.age+=dt;if(this.age<.1)return;this.age=0;
-  const last=race.lastCrossing,reason=race.done?`Finished: all ${race.lapCount} laps accepted`:race.check.gate!==race.next?'Approaching: previous gate accepted':reasons[race.check.code]||race.check.code;
+  const last=race.lastCrossing,reason=race.done?(this.course.closed===false?"Finished: ordered river route accepted":`Finished: all ${race.lapCount} laps accepted`):race.check.gate!==race.next?'Approaching: previous gate accepted':reasons[race.check.code]||race.check.code;
   this.status.textContent=`NAV DEBUG · Gate ${gateIndex}/${this.course.gates.length-1}\n${reason}\nTarget ${(cue?.targetX??g.x).toFixed(1)}, ${(cue?.targetZ??g.z).toFixed(1)} · side ${race.check.signed.toFixed(1)} m · offset ${race.check.lateral.toFixed(1)} m${cue?`\nRoute: ${cue.reason}`:''}${last?`\nLast: gate ${last.gate} · ${reasons[last.code]}`:''}`;
  }
 }

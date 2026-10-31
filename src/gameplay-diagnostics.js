@@ -201,7 +201,10 @@ export class GameplayDiagnostics {
           clear++;
       }
     }
-    this.routePath.setAttribute("d", pathData + " Z");
+    this.routePath.setAttribute(
+      "d",
+      pathData + (tour.venue.closed === false ? "" : " Z"),
+    );
     this.info.textContent = `TRACK IN VIEW ${Math.round((100 * visible) / tour.venue.points.length)}% · CLEAR OF HUD ${Math.round((100 * clear) / tour.venue.points.length)}% · Exposed bank samples ${this.samples?.exposed ?? 0} · Excluded internal edges ${this.samples?.internalExcluded ?? 0}`;
   }
 }

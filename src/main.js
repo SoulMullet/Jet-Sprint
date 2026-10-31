@@ -1,3 +1,6 @@
+import {createRiverLevels,RiverRunProgress,validateRiverLevels} from './river-levels.js';
+import {RiverRunTour} from './river-run.js';
+import {mountRiverRunUI,createRiverRunMarkers} from './river-run-ui.js';
 import {createReplayFeature} from './replay/feature.js';
 import {portableGameData} from './portable-game-data.js';
 import {GameplaySettings} from './gameplay-settings.js';
@@ -12,6 +15,7 @@ import './controls.css';
 import './arcade-layout.css';
 import './gameplay-polish.css';
 import './replay/replay.css';
+import './river-run.css';
 import {protectGameplayGestures} from './gameplay-gestures.js';
 import {RacingCameraSettings} from './racing-camera-settings.js';
 import {CampaignCameras} from './racing-camera-manager.js';
@@ -61,11 +65,8 @@ import {navigateMenu} from './gamepad-menu.js';
 import {trapFocus} from './ui-components.js';
 import {createCampaignAdventure,sliceCampaignNetwork} from './campaign-world.js';
 import {CampaignStreamer,originBounds} from './campaign-streaming.js';
-import {CampaignTour} from './campaign-tour.js';
-import {CampaignProgress} from './campaign-progress.js';
 import {RiverSurface} from './campaign-whitewater.js';
 import {TourPresentation} from './campaign-presentation.js';
-import {mountCampaignUI} from './campaign-ui.js';
 import {track1,campaignDefinition} from './campaign-data.js';
 let replayFeature=null;
 await loadGameFonts();
@@ -90,16 +91,18 @@ const waterTime={value:0},waterBoat={value:new THREE.Vector3()},waterStrength={v
 const bank=mat('#645b45'),dark=mat('#183237'),lime=mat('#e0ef64'),white=mat('#ddd6b7');
 function mesh(geo,material,x=0,y=0,z=0,parent=scene){const m=new THREE.Mesh(geo,material);m.position.set(x,y,z);parent.add(m);return m;}
 
-const campaignWorld=createCampaignAdventure(),N=600;let venue=campaignWorld.courses[0],points=venue.points;
-const campaignProgress=new CampaignProgress({getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)});
-const campaign=new CampaignTour(campaignWorld,campaignProgress);
+const campaignWorld=createCampaignAdventure();
+const riverLevels=createRiverLevels(campaignWorld);campaignWorld.riverRunLevels=riverLevels;
+const campaignProgress=new RiverRunProgress({getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)},riverLevels);
+const campaign=new RiverRunTour(campaignWorld,riverLevels,campaignProgress);
+let venue=campaign.venue,points=venue.points;
+document.body.classList.add('river-run');
 const visibilitySettings=new GameplaySettings({getItem:k=>localStorage.getItem(k),setItem:(k,v)=>localStorage.setItem(k,v)});
-const courseValidation=reportCourseValidation(campaignWorld);visibilitySettings.values.debug.checkpoints=preferences.values.navigationDebug;
-console.info(`Active track: ${venue.id} / version ${venue.version} / ${routeId}`);
+const courseValidation=[...reportCourseValidation(campaignWorld),...validateRiverLevels(riverLevels)];console.info('[River Run validation]',validateRiverLevels(riverLevels));visibilitySettings.values.debug.checkpoints=preferences.values.navigationDebug;
+console.info(`Active track: ${venue.id} / version ${venue.version} / ${campaign.track.routeId}`);
 $('buildDebugHud').dataset.track=venue.id;
-for(const id of ['buildDebugHud','buildDebug'])$(id).textContent=`CAMPAIGN-4 · v${__BUILD_VERSION__} · ${__BUILD_COMMIT__}`;
+for(const id of ['buildDebugHud','buildDebug'])$(id).textContent=`RIVER RUNS · v${__BUILD_VERSION__} · ${__BUILD_COMMIT__}`;
 const overview=document.createElement('label');overview.innerHTML='<input id="courseOverview" type="checkbox"> Campaign overview';$('debug').append(overview);
-const tangents=points.map(p=>({x:p.tx,z:p.tz}));
 // Bank, render surface, collision and bathymetry share the same channel network.
 const outline=sliceCampaignNetwork(campaignWorld.network,originBounds);
 const shore=mesh(shorelineGeometry(outline,channel.water,channel.bank),bank);shore.receiveShadow=true;
@@ -125,7 +128,7 @@ const retroVenue=createRetroVenue(scene,nearest);
 const campaignStream=new CampaignStreamer(scene,campaignWorld,{water:waterLook.material,ground:environment.ground,bank});campaignStream.prime(venue.points[0]);
 const campaignScenery=new TourPresentation(scene,campaignWorld,campaignStream);
 const bigfoot=createBigfoot(scene,forest,nearest);
-const start=points[0],startT=tangents[0];const stripe=new THREE.Group();stripe.position.set(start.x,.035,start.z);stripe.rotation.y=-Math.atan2(startT.z,startT.x);scene.add(stripe);
+const start=riverLevels[0].start,startT={x:start.tx,z:start.tz};const stripe=new THREE.Group();stripe.position.set(start.x,.035,start.z);stripe.rotation.y=-Math.atan2(startT.z,startT.x);scene.add(stripe);
 for(let x=0;x<2;x++)for(let z=0;z<15;z++)mesh(new THREE.BoxGeometry(.65,.025,.96),(x+z)%2?dark:white,(x-.5)*.65,0,(z-7)*.96,stripe);
 for(const side of [-1,1]){mesh(new THREE.BoxGeometry(.25,4,.25),dark,0,2,side*9,stripe);mesh(new THREE.BoxGeometry(.1,1,2),lime,0,3.3,side*8.2,stripe);}
 const boat=racingBoat(scene,{cockpitLayers:true});
@@ -137,7 +140,7 @@ const cameraStaticCount=cameraObstacles.length,cameraObstruction=createCameraObs
 const cameraCollision=(target,position)=>{cameraObstacles.length=cameraStaticCount;campaignStream.appendObstacles(cameraObstacles,target.x,target.z);return cameraObstruction(target,position);};
 const legacyCameraSystem=new RacingCameras(perspective,cameraPreferences,(target,position)=>{cameraObstacles.length=cameraStaticCount;campaignStream.appendObstacles(cameraObstacles,target.x,target.z);return cameraObstruction(target,position);});
 legacyCameraSystem.overviewCenter={x:-7,z:-28,height:235};
-const racingCameraPreferences=new RacingCameraSettings({getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)});racingCameraPreferences.use(venue.id);
+const racingCameraPreferences=new RacingCameraSettings({getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)});for(const level of riverLevels)racingCameraPreferences.inherit(campaignWorld.courses[level.index].id,level.id);racingCameraPreferences.use(venue.id);
 const cameraSystem=new CampaignCameras(perspective,legacyCameraSystem,racingCameraPreferences,campaignWorld,cameraCollision);
 let priorCameraMode=cameraPreferences.mode;cameraPreferences.subscribe(()=>{if(priorCameraMode!==cameraPreferences.mode){cameraSystem.debug=true;priorCameraMode=cameraPreferences.mode;}});
 const cameraFrame={playing:false,top:85,effects:1,overview:false};
@@ -167,7 +170,7 @@ $('resetWater').onclick=()=>fluid.reset();
 
 const audioSettings=new AudioSettings({getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)});
 const engine=new Engine({settings:audioSettings.values,workletURL});let playing=false,paused=false,gameClock=0,last=performance.now();
-const startSequence=new RaceStart(),trackSignals=campaignWorld.courses.map(c=>createRaceSignal(scene,c.points[0],c.points[0]));
+const startSequence=new RaceStart(),trackSignals=riverLevels.map(l=>createRaceSignal(scene,l.start,l.start));createRiverRunMarkers(scene,riverLevels);
 const doubleTap=createDoubleTap(()=>{if(startSequence.state==='RACING')bigfoot.provoke(b,()=>engine.vocal(true));});
 let race=campaign.race;
 let navigator=campaign.navigator;const navigatorHUD=mountNavigator($('navigator'));
@@ -180,6 +183,7 @@ function board(){const records=readScores(scoreStorage).filter(r=>r.course===res
  return records.findIndex(r=>r.id===result.id)+1;
 }
 function finish(){startSequence.finish();
+ if(campaign.mode==='river-run'){result={id:globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random()}`,course:campaign.level.id,version:gameplayVersion,modified:race.modified||campaign.practice,total:race.total,laps:[],lapCount:0,date:new Date().toISOString()};release();journeyUI.finish(result);$('notice').textContent='River complete · Replay, restart or choose the next river';return;}
  result={id:globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random()}`,course:`${campaign.track.id}/${campaign.track.routeId}`,version:gameplayVersion,modified:race.modified||campaign.practice,total:race.total,laps:[...race.laps],lapCount:campaign.track.laps,date:new Date().toISOString()};
  $('resultStats').replaceChildren();const summary=document.createElement('p');summary.textContent=`Total ${format(result.total)} · Best ${format(Math.min(...result.laps))} · Average ${format(result.total/result.laps.length)} · ${result.modified?'Modified':'Standard'}`;$('resultStats').append(summary);
  const list=document.createElement('ol');for(const t of result.laps){const item=document.createElement('li');item.textContent=format(t);list.append(item);}$('resultStats').append(list);
@@ -187,7 +191,7 @@ function finish(){startSequence.finish();
  const prize=document.createElement('p');prize.textContent=`Prize $${campaign.reward?.prize??0} · Clean achievement $${campaign.reward?.cleanBonus??0} · Wallet $${campaignProgress.values.wallet}`;$('resultStats').append(prize);if(campaign.phase==='CHAMPION'){const series=document.createElement('p');series.textContent=campaign.practice?'PRACTICE / CHAMPIONSHIP FINISH':'SERIES COMPLETE / FOUR TRACKS + THREE RIVERS';$('resultStats').append(series);for(const run of campaign.results){const row=document.createElement('p');row.textContent=`${run.track.name} · ${format(run.total)}`;$('resultStats').append(row);}}
 }
 $('continueJourney').onclick=()=>{$('results').hidden=true;document.activeElement?.blur();release();};
-$('saveScore').onclick=()=>{if(!result)return;try{saveScore(scoreStorage,result,$('playerName').value);const rank=board();$('saveScore').disabled=true;$('saveStatus').textContent=rank?`Saved · local position ${rank}`:'Outside the fastest 10';}catch{$('saveStatus').textContent='Storage unavailable. Results remain visible for this race.';}};
+$('saveScore').onclick=()=>{if(!result||campaign.mode==='river-run')return;try{saveScore(scoreStorage,result,$('playerName').value);const rank=board();$('saveScore').disabled=true;$('saveStatus').textContent=rank?`Saved · local position ${rank}`:'Outside the fastest 10';}catch{$('saveStatus').textContent='Storage unavailable. Results remain visible for this race.';}};
 $('raceRestart').onclick=()=>{playing=true;restart();engine.start();};
 const controlPreferences=new ControlSettings({getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)});
 let orientation=null;
@@ -218,7 +222,7 @@ function applyPreferences(ids){const v=preferences.values;
  replayFeature?.noteTuneChange();
 }
 const settingsUI=mountSettings(preferences,applyPreferences);
-mountGameplayLabs(visibilitySettings,$('debug'),{validate:()=>{const report=validateCampaign(campaignWorld,{deep:true,arrows:campaign.phase==='RACE'?waterGuidance.samples:[],activeCourse:venue.id});console.info('[Course / collision / navigation validation]',report);return report;},toggleCheckpoints:on=>{preferences.set('navigationDebug',on);navigationView.setDebug(on);}});
+mountGameplayLabs(visibilitySettings,$('debug'),{validate:()=>{const report=[...validateCampaign(campaignWorld,{deep:true}),...validateRiverLevels(riverLevels,waterGuidance.samples,campaign.level.id)];console.info('[Course / collision / navigation validation]',report);return report;},toggleCheckpoints:on=>{preferences.set('navigationDebug',on);navigationView.setDebug(on);}});
 globalThis.__JET_SPRINT_VISIBILITY__=Object.freeze({inspect:()=>({settings:structuredClone(visibilitySettings.values),guidance:waterGuidance.inspect(),validation:courseValidation,collision:gameplayDiagnostics.samples,contacts:campaignWorld.collisionNearest.recent})});
 const retryScenery=document.createElement('button');retryScenery.id='retryCampaignScenery';retryScenery.textContent='Retry scenery preparation';retryScenery.onclick=()=>campaignStream.retry();settingsUI.groups['Debug Tools'].append(retryScenery);
 const physicsLab=mountPhysicsLab(preferences,()=>({boat:b,motion:boatPresentation.motion}),release);
@@ -260,11 +264,11 @@ function controllerAction(action){
  if(action==='back'){if(dialog)dialog.querySelector('[data-confirm="false"]')?.click();else if(!pit.hidden)interfaceUI.close();else if(!results.hidden)$('continueJourney').click();else if(paused)setPaused(false);return;}
  if(root){if(action==='confirm'&&!playing&&!dialog&&pit.hidden&&!root.contains(document.activeElement)){$('start').click();return;}navigateMenu(action,root);controls.gamepad.haptic();}
 }
-const journeyUI=mountCampaignUI(campaign,campaignProgress,campaignWorld,()=>{if(result){release();$('results').hidden=false;$('continueJourney').focus();}},index=>{campaignStream.previewVenue=index>0?index:null;});
+const journeyUI=mountRiverRunUI(campaign,campaignProgress,riverLevels,{getPlaying:()=>playing,getBoat:()=>b,showResults:()=>{if(result){release();$('results').hidden=false;$('continueJourney').focus();}},onSelect:index=>{if(!playing)restart(index);},onNext:index=>{playing=true;document.body.classList.add('racing');restart(index);engine.start();}});
 globalThis.__JET_SPRINT_CAMPAIGN__=Object.freeze({inspect:()=>({...campaign.inspect(),raceState:startSequence.state,laps:race.laps.length,lapTarget:race.lapCount,raceTime:race.total,streaming:campaignScenery.inspect(),progress:structuredClone(campaignProgress.values)})});
 let b,elapsed=0,lap=1,best=null;
-function syncCourse(){venue=campaign.venue;points=venue.points;race=campaign.race;navigator=campaign.navigator;navigationView.setCourse(venue);navigationView.setDebug(preferences.values.navigationDebug);}
-function restart(index=campaign.practice?0:campaign.index){replayFeature?.reset();cameraSystem.reset();campaign.reset();if(index>0)campaign.resume(index);syncCourse();if(soundLab.testing)soundLab.setTesting(false);const now=performance.now();if(playing&&!paused)gameClock+=Math.max(0,(now-last)/1000);paused=false;$('pauseMenu').hidden=true;document.body.classList.remove('paused');if(document.activeElement?.closest('#pauseMenu,#results'))document.activeElement.blur();$('pauseToggle').setAttribute('aria-expanded','false');last=now;startSequence.reset();playing=document.body.classList.contains('racing');if(playing){startSequence.begin(gameClock,preferences.values.countdownDuration);campaign.begin();}fluid?.reset();fluid?.disturb();race.reset();navigator.reset();race.modified=modified(settings);doubleTap.reset();$('results').hidden=true;result=null;release();engine.reset();const spawn=index>0?campaign.stagingPath.sample(0):start;b={x:spawn.x,z:spawn.z,angle:Math.atan2(spawn.tz,spawn.tx),vx:0,vz:0,pump:0,nozzle:0,yawRate:0};campaignStream.prime(b);elapsed=0;lap=1;best=null;wakeTrail.reset();hfSpray.reset();hfWake.reset();boatPresentation.reset();$('notice').textContent='Follow your navigator. Three laps, then upstream.';journeyUI.update(0,null,true);}
+function syncCourse(){$('buildDebugHud').dataset.track=campaign.level.id;venue=campaign.venue;points=venue.points;race=campaign.race;navigator=campaign.navigator;navigationView.setCourse(venue);navigationView.setDebug(preferences.values.navigationDebug);}
+function restart(index=campaign.index){replayFeature?.reset();cameraSystem.reset();campaign.reset();if(index>0)campaign.resume(index);syncCourse();if(soundLab.testing)soundLab.setTesting(false);const now=performance.now();if(playing&&!paused)gameClock+=Math.max(0,(now-last)/1000);paused=false;$('pauseMenu').hidden=true;document.body.classList.remove('paused');if(document.activeElement?.closest('#pauseMenu,#results'))document.activeElement.blur();$('pauseToggle').setAttribute('aria-expanded','false');last=now;startSequence.reset();playing=document.body.classList.contains('racing');if(playing){startSequence.begin(gameClock,preferences.values.countdownDuration);campaign.begin();}fluid?.reset();fluid?.disturb();race.reset();navigator.reset();race.modified=modified(settings);doubleTap.reset();$('results').hidden=true;result=null;release();engine.reset();const spawn=campaign.level.start;b={x:spawn.x,z:spawn.z,angle:Math.atan2(spawn.tz,spawn.tx),vx:0,vz:0,pump:0,nozzle:0,yawRate:0};campaignStream.prime(b);elapsed=0;lap=0;best=campaignProgress.best(campaign.level.id);wakeTrail.reset();hfSpray.reset();hfWake.reset();boatPresentation.reset();$('notice').textContent='Wait for green, then follow the river to the finish.';journeyUI.update(0,null,true);}
 restart();$('restart').onclick=()=>{if(document.body.classList.contains('racing'))playing=true;restart();if(playing)engine.start();};$('start').onclick=()=>{campaignStream.previewVenue=null;playing=true;document.body.classList.add('racing');engine.start();restart(Number($('campaignStart')?.value||0));};
 let lastEmissionRate=0;
 const hfEffectsOptions={density:1,distance:1,volume:1,effects:1,persistence:3,pose:boatPresentation.motion,impact:0,tuning:preferences.values,emit:true};
@@ -278,7 +282,7 @@ function effects(dt,speed){
 }
 
 function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);cameraSystem.resize(w,h);summerLab?.apply();summerLab?.resize();}window.addEventListener('resize',resize);resize();
-const beforeStep={x:0,z:0};
+const beforeStep={x:0,z:0},cameraAhead={},cameraProjection={};
 let vegetationClock=0;
 function frame(now){requestAnimationFrame(frame);const rawDt=Math.max(0,(now-last)/1000),dt=Math.min(rawDt,.05);last=Math.max(last,now);const viewing=!!replayFeature?.active;let replayCamera=null,renderBoat=b,renderTour=campaign;if(viewing){replayCamera=replayFeature.update(document.hidden?0:rawDt,campaign,{playing,paused,hidden:document.hidden,width:innerWidth,height:innerHeight});renderBoat=replayFeature.renderBoat;renderTour=replayFeature.renderTour;}if(playing&&!paused&&!document.hidden&&!viewing)graphics.sample(rawDt);waterTime.value=now*.001;let speed=Math.hypot(b.vx,b.vz);
  controls.update(dt,speed/(settings.top/3.6));controlLab.update(dt);if(!viewing)riverSurface.update(b,dt);
@@ -286,12 +290,12 @@ function frame(now){requestAnimationFrame(frame);const rawDt=Math.max(0,(now-las
   gameClock+=rawDt;
   const transitions=startSequence.update(gameClock),latestSignal=transitions[transitions.length-1];
   if(latestSignal&&preferences.values.countdownAudio)engine.signal(latestSignal.kind);
-  if(startSequence.state==='RACING'||campaign.phase!=='RACE'||campaign.index>0){
-   const racingDt=campaign.phase==='RACE'&&campaign.index===0?Math.min(dt,Math.max(0,gameClock-startSequence.startAt)):dt;let advanced=0;
+  if(startSequence.state==='RACING'||campaign.done){
+   const racingDt=!campaign.done?Math.min(dt,Math.max(0,gameClock-startSequence.startAt)):dt;let advanced=0;
    while(advanced<racingDt-1e-10){const step=Math.min(PHYSICS_STEP,racingDt-advanced);beforeStep.x=b.x;beforeStep.z=b.z;replayFeature.beforeStep(campaign,b,boatPresentation.motion,input,startSequence);if(campaign.beforePhysics(b,step))stepBoat(b,input,step,campaignWorld.collisionNearest);campaignWorld.collisionNearest.record(b);advanced+=step;const transition=campaign.step(beforeStep,b,step,settings,gameClock-racingDt+advanced,startSequence);boatPresentation.step(b,step,now*.001-racingDt+advanced);replayFeature.afterStep(campaign,b,boatPresentation.motion,input,transition,step);
-    if(transition==='race-complete')finish();if(transition==='arrival'){syncCourse();startSequence.begin(gameClock-racingDt+advanced,preferences.values.countdownDuration);campaign.pendingCountdown=false;}
+    if(transition==='race-complete'||transition==='river-complete')finish();if(transition==='arrival'){syncCourse();startSequence.begin(gameClock-racingDt+advanced,preferences.values.countdownDuration);campaign.pendingCountdown=false;}
     if(campaign.landed)hfSpray.simulation.impact(b.x,0,b.z,1.5);
-    elapsed=race.done?race.total:race.total-race.lapStart;lap=Math.min(campaign.track.laps,race.laps.length+1);best=race.laps.length?Math.min(...race.laps):null;
+    elapsed=race.done?race.total:race.total-race.lapStart;lap=Math.min(campaign.track.laps,race.laps.length+1);best=campaignProgress.best(campaign.level.id);
    }
    speed=Math.hypot(b.vx,b.vz);effects(dt,speed);if(campaign.index===0&&campaign.phase==='RACE')bigfoot.update(dt,b,camera,{speed,distance:settings.sprayDistance/100,volume:settings.waterVolume/100,throttle:input.throttle},()=>engine.vocal(false));engine.update(speed,input.throttle,dt,settings.top/3.6,false,campaign.airborne?0:b.engineLoad);
   }else{b.vx=b.vz=0;speed=0;engine.update(0,preferences.values.prestartRevving?input.throttle:0,dt,settings.top/3.6,true);}
@@ -301,25 +305,25 @@ function frame(now){requestAnimationFrame(frame);const rawDt=Math.max(0,(now-las
  soundLab.update();
  if(!playing&&!soundLab.testing&&!viewing){effects(dt,0);}
  retroVenue.update(document.hidden?0:dt,b);
- const navigating=playing&&!paused&&!document.hidden&&!soundLab.testing&&!viewing&&(startSequence.state==='RACING'||campaign.phase!=='RACE');
+ const navigating=playing&&!paused&&!document.hidden&&!soundLab.testing&&!viewing&&(startSequence.state==='RACING'||campaign.done);
  if(!navigating&&preferences.values.bigfootDebug&&!document.hidden)bigfoot.update(dt,b,camera);
  let navigationCue=null;
- if(navigating){const cue=navigationCue=campaign.cue(b,dt,input);navigatorHUD.update(cue,!$('debug').open&&!soundLab.root.open&&(campaign.phase==='STAGING'||!preferences.values.startHud||gameClock>=startSequence.startAt+2));const notice=cue.notice||(campaign.phase==='RACE'?'Follow the arrows · Three laps':campaign.phase==='EXIT'?'Race clock stopped · Follow the exit gate':'Bonus: speed + clean gates · Side ramp optional');if($('notice').textContent!==notice)$('notice').textContent=notice;}else navigatorHUD.update(null,false);
+ if(navigating){const cue=navigationCue=campaign.cue(b,dt,input);navigatorHUD.update(cue,!$('debug').open&&!soundLab.root.open&&(campaign.phase==='STAGING'||!preferences.values.startHud||gameClock>=startSequence.startAt+2));const notice=cue.notice||(campaign.done?'Run complete · Clock stopped':'Follow the river arrows · Start to finish');if($('notice').textContent!==notice)$('notice').textContent=notice;}else navigatorHUD.update(null,false);
  waterGuidance.update(paused?0:dt,campaign,b,navigationCue,waterTime.value,playing&&!viewing);
- navigationView.update(b,race,navigationCue,navigating&&campaign.phase==='RACE',dt);bigfootView.update(b,dt);
+ navigationView.update(b,race,navigationCue,navigating,dt);bigfootView.update(b,dt);
  const lamps=startSequence.lamps(gameClock);trackSignals.forEach((signal,i)=>signal.update(i===campaign.index?lamps:{upper:false,lower:false,green:false}));
  const signalHUD=$('startSignal'),show=startSequence.active&&preferences.values.startHud&&(startSequence.state!=='RACING'||gameClock<startSequence.startAt+.24);
  signalHUD.hidden=!show||viewing;signalHUD.style.opacity='1';signalHUD.classList.toggle('leaving',startSequence.state==='RACING');
  for(const id of ['upper','lower','green'])$('signal-'+id).classList.toggle('lit',lamps[id]);
  const signalText=startSequence.state==='READY'?'READY':startSequence.state==='COUNTDOWN'?'SET':'GO!';if($('signalText').textContent!==signalText)$('signalText').textContent=signalText;
 
- if(!viewing&&(!playing||startSequence.state!=='RACING'&&campaign.phase==='RACE'))boatPresentation.step(b,dt,now*.001);
+ if(!viewing&&(!playing||startSequence.state!=='RACING'&&!campaign.done))boatPresentation.step(b,dt,now*.001);
  boatPresentation.update(b,input,dt,now*.001,engine.rpm,settings.top);boat.position.y+=campaign.height;if(campaign.airborne)boat.rotation.z+=Math.atan2(campaign.verticalVelocity,Math.max(1,speed))*.35;physicsLab.update(dt);
  if(!viewing)replayFeature.update(document.hidden?0:rawDt,campaign,{playing,paused,hidden:document.hidden,width:innerWidth,height:innerHeight});
  campaignScenery.update(dt,renderTour,renderBoat,now*.001);journeyUI.update(dt,result);
  // Rendering-only camera controller: it never writes boat or race state.
  if(!viewing){waterBoat.value.set(b.x,0,b.z);waterStrength.value=Math.min(1,speed/20);}
- const near=nearest(b.x,b.z),ahead=campaign.phase==='RACE'||!navigationCue?points[(near.index+Math.round(12+speed*.8))%N]:{x:navigationCue.targetX,z:navigationCue.targetZ};
+ const cameraPath=campaign.level.route,ahead=navigationCue?{x:navigationCue.targetX,z:navigationCue.targetZ}:cameraPath.sample(Math.min(cameraPath.length,cameraPath.project(b,0,cameraPath.length,cameraProjection).distance+12+speed*.8),cameraAhead);
  if(!viewing){cameraSystem.overviewCenter.x+=(b.x-cameraSystem.overviewCenter.x)*(1-Math.exp(-dt*3));cameraSystem.overviewCenter.z+=(b.z-cameraSystem.overviewCenter.z)*(1-Math.exp(-dt*3));}
  cameraFrame.playing=playing;cameraFrame.top=settings.top;cameraFrame.effects=settings.effects;cameraFrame.overview=$('courseOverview').checked;
  cameraFrame.tour=campaign;
@@ -339,6 +343,6 @@ function frame(now){requestAnimationFrame(frame);const rawDt=Math.max(0,(now-las
  setInstrumentText($('speed'),Math.round(speed*3.6));setInstrumentText($('time'),format(elapsed));setInstrumentText($('lap'),`${lap}/${campaign.track.laps}`);setInstrumentText($('best'),best===null?'—':format(best));interfaceUI.update(dt,engine.rpm,audioSettings.values.maxRPM,speed*3.6,settings.top);summerLab.render(camera,dt);}
 requestAnimationFrame(frame);
 import('./campaign-debug.js').then(({mountCampaignDebug})=>mountCampaignDebug({campaign,world:campaignWorld,scenery:campaignScenery,startSequence,getRace:()=>race,getBoat:()=>b,getPlaying:()=>playing,getResult:()=>result,getFPS:()=>summerLab.fpsNode.textContent,parent:settingsUI.groups['Debug Tools'],jump:stage=>{
- replayFeature.reset();if(paused)setPaused(false);interfaceUI.close();release();engine.start();result=null;elapsed=0;lap=1;best=null;const p=campaign.practiceStage(Number(stage));syncCourse();playing=true;document.body.classList.add('racing');startSequence.finish();if(campaign.phase==='RACE'){startSequence.begin(gameClock,preferences.values.countdownDuration);}race.modified=true;
+ replayFeature.reset();if(paused)setPaused(false);interfaceUI.close();release();engine.start();result=null;elapsed=0;lap=1;best=null;const p=campaign.practiceStage(Number(stage));syncCourse();playing=true;document.body.classList.add('racing');startSequence.finish();startSequence.begin(gameClock,preferences.values.countdownDuration);race.modified=true;
  Object.assign(b,{x:p.x,z:p.z,angle:Math.atan2(p.tz,p.tx),vx:0,vz:0,pump:0,nozzle:0,yawRate:0,collisionImpulse:0});campaignStream.previewVenue=null;campaignStream.prime(b);cameraSystem.reset();boatPresentation.reset();hfSpray.reset();hfWake.reset();wakeTrail.reset();$('results').hidden=true;last=performance.now();
 }}));

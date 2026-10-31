@@ -53,7 +53,7 @@ export function createReplayFeature({
     visual = new GhostVisual(scene, boat),
     cameras = new ReplayCameras(world, cameraSettings, obstruction);
   const $ = (id) => document.getElementById(id);
-  root.innerHTML = `<summary>Ghost & Replay Lab</summary><p class="lab-intro">Recorded world poses / original official timing. Ghosts have no physics, wake or prize influence. Records are separated by course revision and force tune.</p><div class="replay-options"><label><input id="replayRecording" type="checkbox"> Record races and bonus rivers</label><label>Ghost mode<select id="ghostMode"><option value="personal-best">Personal Best</option><option value="previous">Previous Run</option><option value="selected">Selected Saved Replay</option><option value="disabled">Ghost Disabled</option></select></label><label>Ghost opacity<output></output><input id="ghostOpacity" type="range" min="0.08" max="0.85" step="0.01"></label><label>Ghost color<input id="ghostColor" type="color"></label><label>Sample interval / next event<output></output><input id="replayInterval" type="range" min="0.05" max="0.1" step="0.005"></label></div><button id="resetReplaySettings">Reset ghost settings</button><p id="ghostStatus" role="status"></p><output id="replayDiagnostics" class="replay-diagnostics"></output><details class="settings-section" open><summary>Replay library / this device</summary><label>Recording<select id="savedReplay"><option value="">No completed recordings yet</option></select></label><div class="replay-actions"><button id="saveReplay">Save Replay</button><button id="loadReplay">Load Replay / Viewer</button><button id="useReplayGhost">Use selected ghost</button><button id="exportReplay">Export Replay</button><button id="importReplay">Import Replay</button><button id="deleteReplay">Delete Replay</button></div><input id="replayFile" type="file" accept=".json,application/json" hidden><p id="replayStorageStatus" role="status"></p></details><details class="settings-section" open><summary>Personal records / current force tune</summary><div id="replayRecords"></div></details><details id="telemetryLab" class="settings-section"><summary>Telemetry Lab / recorded vs personal best</summary><div id="labTelemetryGraph"></div><button id="exportTelemetry">Export telemetry CSV</button><p>Snapshots include speed, inputs, slip, heading, world angular velocity, ordered progress and the original lap/checkpoint events.</p></details><details class="settings-section"><summary>Development / portable data</summary><button id="clearTestReplays">Clear unprotected test recordings</button><button id="exportFoundation">Export Unreal-ready game data</button><p>Saved and personal-best history is protected. Import does not award records or prizes. Record interval changes apply to the next event.</p></details>`;
+  root.innerHTML = `<summary>Ghost & Replay Lab</summary><p class="lab-intro">Recorded world poses / original official timing. Ghosts have no physics, wake or prize influence. Records are separated by course revision and force tune.</p><div class="replay-options"><label><input id="replayRecording" type="checkbox"> Record river runs and archived races</label><label>Ghost mode<select id="ghostMode"><option value="personal-best">Personal Best</option><option value="previous">Previous Run</option><option value="selected">Selected Saved Replay</option><option value="disabled">Ghost Disabled</option></select></label><label>Ghost opacity<output></output><input id="ghostOpacity" type="range" min="0.08" max="0.85" step="0.01"></label><label>Ghost color<input id="ghostColor" type="color"></label><label>Sample interval / next event<output></output><input id="replayInterval" type="range" min="0.05" max="0.1" step="0.005"></label></div><button id="resetReplaySettings">Reset ghost settings</button><p id="ghostStatus" role="status"></p><output id="replayDiagnostics" class="replay-diagnostics"></output><details class="settings-section" open><summary>Replay library / this device</summary><label>Recording<select id="savedReplay"><option value="">No completed recordings yet</option></select></label><div class="replay-actions"><button id="saveReplay">Save Replay</button><button id="loadReplay">Load Replay / Viewer</button><button id="useReplayGhost">Use selected ghost</button><button id="exportReplay">Export Replay</button><button id="importReplay">Import Replay</button><button id="deleteReplay">Delete Replay</button></div><input id="replayFile" type="file" accept=".json,application/json" hidden><p id="replayStorageStatus" role="status"></p></details><details class="settings-section" open><summary>Personal records / current force tune</summary><div id="replayRecords"></div></details><details id="telemetryLab" class="settings-section"><summary>Telemetry Lab / recorded vs personal best</summary><div id="labTelemetryGraph"></div><button id="exportTelemetry">Export telemetry CSV</button><p>Snapshots include speed, inputs, slip, heading, world angular velocity, ordered progress and the original lap/checkpoint events.</p></details><details class="settings-section"><summary>Development / portable data</summary><button id="clearTestReplays">Clear unprotected test recordings</button><button id="exportFoundation">Export Unreal-ready game data</button><p>Saved and personal-best history is protected. Import does not award records or prizes. Record interval changes apply to the next event.</p></details>`;
   const viewer = document.createElement("dialog");
   viewer.id = "replayViewer";
   viewer.className = "ui-dialog replay-viewer";
@@ -90,7 +90,8 @@ export function createReplayFeature({
   results.id = "resultsReplay";
   results.textContent = "WATCH RACE REPLAY";
   results.onclick = () => {
-    if (session.lastRaceReplay) openViewer(session.lastRaceReplay);
+    if (session.lastRaceReplay || session.lastCompleted)
+      openViewer(session.lastRaceReplay || session.lastCompleted);
     else onOpenLab();
   };
   $("continueJourney").before(results);
@@ -157,9 +158,12 @@ export function createReplayFeature({
     return repository.get(id);
   }
   const expectedCourse = (r) =>
-    r.meta.course.kind === "race"
-      ? session.courses[r.meta.course.index]
-      : session.rivers[r.meta.course.index];
+    [...session.courses, ...session.rivers, ...session.legacyRivers].find(
+      (c) =>
+        c.kind === r.meta.course.kind &&
+        c.id === r.meta.course.id &&
+        c.index === r.meta.course.index,
+    );
   function match(r) {
     const c = expectedCourse(r);
     return c
@@ -187,7 +191,7 @@ export function createReplayFeature({
       session.saveCompleted(session.lastCompleted, true);
     else
       action(() => {
-        throw Error("Finish a race or bonus river first.");
+        throw Error("Finish a river run or archived race first.");
       });
   };
   $("loadReplay").onclick = () =>
@@ -312,7 +316,7 @@ export function createReplayFeature({
     onPrime(viewPose);
     $("replayTitle").textContent = c.name.toUpperCase();
     $("replayOriginalTimes").textContent =
-      `ORIGINAL ${format(replay.official.total)}${replay.official.laps.length ? " · LAPS " + replay.official.laps.map(format).join(" / ") : " · RIVER BONUS"}${replay.eligible ? "" : " · PRACTICE / CUSTOM SESSION"}`;
+      `ORIGINAL ${format(replay.official.total)}${replay.official.laps.length ? " · LAPS " + replay.official.laps.map(format).join(" / ") : replay.meta.course.id.startsWith("river-run-") ? " · RIVER RUN" : " · RIVER BONUS"}${replay.eligible ? "" : " · PRACTICE / CUSTOM SESSION"}`;
     $("replayTimeline").max = replay.official.total;
     $("replaySpeed").value = "1";
     $("replayCamera").value = cameras.mode;
@@ -401,7 +405,8 @@ export function createReplayFeature({
         !session.catalog.length;
     $("exportReplay").disabled =
       !session.catalog.length && !session.lastCompleted;
-    $("resultsReplay").disabled = !session.lastRaceReplay;
+    $("resultsReplay").disabled =
+      !session.lastRaceReplay && !session.lastCompleted;
     $("ghostStatus").textContent = session.ghostStatus;
     $("replayStorageStatus").textContent = [
       session.status,
@@ -498,6 +503,7 @@ export function createReplayFeature({
       } else if (!viewerActive) {
         const showing =
           playing &&
+          !tour.done &&
           session.activeCourse &&
           ["RACE", "RIVER"].includes(tour.phase) &&
           session.activeCourse.index === tour.index &&
@@ -515,7 +521,10 @@ export function createReplayFeature({
         $("replayDiagnostics").textContent =
           `${info.recording ? "REC" : "IDLE"} · ${info.snapshots.toLocaleString()} snapshots · ${info.sampleInterval.toFixed(3)} s / ${Math.round(1 / info.sampleInterval)} Hz · Last file ${(info.bytes / 1048576).toFixed(2)} MB · ${info.stored}/32 stored · ${compatibilityStatus}`;
         const d =
-          !viewerActive && playing && ["RACE", "RIVER"].includes(tour.phase)
+          !viewerActive &&
+          playing &&
+          !tour.done &&
+          ["RACE", "RIVER"].includes(tour.phase)
             ? session.delta()
             : null;
         delta.hidden = d === null;
@@ -535,7 +544,12 @@ export function createReplayFeature({
             : session.lastCompleted;
         if (primary) {
           loadComparison(primary);
-          if (!root.hidden && $("telemetryLab").open)
+          if (
+            !viewerActive &&
+            !$("pitConsole").hidden &&
+            !root.hidden &&
+            $("telemetryLab").open
+          )
             labGraph.update(
               primary,
               comparison,

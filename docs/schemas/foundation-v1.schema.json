@@ -99,12 +99,7 @@
       "maxItems": 7,
       "items": {
         "type": "object",
-        "required": [
-          "descriptor",
-          "points",
-          "checkpoints",
-          "entry"
-        ]
+        "required": ["descriptor", "points", "checkpoints", "entry"]
       }
     },
     "boundaries": {
@@ -126,11 +121,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": [
-              "id",
-              "waterHalfWidth",
-              "points"
-            ],
+            "required": ["id", "waterHalfWidth", "points"],
             "properties": {
               "id": {
                 "type": "string"
@@ -162,39 +153,22 @@
     },
     "input": {
       "type": "object",
-      "required": [
-        "actions",
-        "controls",
-        "presets"
-      ]
+      "required": ["actions", "controls", "presets"]
     },
     "cameras": {
       "type": "object",
-      "required": [
-        "controls",
-        "states"
-      ]
+      "required": ["controls", "states"]
     },
     "audio": {
       "type": "object",
-      "required": [
-        "controls",
-        "defaults",
-        "presets",
-        "implementation"
-      ]
+      "required": ["controls", "defaults", "presets", "implementation"]
     },
     "labs": {
       "type": "object"
     },
     "replay": {
       "type": "object",
-      "required": [
-        "version",
-        "fields",
-        "limits",
-        "playback"
-      ],
+      "required": ["version", "fields", "limits", "playback"],
       "properties": {
         "version": {
           "const": 1
@@ -229,6 +203,50 @@
     },
     "tuning": {
       "type": "object"
+    },
+    "activeMode": {
+      "type": "string",
+      "enum": ["river-runs-v1", "legacy-campaign-v1"]
+    },
+    "primaryRiverLevels": {
+      "type": "array",
+      "maxItems": 7,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "environmentId",
+          "start",
+          "finish",
+          "startDistance",
+          "revision",
+          "unlockRequirements",
+          "replayDescriptor"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "start": {
+            "type": "object",
+            "required": ["x", "z", "tx", "tz", "heading"]
+          },
+          "finish": {
+            "type": "object",
+            "required": ["x", "z", "tx", "tz", "halfWidth", "distance"]
+          },
+          "unlockRequirements": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
     }
   }
 }

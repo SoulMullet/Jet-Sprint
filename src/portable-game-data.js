@@ -36,6 +36,19 @@ export function portableGameData(world, tuning = {}, build = "local") {
     type: "jet-sprint-foundation",
     version: 1,
     build,
+    activeMode: world.riverRunLevels ? "river-runs-v1" : "legacy-campaign-v1",
+    primaryRiverLevels:
+      world.riverRunLevels?.map((l) => ({
+        id: l.id,
+        name: l.name,
+        environmentId: l.environmentId,
+        start: l.start,
+        finish: l.finish,
+        startDistance: l.startDistance,
+        revision: l.revision,
+        unlockRequirements: l.unlockRequirements,
+        replayDescriptor: l.replayDescriptor,
+      })) || [],
     coordinates: {
       convention: "RH_Y_UP_X_FORWARD",
       distance: "metres",
