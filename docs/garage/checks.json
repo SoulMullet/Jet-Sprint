@@ -1,0 +1,92 @@
+{
+  "version": "0.24.0",
+  "tests": {
+    "node22": {
+      "runtime": "v22.23.4",
+      "command": "node --test",
+      "passed": 253,
+      "failed": 0
+    },
+    "node24": {
+      "runtime": "v24.19.0",
+      "command": "npm test",
+      "passed": 253,
+      "failed": 0
+    }
+  },
+  "build": {
+    "command": "npm run build",
+    "passed": true,
+    "files": 14,
+    "mainGzipKB": 308.22,
+    "advisory": "Existing main chunk exceeds 500 kB."
+  },
+  "localDeployment": {
+    "status": "verified",
+    "commit": "local",
+    "version": "0.24.0",
+    "files": 14,
+    "identity": "MARINE-87",
+    "simulation": "world-space-fixed-step",
+    "campaign": "four-track-1987",
+    "controls": "analog-input-v1"
+  },
+  "browserReports": [
+    "browser-proof.json",
+    "production-proof.json",
+    "emergency-proof.json"
+  ],
+  "deviceLimits": [
+    "No physical iPhone Safari",
+    "No real Xbox hardware",
+    "No audio listening",
+    "No sustained mobile FPS or thermal test"
+  ],
+  "futureIntegration": "No cloud backend, shared live account/economy, Unreal importer/runner or implemented upgrades. Portable definitions/profile and JS golden-parity fixtures only.",
+  "deployment": "Final response reports observed exact-commit GitHub Actions publication verification.",
+  "changedFiles": [
+    "README.md",
+    "docs/UNREAL_MIGRATION.md",
+    "docs/schemas/foundation-v1.schema.json",
+    "index.html",
+    "package-lock.json",
+    "package.json",
+    "scripts/build-proof.mjs",
+    "scripts/verify-deployment.mjs",
+    "src/gamepad-menu.js",
+    "src/main.js",
+    "src/physics.js",
+    "src/portable-game-data.js",
+    "src/replay/session.js",
+    "src/river-run-ui.js",
+    "src/river-run.js",
+    "src/settings.js",
+    "test/deployment-proof.test.js",
+    "test/river-run.test.js",
+    "docs/PERSISTENT_GARAGE.md",
+    "docs/fixtures/physics-parity-v1.json",
+    "docs/garage/browser-proof.json",
+    "docs/garage/career-results.png",
+    "docs/garage/checks.json",
+    "docs/garage/emergency-portrait.png",
+    "docs/garage/emergency-proof.json",
+    "docs/garage/garage-after-race.png",
+    "docs/garage/garage-new-career.png",
+    "docs/garage/garage-portrait.png",
+    "docs/garage/production-garage.png",
+    "docs/garage/production-proof.json",
+    "docs/garage/production-viewer.png",
+    "docs/schemas/player-profile-v1.schema.json",
+    "scripts/export-physics-parity.mjs",
+    "src/garage/career.js",
+    "src/garage/definitions.js",
+    "src/garage/garage.css",
+    "src/garage/preview.js",
+    "src/garage/profile-model.js",
+    "src/garage/profile-store.js",
+    "src/garage/tuning.js",
+    "src/garage/ui.js",
+    "test/garage.test.js",
+    "test/physics-parity.test.js"
+  ]
+}

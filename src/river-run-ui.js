@@ -89,7 +89,7 @@ export function mountRiverRunUI(
   const summary = document.createElement("p");
   summary.id = "campaignSummary";
   summary.className = "campaign-summary";
-  summary.textContent = "THREE REAL RIVER RUSH RUNS / POINT TO POINT";
+  summary.textContent = "THREE RIVER RUNS / ONE PERSISTENT BOAT";
   document.querySelector(".entry-specs").after(summary);
   const label = document.createElement("label");
   label.className = "campaign-start-label";
@@ -186,6 +186,18 @@ export function mountRiverRunUI(
         p.textContent = text;
         $("resultStats").append(p);
       }
+      if (tour.reward?.valid) {
+        const p = document.createElement("p");
+        p.textContent = `PRIZE $${tour.reward.total} / CASH $${tour.reward.wallet}`;
+        $("resultStats").append(p);
+        const breakdown = document.createElement("p");
+        breakdown.textContent = `Finish $${tour.reward.prize} · First clear $${tour.reward.firstClear} · Improved time $${tour.reward.improvement} · Clean $${tour.reward.cleanBonus}`;
+        $("resultStats").append(breakdown);
+      } else if (tour.reward?.reason) {
+        const p = document.createElement("p");
+        p.textContent = tour.reward.reason;
+        $("resultStats").append(p);
+      }
       next.hidden =
         tour.index + 1 >= levels.length ||
         !progress.isUnlocked(levels[tour.index + 1]);
@@ -196,6 +208,8 @@ export function mountRiverRunUI(
       clock += dt;
       if (clock < 0.1 && !force) return;
       clock = 0;
+      for (const l of levels)
+        select.options[l.index].disabled = !progress.isUnlocked(l);
       root.hidden = !getPlaying();
       document.body.classList.toggle("journey-active", !root.hidden);
       results.hidden = !result;

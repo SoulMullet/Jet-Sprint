@@ -1,0 +1,49 @@
+{
+  "runs": [
+    {
+      "level": 1,
+      "time": 112.23333333336964,
+      "reward": 350,
+      "cash": 950,
+      "fuel": 96.28860836660041,
+      "condition": 91.01774948960508
+    },
+    {
+      "level": 2,
+      "time": 162.06666666670264,
+      "reward": 590,
+      "cash": 1496,
+      "fuel": 94.57052743893392,
+      "condition": 100
+    },
+    {
+      "level": 3,
+      "time": 229.30000000004355,
+      "reward": 860,
+      "cash": 2356,
+      "fuel": 86.72378979639956,
+      "condition": 100
+    }
+  ],
+  "firstBankCollision": {
+    "condition": 91.12588059888935,
+    "fuel": 99.93407034689756,
+    "fixture": true,
+    "restartedBeforeFullRuns": true
+  },
+  "newCareerSequentialUnlocks": true,
+  "restartNeverRefillsOrRepairs": true,
+  "garagePausesBoatClockAndConsumption": true,
+  "paidFuelAndRepairButtons": true,
+  "portraitGarageFits": true,
+  "profileSurvivesReload": true,
+  "maintenanceAndPhysicsAndV8Saved": true,
+  "ghostPlaybackPreserved": true,
+  "viewerDoesNotConsumeOrPay": true,
+  "profileExportWorks": true,
+  "fontsLoaded": true,
+  "errors": [],
+  "fixture": "Chromium mobile emulation, controlled frame clock and suppressed drawing between screenshots. Three complete runs use actual GamepadSource/ControlInput/main-loop physics, with no in-run position/stage teleports. A separate explicit bank-collision placement precedes a restart and all complete runs. No physical iPhone/Xbox, audio listening or sustained FPS claim.",
+  "releaseVersion": "0.24.0",
+  "note": "Full main-loop run performed before changing the release label; final unmodified compiled build is covered separately by production-proof.json and emergency-proof.json."
+}

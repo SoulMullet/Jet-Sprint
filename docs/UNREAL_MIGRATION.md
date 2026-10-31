@@ -6,6 +6,8 @@ Open **Pit Control → GHOST → Development / portable data → Export Unreal-r
 
 The active v0.23 entry mode is standalone River Runs. The export now includes `activeMode` and `primaryRiverLevels`: stable IDs, original environment IDs, rest-start poses, finish planes, revisions, unlock requirements and standalone replay descriptors. Archived circuit/bonus data remains in `courses`, `rivers` and `campaign`; it does not describe the current entry progression.
 
+The v0.24 garage/profile contracts are documented in [Persistent Garage](PERSISTENT_GARAGE.md). Player profile JSON ([schema v1](schemas/player-profile-v1.schema.json)) exports separately from physics/course/economy definitions. The foundation pack now includes a `garage` definition block and current maintenance tuning. The one boat ID remains `sprint-boat-1987-v1`. No cross-game account or synchronization is implemented.
+
 ## 1. Current architecture
 
 | Boundary | Current owner | Migration significance |
@@ -17,6 +19,7 @@ The active v0.23 entry mode is standalone River Runs. The export now includes `a
 | Archived campaign | `campaign-data.js`, `campaign.js`, `campaign-tour.js`, `campaign-progress.js` | Original topology, river current/jumps, circuits and rewards retained. No currency transactions in normal river play. |
 | Course construction | `course.js`, `campaign-world.js`, `track.js` | Uses Three.js spline helpers and polygon clipping. Exports of its resulting numeric data are portable; these construction modules are not drop-in Unreal code. |
 | Replays | `replay/model.js`, `replay/course-data.js`, `replay/session.js` | Fixed-interval recording, explicit world-pose interpolation, official event/split observations and route-progress comparison. No ghost physics resimulation. |
+| Persistent career | `garage/profile-model.js`, `garage/career.js`, `garage/profile-store.js` | Separate portable profile/transactions from localStorage. Replace the adapter with authenticated server-side atomic revisions/idempotency for shared mobile/Unreal cash and service state. |
 | Storage | `replay/storage.js`, existing settings/progress stores | IndexedDB for replay payloads/catalog/records; localStorage for small preferences. Replace browser adapters in Unreal. |
 | Rendering | `visuals.js`, `boat-presentation.js`, `graphics-lab.js`, `fluid/*`, `hf-*`, campaign presentation/streaming | Three.js geometry, materials, instancing, render targets and GLSL. Requires new Unreal rendering implementations. |
 | Camera | `racing-camera-manager.js`, `cameras.js`, camera settings | Existing river follow, archived fixed course/cinematic sweep, and comparison modes. `speed-framing.js` uses measured speed and exact response filters. Replays use a separate instance of this same controller. |
@@ -145,3 +148,13 @@ The present Replay Viewer is silent and leaves the live engine paused; it does n
 10. Add new content or deliberate engine-specific handling improvements only after the migrated vertical slice is reliable.
 
 This update provides the data contracts, exports, ghost/replay kernels and documentation for those steps. It does not establish Unreal numerical parity or target-console/mobile performance.
+
+## Garage/profile migration and force parity pipeline
+
+Keep four resources separate in Unreal: (1) Player SaveGame/shared profile; (2) boat physics parameter assets; (3) course/route/checkpoint assets; (4) versioned garage prices, reward tables and future upgrade definitions. Resolve stable IDs rather than embedding engine objects in the player record. Percentages are 0–100, timers seconds, integer cash is fictional dollars. The profile contains one owned boat and an empty installed-upgrade list; categories are placeholders, not implemented upgrades.
+
+An eventual import commandlet should validate `type`, schema version, profile ID/revision, economy version, allowed boat/upgrade IDs, finite ranges, course revisions and payout watermarks before mapping the data into `USTRUCT`/SaveGame structures. Existing primary river IDs reference the numeric environment definitions in the foundation pack. Older moving-entry bonus records remain separate from standalone rest-start results. Unsupported future versions must not be downgraded. Cloud commands should carry profile ID, expected server revision and an idempotency key for finish/service transactions. The server must validate race/service eligibility and own cash, not trust imported client balances. Browser optimistic revision checks are a local foundation, not distributed atomicity or anti-cheat.
+
+The existing force integrator accepts an optional service propulsion scale. Healthy service is exactly the original calculation. Reduced power multiplies jet translation/reported thrust, while nozzle response and steering torque retain their original behavior. State/resource calculations and prices are outside that integrator. A target engine must reproduce this explicit adapter contract or deliberately version a changed model.
+
+`docs/fixtures/physics-parity-v1.json` contains real JS golden response samples, input segments, fixed 1/120 s step, full handling settings, units, mass/inertia and four healthy/drift/damaged/reserve cases. `npm test` checks them automatically; `npm run export:physics-parity` explicitly regenerates the baseline. A future Unreal CI runner should ingest the same vectors, transform coordinates with the contract above, and compare every recorded checkpoint, beginning with the documented proposed tolerances. Those Unreal tolerances remain unvalidated; the current runner checks only JavaScript against its committed reference at 1e-8 absolute tolerance. Add bank/current/checkpoint cases, platform floating-point budgets and long-run drift tests before claiming cross-engine parity. JSON alone does not synchronize simulation or guarantee matching handling.

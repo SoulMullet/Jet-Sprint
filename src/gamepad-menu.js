@@ -1,3 +1,15 @@
+function selectEnabled(select, direction) {
+  for (let step = 1; step <= select.options.length; step++) {
+    const index =
+      (select.selectedIndex + direction * step + select.options.length) %
+      select.options.length;
+    if (!select.options[index].disabled) {
+      select.selectedIndex = index;
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+      return;
+    }
+  }
+}
 /** Use real existing DOM controls, including selects/ranges and nested details. */
 export function navigateMenu(action, root) {
   if (!root) return false;
@@ -35,8 +47,7 @@ export function navigateMenu(action, root) {
   }
   if (action === "confirm") {
     if (active instanceof HTMLSelectElement) {
-      active.selectedIndex = (active.selectedIndex + 1) % active.options.length;
-      active.dispatchEvent(new Event("change", { bubbles: true }));
+      selectEnabled(active, 1);
     } else if (active.tagName === "SUMMARY")
       active.parentElement.open = !active.parentElement.open;
     else if (active.matches("button,input[type=checkbox],input[type=radio]"))
@@ -49,10 +60,7 @@ export function navigateMenu(action, root) {
       direction > 0 ? active.stepUp() : active.stepDown();
       active.dispatchEvent(new Event("input", { bubbles: true }));
     } else if (active instanceof HTMLSelectElement) {
-      active.selectedIndex =
-        (active.selectedIndex + direction + active.options.length) %
-        active.options.length;
-      active.dispatchEvent(new Event("change", { bubbles: true }));
+      selectEnabled(active, direction);
     } else if (active.tagName === "SUMMARY")
       active.parentElement.open = direction > 0;
     else if (active.getAttribute("role") === "tab")

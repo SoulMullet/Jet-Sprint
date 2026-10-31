@@ -1,4 +1,9 @@
 import {
+  garageEconomy,
+  maintenanceSpecs,
+  maintenanceDefaults,
+} from "./garage/definitions.js";
+import {
   handlingDefaults,
   physicsControls,
   handlingProfiles,
@@ -34,6 +39,17 @@ import {
 export function portableGameData(world, tuning = {}, build = "local") {
   return {
     type: "jet-sprint-foundation",
+    garage: {
+      economy: garageEconomy,
+      maintenance: {
+        controls: maintenanceSpecs,
+        defaults: maintenanceDefaults(),
+      },
+      profileSchema: "urn:jet-sprint:player-profile:v1",
+      profileVersion: 1,
+      storage:
+        "Replace local revision adapter with atomic backend transactions and idempotency; player JSON exports separately.",
+    },
     version: 1,
     build,
     activeMode: world.riverRunLevels ? "river-runs-v1" : "legacy-campaign-v1",

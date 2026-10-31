@@ -99,7 +99,12 @@
       "maxItems": 7,
       "items": {
         "type": "object",
-        "required": ["descriptor", "points", "checkpoints", "entry"]
+        "required": [
+          "descriptor",
+          "points",
+          "checkpoints",
+          "entry"
+        ]
       }
     },
     "boundaries": {
@@ -121,7 +126,11 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["id", "waterHalfWidth", "points"],
+            "required": [
+              "id",
+              "waterHalfWidth",
+              "points"
+            ],
             "properties": {
               "id": {
                 "type": "string"
@@ -153,22 +162,39 @@
     },
     "input": {
       "type": "object",
-      "required": ["actions", "controls", "presets"]
+      "required": [
+        "actions",
+        "controls",
+        "presets"
+      ]
     },
     "cameras": {
       "type": "object",
-      "required": ["controls", "states"]
+      "required": [
+        "controls",
+        "states"
+      ]
     },
     "audio": {
       "type": "object",
-      "required": ["controls", "defaults", "presets", "implementation"]
+      "required": [
+        "controls",
+        "defaults",
+        "presets",
+        "implementation"
+      ]
     },
     "labs": {
       "type": "object"
     },
     "replay": {
       "type": "object",
-      "required": ["version", "fields", "limits", "playback"],
+      "required": [
+        "version",
+        "fields",
+        "limits",
+        "playback"
+      ],
       "properties": {
         "version": {
           "const": 1
@@ -206,7 +232,10 @@
     },
     "activeMode": {
       "type": "string",
-      "enum": ["river-runs-v1", "legacy-campaign-v1"]
+      "enum": [
+        "river-runs-v1",
+        "legacy-campaign-v1"
+      ]
     },
     "primaryRiverLevels": {
       "type": "array",
@@ -233,11 +262,24 @@
           },
           "start": {
             "type": "object",
-            "required": ["x", "z", "tx", "tz", "heading"]
+            "required": [
+              "x",
+              "z",
+              "tx",
+              "tz",
+              "heading"
+            ]
           },
           "finish": {
             "type": "object",
-            "required": ["x", "z", "tx", "tz", "halfWidth", "distance"]
+            "required": [
+              "x",
+              "z",
+              "tx",
+              "tz",
+              "halfWidth",
+              "distance"
+            ]
           },
           "unlockRequirements": {
             "type": "array",
@@ -245,6 +287,34 @@
               "type": "string"
             }
           }
+        }
+      }
+    },
+    "garage": {
+      "type": "object",
+      "required": [
+        "economy",
+        "maintenance",
+        "profileSchema",
+        "profileVersion",
+        "storage"
+      ],
+      "properties": {
+        "profileSchema": {
+          "const": "urn:jet-sprint:player-profile:v1"
+        },
+        "profileVersion": {
+          "const": 1
+        },
+        "economy": {
+          "type": "object"
+        },
+        "maintenance": {
+          "type": "object",
+          "required": [
+            "controls",
+            "defaults"
+          ]
         }
       }
     }

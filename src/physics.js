@@ -10,14 +10,14 @@ const smooth=(v,a,b)=>{const t=clamp((v-a)/(b-a),0,1);return t*t*(3-2*t);};
 const stateKeys=['x','z','vx','vz','angle','pump','nozzle','yawRate'];
 
 // One controller; direct callers are also substepped at no more than 1/120 s.
-export function stepBoat(b,input,dt,nearest){
+export function stepBoat(b,input,dt,nearest,service=null){
  for(const k of stateKeys)if(!Number.isFinite(b[k]))b[k]=0;
  if(!Number.isFinite(dt)||dt<=0)return nearest(b.x,b.z);
  let remaining=Math.min(dt,.1),p;
- while(remaining>1e-10){const step=Math.min(PHYSICS_STEP,remaining);p=integrate(b,input,step,nearest);remaining-=step;}
+ while(remaining>1e-10){const step=Math.min(PHYSICS_STEP,remaining);p=integrate(b,input,step,nearest,service?.powerScale??1);remaining-=step;}
  return p;
 }
-function integrate(b,input,dt,nearest){
+function integrate(b,input,dt,nearest,powerScale=1){
  const oldX=b.vx,oldZ=b.vz,speed=Math.hypot(oldX,oldZ),max=settings.top/3.6;
  // Normalized analog command; legacy binary callers retain identical behavior.
  const steering=typeof input.steering==='number'?(Number.isFinite(input.steering)?clamp(input.steering,-1,1):0):Number(!!input.right)-Number(!!input.left);
@@ -39,7 +39,7 @@ function integrate(b,input,dt,nearest){
  const damping=(settings.yawDamping*(.9+.2*Math.min(1,speed/max))+.12*Math.abs(b.yawRate))*(1-spin*.6);
  b.yawRate=clamp((b.yawRate+torque/settings.yawInertia*dt)*Math.exp(-damping/settings.yawInertia*dt),-4,4);
  b.angle+=b.yawRate*dt;
- const fx=Math.cos(b.angle),fz=Math.sin(b.angle),accel=thrust/BOAT_MASS*gain;
+ const fx=Math.cos(b.angle),fz=Math.sin(b.angle),accel=thrust/BOAT_MASS*gain*clamp(powerScale,.5,1);
  // Propulsion is the jet vector, without aligning velocity to the hull heading.
  const forwardThrust=accel*Math.cos(b.nozzle),sideThrust=-accel*Math.sin(b.nozzle);
  b.vx+=(fx*forwardThrust-fz*sideThrust)*dt;b.vz+=(fz*forwardThrust+fx*sideThrust)*dt;
@@ -61,7 +61,7 @@ function integrate(b,input,dt,nearest){
   const nx=dx/d,nz=dz/d;b.bankDepth=d-hullLimit;b.bankNX=nx;b.bankNZ=nz;b.x=c.x+nx*hullLimit;b.z=c.z+nz*hullLimit;
   const outward=b.vx*nx+b.vz*nz;if(outward>0){b.collisionImpulse=outward*1.35;b.vx-=b.collisionImpulse*nx;b.vz-=b.collisionImpulse*nz;}b.vx*=.98;b.vz*=.98;
  }
- b.throttle=throttle;b.steering=steering;b.thrust=thrust;b.jetPower=thrust/13650;
+ b.throttle=throttle;b.steering=steering;b.thrust=thrust*clamp(powerScale,.5,1);b.jetPower=b.thrust/13650;
  b.forwardSpeed=b.vx*fx+b.vz*fz;b.lateralSpeed=-b.vx*fz+b.vz*fx;
  b.slipAngle=Math.atan2(b.lateralSpeed,Math.max(.5,Math.abs(b.forwardSpeed)));
  b.forwardAcceleration=((b.vx-oldX)*fx+(b.vz-oldZ)*fz)/dt;

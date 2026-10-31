@@ -1,8 +1,10 @@
-# JET SPRINT v0.23.0 — River Run Evolution 01
+# JET SPRINT v0.24.0 — Persistent Garage & Career
 
 A mobile-first, single-player 3D jetboat game built with JavaScript, Vite, Three.js and Web Audio. Geometry and sound are procedural; licensed interface fonts are bundled locally. No paid assets, account, API keys or backend are required.
 
-Play the **three actual River Rush environments as standalone point-to-point levels**. Choose River Rush 1, 2 or 3 on the title screen, wait for green, and follow the ordered checkpoints to FINISH. No circuit laps or exit-gate requirement. Results show your completion time and level best, with **WATCH RUN REPLAY**, **RESTART THIS RIVER**, and **NEXT RIVER**. All three existing rivers are selectable immediately. The four circuits, original campaign/reward implementation and their saved records remain archived in the repository; they are outside normal progression.
+Race the **three existing River Rush levels** with one persistent jetboat. Open **GARAGE / YOUR BOAT** on the title screen, **Pause → Garage / fuel & repairs**, or **RETURN TO GARAGE** in results. Earn finish prizes, burn fuel, carry impact damage, buy refuelling/repairs and return to racing. The garage displays the real boat model using the existing renderer. It pauses the run and consumes no fuel. No account, cloud backend, Unreal integration, new boat or purchasable upgrades is included.
+
+New careers start with **$600, 100% fuel/condition and River Rush 1**. A valid finish unlocks the next existing river. Existing installations retain their river access; old wallets and standalone PBs migrate once without retroactive prizes. The four circuit geometries and original campaign/reward code remain archived, with their older saved keys intact. No circuit laps or exit gate is required in normal play. [Garage implementation, exact files, verification and limits](docs/PERSISTENT_GARAGE.md).
 
 The rivers retain their authored bends, rapids, rocks, current, optional jumps, navigation, collision and bounded scenery streaming. Their original lengths are approximately **1.69 / 2.43 / 3.45 km**, with **18 / 23 / 29** ordered checkpoints. Starts are just beyond the original entrance gates. See [implementation, changed files and verification](docs/RIVER_RUN_EVOLUTION.md).
 
@@ -25,11 +27,23 @@ Press **HIT THE WATER** to unlock audio and begin the selected river. Countdown 
 
 ## Saves, level selection and streaming
 
-Standalone completion/PB records use **`jet-sprint-river-runs-v1`**, schema 1, indexed by stable level ID and course revision. Old campaign/wallet keys are untouched and earn no new currency in normal river play. Replay files use new standalone route IDs because a rest-start run is not comparable to an old moving-entry bonus run. Historical campaign/bonus replays remain viewable. Replay storage uses IndexedDB; preferences use localStorage.
+The canonical local career is **`jet-sprint-player-profile-v1`**, schema version 1: profile ID/revision, integer cash, fuel/condition, owned boat, installed-upgrade list, unlocks, revisioned course PBs, bounded recent results and payout-attempt watermark. Fuel/condition never refill on Restart, a finish or a page reload. Automatic saves occur every three simulated engine seconds, at checkpoints, pause/garage, page hide and completion. Services/payouts require successful commits; storage errors expose Retry/export and cannot silently charge cash. A validated previous-profile backup and quarantined corrupt-data slot support recovery. Newer profile versions open read-only rather than being overwritten.
+
+The old **`jet-sprint-river-runs-v1`** and campaign wallet keys remain readable migration sources and are never rewritten by the new career. Local profile JSON backups are separate from tuning, replay and foundation exports. A same-origin deployment retains them. The adapter detects observed revision conflicts, but localStorage is not an atomic cross-tab/cloud transaction service. Future synchronization needs an authoritative backend. [Profile schema](docs/schemas/player-profile-v1.schema.json) and [future Unreal/parity contracts](docs/UNREAL_MIGRATION.md).
+
+Fuel costs **$2 per percentage point**, repairs **$4**. Buttons offer an affordable partial service if a full one exceeds cash. Critical boats without enough money for basic service can request **free emergency service up to 20% fuel / 40% condition**, without receiving cash or a full service. Empty tanks retain reserve propulsion and jet steering. Impacts below 3 m/s velocity change do no damage; a continuing impact charges only its severity increase. Below 30% condition, propulsion loss rises to a mild 6% maximum; steering response stays intact. Tune these independently under **HULL → Development / fuel & condition**.
+
+| River | Finish prize | First clear | Improved PB | Clean run |
+| --- | ---: | ---: | ---: | ---: |
+| River Rush 1 | $250 | $100 | $50 | $25 |
+| River Rush 2 | $400 | $150 | $75 | $40 |
+| River Rush 3 | $600 | $200 | $100 | $60 |
+
+First-clear bonuses pay once; an improvement must beat the prior PB by more than 0.01 s. Full valid repeat runs still earn their base prize. Restarts, stale/duplicate callbacks, incomplete/out-of-order checkpoints and debug practice cannot pay. Ghost/import playback cannot change the profile. Reduced-service-power recordings remain viewable but are excluded from competitive ghost PBs.
 
 Physics/water/spray (`jet-sprint-settings`, schema 3), V8 (`jet-sprint-v8-settings`, schema 1), graphics, input and legacy camera stores keep their original handlers, values and keys. Primary river camera presets inherit the associated old venue preset once, then save independently under **`jet-sprint-racing-cameras-v2`**, schema 2. The six new fields have validated defaults; old fractional speed-intensity values migrate without discarding custom pullback. Individual and group resets remain available. A same-origin GitHub Pages update does not clear browser storage. Clearing site data, private-session expiry or changing origins can remove local saves; use JSON exports for backups.
 
-**Pit Control → RACE → Debug Tools → Level debug** offers the same three rivers for practice. Practice does not save a level best or competitive ghost. Diagnostics show state, checkpoints, scenery preparation and frame rate. Normal results restart the selected river; no circuit is needed to enter it.
+**Pit Control → RACE → Debug Tools → Level debug** offers all three rivers for practice, including locked ones. Practice does not save a level best, prize or competitive ghost. Restarting a locked practice river stays in practice. Diagnostics show state, checkpoints, scenery preparation and frame rate. Normal results restart the selected river; no circuit is needed to enter it.
 
 Scenery uses the existing module worker, bounded 160 m tiles and incremental installation. Distant tile resources are disposed. A failed worker provides a labelled simplified-water fallback with navigation/collisions still active; **Retry scenery preparation** retries it. The retained optional diagnostic GPU-water grid covers the old origin course, not the whole river network; procedural/HF waves and the real authored river current/crests drive normal river presentation.
 
@@ -105,15 +119,17 @@ npm run build
 npm run preview
 ```
 
+`npm run export:physics-parity` deliberately regenerates the portable golden fixtures in `docs/fixtures/physics-parity-v1.json`. CI tests compare current JS forces against the committed fixtures for straight running, drift/coast, damaged power and empty-tank reserve. Review numerical changes before committing a regenerated baseline; no Unreal parity runner is implemented yet.
+
 Node tests cover all three primary rivers driven from rest through the real input/physics/checkpoint pipeline, timer/reset/records, camera convergence and frame-rate independence, plus retained campaign, controls, water, V8, spray and replay suites. Build output is in `dist/`. There is no separate lint/type-check script configured. Vite retains a large-main-chunk advisory (about 298 KB compressed).
 
-[Current QA evidence](docs/river-run-evolution/) distinguishes controlled browser fixtures from the unmodified production bundle. Chromium mobile emulation covers all three completed river runs, results/replays, saved settings, touch gestures and layout. **Physical iPhone Safari, real Xbox hardware, audio listening, sustained mobile FPS and thermal behavior remain unverified.** Use Low on constrained devices.
+[Current garage QA evidence](docs/garage/) and [prior river QA evidence](docs/river-run-evolution/) distinguishes controlled browser fixtures from the unmodified production bundle. Chromium mobile emulation covers all three completed river runs, results/replays, saved settings, touch gestures and layout. **Physical iPhone Safari, real Xbox hardware, audio listening, sustained mobile FPS and thermal behavior remain unverified.** Use Low on constrained devices.
 
 ## GitHub Pages
 
 The included **Deploy GitHub Pages** workflow tests and builds on pushes to `main`. Repository **Settings → Pages → Source** must be **GitHub Actions**. The workflow uploads `dist/` and deploys using official Pages actions. Relative Vite paths support `/Jet-Sprint/`; no paid service or secret is needed.
 
-Every production build writes `build-info.json` with its version/commit, active gameplay **`river-runs-v1`**, replay/foundation markers, retained architecture markers, and SHA-256 hashes of all served files. After deployment, **Verify actual published build and font files** fetches the actual Pages manifest and hashes the HTML, JavaScript/worker, CSS, fonts and licences. A stale publication fails that step. Check the deploy job, rather than only its build job.
+Every production build writes `build-info.json` with its version/commit, active gameplay **`river-runs-v1`**, garage **`persistent-career-v1`**, replay/foundation markers, retained architecture markers, and SHA-256 hashes of all served files. After deployment, **Verify actual published build and font files** fetches the actual Pages manifest and hashes the HTML, JavaScript/worker, CSS, fonts and licences. A stale publication fails that step. Check the deploy job, rather than only its build job.
 
 ```sh
 node scripts/verify-deployment.mjs https://soulmullet.github.io/Jet-Sprint/ FULL_COMMIT_SHA
@@ -123,6 +139,9 @@ For a local preview built without `GITHUB_SHA`, pass `local` instead. Once a new
 
 ## Code map
 
+- `garage/profile-model.js`, `profile-store.js`, `career.js`: portable profile, local revision/backup adapter, maintenance, services and career transactions.
+- `garage/definitions.js`, `tuning.js`: separate economy/upgrade placeholders and persistent developer maintenance settings.
+- `garage/ui.js`, `preview.js`, `garage.css`: native garage dialog, shared boat geometry/renderer and existing visual identity.
 - `river-levels.js`: existing-environment descriptors and isolated versioned level records.
 - `river-run.js`: point-to-point lifecycle adapter over the original River Rush simulation.
 - `river-run-ui.js` / `river-run.css`: start/finish markers, level HUD, selection and results.

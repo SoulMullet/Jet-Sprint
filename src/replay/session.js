@@ -79,6 +79,7 @@ export class ReplaySession {
     this.activeCourse = null;
     this.sessionId = uid();
     this.mixedTune = false;
+    this.servicePenalty = false;
     this.liveTime = 0;
     this.liveProgress = 0;
     this.progressValid = false;
@@ -90,6 +91,12 @@ export class ReplaySession {
     const id = tuneIdentifier(this.getTuning());
     if (this.recorder && id !== this.currentTune) this.mixedTune = true;
     this.currentTune = id;
+  }
+  noteServicePenalty(scale) {
+    if (this.recorder && scale < 1 - 1e-8) {
+      this.mixedTune = true;
+      this.servicePenalty = true;
+    }
   }
   metadata(course) {
     const meta = createReplayMeta(
@@ -107,6 +114,7 @@ export class ReplaySession {
     this.activeCourse = course;
     this.currentTune = tuneIdentifier(this.getTuning());
     this.mixedTune = false;
+    this.servicePenalty = false;
     this.splits = [];
     this.recorder = null;
     this.activePractice = practice;
@@ -320,7 +328,9 @@ export class ReplaySession {
           reason: this.activePractice
             ? "Practice run: excluded from official records."
             : this.mixedTune
-              ? "Physics tuning changed during this run."
+              ? this.servicePenalty
+                ? "Reduced service power: replay retained; excluded from competitive records."
+                : "Physics tuning changed during this run."
               : "",
         });
         this.lastCompleted = recording;

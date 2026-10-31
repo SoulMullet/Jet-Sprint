@@ -41,6 +41,8 @@ export async function verifyDeployment(
         info.streaming !== "worker-tiles-v1"
       )
         throw Error("Wrong live controls, wallet or streaming system.");
+      if (info.garage !== "persistent-career-v1")
+        throw Error("Wrong live garage/career build.");
       if (info.gameplay !== "river-runs-v1")
         throw Error("Wrong active river-run gameplay build.");
       if (

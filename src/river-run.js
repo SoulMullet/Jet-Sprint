@@ -13,6 +13,8 @@ export class RiverRunTour {
     this.reset();
   }
   reset(index = 0) {
+    this.progress.cancel?.(this.attempt);
+    this.attempt = null;
     this.simulator.reset();
     this.index = index;
     this.simulator.index = index;
@@ -114,7 +116,9 @@ export class RiverRunTour {
     return this.simulator.navigator;
   }
   begin() {
+    if (this.begun) return;
     this.begun = true;
+    this.attempt = this.progress.begin?.(this.level, this.practice) ?? null;
   }
   resume(index) {
     if (
@@ -128,7 +132,9 @@ export class RiverRunTour {
     return this.level.start;
   }
   practiceStage(index) {
-    this.resume(index);
+    if (!Number.isInteger(index) || index < 0 || index >= this.levels.length)
+      throw Error("Choose an existing practice river.");
+    this.reset(index);
     this.practice = true;
     return this.level.start;
   }
@@ -137,6 +143,8 @@ export class RiverRunTour {
   }
   step(before, b, dt, settings, now, start) {
     this.simulator.contact(b);
+    if (start.state === "RACING" && !this.begun) this.begin();
+    this.progress.motion?.(b, dt, this.attempt);
     if (this.done || start.state !== "RACING") return null;
     this.race.modified ||= modified(settings);
     this.origin ??= start.startAt;
@@ -174,12 +182,24 @@ export class RiverRunTour {
           lateral,
         };
     }
+    if (this.leaf.checkpoint !== previous)
+      this.progress.checkpoint?.(
+        this.attempt,
+        previous,
+        this.leaf.checkpoint,
+        this.race.total,
+      );
     if (this.leaf.phase === "ARRIVED") {
       this.done = this.race.done = true;
       this.reward = this.progress.complete(
         this.level,
         this.race.total,
         this.practice,
+        {
+          attempt: this.attempt,
+          checkpoints: this.checkpoint,
+          clean: this.eventClean,
+        },
       );
       this.rewardSerial++;
       this.results.push({ level: this.level.id, total: this.race.total });

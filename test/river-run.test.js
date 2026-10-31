@@ -1,3 +1,5 @@
+import { PlayerCareer, CareerRiverProgress } from "../src/garage/career.js";
+import { MaintenanceTuning } from "../src/garage/tuning.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createCampaignAdventure } from "../src/campaign-world.js";
@@ -99,7 +101,8 @@ test("river save failures keep the result in memory and permit retry", () => {
 });
 test("standalone river start, finish and restart never enter a circuit or require a lap", async (t) => {
   const store = memory(),
-    progress = new RiverRunProgress(store, levels);
+    career = new PlayerCareer(store, levels, new MaintenanceTuning(store)),
+    progress = new CareerRiverProgress(career);
   world.riverRunLevels = levels;
   for (const level of levels) {
     const tour = new RiverRunTour(world, levels, progress);
@@ -160,7 +163,7 @@ test("standalone river start, finish and restart never enter a circuit or requir
         before = { x: b.x, z: b.z };
       replays.beforeStep(tour, b, motion, input, start);
       if (tour.beforePhysics(b, dt))
-        stepBoat(b, input, dt, world.collisionNearest);
+        stepBoat(b, input, dt, world.collisionNearest, career.framing());
       const change = tour.step(before, b, dt, settings, now, start);
       replays.afterStep(tour, b, motion, input, change, dt);
       assert.equal(tour.phase, "RIVER");
@@ -173,6 +176,13 @@ test("standalone river start, finish and restart never enter a circuit or requir
     const total = tour.elapsed;
     assert.ok(total > 60 && total < 300);
     assert.equal(progress.best(level.id), total);
+    assert.ok(tour.reward.valid, JSON.stringify(tour.reward));
+    assert.ok(career.profile.cash > 600);
+    assert.ok(career.profile.boat.fuel < 100);
+    assert.equal(
+      JSON.parse(store.getItem("jet-sprint-player-profile-v1")).boat.fuel,
+      career.profile.boat.fuel,
+    );
     await replays.flush();
     assert.equal(replays.lastCompleted.meta.course.id, level.id);
     assert.equal(replays.lastCompleted.official.total, total);

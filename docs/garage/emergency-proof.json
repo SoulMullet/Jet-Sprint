@@ -1,0 +1,15 @@
+{
+  "version": "0.24.0",
+  "emptyTankStillMovesAndSteers": true,
+  "simultaneousTouch": true,
+  "freeEmergencyFuel": 20,
+  "freeEmergencyCondition": 40,
+  "cash": 0,
+  "secondEmergencyDisabled": true,
+  "paidFullServiceUnavailableWithoutCash": true,
+  "valuesSurviveReload": true,
+  "lockedDebugRiverRestartsAsPractice": true,
+  "portraitFits": true,
+  "errors": [],
+  "fixture": "Unmodified production bundle. Controlled frame clock, CDP touch, and a valid seeded zero-cash/zero-fuel/zero-condition profile. Native garage and debug buttons. No real iPhone/Xbox or performance claim."
+}
