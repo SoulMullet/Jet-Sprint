@@ -1,0 +1,32 @@
+{
+  "first": "Turbo Racer X.mp3",
+  "second": "Funky Glitch Groove.mp3",
+  "files": [
+    {
+      "src": "http://127.0.0.1:4262/Jet-Sprint/audio/music/Funky%20Glitch%20Groove.mp3",
+      "duration": 177.2,
+      "error": null
+    },
+    {
+      "src": "http://127.0.0.1:4262/Jet-Sprint/audio/music/Turbo%20Racer%20X.mp3",
+      "duration": 154,
+      "error": null
+    }
+  ],
+  "requests": [
+    {
+      "url": "http://127.0.0.1:4262/Jet-Sprint/audio/music/Funky%20Glitch%20Groove.mp3",
+      "status": 206
+    },
+    {
+      "url": "http://127.0.0.1:4262/Jet-Sprint/audio/music/Turbo%20Racer%20X.mp3",
+      "status": 206
+    }
+  ],
+  "pauseResume": true,
+  "twoElementsOnly": true,
+  "preferencesSurviveReload": true,
+  "noAutoplayBeforeGesture": true,
+  "errors": [],
+  "fixture": "Unmodified compiled game under /Jet-Sprint/ in Chromium mobile emulation. Real MP3 loading/playback and natural ended event after seeking near EOF; native buttons, controlled render clock. Audio output was not listened to; no physical Safari or Xbox test."
+}

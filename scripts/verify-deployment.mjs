@@ -1,3 +1,4 @@
+import { musicFiles } from "../src/race-music.js";
 import { createHash } from "node:crypto";
 import { appendFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
@@ -58,6 +59,11 @@ export async function verifyDeployment(
       )
         throw Error("Wrong deployed font families.");
       const paths = info.assets?.map((a) => a.path) || [];
+      if (
+        info.music !== "alternating-mp3-v1" ||
+        !musicFiles.every((file) => paths.includes("audio/music/" + file))
+      )
+        throw Error("Missing published race soundtrack.");
       if (
         !paths.includes("index.html") ||
         !paths.some((p) => p.endsWith(".js")) ||
