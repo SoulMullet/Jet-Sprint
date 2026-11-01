@@ -16,6 +16,10 @@ export const tuneIdentifier = (tuning) =>
   "forces-" +
   fingerprint([
     ...forceKeys.map((k) => [k, tuning[k]]),
+    ...Object.keys(tuning)
+      .filter((k) => k.startsWith("career"))
+      .sort()
+      .map((k) => [k, tuning[k]]),
     ...["jumpLaunchScale", "jumpGravityScale"]
       .filter((k) => (tuning[k] ?? 1) !== 1)
       .map((k) => [k, tuning[k]]),
@@ -56,10 +60,14 @@ export function createReplayMeta(course, tuning, build, sessionId, id) {
     physicsVersion: PHYSICS_VERSION,
     tuneId: tuneIdentifier(tuning),
     tuning: Object.fromEntries(
-      [...handlingKeys, "jumpLaunchScale", "jumpGravityScale"].map((k) => [
-        k,
-        tuning[k] ?? jumpDefaults[k],
-      ]),
+      [...handlingKeys, "jumpLaunchScale", "jumpGravityScale"]
+        .map((k) => [k, tuning[k] ?? jumpDefaults[k]])
+        .concat(
+          Object.keys(tuning)
+            .filter((k) => k.startsWith("career"))
+            .sort()
+            .map((k) => [k, tuning[k]]),
+        ),
     ),
   };
 }

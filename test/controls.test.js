@@ -164,6 +164,7 @@ test("last meaningful input owns a whole command pair; neutral controller cannot
     throttle: 0,
     left: false,
     right: false,
+    nitrous:false,
   });
 });
 test("explicit device preference applies only while engaged and allows fallback", () => {

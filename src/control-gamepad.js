@@ -3,6 +3,7 @@ import { clamp } from "./control-input.js";
 export const gamepadMapping = Object.freeze({
   steeringAxis: 0,
   throttleButton: 7,
+  nitrous: 5,
   confirm: 0,
   pause: 9,
   view: 8,
@@ -47,6 +48,8 @@ export function readGamepad(pad, settings, out) {
       : 0;
   } else
     out.throttle = buttonValue(pad.buttons?.[gamepadMapping.throttleButton]);
+  out.nitrous =
+    out.supported && buttonValue(pad.buttons?.[gamepadMapping.nitrous]) > 0.5;
   return out;
 }
 export class GamepadSource {
@@ -76,13 +79,15 @@ export class GamepadSource {
     this.state.steering = this.state.throttle = 0;
     this.rawSteering = this.rawThrottle = 0;
     this.state.engaged = this.state.intent = false;
+    this.state.nitrous = false;
     this.previous.fill(1);
     this.repeat.fill(0);
   }
   poll(pads, dt, enabled = true, driving = true) {
     this.time += dt;
     const oldSteer = this.state.steering,
-      oldThrottle = this.state.throttle;
+      oldThrottle = this.state.throttle,
+      oldNitrous = this.state.nitrous;
     let pad = this.index >= 0 ? pads?.[this.index] : null;
     if (!pad || pad.connected === false || pad.id !== this.id) {
       if (this.connected) {
@@ -113,7 +118,8 @@ export class GamepadSource {
     const v = this.settings.values,
       neutral =
         Math.abs(this.state.steering) <= v.padDeadzone &&
-        this.state.throttle <= v.padTriggerDeadzone;
+        this.state.throttle <= v.padTriggerDeadzone &&
+        !this.state.nitrous;
     if (!enabled || !driving) this.armed = false;
     else if (!this.armed && neutral) this.armed = true;
     const buttons = pad.buttons;
@@ -133,12 +139,14 @@ export class GamepadSource {
     }
     if (!enabled || !driving || !this.armed) {
       this.state.steering = this.state.throttle = 0;
+      this.state.nitrous = false;
     }
     this.state.engaged = enabled && this.armed && !neutral;
     this.state.intent =
       this.state.engaged &&
       (Math.abs(oldSteer - this.state.steering) > 0.012 ||
-        Math.abs(oldThrottle - this.state.throttle) > 0.012);
+        Math.abs(oldThrottle - this.state.throttle) > 0.012 ||
+        oldNitrous !== this.state.nitrous);
     return this.state;
   }
   haptic() {
@@ -160,6 +168,7 @@ export class GamepadSource {
   inspect() {
     return {
       connected: this.connected,
+      nitrous:this.state.nitrous,
       id: this.id,
       index: this.index,
       supported: this.state.supported,

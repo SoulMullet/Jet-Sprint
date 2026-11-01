@@ -155,7 +155,7 @@ export function mountCampaignUI(
           ? "Practice clear · No prize awarded"
           : reward.pending && progress.warning
             ? "Reward active · SAVE PENDING"
-            : `Prize +${money(reward.prize)} · Clean +${money(reward.cleanBonus)}`;
+            : `${reward.performanceTier||"FINISH"} +${money(reward.prize)} · Clean +${money(reward.cleanBonus)}`;
       } else if (campaign.phase === "RIVER") {
         const leg = campaign.leaf.world,
           percent = Math.round(

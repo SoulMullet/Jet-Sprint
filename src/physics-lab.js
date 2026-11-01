@@ -1,8 +1,9 @@
+import {toMph} from './speed-units.js';
 import {NamedPresets} from './settings.js';
 import {physicsControls,physicsGroups,presetName} from './handling.js';
 export const physicsPresetsKey='jet-sprint-physics-presets-v1';
 
-export function mountPhysicsLab(store,getState,onOpen=()=>{}){
+export function mountPhysicsLab(store,getState,onOpen=()=>{},{development=true}={}){
  const toggle=document.createElement('button');toggle.id='physicsLabToggle';toggle.type='button';toggle.textContent='BOAT PHYSICS';toggle.setAttribute('aria-controls','physicsLab');toggle.setAttribute('aria-expanded','false');document.body.append(toggle);
  const root=document.createElement('section');root.id='physicsLab';root.hidden=true;root.setAttribute('aria-label','Boat Physics Lab');document.body.append(root);
  const header=document.createElement('div');header.className='physics-heading';root.append(header);
@@ -37,12 +38,12 @@ export function mountPhysicsLab(store,getState,onOpen=()=>{}){
  button('Paste JSON','physicsPaste',async()=>{try{json.value=await navigator.clipboard.readText();message('Pasted. Review, then Import.');}catch{json.focus();message('Paste into the JSON box, then Import.');}},saved);
  button('Import JSON','physicsImport',()=>{const notes=store.importPhysicsText(json.value);message('Physics imported. '+notes.join(' '));},saved);
  const file=document.createElement('input');file.id='physicsFile';file.type='file';file.accept='.json,application/json';file.setAttribute('aria-label','Import physics JSON file');file.onchange=async()=>{try{const f=file.files[0];if(!f)return;if(f.size>200000)throw Error('Physics file exceeds 200 KB.');json.value=await f.text();store.importPhysicsText(json.value);message('Physics file imported.');}catch(e){message(e.message);}finally{file.value='';}};saved.append(file);
- const refresh=()=>{select.value=store.values.physicsPreset;message(presetName[store.values.physicsPreset]+' · changes apply live');};store.subscribe(refresh);refresh();if(named.warning)message(named.warning);
+ const refresh=()=>{select.value=store.values.physicsPreset;message(development?presetName[store.values.physicsPreset]+' · development changes apply live':'Saved tune retained · handling applies live; career propulsion locked (?dev=1 for practice tuning)');};store.subscribe(refresh);refresh();if(named.warning)message(named.warning);
  const legacy=document.getElementById('cameraResponse')?.closest('details');if(legacy)button('Open Boat Physics Lab','physicsLabShortcut',()=>open(true),legacy);
  const telemetry=document.createElement('pre');telemetry.id='physicsTelemetryOverlay';telemetry.hidden=true;telemetry.setAttribute('aria-label','Live boat physics telemetry');document.body.append(telemetry);let clock=1;
  return {root,update(dt){
   const show=store.values.physicsTelemetry&&root.hidden&&!document.getElementById('debug').open;telemetry.hidden=!show;if(!show)return;clock+=dt;if(clock<.1)return;clock=0;
   const {boat:b,motion:m}=getState(),degrees=180/Math.PI,sign=n=>(n>=0?'+':'')+n.toFixed(1);
-  telemetry.textContent=`PHYSICS · ${presetName[store.values.physicsPreset]}\nSpeed ${(Math.hypot(b.vx,b.vz)*3.6).toFixed(1)} km/h\nThrottle ${Math.round((b.throttle||0)*100)}% · steer ${b.steering||0}\nYaw ${sign((b.yawRate||0)*degrees)}°/s\nBank ${sign(m.roll*degrees)}° → ${sign(m.targetRoll*degrees)}°\nSlip ${sign(b.lateralSpeed||0)} m/s\nJet ${((b.thrust||0)/1000).toFixed(2)} kN\nPlaning ${Math.round(m.planing*100)}%`;
+  telemetry.textContent=`PHYSICS · ${presetName[store.values.physicsPreset]}\nSpeed ${toMph(Math.hypot(b.vx,b.vz)).toFixed(1)} MPH\nThrottle ${Math.round((b.throttle||0)*100)}% · steer ${b.steering||0}\nYaw ${sign((b.yawRate||0)*degrees)}°/s\nBank ${sign(m.roll*degrees)}° → ${sign(m.targetRoll*degrees)}°\nSlip ${sign(toMph(b.lateralSpeed||0))} MPH\nJet ${((b.thrust||0)/1000).toFixed(2)} kN\nPlaning ${Math.round(m.planing*100)}%`;
  }};
 }

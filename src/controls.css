@@ -383,3 +383,100 @@ body:not(.racing) #inputOverlay,
     transition: none;
   }
 }
+/* The upper zone belongs to the same throttle pointer; it is never a second button. */
+/* Keep the speed dial beside the taller gesture control, including short phones. */
+body.racing .speed {
+  right: calc(max(16px, env(safe-area-inset-right)) + 137px);
+}
+#arcadeControls #arcadeThrottle {
+  height: 122px;
+  min-height: 100px;
+  overflow: visible;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  touch-action: none;
+}
+#arcadeThrottle > span:first-of-type {
+  font-family: var(--font-display);
+}
+#arcadeThrottle #touchNitroZone {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -48px;
+  height: 39px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 2px 6px;
+  padding: 5px 9px;
+  border: 2px solid var(--gold);
+  border-radius: 12px;
+  background: var(--navy);
+  color: var(--gold);
+  pointer-events: none;
+  font: 600 12px var(--font-label);
+  box-shadow: var(--bevel);
+}
+#touchNitroZone small {
+  font-size: 9px;
+}
+#touchNitroGauge {
+  grid-column: 1/-1;
+  height: 4px;
+  background: linear-gradient(
+    to right,
+    var(--gold) var(--nitro-fill, 0%),
+    var(--deep) 0
+  );
+  border-radius: 2px;
+}
+#touchThrottleValue {
+  font: 18px var(--font-display);
+  color: var(--cream);
+}
+#arcadeThrottle > small {
+  font: 600 9px var(--font-label);
+}
+.nitro-active #touchNitroZone {
+  background: var(--orange) !important;
+  color: var(--deep) !important;
+  border-color: var(--cream) !important;
+  box-shadow: 0 0 10px #d9ac4633;
+}
+#touchNitroZone.empty {
+  border-color: var(--line) !important;
+  color: var(--muted) !important;
+}
+#nitroStreaks {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  opacity: 0;
+}
+#nitroStreaks svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--cream);
+  stroke-width: 0.22;
+}
+body:not(.racing) #nitroStreaks,
+.garage-open #nitroStreaks,
+.paused #nitroStreaks {
+  visibility: hidden;
+}
+@media (max-height: 360px) {
+  #arcadeControls #arcadeThrottle {
+    height: 100px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #nitroStreaks {
+    display: none;
+  }
+}

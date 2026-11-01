@@ -1,6 +1,7 @@
+import { MPH_PER_MPS, toMph } from "../speed-units.js";
 import { S, SAMPLE_FIELDS } from "./model.js";
 export const telemetryMetrics = {
-  speed: ["Speed", "km/h", 3.6],
+  speed: ["Speed", "MPH", MPH_PER_MPS],
   throttle: ["Throttle", "%", 100],
   steering: ["Steering", "%", 100],
   slip: ["Drift / slip", "°", 180 / Math.PI],
@@ -10,9 +11,21 @@ export const telemetryMetrics = {
 };
 export function telemetryCSV(replay) {
   return (
-    SAMPLE_FIELDS.join(",") +
+    SAMPLE_FIELDS.map((k) =>
+      ["speed", "vx", "vy", "vz"].includes(k) ? k + "_mph" : k,
+    ).join(",") +
     "\n" +
-    replay.samples.map((row) => row.join(",")).join("\n") +
+    replay.samples
+      .map((row) =>
+        row
+          .map((v, i) =>
+            ["speed", "vx", "vy", "vz"].includes(SAMPLE_FIELDS[i])
+              ? toMph(v)
+              : v,
+          )
+          .join(","),
+      )
+      .join("\n") +
     "\n"
   );
 }

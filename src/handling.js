@@ -1,7 +1,7 @@
 // One registry supplies the integrator, hull motion, settings validation and Lab.
 const control=(group,label,value,min,max,step,unit,description,physical=true)=>({group,label,value,min,max,step,unit,description,physical});
 export const physicsControls={
- top:control('Propulsion & Throttle','Top-speed target',85,85,180,1,' km/h','Sets the nominal full-throttle drag curve.'),
+ top:control('Propulsion & Throttle','Archived replay speed target',85,85,180,1,' km/h','Preserved for old replays; career stock speed is configured in Development / career performance.'),
  maxThrust:control('Propulsion & Throttle','Maximum thrust',13650,4000,26000,50,' N','Full-pump thrust for the 650 kg racing hull.'),
  pumpResponse:control('Propulsion & Throttle','Throttle response',.12,.03,.5,.01,' s','Pump pressure rise time; lower responds faster.'),
  pumpDecay:control('Propulsion & Throttle','Throttle release',.16,.03,.6,.01,' s','Pressure decay after lifting off the throttle.'),

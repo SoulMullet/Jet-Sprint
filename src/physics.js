@@ -15,21 +15,22 @@ export function stepBoat(b,input,dt,nearest,service=null){
  for(const k of stateKeys)if(!Number.isFinite(b[k]))b[k]=0;
  if(!Number.isFinite(dt)||dt<=0)return nearest(b.x,b.z);
  let remaining=Math.min(dt,.1),p;
- while(remaining>1e-10){const step=Math.min(PHYSICS_STEP,remaining);p=integrate(b,input,step,nearest,service?.powerScale??1);remaining-=step;}
+ while(remaining>1e-10){const step=Math.min(PHYSICS_STEP,remaining);p=integrate(b,input,step,nearest,service);remaining-=step;}
  return p;
 }
-function integrate(b,input,dt,nearest,powerScale=1){
- const oldX=b.vx,oldZ=b.vz,speed=Math.hypot(oldX,oldZ),max=settings.top/3.6;
+function integrate(b,input,dt,nearest,service=null){
+ const powerScale=service?.powerScale??1;
+ const oldX=b.vx,oldZ=b.vz,speed=Math.hypot(oldX,oldZ),max=service?.topSpeedMps??settings.top/3.6;
  // Normalized analog command; legacy binary callers retain identical behavior.
  const steering=typeof input.steering==='number'?(Number.isFinite(input.steering)?clamp(input.steering,-1,1):0):Number(!!input.right)-Number(!!input.left);
  const throttle=typeof input.throttle==='number'?(Number.isFinite(input.throttle)?clamp(input.throttle,0,1):0):Number(!!input.throttle);
- const response=throttle>b.pump?settings.pumpResponse:settings.pumpDecay;
+ const response=(throttle>b.pump?settings.pumpResponse:settings.pumpDecay)/(service?.responseScale??1);
  b.pump+=(throttle-b.pump)*(1-Math.exp(-dt/response));
  const maxNozzle=settings.nozzleAuthority*Math.PI/180;
  b.nozzle+=(steering*maxNozzle-b.nozzle)*(1-Math.exp(-dt*settings.jetSteeringResponse*settings.steer/75));
  b.nozzle=clamp(b.nozzle,-maxNozzle,maxNozzle);
  // Acceleration tuning changes effective mass/inertia, not the reported jet-force ceiling.
- const peak=settings.maxThrust,gain=(settings.acceleration/21)*Math.max(1,settings.top/120),thrust=peak*b.pump;
+ const peak=settings.maxThrust,gain=(settings.acceleration/21)*(service?.gainScale??Math.max(1,settings.top/120)),thrust=peak*b.pump*(service?.thrustScale??1);
  const assistedThrust=peak*settings.throttleOffSteering*Math.min(1,speed/max)*(1-throttle);
  const authority=settings.lowSpeedSteering+(settings.highSpeedSteering-settings.lowSpeedSteering)*Math.min(1,speed/max);
  const moving=smooth(speed+thrust/BOAT_MASS*gain*dt,.15,2);
@@ -49,9 +50,9 @@ function integrate(b,input,dt,nearest,powerScale=1){
  const grip=settings.lateralResistance*settings.hullGrip*(1-settings.drift/100*.78)*(1+Math.min(1.5,speed/max)*.2)*(1+settings.driftRecovery*centered*.6);
  lateral*=Math.exp(-grip*dt);
  b.planing=planingFactor(Math.max(0,forward),settings);
- const nominal=peak/BOAT_MASS*gain,quadratic=Math.max(0,(nominal-.12*max)/(max*max*max));
+ const nominal=peak/BOAT_MASS*gain*(service?.dragCalibrationScale??1),quadratic=Math.max(0,(nominal-.12*max)/(max*max*max));
  const corner=settings.corneringLoss*Math.min(1,Math.abs(lateral)/Math.max(2,speed))*Math.min(3,Math.abs(b.yawRate))*.35;
- const drag=(.12+forward*forward*quadratic+.1*(1-b.planing))*settings.forwardDrag+corner;
+ const drag=(.12+forward*forward*quadratic*(service?.boostDragScale??1)+.1*(1-b.planing))*settings.forwardDrag+corner;
  forward*=Math.exp(-Math.min(30,drag)*dt);
  b.vx=fx*forward-fz*lateral;b.vz=fz*forward+fx*lateral;
  const magnitude=Math.hypot(b.vx,b.vz),limit=max*1.6;
@@ -67,6 +68,7 @@ function integrate(b,input,dt,nearest,powerScale=1){
  b.slipAngle=Math.atan2(b.lateralSpeed,Math.max(.5,Math.abs(b.forwardSpeed)));
  b.forwardAcceleration=((b.vx-oldX)*fx+(b.vz-oldZ)*fz)/dt;
  b.lateralAcceleration=(-(b.vx-oldX)*fz+(b.vz-oldZ)*fx)/dt;
+ b.engineStage=service?.engineStage??0;b.nitrous=service?.nitrous??0;
  b.engineLoad=clamp(b.pump*(.55+.25*(1-b.planing)+.2*(1-Math.min(1,Math.max(0,b.forwardSpeed)/max))),0,1);
  return p;
 }

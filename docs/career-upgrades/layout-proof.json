@@ -1,0 +1,7 @@
+{
+  "browser": "Headless Chromium touch emulation; native rendering, controlled game clock. Not Safari/device testing.",
+  "portrait": "390×844 garage: three shop tabs/purchase controls reachable, sticky Return reachable, no horizontal overflow.",
+  "shortLandscape": "568×320: speed gauge and nitrous zone clear, within viewport.",
+  "development": "All 19 real sliders present under ?dev=1; 107 MPH stock edit saved/applied; attempt practice; normal reload restores 93 MPH and retains but ignores saved debug balance.",
+  "errors": []
+}

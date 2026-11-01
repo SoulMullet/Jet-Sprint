@@ -16,7 +16,7 @@ export function mountInstrumentGauge(root) {
       return `<text id="dial-number-${i}" x="${p[0]}" y="${p[1] + 3}">${i * 40}</text>`;
     })
     .join("");
-  root.innerHTML = `<div class="dial-bezel"><svg class="dial-face" viewBox="0 0 160 160" aria-hidden="true"><circle class="dial-paper" cx="80" cy="80" r="73"/><circle class="dial-rim" cx="80" cy="80" r="67"/>${ticks}${labels}<path id="rev" class="dial-revs" d="M30 111 A59 59 0 1 1 130 111" pathLength="100"/><g id="speedNeedle" class="dial-needle"><path d="M77 82 80 24 83 82Z"/><circle cx="80" cy="80" r="6"/></g><text class="dial-brand" x="80" y="55">MARINE</text></svg><div class="dial-digital"><strong id="speed">0</strong><span>KM/H</span></div><div class="dial-rpm"><output id="hudRPM">900</output><span>RPM</span></div></div>`;
+  root.innerHTML = `<div class="dial-bezel"><svg class="dial-face" viewBox="0 0 160 160" aria-hidden="true"><circle class="dial-paper" cx="80" cy="80" r="73"/><circle class="dial-rim" cx="80" cy="80" r="67"/>${ticks}${labels}<path id="rev" class="dial-revs" d="M30 111 A59 59 0 1 1 130 111" pathLength="100"/><g id="speedNeedle" class="dial-needle"><path d="M77 82 80 24 83 82Z"/><circle cx="80" cy="80" r="6"/></g><text class="dial-brand" x="80" y="55">MARINE</text></svg><div class="dial-digital"><strong id="speed">0</strong><span>MPH</span></div><div class="dial-rpm"><output id="hudRPM">900</output><span>RPM</span></div></div>`;
   const rpm = root.querySelector("#hudRPM"),
     arc = root.querySelector("#rev"),
     needle = root.querySelector("#speedNeedle"),

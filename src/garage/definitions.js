@@ -1,5 +1,5 @@
 // Portable economy/maintenance definitions. No engine or browser dependencies.
-export const GARAGE_VERSION = "garage-economy-v1";
+export const GARAGE_VERSION = "garage-economy-v2";
 export const BOAT_ID = "sprint-boat-1987-v1";
 export const garageEconomy = Object.freeze({
   version: GARAGE_VERSION,
@@ -12,11 +12,38 @@ export const garageEconomy = Object.freeze({
   emergencyFuel: 20,
   emergencyCondition: 40,
   prizes: [
-    { finish: 250, firstClear: 100, improvement: 50, clean: 25 },
-    { finish: 400, firstClear: 150, improvement: 75, clean: 40 },
-    { finish: 600, firstClear: 200, improvement: 100, clean: 60 },
+    {
+      finish: 200,
+      strong: 350,
+      victory: 500,
+      strongTime: 90,
+      victoryTime: 75,
+      firstClear: 250,
+      improvement: 50,
+      clean: 25,
+    },
+    {
+      finish: 200,
+      strong: 350,
+      victory: 500,
+      strongTime: 130,
+      victoryTime: 110,
+      firstClear: 250,
+      improvement: 50,
+      clean: 25,
+    },
+    {
+      finish: 200,
+      strong: 350,
+      victory: 500,
+      strongTime: 185,
+      victoryTime: 160,
+      firstClear: 250,
+      improvement: 50,
+      clean: 25,
+    },
   ],
-  upgradeCategories: ["Engine", "Waterjet", "Hull"],
+  upgradeCategories: ["Engine", "Jet Pump", "Nitrous"],
 });
 export const maintenanceSpecs = {
   idleFuel: ["Running fuel use", 0.008, 0, 0.05, 0.001, "%/s"],

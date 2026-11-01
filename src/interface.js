@@ -1,3 +1,4 @@
+import {displaySetting} from './speed-units.js';
 import { mountInstrumentGauge } from "./instrument-gauge.js";
 import { mountFontDiagnostics } from "./typography.js";
 import { registry } from "./settings.js";
@@ -172,7 +173,7 @@ export function mountInterface({
       const spec = registry[input.id];
       return {
         name: spec.label,
-        defaultValue: spec.default,
+        defaultValue: displaySetting(input.id,spec.default),
         reset: () => preferences.set(input.id, spec.default),
       };
     }

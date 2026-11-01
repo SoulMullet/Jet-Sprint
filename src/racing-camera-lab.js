@@ -1,3 +1,4 @@
+import { displaySetting, storedSetting, speedSetting } from "./speed-units.js";
 import { cameraSpecs, sanitizeCameraPreset } from "./racing-camera-settings.js";
 import { instrumentRange, updateRange } from "./ui-components.js";
 export function mountRacingCameraLab(store, manager, parent, world) {
@@ -56,17 +57,18 @@ export function mountRacingCameraLab(store, manager, parent, world) {
         input = document.createElement("input");
       input.type = "range";
       input.id = `racing-${group}-${k}`;
-      input.min = s[2];
-      input.max = s[3];
-      input.step = s[4];
+      input.min = displaySetting(k, s[2]);
+      input.max = displaySetting(k, s[3]);
+      input.step = displaySetting(k, s[4]);
       label.append(output, input);
       section.append(label);
       instrumentRange(input, {
         name: s[0],
-        defaultValue: s[1],
+        defaultValue: displaySetting(k, s[1]),
         reset: () => apply(group, k, s[1]),
       });
-      input.oninput = () => apply(group, k, Number(input.value));
+      input.oninput = () =>
+        apply(group, k, storedSetting(k, Number(input.value)));
       ranges.push({ group, k, input, output, s });
     }
     const choice = (key, caption, options) => {
@@ -199,8 +201,10 @@ export function mountRacingCameraLab(store, manager, parent, world) {
         : (store.presets[editing] ?? sanitizeCameraPreset());
     course.value = editing;
     for (const { group, k, input, output, s } of ranges) {
-      input.value = p[group][k];
-      output.textContent = p[group][k] + s[5];
+      input.value = displaySetting(k, p[group][k]);
+      output.textContent = speedSetting(k)
+        ? displaySetting(k, p[group][k]).toFixed(1) + " MPH"
+        : p[group][k] + s[5];
       updateRange(input);
     }
     root.querySelector("#racing-flat-projection").value = p.flat.projection;

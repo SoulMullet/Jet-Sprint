@@ -1,4 +1,11 @@
 import {
+  boatPerformance,
+  upgradeQuote,
+  nitrousQuote,
+  upgradeEconomy,
+  standardUpgradeBalance,
+} from "./upgrades.js";
+import {
   garageEconomy,
   serviceQuote,
   emergencyAvailable,
@@ -8,8 +15,17 @@ import {
 } from "./definitions.js";
 import { LocalProfileRepository } from "./profile-store.js";
 export class PlayerCareer {
-  constructor(storage, levels, tuning, { existingPlayer = false } = {}) {
+  constructor(
+    storage,
+    levels,
+    tuning,
+    { existingPlayer = false, upgradeTuning = null, development = false } = {},
+  ) {
     this.levels = levels;
+    this.upgradeTuning = upgradeTuning;
+    this.development = development;
+    this.nitrousActive = false;
+    this.boostAmount = 0;
     this.tuning = tuning;
     this.repository = new LocalProfileRepository(storage);
     this.listeners = new Set();
@@ -98,6 +114,7 @@ export class PlayerCareer {
         return { ok: false, reason: "Clear the previous river first." };
       if (p.career.sequence >= 1e9)
         return { ok: false, reason: "Attempt limit reached." };
+      practice ||= this.development;
       const sequence = ++p.career.sequence;
       p.career.activeAttempt = {
         sequence,
@@ -191,12 +208,114 @@ export class PlayerCareer {
     this.impactGap = Infinity;
     this.impactPeak = 0;
   }
+  get balance() {
+    return this.upgradeTuning?.effective || standardUpgradeBalance;
+  }
   framing() {
-    this.performance.powerScale = powerScale(
-      this.profile.boat,
-      this.tuning.values,
-    );
+    const t = this.balance,
+      b = this.profile.boat;
+    if (
+      this.cachedBalance !== t ||
+      this.cachedEngine !== b.engineStage ||
+      this.cachedPump !== b.pumpStage ||
+      this.cachedKit !== b.nitrousInstalled
+    ) {
+      this.cachedSpec = boatPerformance(b, t);
+      this.cachedBalance = t;
+      this.cachedEngine = b.engineStage;
+      this.cachedPump = b.pumpStage;
+      this.cachedKit = b.nitrousInstalled;
+    }
+    const spec = this.cachedSpec,
+      amount = this.nitrousActive ? this.boostAmount : 0;
+    Object.assign(this.performance, spec, {
+      powerScale: powerScale(b, this.tuning.values),
+      nitrous: amount,
+      thrustScale: spec.thrustScale * (1 + (t.nitroPower - 1) * amount),
+      boostDragScale:
+        1 + (t.nitroPower / (1 + t.nitroSpeedInfluence) ** 3 - 1) * amount,
+    });
     return this.performance;
+  }
+  updateNitrous(input, dt, allowed = true) {
+    const b = this.profile.boat,
+      t = this.balance,
+      was = this.nitrousActive;
+    this.nitrousActive = !!(
+      allowed &&
+      this.writable &&
+      b.nitrousInstalled &&
+      b.nitrousFill > 0 &&
+      input.nitrous &&
+      input.throttle >= t.nitroThrottleRequirement
+    );
+    this.boostAmount +=
+      (Number(this.nitrousActive) - this.boostAmount) *
+      (1 - Math.exp(-dt * 10));
+    if (this.nitrousActive) {
+      b.nitrousFill = Math.max(0, b.nitrousFill - dt * t.nitroConsumption);
+      this.dirty = true;
+      if (b.nitrousFill <= 0) this.nitrousActive = false;
+    }
+    if (was && !this.nitrousActive) this.flush();
+    return this.framing();
+  }
+  stopNitrous() {
+    this.nitrousActive = false;
+    this.boostAmount = 0;
+    this.flush();
+  }
+  upgradeQuote(category) {
+    return upgradeQuote(this.profile, category);
+  }
+  buyUpgrade(category) {
+    return this.mutate((p) => {
+      const q = upgradeQuote(p, category);
+      if (!q.available)
+        return {
+          ok: false,
+          reason: q.owned
+            ? "Already installed."
+            : p.career.activeAttempt
+              ? "Upgrade purchases are available between runs."
+              : "Insufficient cash.",
+        };
+      p.cash -= q.price;
+      if (category === "engine") p.boat.engineStage++;
+      else if (category === "pump") p.boat.pumpStage++;
+      else {
+        p.boat.nitrousInstalled = true;
+        p.boat.nitrousFill = p.boat.nitrousCapacity;
+      }
+      const prefixes = ["engine-stage-", "pump-stage-", "nitrous-kit"];
+      p.boat.installedUpgrades = p.boat.installedUpgrades.filter(
+        (id) => !prefixes.some((prefix) => id.startsWith(prefix)),
+      );
+      if (p.boat.engineStage)
+        p.boat.installedUpgrades.push("engine-stage-" + p.boat.engineStage);
+      if (p.boat.pumpStage)
+        p.boat.installedUpgrades.push("pump-stage-" + p.boat.pumpStage);
+      if (p.boat.nitrousInstalled) p.boat.installedUpgrades.push("nitrous-kit");
+      return { ok: true, ...q };
+    });
+  }
+  quoteNitrous() {
+    return nitrousQuote(this.profile);
+  }
+  refillNitrous() {
+    return this.mutate((p) => {
+      const q = nitrousQuote(p);
+      if (!q.available)
+        return {
+          ok: false,
+          reason: p.career.activeAttempt
+            ? "Refill nitrous between runs."
+            : "Tank full, kit not installed, or insufficient cash.",
+        };
+      p.cash -= q.cost;
+      p.boat.nitrousFill = q.to;
+      return { ok: true, ...q };
+    });
   }
   complete(level, time, practice, proof = {}) {
     const known = this.levels.find(
@@ -255,8 +374,14 @@ export class PlayerCareer {
         table = garageEconomy.prizes[level.index],
         improvement = same && time < old.best - 0.01 ? table.improvement : 0,
         clean = active.clean && proof.clean !== false,
+        basePrize =
+          time <= table.victoryTime
+            ? table.victory
+            : time <= table.strongTime
+              ? table.strong
+              : table.finish,
         prize =
-          table.finish +
+          basePrize +
           (firstClear ? table.firstClear : 0) +
           improvement +
           (clean ? table.clean : 0);
@@ -291,7 +416,13 @@ export class PlayerCareer {
         valid: true,
         personalBest,
         total: prize,
-        prize: table.finish,
+        prize: basePrize,
+        performanceTier:
+          basePrize === table.victory
+            ? "TIME TARGET WIN"
+            : basePrize === table.strong
+              ? "STRONG RUN"
+              : "FINISH",
         firstClear: firstClear ? table.firstClear : 0,
         improvement,
         cleanBonus: clean ? table.clean : 0,

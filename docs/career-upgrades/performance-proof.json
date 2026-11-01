@@ -1,0 +1,165 @@
+{
+  "conditions": "Actual stepBoat integrator at 120 Hz; published Balanced force settings; one healthy 650 kg hull; full throttle, centred nozzle, open straight water, no banks/current; 60 seconds settling then 20 seconds sustained injection. Tank is bypassed only in this reference benchmark; gameplay tank consumption is separately tested.",
+  "rows": [
+    {
+      "engine": 0,
+      "pump": 0,
+      "targetMPH": 93,
+      "settledMPH": 92.60510782900941,
+      "secondsTo60MPH": 1.2916666666666667,
+      "boostMPH": 100.88189310100078
+    },
+    {
+      "engine": 0,
+      "pump": 1,
+      "targetMPH": 94.116,
+      "settledMPH": 93.68861331629041,
+      "secondsTo60MPH": 1.1833333333333333,
+      "boostMPH": 101.95105289896722
+    },
+    {
+      "engine": 0,
+      "pump": 2,
+      "targetMPH": 95.79,
+      "settledMPH": 95.32205516857213,
+      "secondsTo60MPH": 1.075,
+      "boostMPH": 103.61416118346459
+    },
+    {
+      "engine": 0,
+      "pump": 3,
+      "targetMPH": 96.72,
+      "settledMPH": 96.20326146436895,
+      "secondsTo60MPH": 0.975,
+      "boostMPH": 104.44154482947097
+    },
+    {
+      "engine": 1,
+      "pump": 0,
+      "targetMPH": 101,
+      "settledMPH": 100.56543147821263,
+      "secondsTo60MPH": 1.1583333333333334,
+      "boostMPH": 109.52951406408427
+    },
+    {
+      "engine": 1,
+      "pump": 1,
+      "targetMPH": 102.212,
+      "settledMPH": 101.74168898762441,
+      "secondsTo60MPH": 1.0583333333333333,
+      "boostMPH": 110.6916096853965
+    },
+    {
+      "engine": 1,
+      "pump": 2,
+      "targetMPH": 104.03,
+      "settledMPH": 103.51507555099506,
+      "secondsTo60MPH": 0.9666666666666667,
+      "boostMPH": 112.49849192725459
+    },
+    {
+      "engine": 1,
+      "pump": 3,
+      "targetMPH": 105.04,
+      "settledMPH": 104.47140506771886,
+      "secondsTo60MPH": 0.875,
+      "boostMPH": 113.39798583166383
+    },
+    {
+      "engine": 2,
+      "pump": 0,
+      "targetMPH": 109,
+      "settledMPH": 108.51759222821323,
+      "secondsTo60MPH": 1.0333333333333334,
+      "boostMPH": 118.13605680727792
+    },
+    {
+      "engine": 2,
+      "pump": 1,
+      "targetMPH": 110.308,
+      "settledMPH": 109.78595381533962,
+      "secondsTo60MPH": 0.95,
+      "boostMPH": 119.3922827545641
+    },
+    {
+      "engine": 2,
+      "pump": 2,
+      "targetMPH": 112.27,
+      "settledMPH": 111.69847453978922,
+      "secondsTo60MPH": 0.8666666666666667,
+      "boostMPH": 121.3437833886085
+    },
+    {
+      "engine": 2,
+      "pump": 3,
+      "targetMPH": 113.36,
+      "settledMPH": 112.72895494615516,
+      "secondsTo60MPH": 0.7833333333333333,
+      "boostMPH": 122.3165182515836
+    },
+    {
+      "engine": 3,
+      "pump": 0,
+      "targetMPH": 118,
+      "settledMPH": 117.46581686139886,
+      "secondsTo60MPH": 0.925,
+      "boostMPH": 127.83141358254466
+    },
+    {
+      "engine": 3,
+      "pump": 1,
+      "targetMPH": 119.416,
+      "settledMPH": 118.83795734176753,
+      "secondsTo60MPH": 0.85,
+      "boostMPH": 129.19302778372028
+    },
+    {
+      "engine": 3,
+      "pump": 2,
+      "targetMPH": 121.54,
+      "settledMPH": 120.90720648098292,
+      "secondsTo60MPH": 0.775,
+      "boostMPH": 131.30681849788994
+    },
+    {
+      "engine": 3,
+      "pump": 3,
+      "targetMPH": 122.72,
+      "settledMPH": 122.021349539219,
+      "secondsTo60MPH": 0.7083333333333334,
+      "boostMPH": 132.36142907583314
+    },
+    {
+      "engine": 4,
+      "pump": 0,
+      "targetMPH": 128,
+      "settledMPH": 127.40602446391961,
+      "secondsTo60MPH": 0.8333333333333334,
+      "boostMPH": 138.59550063423748
+    },
+    {
+      "engine": 4,
+      "pump": 1,
+      "targetMPH": 129.536,
+      "settledMPH": 128.89329465634387,
+      "secondsTo60MPH": 0.7666666666666667,
+      "boostMPH": 140.0743254226081
+    },
+    {
+      "engine": 4,
+      "pump": 2,
+      "targetMPH": 131.84,
+      "settledMPH": 131.13646116966527,
+      "secondsTo60MPH": 0.7,
+      "boostMPH": 142.36846948125353
+    },
+    {
+      "engine": 4,
+      "pump": 3,
+      "targetMPH": 133.12,
+      "settledMPH": 132.34329245383438,
+      "secondsTo60MPH": 0.6333333333333333,
+      "boostMPH": 143.51411778267186
+    }
+  ]
+}

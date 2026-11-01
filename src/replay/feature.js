@@ -1,3 +1,4 @@
+import {toMph} from '../speed-units.js';
 import { ReplayRepository } from "./storage.js";
 import { ReplaySettings, replayDefaults } from "./settings.js";
 import { ReplaySession } from "./session.js";
@@ -499,7 +500,7 @@ export function createReplayFeature({
         $("replayTime").textContent =
           `${format(player.time)} / ${format(player.replay.official.total)}`;
         $("replayPoseReadout").textContent =
-          `${Math.round(viewPose.speed * 3.6)} KM/H · THR ${Math.round(viewPose.throttle * 100)}% · STEER ${Math.round(viewPose.steering * 100)}% · ${viewPose.slip.toFixed(2)} RAD SLIP`;
+          `${Math.round(toMph(viewPose.speed))} MPH · THR ${Math.round(viewPose.throttle * 100)}% · STEER ${Math.round(viewPose.steering * 100)}% · ${viewPose.slip.toFixed(2)} RAD SLIP`;
       } else if (!viewerActive) {
         const showing =
           playing &&

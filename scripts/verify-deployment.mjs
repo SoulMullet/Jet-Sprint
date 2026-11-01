@@ -45,7 +45,11 @@ export async function verifyDeployment(
         throw Error("Wrong live controls, wallet or streaming system.");
       if (info.environment !== "glassy-jumps-v1")
         throw Error("Wrong jump/water environment build.");
-      if (info.garage !== "persistent-career-v1")
+      if (
+        info.garage !== "career-upgrades-v2" ||
+        info.progression !== "engine-pump-nitrous-v1" ||
+        info.speedUnits !== "mph-v1"
+      )
         throw Error("Wrong live garage/career build.");
       if (info.gameplay !== "river-runs-v1")
         throw Error("Wrong active river-run gameplay build.");

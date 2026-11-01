@@ -410,6 +410,20 @@ export class Engine {
     }
     const p = clamp((m.rpm - s.idleRPM) / (s.maxRPM - s.idleRPM)),
       idleAmount = 1 - p;
+    const stage = clamp(motion?.engineStage || 0, 0, 4),
+      boost = clamp(motion?.nitrous || 0);
+    set(
+      this.trebleEQ.gain,
+      -3 +
+        s.exhaustTreble * 0.055 +
+        s.rasp * 0.015 +
+        s.harmonics * 0.008 +
+        s.crackle * 0.003 +
+        stage * 0.25 +
+        boost * 0.9,
+      t,
+      0.12,
+    );
     const lope =
       1 -
       idleAmount *
@@ -422,7 +436,8 @@ export class Engine {
       (s.engineMute ? 0 : 1) *
       (this.auditionVoice ? 0 : 1) *
       lope *
-      (0.9 + s.pulseStrength * 0.001);
+      (0.9 + s.pulseStrength * 0.001) *
+      (1 + stage * 0.02 + boost * 0.05);
     set(this.engineBus.gain, gain, t, 0.045);
     set(
       this.filter.frequency,
@@ -430,6 +445,8 @@ export class Engine {
         (4000 +
           p * 5000 +
           m.load * s.waterInteraction * 9 +
+          boost * 450 +
+          stage * 80 +
           s.pulseSharpness * 10) *
           (1 - s.muffler * 0.004),
         1800,
@@ -451,6 +468,7 @@ export class Engine {
         voice.weight =
           volume *
           0.0038 *
+          (1 + boost * 0.12) *
           (role === "rev"
             ? 0.3 + 0.7 * m.throttle
             : 0.55 + 0.45 * (1 - m.throttle));

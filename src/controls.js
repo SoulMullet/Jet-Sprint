@@ -10,6 +10,7 @@ const keyMap = {
   ArrowUp: "throttle",
   w: "throttle",
   " ": "throttle",
+  ShiftLeft: "nitrous",
 };
 export const editingInput = (target) =>
   !!target?.closest?.(
@@ -26,6 +27,7 @@ export function bindControls(
     onAction = () => {},
     canDrive = () => true,
     getGamepads = () => navigator.getGamepads?.() ?? [],
+    getNitrous = () => ({ installed: false, fill: 0 }),
   } = {},
 ) {
   const pipeline = new ControlInput(store),
@@ -40,7 +42,12 @@ export function bindControls(
   const touch = { steering: 0, throttle: 0 },
     pointers = { steering: null, throttle: null },
     released = { steering: 0, throttle: 0 };
-  const keys = { left: new Set(), right: new Set(), throttle: new Set() };
+  const keys = {
+    left: new Set(),
+    right: new Set(),
+    throttle: new Set(),
+    nitrous: new Set(),
+  };
   let touchIntent = false,
     enabled = false,
     clock = 0,
@@ -104,6 +111,7 @@ export function bindControls(
       Number(keys.throttle.size > 0),
       Object.values(keys).some((s) => s.size > 0),
       down && !wasHeld,
+      keys.nitrous.size > 0,
     );
     if (down && !wasHeld) onPress(name);
   }
@@ -191,7 +199,12 @@ export function bindControls(
   }
   window.addEventListener("keydown", (e) => {
     if (editingInput(e.target) || !canDrive()) return;
-    const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    const key =
+      e.code === "ShiftLeft"
+        ? "ShiftLeft"
+        : e.key.length === 1
+          ? e.key.toLowerCase()
+          : e.key;
     if (keyMap[key]) {
       e.preventDefault();
       if (!e.repeat || keys[keyMap[key]].has(key))
@@ -199,7 +212,12 @@ export function bindControls(
     }
   });
   window.addEventListener("keyup", (e) => {
-    const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    const key =
+      e.code === "ShiftLeft"
+        ? "ShiftLeft"
+        : e.key.length === 1
+          ? e.key.toLowerCase()
+          : e.key;
     if (keyMap[key]) setKey(keyMap[key], key, false);
   });
   window.addEventListener("gamepaddisconnected", (e) => {
@@ -377,6 +395,7 @@ export function bindControls(
         pad.throttle,
         pad.engaged,
         pad.intent,
+        pad.nitrous,
       );
       if (pad.throttle > 0.04 && lastPadThrottle <= 0.04) onPress("throttle");
       lastPadThrottle = pad.throttle;
@@ -431,9 +450,10 @@ export function bindControls(
     buttons = mountArcadeTouch({
       canDrive,
       onPress,
+      getNitrous,
       release,
-      set: (steer, throttle, engaged) => {
-        pipeline.set("touch", steer, throttle, engaged, true);
+      set: (steer, throttle, engaged, nitrous = false) => {
+        pipeline.set("touch", steer, throttle, engaged, true, nitrous);
         touch.steering = steer;
         touch.throttle = throttle;
         pipeline.update(0);

@@ -301,3 +301,66 @@ body.garage-open .arcade-controls {
 body.garage-open > :not(#game):not(#garage) {
   visibility: hidden;
 }
+.shop-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.shop-tabs button {
+  flex: 1;
+}
+#garage .shop-tabs [aria-selected="true"] {
+  background: var(--gold);
+  color: var(--deep);
+  border-color: var(--cream);
+}
+#boatShopPanel {
+  border-top: 2px solid var(--orange);
+  padding-top: 12px;
+}
+#boatShopPanel h4 {
+  font: 20px var(--font-display);
+  color: var(--cream);
+  margin: 8px 0;
+}
+#shopInstalled {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--gold);
+}
+#shopPrice {
+  display: block;
+  font: 24px var(--font-display);
+  margin: 8px 0;
+}
+#buyBoatUpgrade,
+#refillNitrous {
+  width: 100%;
+  margin: 6px 0;
+}
+#nitrousService {
+  border-top: 1px solid var(--line);
+  margin-top: 12px;
+  padding-top: 12px;
+}
+#garageNitroMeter {
+  background: var(--gold);
+}
+.development-practice .brand::after {
+  content: "DEV / NO PRIZES";
+  display: block;
+  color: var(--gold);
+  font: 600 10px var(--font-label);
+}
+.garage-heading {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: var(--navy);
+  padding: 8px 10px;
+  border-radius: 14px;
+}
+.shop-tabs,
+#boatShopPanel {
+  scroll-margin-top: 90px;
+}

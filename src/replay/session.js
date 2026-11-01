@@ -117,7 +117,7 @@ export class ReplaySession {
     this.servicePenalty = false;
     this.splits = [];
     this.recorder = null;
-    this.activePractice = practice;
+    this.activePractice = practice||!!this.getTuning().careerDev;
     if (this.preferences.values.enabled) {
       this.recorder = new RaceRecorder(
         this.metadata(course),

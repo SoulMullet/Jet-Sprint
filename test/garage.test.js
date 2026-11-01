@@ -160,14 +160,14 @@ test("valid runs pay once, unlock the next existing river and retain PB/result h
     startCash = c.profile.cash;
   const reward = c.complete(levels[0], 120, false, r.proof);
   assert.equal(reward.valid, true);
-  assert.equal(reward.total, 375);
-  assert.equal(c.profile.cash, startCash + 375);
+  assert.equal(reward.total, 475);
+  assert.equal(c.profile.cash, startCash + 475);
   assert.ok(c.profile.career.unlockedCourses.includes(levels[1].id));
   assert.equal(c.profile.results.length, 1);
   assert.equal(c.complete(levels[0], 120, false, r.proof).valid, false);
-  assert.equal(c.profile.cash, startCash + 375);
+  assert.equal(c.profile.cash, startCash + 475);
   const second = validatedRun(c, levels[0], 110);
-  assert.equal(c.complete(levels[0], 110, false, second.proof).total, 325);
+  assert.equal(c.complete(levels[0], 110, false, second.proof).total, 275);
   assert.equal(c.profile.career.records[levels[0].id].best, 110);
   const reload = create(store);
   assert.equal(reload.profile.cash, c.profile.cash);
@@ -282,7 +282,7 @@ test("profile v0 migrates explicitly and corrupted current data recovers a valid
   assert.ok(recovered.recoveryNotice.includes("Recovered"));
   assert.equal(recovered.profile.boat.fuel, JSON.parse(backup).boat.fuel);
   assert.equal(store.getItem(profileKey + ".corrupt"), "{broken");
-  assert.equal(JSON.parse(store.getItem(profileKey)).schemaVersion, 1);
+  assert.equal(JSON.parse(store.getItem(profileKey)).schemaVersion, 2);
 });
 test("invalid and future profiles are handled safely without touching unrelated saves", () => {
   const store = memory(),

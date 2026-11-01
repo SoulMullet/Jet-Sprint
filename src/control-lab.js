@@ -336,5 +336,6 @@ export function mountControlLab(store, controls) {
   }
   store.subscribe(refresh);
   refresh();
-  return { root, update };
+  const nitroMap=document.createElement('p');nitroMap.id='nitrousControlMapping';nitroMap.textContent='NITROUS / Left Shift + throttle on keyboard · RB + RT on standard Xbox controllers · continue the same throttle thumb upward into NITRO. Requires the installed kit and tank charge.';root.append(nitroMap);
+ return { root, update };
 }

@@ -1,3 +1,4 @@
+import {displaySetting,storedSetting,speedSetting} from './speed-units.js';
 import {registry,NamedPresets} from './settings.js';
 import {confirmDialog} from './ui-components.js';
 export function mountSettings(store,apply){
@@ -9,15 +10,15 @@ export function mountSettings(store,apply){
  for(const [id,s] of Object.entries(registry)){
   let el=document.getElementById(id),label=el?.closest('label');
   if(!el){label=document.createElement('label');label.append(document.createTextNode(s.label));el=document.createElement(s.type==='enum'?'select':'input');el.id=id;if(s.type==='enum')for(const name of s.options){const option=document.createElement('option');option.value=name;option.textContent=name;el.append(option);}else if(s.type==='boolean')el.type='checkbox';else{el.type='range';el.min=s.min;el.max=s.max;el.step=s.step;const out=document.createElement('output');out.id=id+'Out';label.append(out);}label.append(el);}
-  if(s.type==='number'){el.min=s.min;el.max=s.max;el.step=s.step;}
+  if(s.type==='number'){el.min=displaySetting(id,s.min);el.max=displaySetting(id,s.max);el.step=displaySetting(id,s.step);}
   if(label.firstChild?.nodeType===Node.TEXT_NODE)label.firstChild.textContent=s.label+' ';
   groups[s.category].append(label);
-  const change=()=>{try{store.set(id,s.type==='boolean'?el.checked:s.type==='number'?Number(el.value):el.value);message('Settings updated.');}catch(error){message(error.message);}};
+  const change=()=>{try{store.set(id,s.type==='boolean'?el.checked:s.type==='number'?storedSetting(id,Number(el.value)):el.value);message('Settings updated.');}catch(error){message(error.message);}};
   el.addEventListener(s.type==='number'?'input':'change',change);
  }
  for(const id of ['waterStatus','testWave','resetWater'])groups['Water Physics'].append(document.getElementById(id));
  root.append(status);
- const refresh=()=>{for(const [id,s] of Object.entries(registry)){const el=document.getElementById(id);if(s.type==='boolean')el.checked=store.values[id];else el.value=store.values[id];const out=document.getElementById(id+'Out');if(out)out.textContent=store.values[id]+(s.unit||'');}};
+ const refresh=()=>{for(const [id,s] of Object.entries(registry)){const el=document.getElementById(id);if(s.type==='boolean')el.checked=store.values[id];else el.value=displaySetting(id,store.values[id]);const out=document.getElementById(id+'Out');if(out)out.textContent=speedSetting(id)?displaySetting(id,store.values[id]).toFixed(1)+' MPH':store.values[id]+(s.unit||'');}};
  store.subscribe((ids,notes)=>{apply(ids);refresh();if(notes.length)message(notes.join(' '));});
  apply(Object.keys(registry));refresh();if(store.warnings.length)message(store.warnings.join(' '));
  const named=new NamedPresets(store.storage),panel=groups['Saved Presets'];

@@ -1,7 +1,8 @@
+import {speedSetting,displaySetting} from './speed-units.js';
 import {sprayControls,sprayDefaults} from './spray-settings.js';
 import {handlingDefaults,physicsControls,handlingKeys,handlingProfiles,identifyHandling} from './handling.js';
 export const SETTINGS_SCHEMA=3;
-export const GAME_VERSION='0.28.0';
+export const GAME_VERSION='0.29.0';
 export const settingsKey='jet-sprint-settings';
 export const presetsKey='jet-sprint-presets';
 const number=(category,label,defaultValue,min,max,step=1,unit='')=>({category,label,type:'number',default:defaultValue,min,max,step,unit});
@@ -23,7 +24,7 @@ export const defaultSettings=()=>Object.fromEntries(Object.entries(registry).map
 const aliases={topSpeed:'top',steering:'steer',sprayLength:'sprayDistance',graphicsQuality:'graphics',waveExaggeration:'waveScale'};
 const plain=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
 const safeKey=k=>!['__proto__','constructor','prototype'].includes(k);
-function valueFor(id,value,notes){const s=registry[id];if(s.type==='boolean'){if(typeof value!=='boolean')throw Error(`${s.label} must be true or false.`);return value;}if(s.type==='enum'){if(typeof value!=='string'||!s.options.includes(value))throw Error(`Unsupported ${s.label}.`);return value;}if(typeof value!=='number'||!Number.isFinite(value))throw Error(`${s.label} must be a finite number.`);const clamped=Math.max(s.min,Math.min(s.max,value)),rounded=Math.max(s.min,Math.min(s.max,Math.round((clamped-s.min)/s.step)*s.step+s.min)),result=Number(rounded.toFixed(6));if(result!==value)notes.push(`${s.label} adjusted to ${result}${s.unit}.`);return result;}
+function valueFor(id,value,notes){const s=registry[id];if(s.type==='boolean'){if(typeof value!=='boolean')throw Error(`${s.label} must be true or false.`);return value;}if(s.type==='enum'){if(typeof value!=='string'||!s.options.includes(value))throw Error(`Unsupported ${s.label}.`);return value;}if(typeof value!=='number'||!Number.isFinite(value))throw Error(`${s.label} must be a finite number.`);const clamped=Math.max(s.min,Math.min(s.max,value)),rounded=Math.max(s.min,Math.min(s.max,Math.round((clamped-s.min)/s.step)*s.step+s.min)),result=Number(rounded.toFixed(6));if(result!==value)notes.push(`${s.label} adjusted to ${speedSetting(id)?displaySetting(id,result).toFixed(1):result}${speedSetting(id)?" MPH":s.unit}.`);return result;}
 const migrations={
  0:input=>({...input,schemaVersion:1,settings:Object.fromEntries(Object.entries(input.settings??input.values).filter(([id])=>safeKey(id)).map(([id,value])=>[Object.hasOwn(aliases,id)?aliases[id]:id,value]))}),
  1:input=>({...input,schemaVersion:2}),

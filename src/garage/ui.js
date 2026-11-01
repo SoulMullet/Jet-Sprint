@@ -1,3 +1,4 @@
+import { mountBoatShop } from "./shop.js";
 import { garageEconomy, emergencyAvailable } from "./definitions.js";
 import { GaragePreview } from "./preview.js";
 import { format } from "../race.js";
@@ -20,12 +21,14 @@ export function mountGarage({
   const $ = (id) => dialog.querySelector("#" + id),
     preview = new GaragePreview(boat, environment),
     view = $("garageBoatView");
-  for (const text of garageEconomy.upgradeCategories) {
-    const b = document.createElement("button");
-    b.disabled = true;
-    b.textContent = text.toUpperCase() + " / LATER";
-    $("garageUpgrades").append(b);
-  }
+  const shop = mountBoatShop(
+    dialog.querySelector(".garage-future"),
+    career,
+    (r) => {
+      message = r.ok ? "Purchased and saved. Your boat is ready." : r.reason;
+      refresh();
+    },
+  );
   const buttons = [];
   for (const [parent, id, text] of [
     ["#intro .entry-main", "introGarage", "GARAGE / YOUR BOAT"],
@@ -52,7 +55,7 @@ export function mountGarage({
   const service = document.createElement("div");
   service.className = "service-status";
   service.innerHTML =
-    '<span>FUEL <b id="runFuel">100%</b></span><span>HULL <b id="runCondition">100%</b></span>';
+    '<span>FUEL <b id="runFuel">100%</b></span><span>HULL <b id="runCondition">100%</b></span><span>NITRO <b id="runNitro">NO KIT</b></span>';
   document.getElementById("journeyHUD").append(service);
   let active = false,
     returnFocus = null,
@@ -78,7 +81,27 @@ export function mountGarage({
     document.getElementById("runCondition").textContent =
       Math.ceil(b.condition) + "%";
     service.classList.toggle("service-low", b.fuel < 20 || b.condition < 30);
+    const n = document.getElementById("runNitro");
+    n.textContent = !b.nitrousInstalled
+      ? "NO KIT"
+      : career.nitrousActive
+        ? "BOOST"
+        : b.nitrousFill <= 0
+          ? "EMPTY"
+          : Math.ceil((100 * b.nitrousFill) / b.nitrousCapacity) + "%";
+    const zone = document.getElementById("touchNitroZone");
+    if (zone) {
+      zone.classList.toggle("empty", !b.nitrousInstalled || b.nitrousFill <= 0);
+      document.getElementById("touchNitroText").textContent = n.textContent;
+      document
+        .getElementById("touchNitroGauge")
+        .style.setProperty(
+          "--nitro-fill",
+          (100 * b.nitrousFill) / b.nitrousCapacity + "%",
+        );
+    }
     if (hudOnly) return;
+    shop.refresh();
     $("garageCash").textContent = money(p.cash);
     for (const [kind, meter, text, button] of [
       ["fuel", "garageFuel", "garageFuelText", "garageRefuel"],
@@ -189,7 +212,7 @@ export function mountGarage({
       ),
       a = document.createElement("a");
     a.href = url;
-    a.download = "jet-sprint-player-profile-v1.json";
+    a.download = "jet-sprint-player-profile-v2.json";
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     message =

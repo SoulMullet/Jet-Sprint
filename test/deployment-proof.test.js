@@ -29,12 +29,14 @@ function fixture() {
   ]);
   const info = {
     commit: sha,
-    version: "0.28.0",
+    version: "0.29.0",
     identity: "MARINE-87",
     simulation: "world-space-fixed-step",
     campaign: "four-track-1987",
     gameplay: "river-runs-v1",
-    garage: "persistent-career-v1",
+    garage: "career-upgrades-v2",
+    progression: "engine-pump-nitrous-v1",
+    speedUnits: "mph-v1",
     environment: "glassy-jumps-v1",
     music: "alternating-mp3-v1",
     engine: "multisample-v8-v2",

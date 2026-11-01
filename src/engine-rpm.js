@@ -35,6 +35,7 @@ export class EngineRPMModel {
       reapplied: false,
       state: "idle",
       cruiseShare: 0,
+      previousBoost: 0,
     });
   }
   update(
@@ -55,6 +56,10 @@ export class EngineRPMModel {
         ? command
         : Number(command === true),
     );
+    const engineStage = clamp(motion?.engineStage || 0, 0, 4),
+      boost = clamp(motion?.nitrous || 0),
+      boostBegan = boost > 0.04 && this.previousBoost <= 0.04;
+    this.previousBoost = boost;
     const previousCommand = this.command,
       before = this.throttle,
       oldRPM = this.rpm;
@@ -62,7 +67,8 @@ export class EngineRPMModel {
     this.throttle = approach(
       before,
       command,
-      2 + s.throttleResponse * 0.16,
+      (2 + s.throttleResponse * 0.16) *
+        (1 + engineStage * 0.025 + boost * 0.08),
       dt,
     );
     this.throttleRate = dt ? (this.throttle - before) / dt : 0;
@@ -122,7 +128,8 @@ export class EngineRPMModel {
             this.throttle * (0.84 + ratio * 0.16) -
               this.load * 0.035 +
               ratio * 0.24 * (1 - this.throttle) +
-              acceleration * this.throttle * 0.015,
+              acceleration * this.throttle * 0.015 +
+              boost * this.throttle * 0.04,
           );
     const airDemand = this.throttle;
     const demand =
@@ -147,10 +154,11 @@ export class EngineRPMModel {
     if (command < 0.2 || previousCommand - command > 0.25)
       this.accelArmed = true;
     if (
-      this.accelArmed &&
-      this.throttleRate > 0.6 &&
-      this.throttle > 0.12 &&
-      this.elapsed - this.upAt > s.accelerationCooldown / 1000
+      (this.accelArmed &&
+        this.throttleRate > 0.6 &&
+        this.throttle > 0.12 &&
+        this.elapsed - this.upAt > s.accelerationCooldown / 1000) ||
+      (boostBegan && this.elapsed - this.upAt > 0.8)
     ) {
       this.upSequence++;
       this.upAt = this.elapsed;

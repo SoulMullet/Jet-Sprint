@@ -1,3 +1,4 @@
+import {displaySetting,storedSetting,speedSetting} from '../speed-units.js';
 import {
   maintenanceDefaults,
   maintenanceSpecs,
@@ -49,8 +50,8 @@ export function mountMaintenanceLab(parent, tuning) {
   const inputs = [];
   const refresh = () => {
     for (const { input, output, key, s } of inputs) {
-      input.value = tuning.values[key];
-      output.textContent = `${Number(input.value).toFixed(s[4] < 0.01 ? 3 : s[4] < 1 ? 2 : 0)} ${s[5]}`;
+      input.value = displaySetting(key,tuning.values[key]);
+      output.textContent = `${Number(input.value).toFixed(s[4] < 0.01 ? 3 : s[4] < 1 ? 2 : 0)} ${speedSetting(key)?"MPH Δv":s[5]}`;
       updateRange(input);
     }
     status.textContent = tuning.warning;
@@ -62,18 +63,18 @@ export function mountMaintenanceLab(parent, tuning) {
     label.textContent = s[0] + " ";
     input.type = "range";
     input.id = "maintenance-" + key;
-    input.min = s[2];
-    input.max = s[3];
-    input.step = s[4];
+    input.min = displaySetting(key,s[2]);
+    input.max = displaySetting(key,s[3]);
+    input.step = displaySetting(key,s[4]);
     label.append(output, input);
     root.append(label);
     inputs.push({ input, output, key, s });
     input.oninput = () => {
-      tuning.set(key, Number(input.value));
+      tuning.set(key, storedSetting(key,Number(input.value)));
       refresh();
     };
     instrumentRange(input, {
-      defaultValue: s[1],
+      defaultValue: displaySetting(key,s[1]),
       reset: () => {
         tuning.set(key, s[1]);
         refresh();

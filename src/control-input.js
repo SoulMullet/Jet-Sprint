@@ -45,13 +45,25 @@ export function returnInput(
       : Math.sign(value) * Math.max(0, Math.abs(value) - speed * time);
   return Math.abs(next) < 0.0001 ? 0 : next;
 }
-const device = () => ({ steering: 0, throttle: 0, engaged: false, stamp: 0 });
+const device = () => ({
+  steering: 0,
+  throttle: 0,
+  nitrous: false,
+  engaged: false,
+  stamp: 0,
+});
 const devices = ["touch", "keyboard", "gamepad"];
 export class ControlInput {
   constructor(settings) {
     this.settings = settings;
     this.sources = { touch: device(), keyboard: device(), gamepad: device() };
-    this.input = { steering: 0, throttle: 0, left: false, right: false };
+    this.input = {
+      steering: 0,
+      throttle: 0,
+      left: false,
+      right: false,
+      nitrous: false,
+    };
     this.active = "none";
     this.clock = 0;
     this.rawSteering = 0;
@@ -59,11 +71,12 @@ export class ControlInput {
     this.targetSteering = 0;
     this.targetThrottle = 0;
   }
-  set(name, steering, throttle, engaged, intent = true) {
+  set(name, steering, throttle, engaged, intent = true, nitrous = false) {
     const s = this.sources[name];
     s.steering = clamp(steering, -1, 1);
     s.throttle = clamp(throttle);
     s.engaged = !!engaged;
+    s.nitrous = !!nitrous;
     if (intent) s.stamp = ++this.clock;
   }
   release() {
@@ -71,6 +84,7 @@ export class ControlInput {
       const s = this.sources[name];
       s.steering = s.throttle = 0;
       s.engaged = false;
+      s.nitrous = false;
       s.stamp = 0;
     }
     this.active = "none";
@@ -81,6 +95,7 @@ export class ControlInput {
         0;
     this.input.steering = this.input.throttle = 0;
     this.input.left = this.input.right = false;
+    this.input.nitrous = false;
   }
   update(dt, speedRatio = 0) {
     const v = this.settings.values,
@@ -106,6 +121,7 @@ export class ControlInput {
       if (previous) {
         previous.steering = previous.throttle = previous.stamp = 0;
         previous.engaged = false;
+        previous.nitrous = false;
       }
       this.input.steering = this.input.throttle = 0;
       this.active = selected;
@@ -113,6 +129,7 @@ export class ControlInput {
     const source = this.sources[selected];
     this.rawSteering = source?.steering ?? 0;
     this.rawThrottle = source?.throttle ?? 0;
+    this.input.nitrous = !!source?.nitrous && this.rawThrottle > 0;
     let steer = this.rawSteering,
       throttle = this.rawThrottle;
     if (selected === "touch" && this.arcadeTouch) {
@@ -181,6 +198,7 @@ export class ControlInput {
   inspect() {
     return {
       device: this.active,
+      nitrous: this.input.nitrous,
       rawSteering: this.rawSteering,
       steering: this.input.steering,
       rawThrottle: this.rawThrottle,

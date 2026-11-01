@@ -1,5 +1,5 @@
 import { BOAT_ID, GARAGE_VERSION, garageEconomy } from "./definitions.js";
-export const PROFILE_VERSION = 1,
+export const PROFILE_VERSION = 2,
   PROFILE_LIMIT = 256 * 1024;
 export const uid = () =>
   globalThis.crypto?.randomUUID?.() ||
@@ -26,7 +26,17 @@ export function freshProfile(levels, { existingPlayer = false } = {}) {
     economyVersion: GARAGE_VERSION,
     cash: garageEconomy.startingCash,
     lifetimeEarnings: 0,
-    boat: { id: BOAT_ID, fuel: 100, condition: 100, installedUpgrades: [] },
+    boat: {
+      id: BOAT_ID,
+      fuel: 100,
+      condition: 100,
+      installedUpgrades: [],
+      engineStage: 0,
+      pumpStage: 0,
+      nitrousInstalled: false,
+      nitrousCapacity: 100,
+      nitrousFill: 0,
+    },
     career: {
       unlockedCourses: existingPlayer
         ? levels.map((l) => l.id)
@@ -65,7 +75,7 @@ export function validateProfile(raw) {
   if (
     !plain(raw) ||
     raw.type !== "jet-sprint-player-profile" ||
-    raw.schemaVersion !== 1
+    raw.schemaVersion !== PROFILE_VERSION
   )
     throw Error("Unsupported player profile version.");
   if (
@@ -84,8 +94,22 @@ export function validateProfile(raw) {
     !percent(b.fuel) ||
     !percent(b.condition) ||
     !Array.isArray(b.installedUpgrades) ||
-    b.installedUpgrades.length > 16 ||
-    !b.installedUpgrades.every(id)
+    b.installedUpgrades.length > 32 ||
+    !b.installedUpgrades.every(id) ||
+    !Number.isInteger(b.engineStage) ||
+    b.engineStage < 0 ||
+    b.engineStage > 4 ||
+    !Number.isInteger(b.pumpStage) ||
+    b.pumpStage < 0 ||
+    b.pumpStage > 3 ||
+    typeof b.nitrousInstalled !== "boolean" ||
+    !Number.isFinite(b.nitrousCapacity) ||
+    b.nitrousCapacity < 1 ||
+    b.nitrousCapacity > 1000 ||
+    !Number.isFinite(b.nitrousFill) ||
+    b.nitrousFill < 0 ||
+    b.nitrousFill > b.nitrousCapacity ||
+    (!b.nitrousInstalled && b.nitrousFill !== 0)
   )
     throw Error("Invalid owned boat.");
   if (
@@ -176,6 +200,19 @@ export function decodeProfile(text) {
     raw.economyVersion = GARAGE_VERSION;
     raw.results ??= [];
     raw.extensions ??= {};
+  }
+  if (raw?.schemaVersion === 1) {
+    if (!["garage-economy-v1", GARAGE_VERSION].includes(raw.economyVersion))
+      throw Error("Unsupported legacy economy.");
+    raw.economyVersion = GARAGE_VERSION;
+    raw.schemaVersion = 2;
+    Object.assign(raw.boat, {
+      engineStage: 0,
+      pumpStage: 0,
+      nitrousInstalled: false,
+      nitrousCapacity: 100,
+      nitrousFill: 0,
+    });
   }
   return validateProfile(raw);
 }

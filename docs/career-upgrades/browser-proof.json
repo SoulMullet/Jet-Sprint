@@ -1,0 +1,41 @@
+{
+  "fixture": "Migrated schema-1 QA profile with $50,000 seed balance, 87% fuel, 94% condition and one old completion; Chromium 844×390 touch emulation, controlled game render clock, native CDP multitouch, simulated standard Gamepad API. This is not a physical Safari or controller test.",
+  "prices": [
+    "PURCHASE STAGE 1 / $1,000",
+    "PURCHASE STAGE 2 / $2,500",
+    "PURCHASE STAGE 3 / $5,000",
+    "PURCHASE STAGE 4 / $9,000",
+    "PURCHASE STAGE 1 / $750",
+    "PURCHASE STAGE 2 / $2,000",
+    "PURCHASE STAGE 3 / $4,500",
+    "PURCHASE KIT / $2,500"
+  ],
+  "legacyProgressPreserved": true,
+  "paidPurchases": {
+    "engine": 4,
+    "pump": 3,
+    "nitrous": true,
+    "cash": 22750
+  },
+  "touch": {
+    "normalThrottleThenBoost": true,
+    "steeringSimultaneous": true,
+    "samePointerCapture": true,
+    "downwardReleaseRetainsFullThrottle": true,
+    "scale": 1,
+    "scroll": 0
+  },
+  "keyboardShift": true,
+  "standardRB": true,
+  "audioContexts": 2,
+  "engineLoops": 4,
+  "musicSimultaneous": true,
+  "threeRapidRestarts": true,
+  "tankPreservedOnRestartAndReload": true,
+  "midRaceShopBlocked": true,
+  "normalCareerIgnoresSavedDebug": true,
+  "speedGaugeClearOfNitro": true,
+  "MPHLabels": true,
+  "cameraThresholdMPH": "12.4274238447467",
+  "errors": []
+}

@@ -3,6 +3,7 @@ import {
   migrateLegacy,
   validateProfile,
   PROFILE_LIMIT,
+  PROFILE_VERSION,
 } from "./profile-model.js";
 export const profileKey = "jet-sprint-player-profile-v1";
 // Synchronous local adapter. A cloud adapter must enforce atomic revision checks
@@ -82,7 +83,7 @@ export class LocalProfileRepository {
     } catch {
       /* Invalid raw data can be recovered from the backup. */
     }
-    if (previousVersion > 1)
+    if (previousVersion > PROFILE_VERSION)
       throw Error("A newer profile version cannot be overwritten.");
     if (this.revision() !== expectedRevision) {
       const e = Error(

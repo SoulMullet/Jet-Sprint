@@ -137,7 +137,12 @@ test("fixed-interval recordings are independent of render cadence and include th
 test("replay serialization and import/export preserve original snapshots, events and official splits", () => {
   const r = recording();
   assert.deepEqual(decodeReplay(JSON.stringify(r)), r);
-  assert.equal(telemetryCSV(r).split("\n")[0], SAMPLE_FIELDS.join(","));
+  assert.equal(
+    telemetryCSV(r).split("\n")[0],
+    SAMPLE_FIELDS.map((k) =>
+      ["speed", "vx", "vy", "vz"].includes(k) ? k + "_mph" : k,
+    ).join(","),
+  );
   assert.ok(graphSeries(r.samples, "speed", 0, 10).length <= 241);
 });
 test("quaternion interpolation takes the shortest arc and playback never calls physics", () => {
