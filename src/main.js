@@ -48,7 +48,6 @@ import {createRetroVenue} from './retro-venue.js';
 import {trackConfig} from './track-layout.js';
 import {channel,settings,stepBoat,PHYSICS_STEP} from './physics.js';
 import {Engine} from './audio.js';
-import workletURL from './v8-worklet.js?worker&url';
 import {AudioSettings} from './audio-settings.js';
 import {mountSoundLab} from './audio-panel.js';
 import {channelGeometry,shorelineGeometry,nearestOnTrack} from './track.js';
@@ -182,7 +181,7 @@ $('resetWater').onclick=()=>fluid.reset();
 
 
 const audioSettings=new AudioSettings({getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)});
-const engine=new Engine({settings:audioSettings.values,workletURL});let playing=false,paused=false,gameClock=0,last=performance.now();
+const engine=new Engine({settings:audioSettings.values,baseURL:import.meta.env.BASE_URL});let playing=false,paused=false,gameClock=0,last=performance.now();
 const startSequence=new RaceStart(),trackSignals=riverLevels.map(l=>createRaceSignal(scene,l.start,l.start));createRiverRunMarkers(scene,riverLevels);
 const doubleTap=createDoubleTap(()=>{if(startSequence.state==='RACING')bigfoot.provoke(b,()=>engine.vocal(true));});
 let race=campaign.race;
@@ -215,7 +214,7 @@ protectGameplayGestures($('game'));
 window.addEventListener('keydown',e=>{if(e.repeat||replayFeature?.active||garage?.active)return;if(paused&&$('pitConsole').hidden&&['p','escape'].includes(e.key.toLowerCase())){e.preventDefault();setPaused(false);return;}if(editingInput(e.target)||soundLab.testing)return;const k=e.key.toLowerCase();if(k==='r')restart();if((k==='p'||k==='escape')&&playing){e.preventDefault();setPaused(!paused);}});
 window.addEventListener('blur',()=>{if(fluid?.solver)fluid.solver.accumulator=0;doubleTap.reset();release();playerCareer.flush();engine.pause();});
 document.addEventListener('visibilitychange',()=>{doubleTap.reset();release();preferences.flush();audioSettings.flush();controlPreferences.flush();playerCareer.flush();if(document.hidden){raceMusic.setSuspended(true);engine.pause();}else last=performance.now();});
-window.addEventListener('pagehide',()=>{raceMusic.stopRace(true);preferences.flush();audioSettings.flush();controlPreferences.flush();playerCareer.flush();});
+window.addEventListener('pagehide',()=>{engine.pause(true);raceMusic.stopRace(true);preferences.flush();audioSettings.flush();controlPreferences.flush();playerCareer.flush();});
 let cameraSyncReady=false;
 function applyPreferences(ids){const v=preferences.values;
  raceMusic.setPreferences(v.musicVolume,v.musicMute,v.masterVolume,v.mute);
@@ -252,6 +251,7 @@ cameraSyncReady=true;
 mountCameraPanel(cameraPreferences,$('debug'),()=>{$('courseOverview').checked=false;});
 mountRacingCameraLab(racingCameraPreferences,cameraSystem,$('cameraSettings'),campaignWorld);
 globalThis.__JET_SPRINT_CAMERA__=Object.freeze({inspect:()=>cameraSystem.inspect()});
+globalThis.__JET_SPRINT_ENGINE__=Object.freeze({inspect:()=>engine.inspect()});
 const soundLab=mountSoundLab(audioSettings,engine,{onTestChange:on=>{release();if(!on&&!playing)engine.pause();last=performance.now();}});
 const musicSection=document.createElement('details');musicSection.className='settings-section';musicSection.innerHTML='<summary>Race soundtrack</summary><p>Random start / alternating playlist. Music volume is independent of engine volume.</p>';for(const id of ['musicVolume','musicMute'])musicSection.append($(id).closest('label'));const enableMusic=document.createElement('button');enableMusic.id='enableRaceMusic';enableMusic.textContent='Enable / resume music';enableMusic.onclick=()=>raceMusic.unlock();musicSection.append(enableMusic);const musicStatus=document.createElement('p');musicStatus.role='status';musicSection.append(musicStatus);soundLab.root.append(musicSection);globalThis.__JET_SPRINT_MUSIC__=Object.freeze({inspect:()=>raceMusic.inspect()});
 soundLab.root.addEventListener('toggle',()=>{if(soundLab.root.open)release();});
@@ -315,7 +315,7 @@ function frame(now){requestAnimationFrame(frame);const rawDt=Math.max(0,(now-las
     if(campaign.landed){boatPresentation.land(campaign.landingSpeed);hfSpray.simulation.landingBurst(b,Math.min(6,1+campaign.landingSpeed*.7)*preferences.values.landingSplash);}
     elapsed=race.done?race.total:race.total-race.lapStart;lap=Math.min(campaign.track.laps,race.laps.length+1);best=campaignProgress.best(campaign.level.id);
    }
-   speed=Math.hypot(b.vx,b.vz);effects(dt,speed);if(campaign.index===0&&campaign.phase==='RACE')bigfoot.update(dt,b,camera,{speed,distance:settings.sprayDistance/100,volume:settings.waterVolume/100,throttle:input.throttle},()=>engine.vocal(false));engine.update(speed,input.throttle,dt,settings.top/3.6,false,campaign.airborne?0:b.engineLoad);
+   speed=Math.hypot(b.vx,b.vz);effects(dt,speed);if(campaign.index===0&&campaign.phase==='RACE')bigfoot.update(dt,b,camera,{speed,distance:settings.sprayDistance/100,volume:settings.waterVolume/100,throttle:input.throttle},()=>engine.vocal(false));engine.update(speed,input.throttle,dt,settings.top/3.6,false,campaign.airborne?0:b.engineLoad,b);
   }else{b.vx=b.vz=0;speed=0;playerCareer.step(dt,b,null,preferences.values.prestartRevving?input.throttle:0);engine.update(0,preferences.values.prestartRevving?input.throttle:0,dt,settings.top/3.6,true);}
   fluid.focus.x=b.x+Math.cos(b.angle)*7;fluid.focus.z=b.z+Math.sin(b.angle)*7;fluid.update(dt);
  }

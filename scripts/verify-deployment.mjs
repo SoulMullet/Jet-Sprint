@@ -1,3 +1,4 @@
+import { engineRecordings } from "../src/engine-samples.js";
 import { musicFiles } from "../src/race-music.js";
 import { createHash } from "node:crypto";
 import { appendFile } from "node:fs/promises";
@@ -65,6 +66,17 @@ export async function verifyDeployment(
       )
         throw Error("Missing published race soundtrack.");
       if (
+        info.engine !== "recorded-v8-v1" ||
+        !Object.values(engineRecordings).every(
+          (path) =>
+            paths.includes(path) &&
+            paths.includes(path.replace(".m4a", ".wav")),
+        )
+      )
+        throw Error(
+          "Missing published real V8 recordings or compatibility copies.",
+        );
+      if (
         !paths.includes("index.html") ||
         !paths.some((p) => p.endsWith(".js")) ||
         !paths.some((p) => p.endsWith(".css")) ||
@@ -121,6 +133,6 @@ if (
   if (process.env.GITHUB_STEP_SUMMARY)
     await appendFile(
       process.env.GITHUB_STEP_SUMMARY,
-      `## Published build verified\n\nCommit: \`${result.commit}\`\n\n${result.files} actual live files fetched and SHA-256 verified, including HTML, JavaScript, CSS and all three font files.\n\nIdentity: ${result.identity}; simulation: ${result.simulation}; controls: ${result.controls}.\n`,
+      `## Published build verified\n\nCommit: \`${result.commit}\`\n\n${result.files} actual live files fetched and SHA-256 verified, including HTML, JavaScript, CSS, all three font files, both MP3 songs and all M4A/WAV engine recordings.\n\nIdentity: ${result.identity}; simulation: ${result.simulation}; controls: ${result.controls}.\n`,
     );
 }

@@ -1,0 +1,166 @@
+{
+  "initial": {
+    "backend": "Recorded V8 / Web Audio",
+    "engineGain": 0.45223352313041687,
+    "engineMuted": false,
+    "sampleTest": false,
+    "rpm": 900,
+    "throttle": 0,
+    "load": 0,
+    "context": "running",
+    "samples": {
+      "cruise": "Loaded M4A",
+      "rev": "Loaded M4A"
+    },
+    "layers": [
+      {
+        "id": "idle",
+        "weight": 0,
+        "playbackRate": 1
+      },
+      {
+        "id": "low",
+        "weight": 0,
+        "playbackRate": 1
+      },
+      {
+        "id": "cruise",
+        "weight": 0,
+        "playbackRate": 1
+      },
+      {
+        "id": "high",
+        "weight": 0,
+        "playbackRate": 1
+      }
+    ],
+    "crossfade": "silent",
+    "acceleration": false,
+    "accelerationCount": 0,
+    "loopSources": 4,
+    "sourcesCreated": 4,
+    "warning": ""
+  },
+  "highRPM": 2258,
+  "releaseRPM": 3589,
+  "controlsVerified": [
+    "audio-operatingRPM",
+    "audio-rpmInertia",
+    "audio-idleRPM",
+    "audio-maxRPM",
+    "audio-throttleResponse",
+    "audio-rpmRise",
+    "audio-rpmFall",
+    "audio-loadEffect",
+    "audio-idleInstability",
+    "audio-camLope",
+    "audio-pitchRange",
+    "audio-accelerationLayer",
+    "audio-cruiseLayer",
+    "audio-crossfadeSpeed",
+    "audio-engineMute",
+    "audio-engineVolume",
+    "audio-lowEmphasis",
+    "audio-waterInteraction",
+    "audio-reflections",
+    "audio-stereoWidth",
+    "audio-distance",
+    "audio-exhaustBass",
+    "audio-exhaustMid",
+    "audio-exhaustTreble",
+    "audio-pulseStrength",
+    "audio-resonance",
+    "audio-rasp",
+    "audio-growl",
+    "audio-crackle",
+    "audio-distortion",
+    "audio-muffler",
+    "audio-pulseSharpness",
+    "audio-pulseDuration",
+    "audio-pulseIrregularity",
+    "audio-harmonics",
+    "audio-rumble",
+    "audio-mechanical",
+    "audio-vibration",
+    "audio-combustion"
+  ],
+  "allControlsSaveThroughExistingHandlers": true,
+  "reset": true,
+  "samplePreview": true,
+  "rapidRestarts": 8,
+  "musicChangeKeepsEngineSources": true,
+  "persisted": {
+    "pitchRange": 47,
+    "cruiseLayer": 71
+  },
+  "simultaneous": {
+    "engine": {
+      "backend": "Recorded V8 / Web Audio",
+      "engineGain": 0.4511764347553253,
+      "engineMuted": false,
+      "sampleTest": false,
+      "rpm": 900,
+      "throttle": 0,
+      "load": 0,
+      "context": "running",
+      "samples": {
+        "cruise": "Loaded M4A",
+        "rev": "Loaded M4A"
+      },
+      "layers": [
+        {
+          "id": "idle",
+          "weight": 1.075,
+          "playbackRate": 1
+        },
+        {
+          "id": "low",
+          "weight": 0,
+          "playbackRate": 0.729
+        },
+        {
+          "id": "cruise",
+          "weight": 0,
+          "playbackRate": 0.72
+        },
+        {
+          "id": "high",
+          "weight": 0,
+          "playbackRate": 0.72
+        }
+      ],
+      "crossfade": "idle",
+      "acceleration": false,
+      "accelerationCount": 1,
+      "loopSources": 4,
+      "sourcesCreated": 6,
+      "warning": ""
+    },
+    "music": {
+      "active": true,
+      "suspended": false,
+      "current": "Turbo Racer X.mp3",
+      "instances": 2,
+      "gains": [
+        0,
+        0.006767190061509609
+      ],
+      "failed": [],
+      "status": "Playing Turbo Racer X.mp3",
+      "context": "running"
+    },
+    "contexts": 2
+  },
+  "requests": [
+    {
+      "url": "http://127.0.0.1:4266/Jet-Sprint/audio/Engine/EngineRev.m4a",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4266/Jet-Sprint/audio/Engine/EngineCruise.m4a",
+      "status": 200
+    }
+  ],
+  "errors": [],
+  "fixture": "Compiled /Jet-Sprint/ build in Chromium 844×390 touch emulation; manual game render clock. Native AudioContext, native decoding and playback. No physical Safari/controller test or subjective listening."
+}

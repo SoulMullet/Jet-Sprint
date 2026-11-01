@@ -6,6 +6,10 @@ const sha = "a".repeat(40);
 function fixture() {
   const files = new Map([
     ["index.html", "current entry"],
+    ["audio/Engine/EngineCruise.m4a", "cruise"],
+    ["audio/Engine/EngineRev.m4a", "rev"],
+    ["audio/Engine/EngineCruise.wav", "cruise-pcm"],
+    ["audio/Engine/EngineRev.wav", "rev-pcm"],
     ["audio/music/Funky Glitch Groove.mp3", "funky"],
     ["audio/music/Turbo Racer X.mp3", "turbo"],
     ["assets/main.js", "world-space-fixed-step"],
@@ -16,7 +20,7 @@ function fixture() {
   ]);
   const info = {
     commit: sha,
-    version: "0.26.0",
+    version: "0.27.0",
     identity: "MARINE-87",
     simulation: "world-space-fixed-step",
     campaign: "four-track-1987",
@@ -24,6 +28,7 @@ function fixture() {
     garage: "persistent-career-v1",
     environment: "glassy-jumps-v1",
     music: "alternating-mp3-v1",
+    engine: "recorded-v8-v1",
     controls: "analog-input-v1",
     economy: "wallet-v2",
     streaming: "worker-tiles-v1",
@@ -43,7 +48,9 @@ function fixture() {
       new Response(
         url.pathname.endsWith("/build-info.json")
           ? JSON.stringify(info)
-          : files.get(decodeURIComponent(url.pathname.replace("/Jet-Sprint/", ""))),
+          : files.get(
+              decodeURIComponent(url.pathname.replace("/Jet-Sprint/", "")),
+            ),
         { status: 200 },
       ),
   };
@@ -55,7 +62,7 @@ test("deployment verification reads and hashes actual live HTML, code, styles an
       attempts: 1,
     });
   assert.equal(result.status, "verified");
-  assert.equal(result.files, 8);
+  assert.equal(result.files, 12);
 });
 test("deployment verification rejects an old deployment and mismatched live assets", async () => {
   const f = fixture();

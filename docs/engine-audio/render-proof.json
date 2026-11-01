@@ -1,0 +1,221 @@
+[
+  {
+    "mode": "default",
+    "peak": 0.41695287823677063,
+    "rms": 0.1251935398525136,
+    "maxStep": 0.07784550823271275,
+    "oneSecondRMS": [
+      0.12993572942566436,
+      0.15055194586017412,
+      0.15148346623349337,
+      0.13452553968265982,
+      0.14279070376469938,
+      0.13852168473440063,
+      0.1349317365587122,
+      0.10031314614001216,
+      0.12999381918718242,
+      0.1346408503504093,
+      0.1351638884825853,
+      0.13623979129531938
+    ],
+    "oscillators": 0,
+    "diagnostics": {
+      "backend": "Recorded V8 / Web Audio",
+      "rpm": 900,
+      "throttle": 0,
+      "load": 6.547483374892715e-28,
+      "context": "running",
+      "samples": {
+        "cruise": "Loaded M4A",
+        "rev": "Loaded M4A"
+      },
+      "layers": [
+        {
+          "id": "idle",
+          "weight": 1.075,
+          "playbackRate": 1
+        },
+        {
+          "id": "low",
+          "weight": 0,
+          "playbackRate": 0.798
+        },
+        {
+          "id": "cruise",
+          "weight": 0,
+          "playbackRate": 0.72
+        },
+        {
+          "id": "high",
+          "weight": 0,
+          "playbackRate": 0.72
+        }
+      ],
+      "crossfade": "idle",
+      "acceleration": false,
+      "accelerationCount": 1,
+      "loopSources": 4,
+      "sourcesCreated": 5,
+      "warning": ""
+    }
+  },
+  {
+    "mode": "max",
+    "peak": 0.40731725096702576,
+    "rms": 0.17591379437083435,
+    "maxStep": 0.15487821027636528,
+    "oneSecondRMS": [
+      0.17988905891646925,
+      0.19032418703578752,
+      0.1892023385444619,
+      0.21015840296261276,
+      0.22058867248912054,
+      0.20199210708735565,
+      0.2114549917632537,
+      0.15845175631318056,
+      0.17966263027654827,
+      0.1806589286000801,
+      0.17603587265802748,
+      0.17915355331057853
+    ],
+    "oscillators": 0,
+    "diagnostics": {
+      "backend": "Recorded V8 / Web Audio",
+      "rpm": 1300,
+      "throttle": 0,
+      "load": 6.9649107303919716e-40,
+      "context": "running",
+      "samples": {
+        "cruise": "Loaded M4A",
+        "rev": "Loaded M4A"
+      },
+      "layers": [
+        {
+          "id": "idle",
+          "weight": 1.25,
+          "playbackRate": 1
+        },
+        {
+          "id": "low",
+          "weight": 0,
+          "playbackRate": 0.72
+        },
+        {
+          "id": "cruise",
+          "weight": 0,
+          "playbackRate": 0.72
+        },
+        {
+          "id": "high",
+          "weight": 0,
+          "playbackRate": 0.72
+        }
+      ],
+      "crossfade": "idle",
+      "acceleration": false,
+      "accelerationCount": 1,
+      "loopSources": 4,
+      "sourcesCreated": 5,
+      "warning": ""
+    }
+  },
+  {
+    "mode": "wav",
+    "peak": 0.4169350564479828,
+    "rms": 0.12519707646627545,
+    "maxStep": 0.07778231613337994,
+    "oneSecondRMS": [
+      0.12993761722576538,
+      0.15055398981290832,
+      0.15148537343584548,
+      0.13452886136627992,
+      0.1427970203095045,
+      0.1385301703389062,
+      0.13493971175153363,
+      0.10031707602235847,
+      0.12999584008765483,
+      0.1346426234425708,
+      0.13516575372928905,
+      0.13624176468206586
+    ],
+    "oscillators": 0,
+    "diagnostics": {
+      "backend": "Recorded V8 / Web Audio",
+      "rpm": 900,
+      "throttle": 0,
+      "load": 6.547483374892715e-28,
+      "context": "running",
+      "samples": {
+        "cruise": "Loaded WAV compatibility copy (M4A: forced AAC incompatibility)",
+        "rev": "Loaded WAV compatibility copy (M4A: forced AAC incompatibility)"
+      },
+      "layers": [
+        {
+          "id": "idle",
+          "weight": 1.075,
+          "playbackRate": 1
+        },
+        {
+          "id": "low",
+          "weight": 0,
+          "playbackRate": 0.798
+        },
+        {
+          "id": "cruise",
+          "weight": 0,
+          "playbackRate": 0.72
+        },
+        {
+          "id": "high",
+          "weight": 0,
+          "playbackRate": 0.72
+        }
+      ],
+      "crossfade": "idle",
+      "acceleration": false,
+      "accelerationCount": 1,
+      "loopSources": 4,
+      "sourcesCreated": 5,
+      "warning": ""
+    }
+  },
+  {
+    "mode": "failed",
+    "peak": 0,
+    "rms": 0,
+    "maxStep": 0,
+    "oneSecondRMS": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "oscillators": 0,
+    "diagnostics": {
+      "backend": "Recorded V8 / Web Audio",
+      "rpm": 900,
+      "throttle": 0,
+      "load": 6.547483374892715e-28,
+      "context": "running",
+      "samples": {
+        "cruise": "FAILED: audio/Engine/EngineCruise.m4a (forced missing recordings; WAV: forced missing recordings)",
+        "rev": "FAILED: audio/Engine/EngineRev.m4a (forced missing recordings; WAV: forced missing recordings)"
+      },
+      "layers": [],
+      "crossfade": "silent",
+      "acceleration": false,
+      "accelerationCount": 0,
+      "loopSources": 0,
+      "sourcesCreated": 0,
+      "warning": "One or more engine layers unavailable. See sample diagnostics; no synthetic fallback."
+    }
+  }
+]

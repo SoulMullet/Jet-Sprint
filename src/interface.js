@@ -16,7 +16,7 @@ const panelDefinitions = [
   ["physics", "HULL", "HULL / DYNAMICS", "physicsLab"],
   ["spray", "SPRAY", "SPRAY / WATERJET", "sprayLab"],
   ["graphics", "VIDEO", "VIDEO / CALIBRATION", "graphicsLab"],
-  ["audio", "V8", "V8 / SOUND LAB", "soundLab"],
+  ["audio", "V8", "V8 / ENGINE AUDIO LAB", "soundLab"],
   ["camera", "VIEW", "VIEW / CAMERAS", "cameraSettings"],
   ["controls", "INPUT", "CONTROL LAB / ANALOG", "controlLab"],
   ["replays", "GHOST", "GHOST / REPLAY LAB", "ghostReplayLab"],
