@@ -9,7 +9,7 @@ The running engine uses the two supplied recordings, without a synthesized engin
 | `public/audio/Engine/EngineCruise.m4a` | 5.805 s | 5.757 s | AAC / 44.1 kHz stereo |
 | `public/audio/Engine/EngineRev.m4a` | 4.458 s | 4.410 s | AAC / 44.1 kHz stereo |
 
-FFprobe, decoded PCM level measurements and the [inspected waveform/spectrogram](recording-analysis.png) informed the region choices. Neither clip contains RPM telemetry. Strong peaks around 110–140 Hz and 310–390 Hz cannot safely be labelled a fundamental/firing frequency or converted to exact RPM. Cruise has several changing-pitch/level regions; Rev builds from its lower-energy opening to a louder sustained central section. Neither file clips at full scale (downmixed measured peaks approximately 0.556 / 0.856). The high-frequency noise bed and recording dynamics remain; there was no source separation. No listening/transcription test was available, so speech, music or other background contamination cannot be confidently excluded.
+FFprobe, decoded PCM level measurements and the [inspected waveform/spectrogram](recording-analysis.png) informed the region choices. Neither clip contains RPM telemetry. Strong peaks around 110–140 Hz and 310–390 Hz cannot safely be labelled a fundamental/firing frequency or converted to exact RPM. Cruise has several changing-pitch/level regions; Rev builds from its lower-energy opening to a louder sustained central section. Decoded stereo float peaks are approximately 0.601 / 1.022. Rev has six channel samples above full scale (about 0.0015% of samples), consistent with a small codec overshoot; the source history cannot be determined from the clip. Downmixed measured peaks are approximately 0.556 / 0.856. Loop normalization and the output limiter provide playback headroom; existing recording artifacts cannot be recovered. The high-frequency noise bed and recording dynamics remain; there was no source separation. No listening/transcription test was available, so speech, music or other background contamination cannot be confidently excluded.
 
 | Layer | Recording | Region (seconds) | Use |
 | --- | --- | --- | --- |
@@ -31,7 +31,7 @@ The recording mix passes through bounded bass/mid/treble/resonance EQ, restraine
 
 Pause uses a short fade then suspends the engine context. Resume cancels stale pause timers. Restarts reuse the same four loop sources; transient/preview sources release and disconnect on end. Raw sample previews are bounded, replace one another, and freeze the race through the existing stationary test mode. No AudioWorklet, ScriptProcessor, oscillator or generated noise runs as the engine source.
 
-Both exact original M4As ship. If M4A fetch/decode fails, the loader tries the matching WAV made from that same recording, explicitly reporting the compatibility path. To regenerate the committed 32 kHz stereo PCM copies:
+Both exact original M4As ship. If M4A fetch/decode fails, the loader tries the matching WAV made from that same recording, explicitly reporting the compatibility path. The 32 kHz stereo PCM copies use a 0.9 gain before 16-bit conversion to preserve headroom for that codec overshoot. To regenerate them:
 
 ```sh
 bash scripts/convert-engine-audio.sh  # requires ffmpeg; not needed for npm ci/build
