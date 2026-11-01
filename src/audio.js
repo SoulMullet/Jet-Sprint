@@ -6,6 +6,7 @@ import {
   loadRecording,
   layerMix,
   clamp,
+  enginePlaybackRate,
 } from "./engine-samples.js";
 const blend = (v, target, rate, dt) =>
   v + (target - v) * (1 - Math.exp(-rate * dt));
@@ -371,10 +372,10 @@ export class Engine {
         weights[i] *
         normal *
         (idle ? 0.75 + s.rumble * 0.005 : s.cruiseLayer / 100);
-      layer.rate = clamp(
-        1 + (timbre - layer.anchor) * s.pitchRange * 0.018,
-        0.72,
-        1.32,
+      layer.rate = enginePlaybackRate(
+        this.rpm,
+        layer.referenceRPM,
+        s.pitchRange,
       );
       set(
         layer.gain.gain,

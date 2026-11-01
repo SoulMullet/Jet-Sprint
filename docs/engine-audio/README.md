@@ -23,7 +23,7 @@ These short field clips limit idle realism and timbral range. Simulated RPM and 
 
 ## Architecture
 
-`engine-samples.js` describes source paths and regions. `audio.js` loads/decode-caches each recording once after the existing gesture-driven engine start. Four persistent native BufferSources loop preprocessed regions, with DC removal, conservative level normalization and an 80 ms complementary raised-cosine seam splice. Equal-power adjacent gains cover every RPM range. Rate changes are smoothed and limited to 0.72–1.32×. Operating RPM sets the cruise blend anchor; Pitch Range limits relative pitch movement.
+`engine-samples.js` describes source paths and regions. `audio.js` loads/decode-caches each recording once after the existing gesture-driven engine start. Four persistent native BufferSources loop preprocessed regions, with DC removal, conservative level normalization and an 80 ms complementary raised-cosine seam splice. Equal-power adjacent gains cover every RPM range. Rate changes use absolute simulated RPM against approximate 900/2800/4200/6800 RPM timbre references, are smoothed, and are limited to 0.72–1.32×. Idle and redline tuning therefore change steady-state pitch as well as displayed RPM. These references are artistic tuning values, not source measurements. Operating RPM sets the cruise blend anchor; Pitch Range limits relative pitch movement.
 
 Throttle revs the engine before the hull accelerates. Smoothed throttle, separate rise/fall rates and RPM Inertia feed the estimated RPM. Existing speed, pump load, lateral speed and yaw rate are read without modifying the boat. Engine load subtly changes RPM, level and filtering. There are no gears. An armed throttle rise starts one short Rev section with separate attack/release and level envelopes. It cannot retrigger until throttle is released below 20%, the 2.2-second cooldown expires and the prior voice ends. Minor throttle fluctuations cannot repeatedly restart the rev.
 
@@ -49,7 +49,7 @@ All 39 registered values (38 ranges and one toggle) use the existing `jet-sprint
 
 ## Verification
 
-- `npm test`: 275 tests pass. Coverage includes range coverage, seam continuity/DC/peak checks, analog throttle/RPM inertia, turning load with immutable physics inputs, legacy-save compatibility and all retained game tests.
+- `npm test`: 276 tests pass. Coverage includes range coverage, seam continuity/DC/peak checks, analog throttle/RPM inertia, turning load with immutable physics inputs, legacy-save compatibility and all retained game tests.
 - Production build passes (existing large-bundle advisory remains).
 - [Native Web Audio render results](render-proof.json): real decoded M4As at default and maximum controls, forced same-recording WAV fallback, and forced missing-file failure. Twelve seconds per render include idle, acceleration, sustain and release; all samples are finite, no full-scale clipping, and no one-second gaps. No engine oscillator is created. This is an objective render check, not a listening judgment.
 - [Compiled-game browser results](game-proof.json) and [phone-layout screenshot](lab-phone.png) document integration checks.

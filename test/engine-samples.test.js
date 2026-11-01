@@ -5,6 +5,7 @@ import {
   layerMix,
   engineRecordings,
   engineRegions,
+  enginePlaybackRate,
 } from "../src/engine-samples.js";
 import { Engine } from "../src/audio.js";
 import {
@@ -28,6 +29,7 @@ test("recording paths retain exact case and all loop regions fit the real decode
     rev: "audio/Engine/EngineRev.m4a",
   });
   for (const r of engineRegions) {
+    assert.ok(Number.isFinite(r.referenceRPM) && r.referenceRPM >= 900);
     assert.ok(r.start > 0 && r.end > r.start + 0.2);
     assert.ok(r.end < (r.recording === "rev" ? 4.4103 : 5.7571));
   }
@@ -109,4 +111,18 @@ test("old schema-1 audio saves and presets retain their values and gain the new 
   const next = new AudioSettings(storage);
   assert.deepEqual(next.values, store.values);
   assert.equal(next.values.engineMute, 1);
+});
+
+test("idle and redline tuning change absolute sample pitch while rate limits prevent cartoon shifts", () => {
+  assert.equal(enginePlaybackRate(900, 900, 35), 1);
+  assert.ok(enginePlaybackRate(600, 900, 35) < 1);
+  assert.ok(enginePlaybackRate(1300, 900, 35) > 1);
+  assert.ok(enginePlaybackRate(4500, 6800, 35) < 1);
+  assert.ok(enginePlaybackRate(9000, 6800, 35) > 1);
+  assert.equal(enginePlaybackRate(9000, 6800, 0), 1);
+  for (const rpm of [600, 900, 4500, 9000])
+    for (const ref of [900, 2800, 4200, 6800]) {
+      const v = enginePlaybackRate(rpm, ref, 75);
+      assert.ok(v >= 0.72 && v <= 1.32);
+    }
 });

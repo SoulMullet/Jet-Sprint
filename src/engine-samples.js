@@ -5,10 +5,38 @@ export const engineRecordings = {
   rev: "audio/Engine/EngineRev.m4a",
 };
 export const engineRegions = [
-  { id: "idle", recording: "rev", start: 0.16, end: 0.76, anchor: 0 },
-  { id: "low", recording: "cruise", start: 2.05, end: 2.75, anchor: 0.32 },
-  { id: "cruise", recording: "cruise", start: 0.25, end: 1.15, anchor: 0.63 },
-  { id: "high", recording: "rev", start: 1.35, end: 3.05, anchor: 1 },
+  {
+    id: "idle",
+    recording: "rev",
+    start: 0.16,
+    end: 0.76,
+    anchor: 0,
+    referenceRPM: 900,
+  },
+  {
+    id: "low",
+    recording: "cruise",
+    start: 2.05,
+    end: 2.75,
+    anchor: 0.32,
+    referenceRPM: 2800,
+  },
+  {
+    id: "cruise",
+    recording: "cruise",
+    start: 0.25,
+    end: 1.15,
+    anchor: 0.63,
+    referenceRPM: 4200,
+  },
+  {
+    id: "high",
+    recording: "rev",
+    start: 1.35,
+    end: 3.05,
+    anchor: 1,
+    referenceRPM: 6800,
+  },
 ];
 export const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
 export function layerMix(position, regions = engineRegions) {
@@ -77,4 +105,14 @@ export async function loadRecording(context, path, fetcher = fetch) {
   const response = await fetcher(path);
   if (!response.ok) throw Error(`HTTP ${response.status}`);
   return context.decodeAudioData(await response.arrayBuffer());
+}
+
+// Approximate timbre references, not measurements of RPM in the recordings.
+// Absolute simulated RPM makes Idle/Maximum RPM tuning audible at steady state.
+export function enginePlaybackRate(rpm, referenceRPM, pitchRange) {
+  return clamp(
+    (Math.max(1, rpm) / referenceRPM) ** (pitchRange * 0.0055),
+    0.72,
+    1.32,
+  );
 }
