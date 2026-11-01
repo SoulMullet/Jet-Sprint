@@ -33,7 +33,7 @@ await writeFile(
       garage: "persistent-career-v1",
       environment: "glassy-jumps-v1",
       music: "alternating-mp3-v1",
-      engine: "recorded-v8-v1",
+      engine: "multisample-v8-v2",
       controls: "analog-input-v1",
       economy: "wallet-v2",
       streaming: "worker-tiles-v1",

@@ -1,3 +1,4 @@
+import { engineRecordings } from "./engine-samples.js";
 import { audioControls, enginePresets } from "./audio-settings.js";
 export function mountSoundLab(store, engine, { onTestChange = () => {} } = {}) {
   const node = (tag, text, parent) => {
@@ -47,7 +48,9 @@ export function mountSoundLab(store, engine, { onTestChange = () => {} } = {}) {
     message("Sound preset applied.");
   };
   let testing = false,
-    throttle = 0;
+    throttle = 0,
+    jumpRemaining = 0;
+  const testContact = { airborne: false, landed: false };
   const test = node("section", null, body);
   test.className = "engine-test";
   const toggle = button(
@@ -81,6 +84,21 @@ export function mountSoundLab(store, engine, { onTestChange = () => {} } = {}) {
     "Stationary test freezes the boat and race clock. Start audio with a tap; use headphones or speakers with bass.",
     test,
   );
+  const jumpButton = button(
+    "Simulate jump / landing",
+    "simulateEngineJump",
+    () => {
+      if (!testing) api.setTesting(true);
+      jumpRemaining = jumpRemaining > 0 ? 0 : 1.25;
+      testContact.landed = false;
+    },
+    test,
+  );
+  node(
+    "p",
+    "Jump preview changes audio contact only; it does not move the live boat.",
+    test,
+  );
   const unlock = button(
     "Enable / resume audio",
     "unlockEngine",
@@ -98,7 +116,7 @@ export function mountSoundLab(store, engine, { onTestChange = () => {} } = {}) {
   );
   const tip = node(
     "p",
-    "Source RPM is uncalibrated. Idle uses the lowest available section; voicing controls process the recordings without adding a synthetic engine.",
+    "Six real recordings / source RPM is uncalibrated. Recorded idle and cruise beds remain continuous through rev, release, flight and landing.",
     body,
   );
   tip.className = "idle-tip";
@@ -109,10 +127,8 @@ export function mountSoundLab(store, engine, { onTestChange = () => {} } = {}) {
     "Hear each supplied recording directly (four-second preview). Testing pauses the race. Engine volume and mute still apply.",
     samples,
   );
-  for (const [id, title] of [
-    ["cruise", "EngineCruise.m4a"],
-    ["rev", "EngineRev.m4a"],
-  ])
+  for (const [id, path] of Object.entries(engineRecordings)) {
+    const title = path.split("/").at(-1);
     button(
       "Play " + title,
       "sampleTest-" + id,
@@ -122,6 +138,7 @@ export function mountSoundLab(store, engine, { onTestChange = () => {} } = {}) {
       },
       samples,
     );
+  }
   button(
     "Stop sample preview",
     "sampleTest-stop",
@@ -301,8 +318,25 @@ export function mountSoundLab(store, engine, { onTestChange = () => {} } = {}) {
     get throttle() {
       return throttle;
     },
+    get contact() {
+      return testContact;
+    },
+    stepTest(dt) {
+      const wasAir = testContact.airborne;
+      jumpRemaining = Math.max(0, jumpRemaining - dt);
+      testContact.airborne = jumpRemaining > 0;
+      testContact.landed = wasAir && !testContact.airborne;
+    },
     setTesting(on) {
-      testing = !!on;
+      on = !!on;
+      if (on !== testing) {
+        if (on) engine.beginTest();
+        else engine.endTest();
+      }
+      testing = on;
+      jumpRemaining = 0;
+      testContact.airborne = false;
+      testContact.landed = false;
       throttle = 0;
       slider.value = 0;
       value.textContent = "0%";
@@ -326,13 +360,13 @@ export function mountSoundLab(store, engine, { onTestChange = () => {} } = {}) {
       if (performance.now() - diagnosticTime > 150) {
         diagnosticTime = performance.now();
         const d = engine.inspect();
-        diagnosticText.textContent = `${d.backend}\nRPM ${d.rpm} / throttle ${d.throttle}% / load ${Math.round(d.load * 100)}%\nContext: ${d.context}\n${Object.entries(
+        diagnosticText.textContent = `${d.backend}\n${d.state} / airborne ${d.airborne ? "YES" : "NO"}\nRPM ${d.rpm} / change ${d.rpmRate} RPM/s\nThrottle ${d.throttle}% / load ${Math.round(d.load * 100)}%\nContext: ${d.context}\n${Object.entries(
           d.samples,
         )
           .map(([k, v]) => k + ": " + v)
           .join(
             "\n",
-          )}\nLayers / playback rates:\n${d.layers.map((l) => l.id + " " + Math.round(l.weight * 100) + "% @ " + l.playbackRate + "×").join("\n")}\nCrossfade: ${d.crossfade}\nAcceleration: ${d.acceleration ? "active" : "idle"} / loops: ${d.loopSources}\n${d.warning}`;
+          )}\nLayers / playback rates:\n${d.layers.map((l) => l.id + " " + Math.round(l.gain * 100) + "% @ " + l.playbackRate + "×").join("\n")}\nCrossfade: ${d.crossfade}\nRev ${d.acceleration ? "active" : "idle"} / rev-down ${d.revDown ? "active" : "idle"}\nLoops ${d.loopSources} / active sources ${d.activeSources}\n${d.warning}`;
         if (d.warning) message(d.warning);
       }
     },

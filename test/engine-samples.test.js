@@ -2,11 +2,11 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   seamlessLoop,
-  layerMix,
   engineRecordings,
   engineRegions,
   enginePlaybackRate,
 } from "../src/engine-samples.js";
+import { EngineRPMModel, engineBedMix } from "../src/engine-rpm.js";
 import { Engine } from "../src/audio.js";
 import {
   AudioSettings,
@@ -27,19 +27,55 @@ test("recording paths retain exact case and all loop regions fit the real decode
   assert.deepEqual(engineRecordings, {
     cruise: "audio/Engine/EngineCruise.m4a",
     rev: "audio/Engine/EngineRev.m4a",
+    idle: "audio/Engine/EngineIdle.m4a",
+    revDown: "audio/Engine/EngineRevDown.m4a",
+    cruiseOne: "audio/Engine/EngineCruiseLayerOne.m4a",
+    jump: "audio/Engine/EngineJump.m4a",
   });
   for (const r of engineRegions) {
     assert.ok(Number.isFinite(r.referenceRPM) && r.referenceRPM >= 900);
     assert.ok(r.start > 0 && r.end > r.start + 0.2);
-    assert.ok(r.end < (r.recording === "rev" ? 4.4103 : 5.7571));
+    assert.ok(
+      r.end <
+        { idle: 7.916, cruise: 5.7571, cruiseOne: 3.296, jump: 0.881 }[
+          r.recording
+        ],
+    );
   }
 });
-test("equal-power sample blends cover every RPM with unit power and no range gap", () => {
-  for (let x = 0; x <= 1; x += 0.001) {
-    const w = layerMix(x);
-    assert.ok(Math.abs(w.reduce((s, v) => s + v * v, 0) - 1) < 1e-10);
-    assert.ok(w.filter((v) => v > 0.0001).length <= 2);
-  }
+test("normalized beds remain continuous through RPM/flight ranges, and individual mutes are respected", () => {
+  const s = {
+    ...defaultAudio(),
+    idleSampleVolume: 100,
+    rumble: 50,
+    cruiseLayer: 100,
+    cruiseLayerOneVolume: 100,
+    jumpSampleVolume: 100,
+    jumpBlend: 100,
+  };
+  for (let p = 0; p <= 1; p += 0.01)
+    for (const flightBlend of [0, 0.5, 1])
+      for (const throttle of [0, 1]) {
+        const m = {
+          rpm: s.idleRPM + p * (s.maxRPM - s.idleRPM),
+          flightBlend,
+          throttle,
+          cruiseShare: 0.4,
+        };
+        const w = engineBedMix(m, s);
+        const power = w.reduce((a, b) => a + b * b, 0);
+        assert.ok(power > 0.12 && power <= 1.001);
+        assert.deepEqual(
+          engineBedMix(m, {
+            ...s,
+            idleSampleVolume: 0,
+            cruiseLayer: 0,
+            cruiseLayerOneVolume: 0,
+            jumpSampleVolume: 0,
+          }),
+          [0, 0, 0, 0],
+        );
+      }
 });
 test("loop splice is continuous at the wrap, removes DC, and bounds normalized peaks", () => {
   const input = buffer(2, 32000, 32000);

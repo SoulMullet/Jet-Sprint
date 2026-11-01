@@ -1,57 +1,62 @@
 // Authored by inspecting the supplied recordings' waveform and spectral evolution.
 // These are relative timbre anchors, NOT measured source RPM calibrations.
 export const engineRecordings = {
-  cruise: "audio/Engine/EngineCruise.m4a",
+  idle: "audio/Engine/EngineIdle.m4a",
   rev: "audio/Engine/EngineRev.m4a",
+  revDown: "audio/Engine/EngineRevDown.m4a",
+  cruise: "audio/Engine/EngineCruise.m4a",
+  cruiseOne: "audio/Engine/EngineCruiseLayerOne.m4a",
+  jump: "audio/Engine/EngineJump.m4a",
 };
 export const engineRegions = [
   {
     id: "idle",
-    recording: "rev",
-    start: 0.16,
-    end: 0.76,
-    anchor: 0,
+    recording: "idle",
+    start: 0.35,
+    end: 4.95,
     referenceRPM: 900,
-  },
-  {
-    id: "low",
-    recording: "cruise",
-    start: 2.05,
-    end: 2.75,
-    anchor: 0.32,
-    referenceRPM: 2800,
+    overlap: 0.1,
   },
   {
     id: "cruise",
     recording: "cruise",
     start: 0.25,
-    end: 1.15,
-    anchor: 0.63,
+    end: 1.2,
     referenceRPM: 4200,
+    overlap: 0.08,
   },
   {
-    id: "high",
-    recording: "rev",
-    start: 1.35,
-    end: 3.05,
-    anchor: 1,
-    referenceRPM: 6800,
+    id: "cruiseOne",
+    recording: "cruiseOne",
+    start: 0.25,
+    end: 2.2,
+    referenceRPM: 4400,
+    overlap: 0.08,
+  },
+  {
+    id: "jump",
+    recording: "jump",
+    start: 0.09,
+    end: 0.8,
+    referenceRPM: 6400,
+    overlap: 0.06,
   },
 ];
+export const transientRegions = {
+  rev: {
+    recording: "rev",
+    offsets: [0.28, 0.46, 0.64],
+    durations: [1.55, 1.45, 1.35],
+    referenceRPM: 4800,
+  },
+  revDown: {
+    recording: "revDown",
+    offsets: [0.18, 0.26, 0.34],
+    durations: [2.85, 2.7, 2.6],
+    referenceRPM: 4800,
+  },
+};
 export const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
-export function layerMix(position, regions = engineRegions) {
-  const weights = regions.map(() => 0);
-  position = clamp(position);
-  let i = 0;
-  while (i < regions.length - 2 && position > regions[i + 1].anchor) i++;
-  const t = clamp(
-    (position - regions[i].anchor) /
-      (regions[i + 1].anchor - regions[i].anchor),
-  );
-  weights[i] = Math.cos((t * Math.PI) / 2);
-  weights[i + 1] = Math.sin((t * Math.PI) / 2);
-  return weights;
-}
 // Bake a complementary raised-cosine splice once. The buffer's final sample
 // approaches the sample immediately preceding its start; no main-thread scheduler.
 export function seamlessLoop(context, source, start, end, overlap = 0.08) {
@@ -102,9 +107,15 @@ export function seamlessLoop(context, source, start, end, overlap = 0.08) {
   return out;
 }
 export async function loadRecording(context, path, fetcher = fetch) {
-  const response = await fetcher(path);
-  if (!response.ok) throw Error(`HTTP ${response.status}`);
-  return context.decodeAudioData(await response.arrayBuffer());
+  const controller = new AbortController(),
+    timer = setTimeout(() => controller.abort(), 15000);
+  try {
+    const response = await fetcher(path, { signal: controller.signal });
+    if (!response.ok) throw Error(`HTTP ${response.status}`);
+    return await context.decodeAudioData(await response.arrayBuffer());
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 // Approximate timbre references, not measurements of RPM in the recordings.

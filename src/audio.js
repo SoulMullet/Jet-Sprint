@@ -4,12 +4,11 @@ import {
   engineRegions,
   seamlessLoop,
   loadRecording,
-  layerMix,
+  transientRegions,
   clamp,
   enginePlaybackRate,
 } from "./engine-samples.js";
-const blend = (v, target, rate, dt) =>
-  v + (target - v) * (1 - Math.exp(-rate * dt));
+import { EngineRPMModel, engineBedMix } from "./engine-rpm.js";
 const set = (param, value, time, tau = 0.045) =>
   param.setTargetAtTime(value, time, tau);
 export class Engine {
@@ -27,23 +26,50 @@ export class Engine {
     this.volume = 1;
     this.layers = [];
     this.recordings = {};
-    this.sampleStatus = { cruise: "Not loaded", rev: "Not loaded" };
-    this.backend = "Recorded V8 / Web Audio";
+    this.sampleStatus = Object.fromEntries(
+      Object.keys(engineRecordings).map((id) => [id, "Not loaded"]),
+    );
+    this.transients = { rev: null, revDown: null };
+    this.voices = new Set();
+    this.backend = "Multi-sample V8 / Web Audio";
     this.lifecycle = 0;
     this.sourcesCreated = 0;
     this.accelerationCount = 0;
     this.reset();
   }
+  get rpm() {
+    return this.model.rpm;
+  }
+  get throttle() {
+    return this.model.throttle;
+  }
+  get load() {
+    return this.model.load;
+  }
   reset() {
-    this.rpm = this.settings.idleRPM;
-    this.throttle = 0;
-    this.load = 0;
-    this.burble = 0;
-    this.acceleration = 0;
-    this.accelArmed = true;
-    this.lastAcceleration = -10;
+    this.model = new EngineRPMModel(this.settings);
+    this.savedModel = null;
+    this.seenUp = 0;
+    this.seenDown = 0;
     this.stopAudition();
-    this.stopAcceleration();
+    this.stopTransients();
+  }
+  beginTest() {
+    if (this.savedModel) return;
+    this.savedModel = this.model;
+    this.model = new EngineRPMModel(this.settings);
+    this.seenUp = 0;
+    this.seenDown = 0;
+    this.stopTransients();
+  }
+  endTest() {
+    if (!this.savedModel) return;
+    this.stopAudition();
+    this.stopTransients();
+    this.model = this.savedModel;
+    this.savedModel = null;
+    this.seenUp = this.model.upSequence;
+    this.seenDown = this.model.downSequence;
   }
   setSettings(settings) {
     this.settings = validateAudio(settings);
@@ -113,9 +139,19 @@ export class Engine {
               ")";
           }
         }
+        this.installLoops(id);
       }),
     );
-    for (const region of engineRegions) {
+    this.warning =
+      this.layers.length < engineRegions.length ||
+      Object.keys(this.recordings).length < 6
+        ? "One or more engine layers unavailable. See sample diagnostics; no synthetic fallback."
+        : "";
+    return this.layers.length > 0;
+  }
+  installLoops(id) {
+    for (const region of engineRegions.filter((r) => r.recording === id)) {
+      if (this.layers.some((l) => l.id === region.id)) continue;
       const recording = this.recordings[region.recording];
       if (!recording) continue;
       try {
@@ -124,6 +160,7 @@ export class Engine {
             recording,
             region.start,
             region.end,
+            region.overlap,
           ),
           source = this.ctx.createBufferSource(),
           gain = this.ctx.createGain();
@@ -132,7 +169,7 @@ export class Engine {
         gain.gain.value = 0;
         source.connect(gain);
         gain.connect(this.engineInput);
-        source.start();
+        source.start(0, region.id === "cruiseOne" ? buffer.duration * 0.37 : 0);
         this.sourcesCreated++;
         this.layers.push({
           ...region,
@@ -146,11 +183,6 @@ export class Engine {
         this.sampleStatus[region.recording] = "FAILED loop: " + e.message;
       }
     }
-    this.warning =
-      this.layers.length < 4
-        ? "One or more engine layers unavailable. See sample diagnostics; no synthetic fallback."
-        : "";
-    return this.layers.length > 0;
   }
   buildGraph(c) {
     const filter = (type, hz) => {
@@ -201,14 +233,21 @@ export class Engine {
     merge.connect(this.engineBus);
     this.runningGain = c.createGain();
     this.runningGain.gain.value = 0;
-    this.engineBus.connect(this.runningGain);
+    this.engineMix = c.createGain();
+    this.engineCompressor = c.createDynamicsCompressor();
+    this.engineCompressor.knee.value = 12;
+    this.engineCompressor.attack.value = 0.003;
+    this.engineCompressor.release.value = 0.16;
+    this.engineBus.connect(this.engineMix);
+    this.engineMix.connect(this.engineCompressor);
+    this.engineCompressor.connect(this.runningGain);
     this.runningGain.connect(this.master);
     this.echo = c.createDelay(0.3);
     this.echo.delayTime.value = 0.105;
     this.wet = c.createGain();
     this.engineBus.connect(this.echo);
     this.echo.connect(this.wet);
-    this.wet.connect(this.runningGain);
+    this.wet.connect(this.engineMix);
     const compressor = (this.compressor = c.createDynamicsCompressor());
     compressor.threshold.value = -14;
     compressor.knee.value = 12;
@@ -257,6 +296,8 @@ export class Engine {
     set(this.resonator.frequency, 65 + s.resonance * 0.6, t);
     set(this.resonator.gain, s.rumble * 0.025 + s.vibration * 0.008, t);
     set(this.wet.gain, s.reflections * 0.001, t);
+    set(this.engineCompressor.threshold, -8 - s.engineCompression * 0.12, t);
+    set(this.engineCompressor.ratio, 2 + s.engineCompression * 0.08, t);
     for (const { g, diagonal } of this.stereoGains)
       set(g.gain, (1 + ((diagonal ? 1 : -1) * s.stereoWidth) / 100) / 2, t);
   }
@@ -272,8 +313,10 @@ export class Engine {
       );
   }
   pause(immediate = false) {
+    this.seenUp = this.model.upSequence;
+    this.seenDown = this.model.downSequence;
     this.stopAudition();
-    this.stopAcceleration();
+    this.stopTransients();
     if (!this.ctx) return;
     const token = ++this.lifecycle;
     set(this.runningGain.gain, 0, this.ctx.currentTime, 0.018);
@@ -291,110 +334,90 @@ export class Engine {
     revOnly = false,
     propulsionLoad = null,
     motion = null,
+    contact = null,
   ) {
-    const s = this.settings;
-    dt = clamp(Number.isFinite(dt) ? dt : 0, 0, 0.1);
-    const throttle =
-        typeof pressed === "number" ? clamp(pressed) : Number(!!pressed),
-      ratio = clamp(speed / Math.max(1, maxSpeed)),
-      before = this.throttle;
-    this.throttle = blend(before, throttle, 2 + s.throttleResponse * 0.16, dt);
-    const waterLoad = Number.isFinite(propulsionLoad)
-      ? clamp(propulsionLoad)
-      : 0.8 + ratio * 0.2;
-    const corner = motion
-      ? clamp(
-          Math.abs(motion.lateralSpeed || 0) / 12 +
-            Math.abs(motion.yawRate || 0) * 0.12,
-        )
-      : 0;
-    this.load = clamp(
-      this.throttle *
-        (0.4 + waterLoad * 0.5 + corner * 0.18) *
-        (s.loadEffect / 100),
-    );
-    const span = s.maxRPM - s.idleRPM;
-    const demand = revOnly
-      ? this.throttle
-      : clamp(
-          this.throttle * (0.84 + ratio * 0.16) -
-            this.load * 0.035 +
-            ratio * 0.24 * (1 - this.throttle),
-        );
-    const target = s.idleRPM + span * demand,
-      inertia = 1.65 - s.rpmInertia * 0.013;
-    this.rpm = blend(
-      this.rpm,
-      target,
-      (target > this.rpm ? 0.7 + s.rpmRise * 0.075 : 0.5 + s.rpmFall * 0.055) *
-        inertia,
+    const s = this.settings,
+      m = this.model;
+    m.update(
+      s,
+      speed,
+      pressed,
       dt,
+      maxSpeed,
+      revOnly,
+      propulsionLoad,
+      motion,
+      contact,
     );
-    this.acceleration = dt > 0 ? (this.throttle - before) / dt : 0;
-    if (throttle < 0.2) this.accelArmed = true;
     if (!this.ctx || this.ctx.state !== "running") return;
     const t = this.ctx.currentTime;
-    if (
-      this.accelArmed &&
-      this.acceleration > 0.6 &&
-      this.throttle > 0.12 &&
-      t - this.lastAcceleration > 2.2
-    ) {
-      this.triggerAcceleration();
-      this.accelArmed = false;
+    if (m.reapplied)
+      this.releaseTransient("revDown", Math.min(0.18, s.revDownFade / 2000));
+    if (m.upSequence !== this.seenUp && this.recordings.rev) {
+      this.seenUp = m.upSequence;
+      if (m.elapsed - m.upAt < 0.5) {
+        this.releaseTransient("revDown", 0.09);
+        this.triggerTransient("rev");
+      }
     }
-    const operating = clamp((s.operatingRPM - s.idleRPM) / span, 0.25, 0.8),
-      p = clamp((this.rpm - s.idleRPM) / span);
-    // Operating RPM positions the cruise anchor without changing either simulation or source calibration.
-    const timbre =
-      p < operating
-        ? (p / operating) * 0.63
-        : 0.63 + ((p - operating) / (1 - operating)) * 0.37;
-    const weights = layerMix(timbre),
+    if (m.downSequence !== this.seenDown && this.recordings.revDown) {
+      this.seenDown = m.downSequence;
+      if (m.elapsed - m.downAt < 0.5) {
+        this.releaseTransient("rev", 0.09);
+        this.triggerTransient("revDown");
+      }
+    }
+    const weights = engineBedMix(m, s),
       tau = 0.025 + (100 - s.crossfadeSpeed) * 0.003;
-    let available = this.layers.reduce(
-      (sum, l) =>
-        sum + weights[engineRegions.findIndex((r) => r.id === l.id)] ** 2,
-      0,
-    );
-    if (available < 0.001 && this.layers.length) {
-      const closest = this.layers.reduce((a, b) =>
-        Math.abs(a.anchor - timbre) < Math.abs(b.anchor - timbre) ? a : b,
-      );
-      weights[engineRegions.findIndex((r) => r.id === closest.id)] = 1;
-      available = 1;
+    // Missing assets leave a continuous remaining bed, with explicit diagnostics.
+    if (
+      this.layers.length < engineRegions.length &&
+      this.layers.length &&
+      this.layers.every(
+        (l) => weights[engineRegions.findIndex((r) => r.id === l.id)] < 0.001,
+      )
+    ) {
+      const fallback =
+        this.layers.find((l) => l.id === "idle") ||
+        this.layers.find((l) => l.id === "cruise") ||
+        this.layers[0];
+      const id = engineRegions.findIndex((r) => r.id === fallback.id);
+      const volume = {
+        idle: s.idleSampleVolume,
+        cruise: s.cruiseLayer,
+        cruiseOne: s.cruiseLayerOneVolume,
+        jump: s.jumpSampleVolume,
+      }[fallback.id];
+      weights[id] = fallback.id === "jump" && !m.airborne ? 0 : volume * 0.006;
     }
-    const normal = available > 0.001 ? 1 / Math.sqrt(available) : 0;
+    const foreground = Object.entries(this.transients).some(
+        ([role, v]) =>
+          v && (role === "rev" ? s.accelerationLayer : s.revDownVolume) > 0,
+      ),
+      bedDuck = foreground ? 0.82 : 1;
     for (const layer of this.layers) {
-      const i = engineRegions.findIndex((r) => r.id === layer.id),
-        idle = layer.id === "idle";
-      layer.weight =
-        weights[i] *
-        normal *
-        (idle ? 0.75 + s.rumble * 0.005 : s.cruiseLayer / 100);
-      layer.rate = enginePlaybackRate(
-        this.rpm,
-        layer.referenceRPM,
-        s.pitchRange,
-      );
-      set(
-        layer.gain.gain,
-        layer.weight * (this.accelVoice?.alive ? 0.88 : 1),
-        t,
-        tau,
-      );
+      const i = engineRegions.findIndex((r) => r.id === layer.id);
+      layer.weight = weights[i] * bedDuck;
+      layer.rate = enginePlaybackRate(m.rpm, layer.referenceRPM, s.pitchRange);
+      if (layer.id === "cruiseOne")
+        layer.rate = clamp(
+          layer.rate * (1 + 0.0025 * Math.sin(m.elapsed * 0.31)),
+          0.72,
+          1.32,
+        );
+      set(layer.gain.gain, layer.weight, t, tau);
       set(layer.source.playbackRate, layer.rate, t, 0.08);
     }
-    const idleAmount = 1 - p,
-      lope =
-        1 -
-        idleAmount *
-          (s.camLope + s.idleInstability + s.pulseIrregularity) *
-          0.00018 *
-          (0.5 + 0.5 * Math.sin(t * (6 + s.pulseDuration * 0.04)));
+    const p = clamp((m.rpm - s.idleRPM) / (s.maxRPM - s.idleRPM)),
+      idleAmount = 1 - p;
+    const lope =
+      1 -
+      idleAmount *
+        (s.camLope + s.idleInstability + s.pulseIrregularity) *
+        0.00018 *
+        (0.5 + 0.5 * Math.sin(t * (6 + s.pulseDuration * 0.04)));
     const gain =
-      (((0.72 + this.throttle * 0.18 + this.load * 0.1) *
-        (s.engineVolume / 100)) /
+      (((0.72 + m.throttle * 0.18 + m.load * 0.1) * (s.engineVolume / 100)) /
         (1 + s.distance * 0.015)) *
       (s.engineMute ? 0 : 1) *
       (this.auditionVoice ? 0 : 1) *
@@ -406,7 +429,7 @@ export class Engine {
       clamp(
         (4000 +
           p * 5000 +
-          this.load * s.waterInteraction * 9 +
+          m.load * s.waterInteraction * 9 +
           s.pulseSharpness * 10) *
           (1 - s.muffler * 0.004),
         1800,
@@ -422,67 +445,119 @@ export class Engine {
         t,
         0.04,
       );
-    if (this.accelVoice?.alive) {
-      set(
-        this.accelVoice.gain.gain,
-        (s.accelerationLayer / 100) * 0.42 * this.throttle,
-        t,
-        0.06,
-      );
-      set(
-        this.accelVoice.source.playbackRate,
-        clamp(0.9 + p * 0.2, 0.9, 1.1),
-        t,
-        0.1,
-      );
-    }
+    for (const [role, voice] of Object.entries(this.transients))
+      if (voice) {
+        const volume = role === "rev" ? s.accelerationLayer : s.revDownVolume;
+        voice.weight =
+          volume *
+          0.0038 *
+          (role === "rev"
+            ? 0.3 + 0.7 * m.throttle
+            : 0.55 + 0.45 * (1 - m.throttle));
+        voice.rate = clamp(
+          enginePlaybackRate(m.rpm, voice.referenceRPM, s.pitchRange),
+          0.82,
+          1.18,
+        );
+        set(voice.gain.gain, voice.weight, t, 0.06);
+        set(voice.source.playbackRate, voice.rate, t, 0.09);
+      }
   }
-  triggerAcceleration() {
-    if (!this.recordings.rev || this.accelVoice?.alive) return;
+  triggerTransient(role) {
+    const spec = transientRegions[role],
+      recording = this.recordings[spec.recording];
+    if (!recording || this.transients[role]) return;
     const c = this.ctx,
       t = c.currentTime,
-      index = this.accelerationCount++ % 3,
-      offset = [0.28, 0.46, 0.64][index],
-      duration = [1.55, 1.45, 1.35][index];
+      count =
+        role === "rev"
+          ? this.accelerationCount++
+          : (this.revDownCount = (this.revDownCount || 0) + 1),
+      index = count % 3;
+    const offset = spec.offsets[index],
+      duration = Math.min(
+        spec.durations[index],
+        recording.duration - offset - 0.02,
+      );
+    if (duration < 0.2) return;
     const source = c.createBufferSource(),
       gain = c.createGain(),
       envelope = c.createGain();
-    source.buffer = this.recordings.rev;
+    source.buffer = recording;
+    const voice = {
+      role,
+      source,
+      gain,
+      envelope,
+      referenceRPM: spec.referenceRPM,
+      weight: 0,
+      rate: clamp(
+        enginePlaybackRate(
+          this.rpm,
+          spec.referenceRPM,
+          this.settings.pitchRange,
+        ),
+        0.82,
+        1.18,
+      ),
+      retiring: false,
+    };
+    source.playbackRate.value = voice.rate;
     gain.gain.value = 0;
     source.connect(gain);
     gain.connect(envelope);
     envelope.connect(this.engineInput);
-    this.lastAcceleration = t;
-    this.accelVoice = { source, gain, envelope, alive: true };
-    this.sourcesCreated++;
-    const voice = this.accelVoice;
-    gain.gain.value = this.settings.accelerationLayer * 0.0042;
+    const attack =
+      role === "rev" ? 0.035 + this.settings.idleRevCrossfade * 0.0015 : 0.045;
+    const earliestEnd = duration / 1.18,
+      release =
+        role === "rev"
+          ? 0.08 + this.settings.revCruiseCrossfade * 0.0035
+          : this.settings.revDownFade / 1000;
     envelope.gain.setValueAtTime(0, t);
-    envelope.gain.linearRampToValueAtTime(1, t + 0.08);
-    // BufferSource duration is sample time; stop envelope is scheduled conservatively before earliest end.
-    source.start(t, offset, duration);
-    envelope.gain.setValueAtTime(1, t + duration / 1.1 - 0.18);
-    envelope.gain.linearRampToValueAtTime(0, t + duration / 1.1 - 0.01);
+    envelope.gain.linearRampToValueAtTime(1, t + attack);
+    envelope.gain.setValueAtTime(
+      1,
+      t + Math.max(attack, earliestEnd - release - 0.02),
+    );
+    envelope.gain.linearRampToValueAtTime(0, t + earliestEnd - 0.01);
+    this.transients[role] = voice;
+    this.voices.add(voice);
+    this.sourcesCreated++;
     source.onended = () => {
-      voice.alive = false;
       source.disconnect();
       gain.disconnect();
       envelope.disconnect();
-      if (this.accelVoice === voice) this.accelVoice = null;
+      this.voices.delete(voice);
+      if (this.transients[role] === voice) this.transients[role] = null;
     };
+    source.start(t, offset, duration);
   }
-  stopAcceleration() {
-    const voice = this.accelVoice;
-    if (!voice) return;
-    voice.alive = false;
-    const t = this.ctx.currentTime;
-    voice.envelope.gain.cancelScheduledValues(t);
-    voice.envelope.gain.setValueAtTime(voice.envelope.gain.value, t);
-    voice.envelope.gain.linearRampToValueAtTime(0, t + 0.04);
+  fadeVoice(v, seconds) {
+    v.retiring = true;
+    const t = this.ctx.currentTime,
+      p = v.envelope.gain;
+    if (p.cancelAndHoldAtTime) p.cancelAndHoldAtTime(t);
+    else {
+      p.cancelScheduledValues(t);
+      p.setValueAtTime(p.value, t);
+    }
+    p.linearRampToValueAtTime(0, t + seconds);
     try {
-      voice.source.stop(t + 0.05);
+      v.source.stop(t + seconds + 0.01);
     } catch {}
-    this.accelVoice = null;
+  }
+  releaseTransient(role, seconds = 0.05) {
+    const v = this.transients[role];
+    if (!v) return;
+    this.fadeVoice(v, seconds);
+    this.transients[role] = null;
+  }
+  stopTransients() {
+    if (!this.transients) return;
+    for (const v of this.voices) this.fadeVoice(v, 0.04);
+    for (const role of Object.keys(this.transients))
+      this.transients[role] = null;
   }
   async audition(id) {
     this.stopAudition();
@@ -537,29 +612,49 @@ export class Engine {
     this.auditionVoice = null;
   }
   inspect() {
+    const m = this.model;
+    const layers = this.layers.map((l) => ({
+      id: l.id,
+      weight: +l.weight.toFixed(3),
+      gain: l.gain.gain.value,
+      playbackRate: +l.rate.toFixed(3),
+    }));
+    for (const v of this.voices)
+      layers.push({
+        id: v.role,
+        weight: v.retiring ? 0 : v.weight,
+        gain: v.gain.gain.value * v.envelope.gain.value,
+        playbackRate: v.rate,
+        retiring: v.retiring,
+      });
     return {
       backend: this.backend,
       engineGain: this.engineBus?.gain.value || 0,
       engineMuted: !!this.settings.engineMute,
       sampleTest: !!this.auditionVoice,
-      rpm: Math.round(this.rpm),
-      throttle: Math.round(this.throttle * 100),
-      load: this.load,
+      rpm: Math.round(m.rpm),
+      rpmRate: Math.round(m.rpmRate),
+      throttle: Math.round(m.throttle * 100),
+      load: m.load,
+      state: m.state,
+      airborne: m.airborne,
+      flightBlend: m.flightBlend,
+      landing: m.landing,
       context: this.ctx?.state || "not started",
       samples: { ...this.sampleStatus },
-      layers: this.layers.map((l) => ({
-        id: l.id,
-        weight: +l.weight.toFixed(3),
-        playbackRate: +l.rate.toFixed(3),
-      })),
+      layers,
       crossfade:
-        this.layers
+        layers
           .filter((l) => l.weight > 0.02)
           .map((l) => l.id)
           .join(" + ") || "silent",
-      acceleration: !!this.accelVoice?.alive,
+      acceleration: !!this.transients.rev,
+      revDown: !!this.transients.revDown,
       accelerationCount: this.accelerationCount,
+      revDownCount: this.revDownCount || 0,
       loopSources: this.layers.length,
+      activeSources:
+        this.layers.length + this.voices.size + Number(!!this.auditionVoice),
       sourcesCreated: this.sourcesCreated,
       warning: this.warning || "",
     };

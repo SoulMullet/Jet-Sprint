@@ -1,0 +1,349 @@
+{
+  "initial": {
+    "backend": "Multi-sample V8 / Web Audio",
+    "engineGain": 0.4519442319869995,
+    "engineMuted": false,
+    "sampleTest": false,
+    "rpm": 900,
+    "rpmRate": 0,
+    "throttle": 0,
+    "load": 0,
+    "state": "idle",
+    "airborne": false,
+    "flightBlend": 0,
+    "landing": 0,
+    "context": "running",
+    "samples": {
+      "idle": "Loaded M4A",
+      "rev": "Loaded M4A",
+      "revDown": "Loaded M4A",
+      "cruise": "Loaded M4A",
+      "cruiseOne": "Loaded M4A",
+      "jump": "Loaded M4A"
+    },
+    "layers": [
+      {
+        "id": "jump",
+        "weight": 0,
+        "gain": 0,
+        "playbackRate": 1
+      },
+      {
+        "id": "cruiseOne",
+        "weight": 0,
+        "gain": 0,
+        "playbackRate": 1
+      },
+      {
+        "id": "cruise",
+        "weight": 0,
+        "gain": 0,
+        "playbackRate": 1
+      },
+      {
+        "id": "idle",
+        "weight": 0,
+        "gain": 0,
+        "playbackRate": 1
+      }
+    ],
+    "crossfade": "silent",
+    "acceleration": false,
+    "revDown": false,
+    "accelerationCount": 0,
+    "revDownCount": 0,
+    "loopSources": 4,
+    "activeSources": 4,
+    "sourcesCreated": 4,
+    "warning": ""
+  },
+  "auditionedSix": true,
+  "airborne": {
+    "backend": "Multi-sample V8 / Web Audio",
+    "engineGain": 0.5465906858444214,
+    "engineMuted": false,
+    "sampleTest": false,
+    "rpm": 3377,
+    "rpmRate": 9431,
+    "throttle": 68,
+    "load": 0.14624762123846122,
+    "state": "airborne",
+    "airborne": true,
+    "flightBlend": 0.6321205588285577,
+    "landing": 0,
+    "context": "running",
+    "samples": {
+      "idle": "Loaded M4A",
+      "rev": "Loaded M4A",
+      "revDown": "Loaded M4A",
+      "cruise": "Loaded M4A",
+      "cruiseOne": "Loaded M4A",
+      "jump": "Loaded M4A"
+    },
+    "layers": [
+      {
+        "id": "jump",
+        "weight": 0.282,
+        "gain": 0.2818729877471924,
+        "playbackRate": 0.884
+      },
+      {
+        "id": "cruiseOne",
+        "weight": 0.088,
+        "gain": 0.08798996359109879,
+        "playbackRate": 0.951
+      },
+      {
+        "id": "cruise",
+        "weight": 0.63,
+        "gain": 0.629657506942749,
+        "playbackRate": 0.959
+      },
+      {
+        "id": "idle",
+        "weight": 0.002,
+        "gain": 0.001598626608029008,
+        "playbackRate": 1.29
+      }
+    ],
+    "crossfade": "jump + cruiseOne + cruise",
+    "acceleration": false,
+    "revDown": false,
+    "accelerationCount": 1,
+    "revDownCount": 1,
+    "loopSources": 4,
+    "activeSources": 4,
+    "sourcesCreated": 6,
+    "warning": ""
+  },
+  "landed": {
+    "backend": "Multi-sample V8 / Web Audio",
+    "engineGain": 0.5642800331115723,
+    "engineMuted": false,
+    "sampleTest": false,
+    "rpm": 3741,
+    "rpmRate": 7276,
+    "throttle": 74,
+    "load": 0.3041811824671552,
+    "state": "landing",
+    "airborne": false,
+    "flightBlend": 0.46018096584674684,
+    "landing": 0.6411803884299546,
+    "context": "running",
+    "samples": {
+      "idle": "Loaded M4A",
+      "rev": "Loaded M4A",
+      "revDown": "Loaded M4A",
+      "cruise": "Loaded M4A",
+      "cruiseOne": "Loaded M4A",
+      "jump": "Loaded M4A"
+    },
+    "layers": [
+      {
+        "id": "jump",
+        "weight": 0.233,
+        "gain": 0.2340860515832901,
+        "playbackRate": 0.902
+      },
+      {
+        "id": "cruiseOne",
+        "weight": 0.106,
+        "gain": 0.10588682442903519,
+        "playbackRate": 0.97
+      },
+      {
+        "id": "cruise",
+        "weight": 0.714,
+        "gain": 0.7128525376319885,
+        "playbackRate": 0.978
+      },
+      {
+        "id": "idle",
+        "weight": 0,
+        "gain": 0.00001972384961845819,
+        "playbackRate": 1.316
+      }
+    ],
+    "crossfade": "jump + cruiseOne + cruise",
+    "acceleration": false,
+    "revDown": false,
+    "accelerationCount": 1,
+    "revDownCount": 1,
+    "loopSources": 4,
+    "activeSources": 4,
+    "sourcesCreated": 6,
+    "warning": ""
+  },
+  "testPreservesLiveBoatAndClock": true,
+  "highRPM": 2016,
+  "releaseRPM": 3110,
+  "controlsVerified": [
+    "audio-idleSampleVolume",
+    "audio-revDownVolume",
+    "audio-cruiseLayerOneVolume",
+    "audio-jumpSampleVolume",
+    "audio-idleRevCrossfade",
+    "audio-revCruiseCrossfade",
+    "audio-cruiseBlend",
+    "audio-pitchRange",
+    "audio-accelerationLayer",
+    "audio-cruiseLayer",
+    "audio-crossfadeSpeed",
+    "audio-revDownThreshold",
+    "audio-revDownCooldown",
+    "audio-revDownFade",
+    "audio-accelerationCooldown",
+    "audio-airborneResponse",
+    "audio-airborneDelay",
+    "audio-airborneHysteresis",
+    "audio-jumpBlend",
+    "audio-landingTransition",
+    "audio-engineCompression",
+    "audio-engineMute",
+    "audio-engineVolume",
+    "audio-lowEmphasis",
+    "audio-waterInteraction",
+    "audio-reflections",
+    "audio-stereoWidth",
+    "audio-distance",
+    "audio-operatingRPM",
+    "audio-rpmInertia",
+    "audio-idleRPM",
+    "audio-maxRPM",
+    "audio-throttleResponse",
+    "audio-rpmRise",
+    "audio-rpmFall",
+    "audio-loadEffect",
+    "audio-idleInstability",
+    "audio-camLope",
+    "audio-exhaustBass",
+    "audio-exhaustMid",
+    "audio-exhaustTreble",
+    "audio-pulseStrength",
+    "audio-resonance",
+    "audio-rasp",
+    "audio-growl",
+    "audio-crackle",
+    "audio-distortion",
+    "audio-muffler",
+    "audio-pulseSharpness",
+    "audio-pulseDuration",
+    "audio-pulseIrregularity",
+    "audio-harmonics",
+    "audio-rumble",
+    "audio-mechanical",
+    "audio-vibration",
+    "audio-combustion"
+  ],
+  "allControlsSaveThroughExistingHandlers": true,
+  "reset": true,
+  "samplePreview": true,
+  "rapidRestarts": 8,
+  "musicChangeKeepsEngineSources": true,
+  "persisted": {
+    "pitchRange": 47,
+    "cruiseLayer": 71
+  },
+  "simultaneous": {
+    "engine": {
+      "backend": "Multi-sample V8 / Web Audio",
+      "engineGain": 0.4527777135372162,
+      "engineMuted": false,
+      "sampleTest": false,
+      "rpm": 900,
+      "rpmRate": 0,
+      "throttle": 0,
+      "load": 0,
+      "state": "idle",
+      "airborne": false,
+      "flightBlend": 0,
+      "landing": 0,
+      "context": "running",
+      "samples": {
+        "idle": "Loaded M4A",
+        "rev": "Loaded M4A",
+        "revDown": "Loaded M4A",
+        "cruise": "Loaded M4A",
+        "cruiseOne": "Loaded M4A",
+        "jump": "Loaded M4A"
+      },
+      "layers": [
+        {
+          "id": "jump",
+          "weight": 0,
+          "gain": 0,
+          "playbackRate": 0.72
+        },
+        {
+          "id": "cruiseOne",
+          "weight": 0,
+          "gain": 0,
+          "playbackRate": 0.72
+        },
+        {
+          "id": "cruise",
+          "weight": 0,
+          "gain": 0,
+          "playbackRate": 0.72
+        },
+        {
+          "id": "idle",
+          "weight": 0.914,
+          "gain": 0.9137499928474426,
+          "playbackRate": 1
+        }
+      ],
+      "crossfade": "idle",
+      "acceleration": false,
+      "revDown": false,
+      "accelerationCount": 1,
+      "revDownCount": 1,
+      "loopSources": 4,
+      "activeSources": 4,
+      "sourcesCreated": 12,
+      "warning": ""
+    },
+    "music": {
+      "active": true,
+      "suspended": false,
+      "current": "Funky Glitch Groove.mp3",
+      "instances": 2,
+      "gains": [
+        0.06297890096902847,
+        0.07434748113155365
+      ],
+      "failed": [],
+      "status": "Playing Funky Glitch Groove.mp3",
+      "context": "running"
+    },
+    "contexts": 2
+  },
+  "requests": [
+    {
+      "url": "http://127.0.0.1:4268/Jet-Sprint/audio/Engine/EngineIdle.m4a",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4268/Jet-Sprint/audio/Engine/EngineRev.m4a",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4268/Jet-Sprint/audio/Engine/EngineRevDown.m4a",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4268/Jet-Sprint/audio/Engine/EngineCruise.m4a",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4268/Jet-Sprint/audio/Engine/EngineCruiseLayerOne.m4a",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4268/Jet-Sprint/audio/Engine/EngineJump.m4a",
+      "status": 200
+    }
+  ],
+  "errors": [],
+  "fixture": "Compiled /Jet-Sprint/ build in Chromium 844×390 touch emulation; manual game render clock. Native AudioContext, native decoding and playback. No physical Safari/controller test or subjective listening."
+}

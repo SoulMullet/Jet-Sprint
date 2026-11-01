@@ -1,0 +1,1580 @@
+{
+  "method": "Stereo float PCM resampled to 32 kHz; peaks are not calibrated RPM. Contamination cannot be excluded without listening.",
+  "recordings": [
+    {
+      "file": "public/audio/Engine/EngineIdle.m4a",
+      "sha256": "e4814f92a06bf385732a6f946929be921eff930f86231e18bcb61cc2c73269dc",
+      "bytes": 130370,
+      "containerSeconds": 7.964444,
+      "codec_name": "aac",
+      "sample_rate": "44100",
+      "channels": 2,
+      "measuredAtHz": 32000,
+      "decodedSeconds": 7.91653125,
+      "stereoRMS": 0.16344478726387024,
+      "rmsDbFS": -15.732578515882953,
+      "stereoPeak": 0.7182283997535706,
+      "peakDbFS": -2.874748525206685,
+      "overFullScaleChannelSamples": 0,
+      "firstActive10msWindow": 0.0,
+      "lastActive10msWindow": 7.9,
+      "windows": [
+        {
+          "start": 0.0,
+          "rms": 0.17170362174510956,
+          "centroidHz": 295.23695904912705,
+          "strongPeaksHz": [
+            46.875,
+            187.5,
+            250.0
+          ]
+        },
+        {
+          "start": 0.25,
+          "rms": 0.1669764667749405,
+          "centroidHz": 444.3341247596541,
+          "strongPeaksHz": [
+            171.875,
+            46.875,
+            312.5
+          ]
+        },
+        {
+          "start": 0.5,
+          "rms": 0.1739187240600586,
+          "centroidHz": 494.19626143754095,
+          "strongPeaksHz": [
+            171.875,
+            62.5,
+            265.625
+          ]
+        },
+        {
+          "start": 0.75,
+          "rms": 0.15225711464881897,
+          "centroidHz": 348.0111335168445,
+          "strongPeaksHz": [
+            187.5,
+            46.875,
+            234.375
+          ]
+        },
+        {
+          "start": 1.0,
+          "rms": 0.1791689246892929,
+          "centroidHz": 354.79512814581426,
+          "strongPeaksHz": [
+            187.5,
+            62.5,
+            234.375
+          ]
+        },
+        {
+          "start": 1.25,
+          "rms": 0.15549074113368988,
+          "centroidHz": 418.3475738114827,
+          "strongPeaksHz": [
+            187.5,
+            62.5,
+            250.0
+          ]
+        },
+        {
+          "start": 1.5,
+          "rms": 0.151997372508049,
+          "centroidHz": 546.6098232398017,
+          "strongPeaksHz": [
+            187.5,
+            62.5,
+            296.875
+          ]
+        },
+        {
+          "start": 1.75,
+          "rms": 0.15051323175430298,
+          "centroidHz": 464.9340311814668,
+          "strongPeaksHz": [
+            62.5,
+            187.5,
+            250.0
+          ]
+        },
+        {
+          "start": 2.0,
+          "rms": 0.1605350524187088,
+          "centroidHz": 360.88980043317434,
+          "strongPeaksHz": [
+            62.5,
+            187.5,
+            250.0
+          ]
+        },
+        {
+          "start": 2.25,
+          "rms": 0.15015137195587158,
+          "centroidHz": 400.09077698438955,
+          "strongPeaksHz": [
+            187.5,
+            62.5,
+            250.0
+          ]
+        },
+        {
+          "start": 2.5,
+          "rms": 0.123383067548275,
+          "centroidHz": 290.9870469984395,
+          "strongPeaksHz": [
+            62.5,
+            171.875,
+            250.0
+          ]
+        },
+        {
+          "start": 2.75,
+          "rms": 0.16408462822437286,
+          "centroidHz": 311.42649781834484,
+          "strongPeaksHz": [
+            187.5,
+            62.5,
+            93.75
+          ]
+        },
+        {
+          "start": 3.0,
+          "rms": 0.1789608895778656,
+          "centroidHz": 396.58685551970257,
+          "strongPeaksHz": [
+            187.5,
+            62.5,
+            250.0
+          ]
+        },
+        {
+          "start": 3.25,
+          "rms": 0.12033196538686752,
+          "centroidHz": 286.78603125251425,
+          "strongPeaksHz": [
+            62.5,
+            187.5,
+            250.0
+          ]
+        },
+        {
+          "start": 3.5,
+          "rms": 0.16652050614356995,
+          "centroidHz": 289.9839607992039,
+          "strongPeaksHz": [
+            62.5,
+            187.5,
+            250.0
+          ]
+        },
+        {
+          "start": 3.75,
+          "rms": 0.1622243970632553,
+          "centroidHz": 296.93137553905154,
+          "strongPeaksHz": [
+            187.5,
+            62.5,
+            312.5
+          ]
+        },
+        {
+          "start": 4.0,
+          "rms": 0.13571356236934662,
+          "centroidHz": 331.6194448557391,
+          "strongPeaksHz": [
+            62.5,
+            171.875,
+            250.0
+          ]
+        },
+        {
+          "start": 4.25,
+          "rms": 0.14673876762390137,
+          "centroidHz": 317.33036459041045,
+          "strongPeaksHz": [
+            62.5,
+            187.5,
+            250.0
+          ]
+        },
+        {
+          "start": 4.5,
+          "rms": 0.16944552958011627,
+          "centroidHz": 414.2583358324667,
+          "strongPeaksHz": [
+            187.5,
+            62.5,
+            250.0
+          ]
+        },
+        {
+          "start": 4.75,
+          "rms": 0.1700504869222641,
+          "centroidHz": 323.2357377931189,
+          "strongPeaksHz": [
+            62.5,
+            187.5,
+            625.0
+          ]
+        },
+        {
+          "start": 5.0,
+          "rms": 0.1645546406507492,
+          "centroidHz": 385.4110395832128,
+          "strongPeaksHz": [
+            62.5,
+            187.5,
+            265.625
+          ]
+        },
+        {
+          "start": 5.25,
+          "rms": 0.12079650163650513,
+          "centroidHz": 258.320075282672,
+          "strongPeaksHz": [
+            78.125,
+            187.5,
+            234.375
+          ]
+        },
+        {
+          "start": 5.5,
+          "rms": 0.1789560317993164,
+          "centroidHz": 338.0103783618974,
+          "strongPeaksHz": [
+            187.5,
+            46.875,
+            250.0
+          ]
+        },
+        {
+          "start": 5.75,
+          "rms": 0.16408057510852814,
+          "centroidHz": 286.6387426628718,
+          "strongPeaksHz": [
+            187.5,
+            46.875,
+            265.625
+          ]
+        },
+        {
+          "start": 6.0,
+          "rms": 0.16200582683086395,
+          "centroidHz": 276.31469775795506,
+          "strongPeaksHz": [
+            46.875,
+            187.5,
+            265.625
+          ]
+        },
+        {
+          "start": 6.25,
+          "rms": 0.16437000036239624,
+          "centroidHz": 287.4054043253819,
+          "strongPeaksHz": [
+            187.5,
+            62.5,
+            406.25
+          ]
+        },
+        {
+          "start": 6.5,
+          "rms": 0.1428995579481125,
+          "centroidHz": 373.63715052033456,
+          "strongPeaksHz": [
+            46.875,
+            187.5,
+            296.875
+          ]
+        },
+        {
+          "start": 6.75,
+          "rms": 0.1457541137933731,
+          "centroidHz": 235.95542691897938,
+          "strongPeaksHz": [
+            171.875,
+            62.5,
+            265.625
+          ]
+        },
+        {
+          "start": 7.0,
+          "rms": 0.17339423298835754,
+          "centroidHz": 283.4592151902496,
+          "strongPeaksHz": [
+            187.5,
+            62.5,
+            250.0
+          ]
+        },
+        {
+          "start": 7.25,
+          "rms": 0.14733204245567322,
+          "centroidHz": 320.14108247298293,
+          "strongPeaksHz": [
+            187.5,
+            62.5,
+            296.875
+          ]
+        },
+        {
+          "start": 7.5,
+          "rms": 0.166644886136055,
+          "centroidHz": 296.15103652379014,
+          "strongPeaksHz": [
+            62.5,
+            187.5,
+            453.125
+          ]
+        }
+      ]
+    },
+    {
+      "file": "public/audio/Engine/EngineRev.m4a",
+      "sha256": "3283c510f682c983cd5109dbe95af04c801c3d01bb5546bb844ce7f3cf85e8bf",
+      "bytes": 73222,
+      "containerSeconds": 4.458231,
+      "codec_name": "aac",
+      "sample_rate": "44100",
+      "channels": 2,
+      "measuredAtHz": 32000,
+      "decodedSeconds": 4.41034375,
+      "stereoRMS": 0.22507770359516144,
+      "rmsDbFS": -12.953350489610699,
+      "stereoPeak": 1.020648717880249,
+      "peakDbFS": 0.17752588704940847,
+      "overFullScaleChannelSamples": 5,
+      "firstActive10msWindow": 0.0,
+      "lastActive10msWindow": 4.39,
+      "windows": [
+        {
+          "start": 0.0,
+          "rms": 0.12524454295635223,
+          "centroidHz": 389.84630601083364,
+          "strongPeaksHz": [
+            78.125,
+            250.0,
+            171.875
+          ]
+        },
+        {
+          "start": 0.25,
+          "rms": 0.168019101023674,
+          "centroidHz": 654.5996072068774,
+          "strongPeaksHz": [
+            234.375,
+            93.75,
+            156.25
+          ]
+        },
+        {
+          "start": 0.5,
+          "rms": 0.16464385390281677,
+          "centroidHz": 605.6631274696516,
+          "strongPeaksHz": [
+            265.625,
+            109.375,
+            390.625
+          ]
+        },
+        {
+          "start": 0.75,
+          "rms": 0.17950277030467987,
+          "centroidHz": 722.8318207981827,
+          "strongPeaksHz": [
+            343.75,
+            296.875,
+            109.375
+          ]
+        },
+        {
+          "start": 1.0,
+          "rms": 0.19125336408615112,
+          "centroidHz": 736.1317095350917,
+          "strongPeaksHz": [
+            375.0,
+            140.625,
+            750.0
+          ]
+        },
+        {
+          "start": 1.25,
+          "rms": 0.2200840264558792,
+          "centroidHz": 748.7223549447156,
+          "strongPeaksHz": [
+            375.0,
+            140.625,
+            187.5
+          ]
+        },
+        {
+          "start": 1.5,
+          "rms": 0.25455716252326965,
+          "centroidHz": 871.6791680162212,
+          "strongPeaksHz": [
+            375.0,
+            125.0,
+            765.625
+          ]
+        },
+        {
+          "start": 1.75,
+          "rms": 0.23693515360355377,
+          "centroidHz": 772.9802377852112,
+          "strongPeaksHz": [
+            359.375,
+            140.625,
+            734.375
+          ]
+        },
+        {
+          "start": 2.0,
+          "rms": 0.23967976868152618,
+          "centroidHz": 578.030293465453,
+          "strongPeaksHz": [
+            359.375,
+            125.0,
+            78.125
+          ]
+        },
+        {
+          "start": 2.25,
+          "rms": 0.24282796680927277,
+          "centroidHz": 702.5936125156252,
+          "strongPeaksHz": [
+            375.0,
+            140.625,
+            187.5
+          ]
+        },
+        {
+          "start": 2.5,
+          "rms": 0.2747219502925873,
+          "centroidHz": 567.5561228955361,
+          "strongPeaksHz": [
+            359.375,
+            140.625,
+            187.5
+          ]
+        },
+        {
+          "start": 2.75,
+          "rms": 0.25585129857063293,
+          "centroidHz": 560.5132984495837,
+          "strongPeaksHz": [
+            359.375,
+            140.625,
+            93.75
+          ]
+        },
+        {
+          "start": 3.0,
+          "rms": 0.22248557209968567,
+          "centroidHz": 720.2425837207664,
+          "strongPeaksHz": [
+            375.0,
+            140.625,
+            765.625
+          ]
+        },
+        {
+          "start": 3.25,
+          "rms": 0.17206312716007233,
+          "centroidHz": 893.1738380211877,
+          "strongPeaksHz": [
+            375.0,
+            140.625,
+            234.375
+          ]
+        },
+        {
+          "start": 3.5,
+          "rms": 0.16062286496162415,
+          "centroidHz": 928.4693355157665,
+          "strongPeaksHz": [
+            359.375,
+            140.625,
+            93.75
+          ]
+        },
+        {
+          "start": 3.75,
+          "rms": 0.19564232230186462,
+          "centroidHz": 830.1916951924176,
+          "strongPeaksHz": [
+            375.0,
+            140.625,
+            765.625
+          ]
+        },
+        {
+          "start": 4.0,
+          "rms": 0.17212341725826263,
+          "centroidHz": 897.709902555247,
+          "strongPeaksHz": [
+            375.0,
+            140.625,
+            234.375
+          ]
+        }
+      ]
+    },
+    {
+      "file": "public/audio/Engine/EngineRevDown.m4a",
+      "sha256": "710ce58056c320ac0e94c3af5ae32bab789751ce6661f84236720071076c5909",
+      "bytes": 50838,
+      "containerSeconds": 3.413333,
+      "codec_name": "aac",
+      "sample_rate": "44100",
+      "channels": 2,
+      "measuredAtHz": 32000,
+      "decodedSeconds": 3.36546875,
+      "stereoRMS": 0.1429637372493744,
+      "rmsDbFS": -16.89548214715427,
+      "stereoPeak": 0.49152541160583496,
+      "peakDbFS": -6.169080489092468,
+      "overFullScaleChannelSamples": 0,
+      "firstActive10msWindow": 0.09,
+      "lastActive10msWindow": 3.34,
+      "windows": [
+        {
+          "start": 0.0,
+          "rms": 0.08119354397058487,
+          "centroidHz": 653.6474894285526,
+          "strongPeaksHz": [
+            125.0,
+            328.125,
+            421.875
+          ]
+        },
+        {
+          "start": 0.25,
+          "rms": 0.12361036986112595,
+          "centroidHz": 721.6231245384249,
+          "strongPeaksHz": [
+            125.0,
+            156.25,
+            375.0
+          ]
+        },
+        {
+          "start": 0.5,
+          "rms": 0.14428195357322693,
+          "centroidHz": 879.3830422891523,
+          "strongPeaksHz": [
+            109.375,
+            140.625,
+            703.125
+          ]
+        },
+        {
+          "start": 0.75,
+          "rms": 0.15659630298614502,
+          "centroidHz": 720.1212191627411,
+          "strongPeaksHz": [
+            125.0,
+            328.125,
+            531.25
+          ]
+        },
+        {
+          "start": 1.0,
+          "rms": 0.13804399967193604,
+          "centroidHz": 809.681548611925,
+          "strongPeaksHz": [
+            125.0,
+            406.25,
+            625.0
+          ]
+        },
+        {
+          "start": 1.25,
+          "rms": 0.1297767013311386,
+          "centroidHz": 804.0558047902525,
+          "strongPeaksHz": [
+            515.625,
+            125.0,
+            406.25
+          ]
+        },
+        {
+          "start": 1.5,
+          "rms": 0.1342223435640335,
+          "centroidHz": 710.0086231122101,
+          "strongPeaksHz": [
+            390.625,
+            125.0,
+            500.0
+          ]
+        },
+        {
+          "start": 1.75,
+          "rms": 0.1542157679796219,
+          "centroidHz": 530.8277460750446,
+          "strongPeaksHz": [
+            328.125,
+            453.125,
+            125.0
+          ]
+        },
+        {
+          "start": 2.0,
+          "rms": 0.15680353343486786,
+          "centroidHz": 1010.6368067063021,
+          "strongPeaksHz": [
+            359.375,
+            406.25,
+            484.375
+          ]
+        },
+        {
+          "start": 2.25,
+          "rms": 0.1704525351524353,
+          "centroidHz": 916.974288924502,
+          "strongPeaksHz": [
+            375.0,
+            468.75,
+            46.875
+          ]
+        },
+        {
+          "start": 2.5,
+          "rms": 0.1378932148218155,
+          "centroidHz": 1038.100976551026,
+          "strongPeaksHz": [
+            109.375,
+            312.5,
+            343.75
+          ]
+        },
+        {
+          "start": 2.75,
+          "rms": 0.15735119581222534,
+          "centroidHz": 737.4384946408106,
+          "strongPeaksHz": [
+            328.125,
+            125.0,
+            203.125
+          ]
+        },
+        {
+          "start": 3.0,
+          "rms": 0.14894455671310425,
+          "centroidHz": 821.5575591101157,
+          "strongPeaksHz": [
+            359.375,
+            140.625,
+            718.75
+          ]
+        }
+      ]
+    },
+    {
+      "file": "public/audio/Engine/EngineCruise.m4a",
+      "sha256": "ad75fdd5c5217203d5633ed2108349f7bcb871045e18fdb43113c9dfec01d971",
+      "bytes": 92302,
+      "containerSeconds": 5.804989,
+      "codec_name": "aac",
+      "sample_rate": "44100",
+      "channels": 2,
+      "measuredAtHz": 32000,
+      "decodedSeconds": 5.757125,
+      "stereoRMS": 0.1717829406261444,
+      "rmsDbFS": -15.30039934324957,
+      "stereoPeak": 0.5984262228012085,
+      "peakDbFS": -4.459787682272193,
+      "overFullScaleChannelSamples": 0,
+      "firstActive10msWindow": 0.0,
+      "lastActive10msWindow": 5.74,
+      "windows": [
+        {
+          "start": 0.0,
+          "rms": 0.13207314908504486,
+          "centroidHz": 465.7659401933016,
+          "strongPeaksHz": [
+            375.0,
+            125.0,
+            187.5
+          ]
+        },
+        {
+          "start": 0.25,
+          "rms": 0.1746722012758255,
+          "centroidHz": 523.0291463341306,
+          "strongPeaksHz": [
+            390.625,
+            125.0,
+            437.5
+          ]
+        },
+        {
+          "start": 0.5,
+          "rms": 0.18458355963230133,
+          "centroidHz": 513.2091712148548,
+          "strongPeaksHz": [
+            390.625,
+            343.75,
+            437.5
+          ]
+        },
+        {
+          "start": 0.75,
+          "rms": 0.2051498144865036,
+          "centroidHz": 487.0854466215317,
+          "strongPeaksHz": [
+            390.625,
+            343.75,
+            437.5
+          ]
+        },
+        {
+          "start": 1.0,
+          "rms": 0.15156707167625427,
+          "centroidHz": 750.8557692727956,
+          "strongPeaksHz": [
+            125.0,
+            390.625,
+            250.0
+          ]
+        },
+        {
+          "start": 1.25,
+          "rms": 0.16950693726539612,
+          "centroidHz": 581.8597697072079,
+          "strongPeaksHz": [
+            359.375,
+            390.625,
+            125.0
+          ]
+        },
+        {
+          "start": 1.5,
+          "rms": 0.15139688551425934,
+          "centroidHz": 767.4450638623072,
+          "strongPeaksHz": [
+            359.375,
+            500.0,
+            406.25
+          ]
+        },
+        {
+          "start": 1.75,
+          "rms": 0.13572238385677338,
+          "centroidHz": 615.0817109023048,
+          "strongPeaksHz": [
+            453.125,
+            125.0,
+            328.125
+          ]
+        },
+        {
+          "start": 2.0,
+          "rms": 0.1446145921945572,
+          "centroidHz": 526.6571147126706,
+          "strongPeaksHz": [
+            125.0,
+            312.5,
+            437.5
+          ]
+        },
+        {
+          "start": 2.25,
+          "rms": 0.15828856825828552,
+          "centroidHz": 367.6549796671593,
+          "strongPeaksHz": [
+            125.0,
+            312.5,
+            437.5
+          ]
+        },
+        {
+          "start": 2.5,
+          "rms": 0.1463458091020584,
+          "centroidHz": 486.19998630857793,
+          "strongPeaksHz": [
+            312.5,
+            125.0,
+            421.875
+          ]
+        },
+        {
+          "start": 2.75,
+          "rms": 0.18988710641860962,
+          "centroidHz": 481.9137928451665,
+          "strongPeaksHz": [
+            359.375,
+            125.0,
+            468.75
+          ]
+        },
+        {
+          "start": 3.0,
+          "rms": 0.22805684804916382,
+          "centroidHz": 451.54825310062586,
+          "strongPeaksHz": [
+            375.0,
+            140.625,
+            500.0
+          ]
+        },
+        {
+          "start": 3.25,
+          "rms": 0.16371889412403107,
+          "centroidHz": 593.3618727673124,
+          "strongPeaksHz": [
+            140.625,
+            359.375,
+            421.875
+          ]
+        },
+        {
+          "start": 3.5,
+          "rms": 0.15187211334705353,
+          "centroidHz": 883.3731382180769,
+          "strongPeaksHz": [
+            140.625,
+            500.0,
+            421.875
+          ]
+        },
+        {
+          "start": 3.75,
+          "rms": 0.1469726413488388,
+          "centroidHz": 798.9292129030091,
+          "strongPeaksHz": [
+            140.625,
+            218.75,
+            484.375
+          ]
+        },
+        {
+          "start": 4.0,
+          "rms": 0.1438426673412323,
+          "centroidHz": 851.0184381449146,
+          "strongPeaksHz": [
+            140.625,
+            406.25,
+            500.0
+          ]
+        },
+        {
+          "start": 4.25,
+          "rms": 0.14599654078483582,
+          "centroidHz": 893.6825060871155,
+          "strongPeaksHz": [
+            140.625,
+            359.375,
+            531.25
+          ]
+        },
+        {
+          "start": 4.5,
+          "rms": 0.15658843517303467,
+          "centroidHz": 632.0313439031277,
+          "strongPeaksHz": [
+            125.0,
+            343.75,
+            62.5
+          ]
+        },
+        {
+          "start": 4.75,
+          "rms": 0.13753542304039001,
+          "centroidHz": 781.8601704968507,
+          "strongPeaksHz": [
+            125.0,
+            343.75,
+            468.75
+          ]
+        },
+        {
+          "start": 5.0,
+          "rms": 0.16768339276313782,
+          "centroidHz": 744.6962619051121,
+          "strongPeaksHz": [
+            125.0,
+            390.625,
+            343.75
+          ]
+        },
+        {
+          "start": 5.25,
+          "rms": 0.13990437984466553,
+          "centroidHz": 548.894979882641,
+          "strongPeaksHz": [
+            359.375,
+            109.375,
+            140.625
+          ]
+        },
+        {
+          "start": 5.5,
+          "rms": 0.1615999937057495,
+          "centroidHz": 516.3459871392464,
+          "strongPeaksHz": [
+            375.0,
+            109.375,
+            515.625
+          ]
+        }
+      ]
+    },
+    {
+      "file": "public/audio/Engine/EngineCruiseLayerOne.m4a",
+      "sha256": "0f702bfac236e22d5e583b614f803e52fe866f34cacf962ce16ba0d5c496c4ec",
+      "bytes": 52690,
+      "containerSeconds": 3.343673,
+      "codec_name": "aac",
+      "sample_rate": "44100",
+      "channels": 2,
+      "measuredAtHz": 32000,
+      "decodedSeconds": 3.2958125,
+      "stereoRMS": 0.11464253813028336,
+      "rmsDbFS": -18.81308414869467,
+      "stereoPeak": 0.47378966212272644,
+      "peakDbFS": -6.488288392401654,
+      "overFullScaleChannelSamples": 0,
+      "firstActive10msWindow": 0.0,
+      "lastActive10msWindow": 3.27,
+      "windows": [
+        {
+          "start": 0.0,
+          "rms": 0.1226193755865097,
+          "centroidHz": 484.67193270657873,
+          "strongPeaksHz": [
+            390.625,
+            125.0,
+            62.5
+          ]
+        },
+        {
+          "start": 0.25,
+          "rms": 0.11160798370838165,
+          "centroidHz": 553.784147746915,
+          "strongPeaksHz": [
+            390.625,
+            125.0,
+            187.5
+          ]
+        },
+        {
+          "start": 0.5,
+          "rms": 0.10092178732156754,
+          "centroidHz": 618.8207031886476,
+          "strongPeaksHz": [
+            390.625,
+            125.0,
+            187.5
+          ]
+        },
+        {
+          "start": 0.75,
+          "rms": 0.10537558794021606,
+          "centroidHz": 762.9923971405245,
+          "strongPeaksHz": [
+            406.25,
+            62.5,
+            171.875
+          ]
+        },
+        {
+          "start": 1.0,
+          "rms": 0.10900496691465378,
+          "centroidHz": 871.7176257515617,
+          "strongPeaksHz": [
+            156.25,
+            250.0,
+            406.25
+          ]
+        },
+        {
+          "start": 1.25,
+          "rms": 0.116750068962574,
+          "centroidHz": 807.2151683346667,
+          "strongPeaksHz": [
+            156.25,
+            125.0,
+            421.875
+          ]
+        },
+        {
+          "start": 1.5,
+          "rms": 0.11778566986322403,
+          "centroidHz": 558.5309641077288,
+          "strongPeaksHz": [
+            156.25,
+            125.0,
+            250.0
+          ]
+        },
+        {
+          "start": 1.75,
+          "rms": 0.12248474359512329,
+          "centroidHz": 419.09517449872385,
+          "strongPeaksHz": [
+            156.25,
+            250.0,
+            406.25
+          ]
+        },
+        {
+          "start": 2.0,
+          "rms": 0.10614968091249466,
+          "centroidHz": 516.735392274851,
+          "strongPeaksHz": [
+            140.625,
+            62.5,
+            250.0
+          ]
+        },
+        {
+          "start": 2.25,
+          "rms": 0.08337904512882233,
+          "centroidHz": 464.2842072440697,
+          "strongPeaksHz": [
+            125.0,
+            203.125,
+            328.125
+          ]
+        },
+        {
+          "start": 2.5,
+          "rms": 0.0979047641158104,
+          "centroidHz": 342.9552507537532,
+          "strongPeaksHz": [
+            125.0,
+            171.875,
+            78.125
+          ]
+        },
+        {
+          "start": 2.75,
+          "rms": 0.11517202854156494,
+          "centroidHz": 443.6055820198977,
+          "strongPeaksHz": [
+            125.0,
+            343.75,
+            171.875
+          ]
+        },
+        {
+          "start": 3.0,
+          "rms": 0.10788621008396149,
+          "centroidHz": 781.6707773062531,
+          "strongPeaksHz": [
+            140.625,
+            359.375,
+            171.875
+          ]
+        }
+      ]
+    },
+    {
+      "file": "public/audio/Engine/EngineJump.m4a",
+      "sha256": "05baae32dddefe7c0cc2bfe65480ecf3a3ae395438c21753b5c4ef0d297198c4",
+      "bytes": 14151,
+      "containerSeconds": 0.928798,
+      "codec_name": "aac",
+      "sample_rate": "44100",
+      "channels": 2,
+      "measuredAtHz": 32000,
+      "decodedSeconds": 0.8809375,
+      "stereoRMS": 0.11008907109498978,
+      "rmsDbFS": -19.16511585466577,
+      "stereoPeak": 0.5037213563919067,
+      "peakDbFS": -5.9561927173488804,
+      "overFullScaleChannelSamples": 0,
+      "firstActive10msWindow": 0.0,
+      "lastActive10msWindow": 0.86,
+      "windows": [
+        {
+          "start": 0.0,
+          "rms": 0.09724030643701553,
+          "centroidHz": 566.4111267254005,
+          "strongPeaksHz": [
+            187.5,
+            156.25,
+            62.5
+          ]
+        },
+        {
+          "start": 0.25,
+          "rms": 0.09764733910560608,
+          "centroidHz": 500.4759066080857,
+          "strongPeaksHz": [
+            171.875,
+            328.125,
+            78.125
+          ]
+        },
+        {
+          "start": 0.5,
+          "rms": 0.09922555088996887,
+          "centroidHz": 530.8982088355857,
+          "strongPeaksHz": [
+            390.625,
+            109.375,
+            156.25
+          ]
+        }
+      ]
+    },
+    {
+      "file": "public/audio/Engine/EngineCruise.wav",
+      "sha256": "34577021d2e9ff778a3374e3bdeb8490d49105cce4b5057d39d909af6102e670",
+      "bytes": 736990,
+      "containerSeconds": 5.757125,
+      "codec_name": "pcm_s16le",
+      "sample_rate": "32000",
+      "channels": 2,
+      "measuredAtHz": 32000,
+      "decodedSeconds": 5.757125,
+      "stereoRMS": 0.15460464358329773,
+      "rmsDbFS": -16.215549321896386,
+      "stereoPeak": 0.53857421875,
+      "peakDbFS": -5.375088797272051,
+      "overFullScaleChannelSamples": 0,
+      "firstActive10msWindow": 0.0,
+      "lastActive10msWindow": 5.74,
+      "windows": [
+        {
+          "start": 0.0,
+          "rms": 0.11886589229106903,
+          "centroidHz": 465.7654945040605,
+          "strongPeaksHz": [
+            375.0,
+            125.0,
+            187.5
+          ]
+        },
+        {
+          "start": 0.25,
+          "rms": 0.1572050005197525,
+          "centroidHz": 523.0279315811069,
+          "strongPeaksHz": [
+            390.625,
+            125.0,
+            437.5
+          ]
+        },
+        {
+          "start": 0.5,
+          "rms": 0.16612525284290314,
+          "centroidHz": 513.2094974810916,
+          "strongPeaksHz": [
+            390.625,
+            343.75,
+            437.5
+          ]
+        },
+        {
+          "start": 0.75,
+          "rms": 0.18463478982448578,
+          "centroidHz": 487.0862564749977,
+          "strongPeaksHz": [
+            390.625,
+            343.75,
+            437.5
+          ]
+        },
+        {
+          "start": 1.0,
+          "rms": 0.1364104300737381,
+          "centroidHz": 750.8572313042855,
+          "strongPeaksHz": [
+            125.0,
+            390.625,
+            250.0
+          ]
+        },
+        {
+          "start": 1.25,
+          "rms": 0.1525561362504959,
+          "centroidHz": 581.858481966445,
+          "strongPeaksHz": [
+            359.375,
+            390.625,
+            125.0
+          ]
+        },
+        {
+          "start": 1.5,
+          "rms": 0.136257141828537,
+          "centroidHz": 767.4467139698511,
+          "strongPeaksHz": [
+            359.375,
+            500.0,
+            406.25
+          ]
+        },
+        {
+          "start": 1.75,
+          "rms": 0.12215016037225723,
+          "centroidHz": 615.0805392605456,
+          "strongPeaksHz": [
+            453.125,
+            125.0,
+            328.125
+          ]
+        },
+        {
+          "start": 2.0,
+          "rms": 0.13015316426753998,
+          "centroidHz": 526.6562662712921,
+          "strongPeaksHz": [
+            125.0,
+            312.5,
+            437.5
+          ]
+        },
+        {
+          "start": 2.25,
+          "rms": 0.14245963096618652,
+          "centroidHz": 367.6559256694219,
+          "strongPeaksHz": [
+            125.0,
+            312.5,
+            437.5
+          ]
+        },
+        {
+          "start": 2.5,
+          "rms": 0.1317112147808075,
+          "centroidHz": 486.20050011426264,
+          "strongPeaksHz": [
+            312.5,
+            125.0,
+            421.875
+          ]
+        },
+        {
+          "start": 2.75,
+          "rms": 0.1708984225988388,
+          "centroidHz": 481.91418748914907,
+          "strongPeaksHz": [
+            359.375,
+            125.0,
+            468.75
+          ]
+        },
+        {
+          "start": 3.0,
+          "rms": 0.205251082777977,
+          "centroidHz": 451.5484963508295,
+          "strongPeaksHz": [
+            375.0,
+            140.625,
+            500.0
+          ]
+        },
+        {
+          "start": 3.25,
+          "rms": 0.14734698832035065,
+          "centroidHz": 593.3624277198589,
+          "strongPeaksHz": [
+            140.625,
+            359.375,
+            421.875
+          ]
+        },
+        {
+          "start": 3.5,
+          "rms": 0.136684849858284,
+          "centroidHz": 883.3703947984993,
+          "strongPeaksHz": [
+            140.625,
+            500.0,
+            421.875
+          ]
+        },
+        {
+          "start": 3.75,
+          "rms": 0.13227537274360657,
+          "centroidHz": 798.9291713763312,
+          "strongPeaksHz": [
+            140.625,
+            218.75,
+            484.375
+          ]
+        },
+        {
+          "start": 4.0,
+          "rms": 0.12945841252803802,
+          "centroidHz": 851.0184945547546,
+          "strongPeaksHz": [
+            140.625,
+            406.25,
+            500.0
+          ]
+        },
+        {
+          "start": 4.25,
+          "rms": 0.13139687478542328,
+          "centroidHz": 893.6813922717497,
+          "strongPeaksHz": [
+            140.625,
+            359.375,
+            531.25
+          ]
+        },
+        {
+          "start": 4.5,
+          "rms": 0.14092959463596344,
+          "centroidHz": 632.0324863699034,
+          "strongPeaksHz": [
+            125.0,
+            343.75,
+            62.5
+          ]
+        },
+        {
+          "start": 4.75,
+          "rms": 0.1237819641828537,
+          "centroidHz": 781.8601873129459,
+          "strongPeaksHz": [
+            125.0,
+            343.75,
+            468.75
+          ]
+        },
+        {
+          "start": 5.0,
+          "rms": 0.15091508626937866,
+          "centroidHz": 744.6953129256435,
+          "strongPeaksHz": [
+            125.0,
+            390.625,
+            343.75
+          ]
+        },
+        {
+          "start": 5.25,
+          "rms": 0.12591393291950226,
+          "centroidHz": 548.895671314954,
+          "strongPeaksHz": [
+            359.375,
+            109.375,
+            140.625
+          ]
+        },
+        {
+          "start": 5.5,
+          "rms": 0.145440012216568,
+          "centroidHz": 516.3452284588258,
+          "strongPeaksHz": [
+            375.0,
+            109.375,
+            515.625
+          ]
+        }
+      ]
+    },
+    {
+      "file": "public/audio/Engine/EngineRev.wav",
+      "sha256": "64ff60aedab892d06ea8f7c4d07165639997c651344b5c7646f5611330575422",
+      "bytes": 564602,
+      "containerSeconds": 4.410344,
+      "codec_name": "pcm_s16le",
+      "sample_rate": "32000",
+      "channels": 2,
+      "measuredAtHz": 32000,
+      "decodedSeconds": 4.41034375,
+      "stereoRMS": 0.20256994664669037,
+      "rmsDbFS": -13.86849972577907,
+      "stereoPeak": 0.9185791015625,
+      "peakDbFS": -0.7376687873174914,
+      "overFullScaleChannelSamples": 0,
+      "firstActive10msWindow": 0.0,
+      "lastActive10msWindow": 4.39,
+      "windows": [
+        {
+          "start": 0.0,
+          "rms": 0.11272004246711731,
+          "centroidHz": 389.844666517311,
+          "strongPeaksHz": [
+            78.125,
+            250.0,
+            171.875
+          ]
+        },
+        {
+          "start": 0.25,
+          "rms": 0.15121708810329437,
+          "centroidHz": 654.5988425623796,
+          "strongPeaksHz": [
+            234.375,
+            93.75,
+            156.25
+          ]
+        },
+        {
+          "start": 0.5,
+          "rms": 0.1481795758008957,
+          "centroidHz": 605.6641216730424,
+          "strongPeaksHz": [
+            265.625,
+            109.375,
+            390.625
+          ]
+        },
+        {
+          "start": 0.75,
+          "rms": 0.1615525186061859,
+          "centroidHz": 722.8319826550897,
+          "strongPeaksHz": [
+            343.75,
+            296.875,
+            109.375
+          ]
+        },
+        {
+          "start": 1.0,
+          "rms": 0.17212797701358795,
+          "centroidHz": 736.1292302990418,
+          "strongPeaksHz": [
+            375.0,
+            140.625,
+            750.0
+          ]
+        },
+        {
+          "start": 1.25,
+          "rms": 0.1980757713317871,
+          "centroidHz": 748.7229645494444,
+          "strongPeaksHz": [
+            375.0,
+            140.625,
+            187.5
+          ]
+        },
+        {
+          "start": 1.5,
+          "rms": 0.22910141944885254,
+          "centroidHz": 871.6792263635342,
+          "strongPeaksHz": [
+            375.0,
+            125.0,
+            765.625
+          ]
+        },
+        {
+          "start": 1.75,
+          "rms": 0.21324171125888824,
+          "centroidHz": 772.9812447026823,
+          "strongPeaksHz": [
+            359.375,
+            140.625,
+            734.375
+          ]
+        },
+        {
+          "start": 2.0,
+          "rms": 0.21571187674999237,
+          "centroidHz": 578.0305674125732,
+          "strongPeaksHz": [
+            359.375,
+            125.0,
+            78.125
+          ]
+        },
+        {
+          "start": 2.25,
+          "rms": 0.21854528784751892,
+          "centroidHz": 702.5953604711522,
+          "strongPeaksHz": [
+            375.0,
+            140.625,
+            187.5
+          ]
+        },
+        {
+          "start": 2.5,
+          "rms": 0.24724973738193512,
+          "centroidHz": 567.5550958939036,
+          "strongPeaksHz": [
+            359.375,
+            140.625,
+            187.5
+          ]
+        },
+        {
+          "start": 2.75,
+          "rms": 0.2302662432193756,
+          "centroidHz": 560.5126796724932,
+          "strongPeaksHz": [
+            359.375,
+            140.625,
+            93.75
+          ]
+        },
+        {
+          "start": 3.0,
+          "rms": 0.2002369910478592,
+          "centroidHz": 720.2401563748408,
+          "strongPeaksHz": [
+            375.0,
+            140.625,
+            765.625
+          ]
+        },
+        {
+          "start": 3.25,
+          "rms": 0.1548568457365036,
+          "centroidHz": 893.1736503924734,
+          "strongPeaksHz": [
+            375.0,
+            140.625,
+            234.375
+          ]
+        },
+        {
+          "start": 3.5,
+          "rms": 0.1445605754852295,
+          "centroidHz": 928.468109326565,
+          "strongPeaksHz": [
+            359.375,
+            140.625,
+            93.75
+          ]
+        },
+        {
+          "start": 3.75,
+          "rms": 0.17607802152633667,
+          "centroidHz": 830.1940701446368,
+          "strongPeaksHz": [
+            375.0,
+            140.625,
+            765.625
+          ]
+        },
+        {
+          "start": 4.0,
+          "rms": 0.15491105616092682,
+          "centroidHz": 897.710890532545,
+          "strongPeaksHz": [
+            375.0,
+            140.625,
+            234.375
+          ]
+        }
+      ]
+    }
+  ],
+  "comparisons": {
+    "EngineCruise": {
+      "correlation": 0.9999999990864669,
+      "wavGainAgainstM4a": 0.8999998569488525,
+      "residualRMS": 6.226819550647633e-06
+    },
+    "EngineRev": {
+      "correlation": 0.9999999994345848,
+      "wavGainAgainstM4a": 0.9000000953674316,
+      "residualRMS": 6.242529707378708e-06
+    },
+    "secondCruiseAgainstMain": {
+      "maxFullClipAlignedCorrelation": 0.07636123895645142
+    }
+  }
+}

@@ -66,7 +66,7 @@ export async function verifyDeployment(
       )
         throw Error("Missing published race soundtrack.");
       if (
-        info.engine !== "recorded-v8-v1" ||
+        info.engine !== "multisample-v8-v2" ||
         !Object.values(engineRecordings).every(
           (path) =>
             paths.includes(path) &&

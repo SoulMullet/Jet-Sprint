@@ -1,8 +1,8 @@
-# JET SPRINT v0.27.0 — Recorded V8 Engine
+# JET SPRINT v0.28.0 — Six-Recording V8
 
 A mobile-first, single-player 3D jetboat game built with JavaScript, Vite, Three.js and Web Audio. Geometry is procedural; the V8 mixes supplied recordings through Web Audio. Engine recordings, two supplied MP3 songs and licensed interface fonts are bundled locally. No paid assets, account, API keys or backend are required.
 
-The V8 now uses the supplied **EngineCruise.m4a / EngineRev.m4a** recordings with overlapping loop layers, restrained acceleration samples and throttle/load-driven RPM inertia. **Pit Control → V8 / Engine Audio Lab** provides saved recording blends, engine mute, diagnostics and raw-sample tests. Existing audio saves and music remain intact. [Architecture, recording analysis, changed files and verification](docs/engine-audio/README.md).
+The V8 now integrates **Idle, Rev, RevDown, Cruise, CruiseLayerOne and Jump** recordings through one RPM/load model. A continuous idle/dual-cruise bed supports smooth acceleration, release and actual airborne/landing transitions. **Pit Control → V8 / Engine Audio Lab** keeps existing saves/presets and adds sample levels, blending, flight/load tuning, engine compression, six independent previews and an audio-only jump test. Music remains independent. [Architecture, source analysis, changed files and verification](docs/multi-v8/README.md).
 
 Races now randomly start **Funky Glitch Groove** or **Turbo Racer X**, then alternate automatically, with 1.5-second fades. **Pit Control → V8 → Race soundtrack** provides saved **Music Volume** (35% default), **Music Mute**, and a gesture-based playback recovery button. Engine volume remains independent. Music pauses for Pause/Garage/replays and stops at results. [Exact audio files, implementation, verification and limits](docs/RACE_MUSIC.md).
 
