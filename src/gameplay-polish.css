@@ -1,7 +1,6 @@
 #game,
 #game canvas,
-#arcadeControls,
-#arcadeControls * {
+#arcadeControls button {
   touch-action: none;
   overscroll-behavior: none;
   user-select: none;

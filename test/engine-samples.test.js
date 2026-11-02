@@ -31,15 +31,24 @@ test("recording paths retain exact case and all loop regions fit the real decode
     revDown: "audio/Engine/EngineRevDown.m4a",
     cruiseOne: "audio/Engine/EngineCruiseLayerOne.m4a",
     jump: "audio/Engine/EngineJump.m4a",
+    cruiseTwo: "audio/Engine/EngineCruiseLayerTwo.m4a",
+    highRev: "audio/Engine/EngineHighRev.m4a",
+    revOut: "audio/Engine/EngineRevOut.m4a",
   });
   for (const r of engineRegions) {
     assert.ok(Number.isFinite(r.referenceRPM) && r.referenceRPM >= 900);
     assert.ok(r.start > 0 && r.end > r.start + 0.2);
     assert.ok(
       r.end <
-        { idle: 7.916, cruise: 5.7571, cruiseOne: 3.296, jump: 0.881 }[
-          r.recording
-        ],
+        {
+          idle: 7.916,
+          cruise: 5.7571,
+          cruiseOne: 3.296,
+          jump: 0.881,
+          cruiseTwo: 5.8267,
+          highRev: 2.158,
+          revOut: 1.647,
+        }[r.recording],
     );
   }
 });
@@ -72,8 +81,11 @@ test("normalized beds remain continuous through RPM/flight ranges, and individua
             cruiseLayer: 0,
             cruiseLayerOneVolume: 0,
             jumpSampleVolume: 0,
+            cruiseLayerTwoVolume: 0,
+            highRPMLayerVolume: 0,
+            revOutVolume: 0,
           }),
-          [0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
         );
       }
 });

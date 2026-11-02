@@ -11,6 +11,9 @@ function fixture() {
       "EngineCruiseLayerOne",
       "EngineRevDown",
       "EngineJump",
+      "EngineCruiseLayerTwo",
+      "EngineHighRev",
+      "EngineRevOut",
     ].flatMap((name) => [
       ["audio/Engine/" + name + ".m4a", name],
       ["audio/Engine/" + name + ".wav", name + "-pcm"],
@@ -29,7 +32,7 @@ function fixture() {
   ]);
   const info = {
     commit: sha,
-    version: "0.29.0",
+    version: "0.30.0",
     identity: "MARINE-87",
     simulation: "world-space-fixed-step",
     campaign: "four-track-1987",
@@ -39,7 +42,8 @@ function fixture() {
     speedUnits: "mph-v1",
     environment: "glassy-jumps-v1",
     music: "alternating-mp3-v1",
-    engine: "multisample-v8-v2",
+    engine: "multisample-v8-v3",
+    touchInput: "independent-captures-v2",
     controls: "analog-input-v1",
     economy: "wallet-v2",
     streaming: "worker-tiles-v1",
@@ -73,7 +77,7 @@ test("deployment verification reads and hashes actual live HTML, code, styles an
       attempts: 1,
     });
   assert.equal(result.status, "verified");
-  assert.equal(result.files, 20);
+  assert.equal(result.files, 26);
 });
 test("deployment verification rejects an old deployment and mismatched live assets", async () => {
   const f = fixture();

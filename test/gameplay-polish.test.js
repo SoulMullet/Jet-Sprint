@@ -110,14 +110,12 @@ test("manual zoom persists and Auto-Fit explicitly restores automatic framing wi
   assert.equal(copy.values.flat.framing, "auto");
   assert.equal(copy.values.flat.zoom, 1);
 });
-test("Safari gesture fallback cancels every rapid gameplay tap but never installs document/menu handlers", () => {
+test("gameplay gesture guards leave touch/pointer sequences intact, scope zoom/selection guards to their surface", () => {
   const game = new EventTarget(),
     menu = new EventTarget();
   const cleanup = protectGameplayGestures(game);
   for (let i = 0; i < 20; i++)
     for (const type of [
-      "touchstart",
-      "touchend",
       "gesturestart",
       "gesturechange",
       "dblclick",
@@ -131,6 +129,18 @@ test("Safari gesture fallback cancels every rapid gameplay tap but never install
       assert.equal(a.defaultPrevented, true);
       assert.equal(b.defaultPrevented, false);
     }
+  for (const type of [
+    "touchstart",
+    "touchmove",
+    "touchend",
+    "pointerdown",
+    "pointermove",
+    "pointerup",
+  ]) {
+    const e = new Event(type, { cancelable: true });
+    game.dispatchEvent(e);
+    assert.equal(e.defaultPrevented, false);
+  }
   cleanup();
   const e = new Event("touchend", { cancelable: true });
   game.dispatchEvent(e);

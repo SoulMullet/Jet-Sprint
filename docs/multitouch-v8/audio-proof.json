@@ -1,0 +1,4322 @@
+[
+  {
+    "mode": "default",
+    "peak": 0.5355901122093201,
+    "rms": 0.1771632184506718,
+    "oneSecondRMS": [
+      0.19299018188579373,
+      0.21189398667950649,
+      0.2071659861949324,
+      0.19829225695479957,
+      0.1758902763331841,
+      0.1656683347088091,
+      0.15897535994759013,
+      0.1604976528960533,
+      0.16876571202065674,
+      0.15362276248731493,
+      0.1828095871212435,
+      0.16717343946507157,
+      0.1652585279309593,
+      0.1734857395046375,
+      0.1749590382584358,
+      0.16944227110099738,
+      0.17071713406927433,
+      0.19212484882249756,
+      0.148819503148139,
+      0.17474390997856093,
+      0.1772981192288064,
+      0.18388592003238277,
+      0.18465055615851073,
+      0.18103751863381676
+    ],
+    "maxStep": 0.1400387929752469,
+    "oscillators": 0,
+    "activeRoles": [
+      "idle",
+      "rev",
+      "cruise",
+      "cruiseOne",
+      "cruiseTwo",
+      "revDown",
+      "highRev",
+      "jump",
+      "revOut"
+    ],
+    "final": {
+      "backend": "Multi-sample V8 / Web Audio",
+      "engineGain": 0.49440720677375793,
+      "engineMuted": false,
+      "sampleTest": false,
+      "rpm": 1962,
+      "rpmRate": 0,
+      "throttle": 0,
+      "load": 1.4460823451853573e-36,
+      "state": "cruising",
+      "airborne": false,
+      "flightBlend": 2.6653066262545294e-28,
+      "highRPMBlend": 0.000001178330987156976,
+      "highRPMActive": false,
+      "cruiseTwoShare": 0.16097458842721155,
+      "landing": 2.4891212533276127e-39,
+      "context": "running",
+      "samples": {
+        "idle": "Loaded M4A",
+        "rev": "Loaded M4A",
+        "revDown": "Loaded M4A",
+        "cruise": "Loaded M4A",
+        "cruiseOne": "Loaded M4A",
+        "jump": "Loaded M4A",
+        "cruiseTwo": "Loaded M4A",
+        "highRev": "Loaded M4A",
+        "revOut": "Loaded M4A"
+      },
+      "layers": [
+        {
+          "id": "jump",
+          "weight": 0,
+          "gain": 3.1897538933614707e-25,
+          "playbackRate": 0.796
+        },
+        {
+          "id": "cruiseOne",
+          "weight": 0.059,
+          "gain": 0.05902227386832237,
+          "playbackRate": 0.856
+        },
+        {
+          "id": "cruise",
+          "weight": 0.344,
+          "gain": 0.34391364455223083,
+          "playbackRate": 0.864
+        },
+        {
+          "id": "idle",
+          "weight": 0.638,
+          "gain": 0.6378946900367737,
+          "playbackRate": 1.162
+        },
+        {
+          "id": "highRev",
+          "weight": 0,
+          "gain": 0.0004053752345498651,
+          "playbackRate": 0.794
+        },
+        {
+          "id": "cruiseTwo",
+          "weight": 0.059,
+          "gain": 0.05927043780684471,
+          "playbackRate": 0.852
+        },
+        {
+          "id": "revOut",
+          "weight": 0,
+          "gain": 1.0319136832850369e-24,
+          "playbackRate": 0.785
+        }
+      ],
+      "crossfade": "cruiseOne + cruise + idle + cruiseTwo",
+      "acceleration": false,
+      "revDown": false,
+      "accelerationCount": 2,
+      "revDownCount": 2,
+      "loopSources": 7,
+      "activeSources": 7,
+      "sourcesCreated": 11,
+      "warning": ""
+    },
+    "frames": [
+      {
+        "time": 0,
+        "rpm": 900,
+        "load": 0,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "idle",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "idle",
+            "weight": 0.914,
+            "playbackRate": 1
+          }
+        ]
+      },
+      {
+        "time": 1,
+        "rpm": 900,
+        "load": 0,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "idle",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "idle",
+            "weight": 0.914,
+            "playbackRate": 1
+          }
+        ]
+      },
+      {
+        "time": 2,
+        "rpm": 900,
+        "load": 0,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "idle",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "idle",
+            "weight": 0.914,
+            "playbackRate": 1
+          }
+        ]
+      },
+      {
+        "time": 3,
+        "rpm": 965,
+        "load": 0.08791681140925729,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "accelerating",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "idle",
+            "weight": 0.749,
+            "playbackRate": 1.014
+          },
+          {
+            "id": "rev",
+            "weight": 0.1039845705457388,
+            "playbackRate": 0.82
+          }
+        ]
+      },
+      {
+        "time": 4,
+        "rpm": 4990,
+        "load": 0.4323529394817366,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "accelerating",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.156,
+            "playbackRate": 1.025
+          },
+          {
+            "id": "cruise",
+            "weight": 0.507,
+            "playbackRate": 1.034
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.275,
+            "playbackRate": 1.02
+          },
+          {
+            "id": "rev",
+            "weight": 0.22106486045715484,
+            "playbackRate": 1.0074921005278363
+          }
+        ]
+      },
+      {
+        "time": 5,
+        "rpm": 5034,
+        "load": 0.42881734999951465,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "cruising",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.154,
+            "playbackRate": 1.026
+          },
+          {
+            "id": "cruise",
+            "weight": 0.46,
+            "playbackRate": 1.036
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.308,
+            "playbackRate": 1.022
+          },
+          {
+            "id": "rev",
+            "weight": 0.22106499999983364,
+            "playbackRate": 1.0092233757308695
+          }
+        ]
+      },
+      {
+        "time": 6,
+        "rpm": 5025,
+        "load": 0.4288173499999998,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "cruising",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.153,
+            "playbackRate": 1.026
+          },
+          {
+            "id": "cruise",
+            "weight": 0.454,
+            "playbackRate": 1.035
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.312,
+            "playbackRate": 1.021
+          },
+          {
+            "id": "rev",
+            "weight": 0.22106499999999996,
+            "playbackRate": 1.008847674334701
+          }
+        ]
+      },
+      {
+        "time": 7,
+        "rpm": 5072,
+        "load": 0.45338004678838983,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "decelerating",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.153,
+            "playbackRate": 1.028
+          },
+          {
+            "id": "cruise",
+            "weight": 0.451,
+            "playbackRate": 1.037
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.314,
+            "playbackRate": 1.023
+          },
+          {
+            "id": "rev",
+            "weight": 0.21579125225663426,
+            "playbackRate": 1.0106541260177964
+          }
+        ]
+      },
+      {
+        "time": 8,
+        "rpm": 5113,
+        "load": 0.3872687787951109,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "cruising",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.15,
+            "playbackRate": 1.029
+          },
+          {
+            "id": "cruise",
+            "weight": 0.451,
+            "playbackRate": 1.039
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.315,
+            "playbackRate": 1.025
+          },
+          {
+            "id": "rev",
+            "weight": 0.19513002462520793,
+            "playbackRate": 1.0122279739424007
+          }
+        ]
+      },
+      {
+        "time": 9,
+        "rpm": 5076,
+        "load": 0.28133376011349204,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "decelerating",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.15,
+            "playbackRate": 1.028
+          },
+          {
+            "id": "cruise",
+            "weight": 0.453,
+            "playbackRate": 1.037
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.314,
+            "playbackRate": 1.023
+          },
+          {
+            "id": "revDown",
+            "weight": 0.15655220581006613,
+            "playbackRate": 1.0108279753895169
+          }
+        ]
+      },
+      {
+        "time": 10,
+        "rpm": 2208,
+        "load": 3.353089282893976e-7,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "decelerating",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.091,
+            "playbackRate": 0.876
+          },
+          {
+            "id": "cruise",
+            "weight": 0.422,
+            "playbackRate": 0.884
+          },
+          {
+            "id": "idle",
+            "weight": 0.529,
+            "playbackRate": 1.189
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.143,
+            "playbackRate": 0.872
+          },
+          {
+            "id": "revDown",
+            "weight": 0.2089999374898567,
+            "playbackRate": 0.8611822851952045
+          }
+        ]
+      },
+      {
+        "time": 10.2,
+        "rpm": 2161,
+        "load": 0.08719780606039755,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "accelerating",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.085,
+            "playbackRate": 0.872
+          },
+          {
+            "id": "cruise",
+            "weight": 0.411,
+            "playbackRate": 0.88
+          },
+          {
+            "id": "idle",
+            "weight": 0.553,
+            "playbackRate": 1.184
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.127,
+            "playbackRate": 0.868
+          },
+          {
+            "id": "rev",
+            "weight": 0.10398457805559015,
+            "playbackRate": 0.8575678979269439
+          }
+        ]
+      },
+      {
+        "time": 11,
+        "rpm": 5677,
+        "load": 0.42881111952264284,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "accelerating",
+        "highRPMBlend": 0.028664859847180677,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.149,
+            "playbackRate": 1.05
+          },
+          {
+            "id": "cruise",
+            "weight": 0.472,
+            "playbackRate": 1.06
+          },
+          {
+            "id": "highRev",
+            "weight": 0.097,
+            "playbackRate": 0.974
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.293,
+            "playbackRate": 1.046
+          },
+          {
+            "id": "rev",
+            "weight": 0.22106286468037079,
+            "playbackRate": 1.032847269304476
+          }
+        ]
+      },
+      {
+        "time": 12,
+        "rpm": 5784,
+        "load": 0.4288173499925741,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "cruising",
+        "highRPMBlend": 0.1776288125423213,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.134,
+            "playbackRate": 1.054
+          },
+          {
+            "id": "cruise",
+            "weight": 0.382,
+            "playbackRate": 1.064
+          },
+          {
+            "id": "highRev",
+            "weight": 0.242,
+            "playbackRate": 0.978
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.302,
+            "playbackRate": 1.05
+          },
+          {
+            "id": "rev",
+            "weight": 0.22106499999745496,
+            "playbackRate": 1.0365592306542644
+          }
+        ]
+      },
+      {
+        "time": 12.2,
+        "rpm": 5836,
+        "load": 0.1190015526011959,
+        "airborne": true,
+        "flightBlend": 0.77686983985157,
+        "state": "airborne",
+        "highRPMBlend": 0.19256128617649224,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "jump",
+            "weight": 0.138,
+            "playbackRate": 0.982
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.076,
+            "playbackRate": 1.056
+          },
+          {
+            "id": "cruise",
+            "weight": 0.223,
+            "playbackRate": 1.065
+          },
+          {
+            "id": "highRev",
+            "weight": 0.146,
+            "playbackRate": 0.979
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.172,
+            "playbackRate": 1.051
+          },
+          {
+            "id": "revOut",
+            "weight": 0.445,
+            "playbackRate": 0.968
+          },
+          {
+            "id": "rev",
+            "weight": 0.22106499999983364,
+            "playbackRate": 1.0383261374926118
+          }
+        ]
+      },
+      {
+        "time": 13,
+        "rpm": 5903,
+        "load": 0.03004706541990161,
+        "airborne": true,
+        "flightBlend": 0.9999251481701122,
+        "state": "airborne",
+        "highRPMBlend": 0.27868639451275634,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "jump",
+            "weight": 0.147,
+            "playbackRate": 0.985
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.038,
+            "playbackRate": 1.058
+          },
+          {
+            "id": "cruise",
+            "weight": 0.134,
+            "playbackRate": 1.068
+          },
+          {
+            "id": "highRev",
+            "weight": 0.103,
+            "playbackRate": 0.982
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.09,
+            "playbackRate": 1.054
+          },
+          {
+            "id": "revOut",
+            "weight": 0.474,
+            "playbackRate": 0.97
+          },
+          {
+            "id": "rev",
+            "weight": 0.22106499999999996,
+            "playbackRate": 1.0406177571894508
+          }
+        ]
+      },
+      {
+        "time": 14,
+        "rpm": 5909,
+        "load": 0.20199456134252494,
+        "airborne": false,
+        "flightBlend": 0.8995864602783304,
+        "state": "landing",
+        "highRPMBlend": 0.29831239697103057,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "jump",
+            "weight": 0.145,
+            "playbackRate": 0.985
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.049,
+            "playbackRate": 1.058
+          },
+          {
+            "id": "cruise",
+            "weight": 0.179,
+            "playbackRate": 1.068
+          },
+          {
+            "id": "highRev",
+            "weight": 0.142,
+            "playbackRate": 0.982
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.117,
+            "playbackRate": 1.054
+          },
+          {
+            "id": "revOut",
+            "weight": 0.468,
+            "playbackRate": 0.971
+          },
+          {
+            "id": "rev",
+            "weight": 0.24759279999999995,
+            "playbackRate": 1.04082324855342
+          }
+        ]
+      },
+      {
+        "time": 15,
+        "rpm": 5985,
+        "load": 0.4282083930052976,
+        "airborne": false,
+        "flightBlend": 0.0015725976715564199,
+        "state": "cruising",
+        "highRPMBlend": 0.36205708525038083,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.116,
+            "playbackRate": 1.061
+          },
+          {
+            "id": "cruise",
+            "weight": 0.338,
+            "playbackRate": 1.071
+          },
+          {
+            "id": "highRev",
+            "weight": 0.345,
+            "playbackRate": 0.984
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.266,
+            "playbackRate": 1.056
+          },
+          {
+            "id": "rev",
+            "weight": 0.24759279999999995,
+            "playbackRate": 1.0434025490689358
+          }
+        ]
+      },
+      {
+        "time": 16,
+        "rpm": 6017,
+        "load": 0.4451925895993351,
+        "airborne": false,
+        "flightBlend": 0.000002749111448186437,
+        "state": "accelerating",
+        "highRPMBlend": 0.3746598310587934,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.117,
+            "playbackRate": 1.062
+          },
+          {
+            "id": "cruise",
+            "weight": 0.332,
+            "playbackRate": 1.072
+          },
+          {
+            "id": "highRev",
+            "weight": 0.351,
+            "playbackRate": 0.985
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.264,
+            "playbackRate": 1.058
+          },
+          {
+            "id": "rev",
+            "weight": 0.2538788433714683,
+            "playbackRate": 1.044457355151261
+          }
+        ]
+      },
+      {
+        "time": 17,
+        "rpm": 6793,
+        "load": 0.5044909715373901,
+        "airborne": false,
+        "flightBlend": 4.805815175263401e-9,
+        "state": "cruising",
+        "highRPMBlend": 0.9140558139023163,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.042,
+            "playbackRate": 1.087
+          },
+          {
+            "id": "cruise",
+            "weight": 0.11,
+            "playbackRate": 1.097
+          },
+          {
+            "id": "highRev",
+            "weight": 0.549,
+            "playbackRate": 1.009
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.104,
+            "playbackRate": 1.083
+          },
+          {
+            "id": "rev",
+            "weight": 0.2766399899400119,
+            "playbackRate": 1.0691413855293301
+          }
+        ]
+      },
+      {
+        "time": 18,
+        "rpm": 6745,
+        "load": 0.4019053715874288,
+        "airborne": false,
+        "flightBlend": 8.401208875699863e-12,
+        "state": "decelerating",
+        "highRPMBlend": 0.9862742504366939,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.017,
+            "playbackRate": 1.086
+          },
+          {
+            "id": "cruise",
+            "weight": 0.044,
+            "playbackRate": 1.095
+          },
+          {
+            "id": "highRev",
+            "weight": 0.57,
+            "playbackRate": 1.007
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.042,
+            "playbackRate": 1.081
+          },
+          {
+            "id": "revDown",
+            "weight": 0.13407457972869088,
+            "playbackRate": 1.0676692518679167
+          }
+        ]
+      },
+      {
+        "time": 19,
+        "rpm": 2336,
+        "load": 4.790127546989728e-7,
+        "airborne": false,
+        "flightBlend": 1.4686438824453905e-14,
+        "state": "decelerating",
+        "highRPMBlend": 0.11194530538796231,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.097,
+            "playbackRate": 0.885
+          },
+          {
+            "id": "cruise",
+            "weight": 0.445,
+            "playbackRate": 0.893
+          },
+          {
+            "id": "idle",
+            "weight": 0.46,
+            "playbackRate": 1.202
+          },
+          {
+            "id": "highRev",
+            "weight": 0.152,
+            "playbackRate": 0.821
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.148,
+            "playbackRate": 0.881
+          },
+          {
+            "id": "revDown",
+            "weight": 0.2089999106997953,
+            "playbackRate": 0.8705756074462379
+          }
+        ]
+      },
+      {
+        "time": 20,
+        "rpm": 1987,
+        "load": 5.709135418027068e-13,
+        "airborne": false,
+        "flightBlend": 2.56738629565925e-17,
+        "state": "cruising",
+        "highRPMBlend": 0.011223506878393283,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.063,
+            "playbackRate": 0.858
+          },
+          {
+            "id": "cruise",
+            "weight": 0.349,
+            "playbackRate": 0.866
+          },
+          {
+            "id": "idle",
+            "weight": 0.629,
+            "playbackRate": 1.165
+          },
+          {
+            "id": "highRev",
+            "weight": 0.033,
+            "playbackRate": 0.796
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.072,
+            "playbackRate": 0.854
+          },
+          {
+            "id": "revDown",
+            "weight": 0.20899999999989358,
+            "playbackRate": 0.8438610983578403
+          }
+        ]
+      },
+      {
+        "time": 21,
+        "rpm": 1964,
+        "load": 6.80445915095809e-19,
+        "airborne": false,
+        "flightBlend": 4.4881352586058395e-20,
+        "state": "cruising",
+        "highRPMBlend": 0.0011252558221426484,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.06,
+            "playbackRate": 0.856
+          },
+          {
+            "id": "cruise",
+            "weight": 0.343,
+            "playbackRate": 0.864
+          },
+          {
+            "id": "idle",
+            "weight": 0.637,
+            "playbackRate": 1.162
+          },
+          {
+            "id": "highRev",
+            "weight": 0.01,
+            "playbackRate": 0.794
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.063,
+            "playbackRate": 0.852
+          },
+          {
+            "id": "revDown",
+            "weight": 0.209,
+            "playbackRate": 0.8419332169423035
+          }
+        ]
+      },
+      {
+        "time": 22,
+        "rpm": 1962,
+        "load": 8.109925750028467e-25,
+        "airborne": false,
+        "flightBlend": 7.845861814249702e-23,
+        "state": "cruising",
+        "highRPMBlend": 0.0001128168476203751,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.059,
+            "playbackRate": 0.856
+          },
+          {
+            "id": "cruise",
+            "weight": 0.343,
+            "playbackRate": 0.864
+          },
+          {
+            "id": "idle",
+            "weight": 0.638,
+            "playbackRate": 1.162
+          },
+          {
+            "id": "highRev",
+            "weight": 0.003,
+            "playbackRate": 0.794
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.061,
+            "playbackRate": 0.852
+          },
+          {
+            "id": "revDown",
+            "weight": 0.209,
+            "playbackRate": 0.8418029866639425
+          }
+        ]
+      },
+      {
+        "time": 23,
+        "rpm": 1962,
+        "load": 9.665852084910239e-31,
+        "airborne": false,
+        "flightBlend": 1.371561774798725e-25,
+        "state": "cruising",
+        "highRPMBlend": 0.000011310886694870589,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.059,
+            "playbackRate": 0.856
+          },
+          {
+            "id": "cruise",
+            "weight": 0.344,
+            "playbackRate": 0.864
+          },
+          {
+            "id": "idle",
+            "weight": 0.638,
+            "playbackRate": 1.162
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.06,
+            "playbackRate": 0.852
+          },
+          {
+            "id": "revDown",
+            "weight": 0.209,
+            "playbackRate": 0.8417942314399761
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "mode": "max",
+    "peak": 0.5375545024871826,
+    "rms": 0.27321145003239644,
+    "oneSecondRMS": [
+      0.2990454265968508,
+      0.30006681700938254,
+      0.3100199616495149,
+      0.28779843938123933,
+      0.26752978348596396,
+      0.2620098426280468,
+      0.2522619487923641,
+      0.2547636470519698,
+      0.26932408663888036,
+      0.2722280371567185,
+      0.28544176601225496,
+      0.25944759145527047,
+      0.2728225116647326,
+      0.27144457372515907,
+      0.2710202653267856,
+      0.265079080019394,
+      0.2647881166946638,
+      0.27424777907386294,
+      0.26975170359938516,
+      0.2847146209421213,
+      0.2764528785925288,
+      0.28640663203274436,
+      0.28388525408542215,
+      0.27806019145699984
+    ],
+    "maxStep": 0.33655504882335663,
+    "oscillators": 0,
+    "activeRoles": [
+      "idle",
+      "rev",
+      "cruiseOne",
+      "cruise",
+      "cruiseTwo",
+      "revDown",
+      "jump",
+      "revOut",
+      "highRev"
+    ],
+    "final": {
+      "backend": "Multi-sample V8 / Web Audio",
+      "engineGain": 0.3097473084926605,
+      "engineMuted": false,
+      "sampleTest": false,
+      "rpm": 2686,
+      "rpmRate": 0,
+      "throttle": 0,
+      "load": 1.9758574835008273e-52,
+      "state": "cruising",
+      "airborne": false,
+      "flightBlend": 3.086617322461047e-16,
+      "highRPMBlend": 2.08295206008622e-12,
+      "highRPMActive": false,
+      "cruiseTwoShare": 0.08000000187365112,
+      "landing": 3.3382377953648975e-15,
+      "context": "running",
+      "samples": {
+        "idle": "Loaded M4A",
+        "rev": "Loaded M4A",
+        "revDown": "Loaded M4A",
+        "cruise": "Loaded M4A",
+        "cruiseOne": "Loaded M4A",
+        "jump": "Loaded M4A",
+        "cruiseTwo": "Loaded M4A",
+        "highRev": "Loaded M4A",
+        "revOut": "Loaded M4A"
+      },
+      "layers": [
+        {
+          "id": "jump",
+          "weight": 0,
+          "gain": 1.9300469575079336e-17,
+          "playbackRate": 0.72
+        },
+        {
+          "id": "cruiseOne",
+          "weight": 0.055,
+          "gain": 0.055484626442193985,
+          "playbackRate": 0.816
+        },
+        {
+          "id": "cruise",
+          "weight": 0.102,
+          "gain": 0.10221173614263535,
+          "playbackRate": 0.832
+        },
+        {
+          "id": "highRev",
+          "weight": 0,
+          "gain": 1.7630418369662948e-7,
+          "playbackRate": 0.72
+        },
+        {
+          "id": "idle",
+          "weight": 1.014,
+          "gain": 1.0144721269607544,
+          "playbackRate": 1.32
+        },
+        {
+          "id": "cruiseTwo",
+          "weight": 0.015,
+          "gain": 0.014692148193717003,
+          "playbackRate": 0.808
+        },
+        {
+          "id": "revOut",
+          "weight": 0,
+          "gain": 3.787927700526536e-17,
+          "playbackRate": 0.72
+        }
+      ],
+      "crossfade": "cruiseOne + cruise + idle",
+      "acceleration": false,
+      "revDown": false,
+      "accelerationCount": 2,
+      "revDownCount": 2,
+      "loopSources": 7,
+      "activeSources": 7,
+      "sourcesCreated": 11,
+      "warning": ""
+    },
+    "frames": [
+      {
+        "time": 0,
+        "rpm": 1300,
+        "load": 0,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "idle",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "idle",
+            "weight": 1.25,
+            "playbackRate": 1.164
+          }
+        ]
+      },
+      {
+        "time": 1,
+        "rpm": 1300,
+        "load": 0,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "idle",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "idle",
+            "weight": 1.25,
+            "playbackRate": 1.164
+          }
+        ]
+      },
+      {
+        "time": 2,
+        "rpm": 1300,
+        "load": 0,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "idle",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "idle",
+            "weight": 1.25,
+            "playbackRate": 1.164
+          }
+        ]
+      },
+      {
+        "time": 3,
+        "rpm": 1370,
+        "load": 0.1869604083941534,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "accelerating",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "idle",
+            "weight": 1.025,
+            "playbackRate": 1.189
+          },
+          {
+            "id": "rev",
+            "weight": 0.1775513438710415,
+            "playbackRate": 0.82
+          }
+        ]
+      },
+      {
+        "time": 4,
+        "rpm": 6305,
+        "load": 0.6651589987961355,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "accelerating",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.464,
+            "playbackRate": 1.16
+          },
+          {
+            "id": "cruise",
+            "weight": 0.197,
+            "playbackRate": 1.182
+          },
+          {
+            "id": "idle",
+            "weight": 0.308,
+            "playbackRate": 1.32
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.598,
+            "playbackRate": 1.149
+          },
+          {
+            "id": "rev",
+            "weight": 0.34009999959078396,
+            "playbackRate": 1.1190442759210406
+          }
+        ]
+      },
+      {
+        "time": 5,
+        "rpm": 6615,
+        "load": 0.6597189999999998,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "cruising",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.421,
+            "playbackRate": 1.183
+          },
+          {
+            "id": "cruise",
+            "weight": 0.174,
+            "playbackRate": 1.206
+          },
+          {
+            "id": "idle",
+            "weight": 0.227,
+            "playbackRate": 1.32
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.657,
+            "playbackRate": 1.172
+          },
+          {
+            "id": "rev",
+            "weight": 0.3400999999999999,
+            "playbackRate": 1.1414414800190333
+          }
+        ]
+      },
+      {
+        "time": 6,
+        "rpm": 6620,
+        "load": 0.6597189999999998,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "cruising",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.404,
+            "playbackRate": 1.184
+          },
+          {
+            "id": "cruise",
+            "weight": 0.168,
+            "playbackRate": 1.206
+          },
+          {
+            "id": "idle",
+            "weight": 0.225,
+            "playbackRate": 1.32
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.67,
+            "playbackRate": 1.173
+          },
+          {
+            "id": "rev",
+            "weight": 0.3400999999999999,
+            "playbackRate": 1.1417847027581158
+          }
+        ]
+      },
+      {
+        "time": 7,
+        "rpm": 6654,
+        "load": 0.6875837119709872,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "decelerating",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.394,
+            "playbackRate": 1.186
+          },
+          {
+            "id": "cruise",
+            "weight": 0.163,
+            "playbackRate": 1.209
+          },
+          {
+            "id": "idle",
+            "weight": 0.217,
+            "playbackRate": 1.32
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.679,
+            "playbackRate": 1.175
+          },
+          {
+            "id": "rev",
+            "weight": 0.3288850569639338,
+            "playbackRate": 1.1442348724940763
+          }
+        ]
+      },
+      {
+        "time": 8,
+        "rpm": 6731,
+        "load": 0.5957980002310702,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "cruising",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.393,
+            "playbackRate": 1.192
+          },
+          {
+            "id": "cruise",
+            "weight": 0.163,
+            "playbackRate": 1.215
+          },
+          {
+            "id": "idle",
+            "weight": 0.198,
+            "playbackRate": 1.32
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.683,
+            "playbackRate": 1.181
+          },
+          {
+            "id": "rev",
+            "weight": 0.30020000007221453,
+            "playbackRate": 1.1496633041851254
+          }
+        ]
+      },
+      {
+        "time": 9,
+        "rpm": 6691,
+        "load": 0.3905898265260986,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "decelerating",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.395,
+            "playbackRate": 1.189
+          },
+          {
+            "id": "cruise",
+            "weight": 0.164,
+            "playbackRate": 1.212
+          },
+          {
+            "id": "idle",
+            "weight": 0.208,
+            "playbackRate": 1.32
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.68,
+            "playbackRate": 1.178
+          },
+          {
+            "id": "revDown",
+            "weight": 0.2939448291081984,
+            "playbackRate": 1.1468445949667334
+          }
+        ]
+      },
+      {
+        "time": 10,
+        "rpm": 3212,
+        "load": 9.833093881050737e-10,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "decelerating",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.127,
+            "playbackRate": 0.878
+          },
+          {
+            "id": "cruise",
+            "weight": 0.125,
+            "playbackRate": 0.895
+          },
+          {
+            "id": "idle",
+            "weight": 0.988,
+            "playbackRate": 1.32
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.127,
+            "playbackRate": 0.87
+          },
+          {
+            "id": "revDown",
+            "weight": 0.37999999978335625,
+            "playbackRate": 0.8473192050954707
+          }
+        ]
+      },
+      {
+        "time": 10.2,
+        "rpm": 3092,
+        "load": 0.18543135352276804,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "accelerating",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.113,
+            "playbackRate": 0.865
+          },
+          {
+            "id": "cruise",
+            "weight": 0.114,
+            "playbackRate": 0.881
+          },
+          {
+            "id": "idle",
+            "weight": 0.996,
+            "playbackRate": 1.32
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.108,
+            "playbackRate": 0.857
+          },
+          {
+            "id": "rev",
+            "weight": 0.1775513438774658,
+            "playbackRate": 0.8340935522687967
+          }
+        ]
+      },
+      {
+        "time": 11,
+        "rpm": 7107,
+        "load": 0.65971893736498,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "accelerating",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.419,
+            "playbackRate": 1.219
+          },
+          {
+            "id": "cruise",
+            "weight": 0.18,
+            "playbackRate": 1.242
+          },
+          {
+            "id": "idle",
+            "weight": 0.116,
+            "playbackRate": 1.32
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.675,
+            "playbackRate": 1.207
+          },
+          {
+            "id": "rev",
+            "weight": 0.3400999785336211,
+            "playbackRate": 1.175739866627337
+          }
+        ]
+      },
+      {
+        "time": 12,
+        "rpm": 7585,
+        "load": 0.6597189999999997,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "cruising",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.384,
+            "playbackRate": 1.252
+          },
+          {
+            "id": "cruise",
+            "weight": 0.159,
+            "playbackRate": 1.276
+          },
+          {
+            "id": "idle",
+            "weight": 0.041,
+            "playbackRate": 1.32
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.706,
+            "playbackRate": 1.24
+          },
+          {
+            "id": "rev",
+            "weight": 0.3400999999999999,
+            "playbackRate": 1.18
+          }
+        ]
+      },
+      {
+        "time": 12.2,
+        "rpm": 7657,
+        "load": 0.18307931169435462,
+        "airborne": true,
+        "flightBlend": 0.7768698398515701,
+        "state": "airborne",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "jump",
+            "weight": 0.302,
+            "playbackRate": 1.077
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.233,
+            "playbackRate": 1.257
+          },
+          {
+            "id": "cruise",
+            "weight": 0.1,
+            "playbackRate": 1.281
+          },
+          {
+            "id": "idle",
+            "weight": 0.032,
+            "playbackRate": 1.32
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.402,
+            "playbackRate": 1.245
+          },
+          {
+            "id": "revOut",
+            "weight": 0.594,
+            "playbackRate": 1.044
+          },
+          {
+            "id": "rev",
+            "weight": 0.3400999999999999,
+            "playbackRate": 1.18
+          }
+        ]
+      },
+      {
+        "time": 13,
+        "rpm": 7842,
+        "load": 0.04618117113641445,
+        "airborne": true,
+        "flightBlend": 0.9999986290409136,
+        "state": "airborne",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "jump",
+            "weight": 0.322,
+            "playbackRate": 1.087
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.146,
+            "playbackRate": 1.269
+          },
+          {
+            "id": "cruise",
+            "weight": 0.094,
+            "playbackRate": 1.294
+          },
+          {
+            "id": "idle",
+            "weight": 0.015,
+            "playbackRate": 1.32
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.217,
+            "playbackRate": 1.257
+          },
+          {
+            "id": "revOut",
+            "weight": 0.632,
+            "playbackRate": 1.054
+          },
+          {
+            "id": "rev",
+            "weight": 0.3400999999999999,
+            "playbackRate": 1.18
+          }
+        ]
+      },
+      {
+        "time": 14,
+        "rpm": 7846,
+        "load": 0.22636662670945798,
+        "airborne": false,
+        "flightBlend": 0.9422130996784229,
+        "state": "landing",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "jump",
+            "weight": 0.321,
+            "playbackRate": 1.088
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.18,
+            "playbackRate": 1.269
+          },
+          {
+            "id": "cruise",
+            "weight": 0.12,
+            "playbackRate": 1.294
+          },
+          {
+            "id": "idle",
+            "weight": 0.015,
+            "playbackRate": 1.32
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.251,
+            "playbackRate": 1.258
+          },
+          {
+            "id": "revOut",
+            "weight": 0.629,
+            "playbackRate": 1.054
+          },
+          {
+            "id": "rev",
+            "weight": 0.3809119999999999,
+            "playbackRate": 1.18
+          }
+        ]
+      },
+      {
+        "time": 15,
+        "rpm": 7881,
+        "load": 0.6486289433383302,
+        "airborne": false,
+        "flightBlend": 0.026490942921582793,
+        "state": "cruising",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "jump",
+            "weight": 0.013,
+            "playbackRate": 1.09
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.444,
+            "playbackRate": 1.272
+          },
+          {
+            "id": "cruise",
+            "weight": 0.185,
+            "playbackRate": 1.296
+          },
+          {
+            "id": "idle",
+            "weight": 0.012,
+            "playbackRate": 1.32
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.663,
+            "playbackRate": 1.26
+          },
+          {
+            "id": "revOut",
+            "weight": 0.026,
+            "playbackRate": 1.056
+          },
+          {
+            "id": "rev",
+            "weight": 0.3809119999999999,
+            "playbackRate": 1.18
+          }
+        ]
+      },
+      {
+        "time": 16,
+        "rpm": 7904,
+        "load": 0.6941398840566059,
+        "airborne": false,
+        "flightBlend": 0.000744810337612661,
+        "state": "accelerating",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.468,
+            "playbackRate": 1.273
+          },
+          {
+            "id": "cruise",
+            "weight": 0.194,
+            "playbackRate": 1.298
+          },
+          {
+            "id": "idle",
+            "weight": 0.011,
+            "playbackRate": 1.32
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.645,
+            "playbackRate": 1.262
+          },
+          {
+            "id": "rev",
+            "weight": 0.3942346114588221,
+            "playbackRate": 1.18
+          }
+        ]
+      },
+      {
+        "time": 17,
+        "rpm": 8936,
+        "load": 0.7761326150124827,
+        "airborne": false,
+        "flightBlend": 0.000020940834029834565,
+        "state": "accelerating",
+        "highRPMBlend": 0.7229670442003572,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.228,
+            "playbackRate": 1.32
+          },
+          {
+            "id": "cruise",
+            "weight": 0.094,
+            "playbackRate": 1.32
+          },
+          {
+            "id": "highRev",
+            "weight": 0.697,
+            "playbackRate": 1.14
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.354,
+            "playbackRate": 1.32
+          },
+          {
+            "id": "rev",
+            "weight": 0.4255999999812916,
+            "playbackRate": 1.18
+          }
+        ]
+      },
+      {
+        "time": 18,
+        "rpm": 8922,
+        "load": 0.5579853591997599,
+        "airborne": false,
+        "flightBlend": 5.887653644425234e-7,
+        "state": "decelerating",
+        "highRPMBlend": 0.9785103707585383,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.067,
+            "playbackRate": 1.32
+          },
+          {
+            "id": "cruise",
+            "weight": 0.028,
+            "playbackRate": 1.32
+          },
+          {
+            "id": "highRev",
+            "weight": 0.811,
+            "playbackRate": 1.14
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.096,
+            "playbackRate": 1.32
+          },
+          {
+            "id": "revDown",
+            "weight": 0.25706404158314067,
+            "playbackRate": 1.18
+          }
+        ]
+      },
+      {
+        "time": 19,
+        "rpm": 3501,
+        "load": 1.4047276934730514e-9,
+        "airborne": false,
+        "flightBlend": 1.6553526658645512e-8,
+        "state": "decelerating",
+        "highRPMBlend": 0.011421760026117379,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.16,
+            "playbackRate": 0.91
+          },
+          {
+            "id": "cruise",
+            "weight": 0.213,
+            "playbackRate": 0.928
+          },
+          {
+            "id": "highRev",
+            "weight": 0.03,
+            "playbackRate": 0.775
+          },
+          {
+            "id": "idle",
+            "weight": 0.962,
+            "playbackRate": 1.32
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.087,
+            "playbackRate": 0.902
+          },
+          {
+            "id": "revDown",
+            "weight": 0.3799999996905089,
+            "playbackRate": 0.8779295997269464
+          }
+        ]
+      },
+      {
+        "time": 20,
+        "rpm": 2786,
+        "load": 3.536400179162937e-18,
+        "airborne": false,
+        "flightBlend": 4.654133231800152e-10,
+        "state": "decelerating",
+        "highRPMBlend": 0.00012688429259077202,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.07,
+            "playbackRate": 0.828
+          },
+          {
+            "id": "cruise",
+            "weight": 0.113,
+            "playbackRate": 0.844
+          },
+          {
+            "id": "highRev",
+            "weight": 0.002,
+            "playbackRate": 0.72
+          },
+          {
+            "id": "idle",
+            "weight": 1.011,
+            "playbackRate": 1.32
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.023,
+            "playbackRate": 0.821
+          },
+          {
+            "id": "revDown",
+            "weight": 0.38,
+            "playbackRate": 0.82
+          }
+        ]
+      },
+      {
+        "time": 21,
+        "rpm": 2698,
+        "load": 8.902882922327004e-27,
+        "airborne": false,
+        "flightBlend": 1.3085402637167665e-11,
+        "state": "cruising",
+        "highRPMBlend": 0.0000014095571671482068,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.06,
+            "playbackRate": 0.817
+          },
+          {
+            "id": "cruise",
+            "weight": 0.102,
+            "playbackRate": 0.833
+          },
+          {
+            "id": "idle",
+            "weight": 1.014,
+            "playbackRate": 1.32
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.015,
+            "playbackRate": 0.81
+          },
+          {
+            "id": "revDown",
+            "weight": 0.38,
+            "playbackRate": 0.82
+          }
+        ]
+      },
+      {
+        "time": 22,
+        "rpm": 2687,
+        "load": 2.2412996356183596e-35,
+        "airborne": false,
+        "flightBlend": 3.679047282249074e-13,
+        "state": "cruising",
+        "highRPMBlend": 1.5658765690304028e-8,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.057,
+            "playbackRate": 0.816
+          },
+          {
+            "id": "cruise",
+            "weight": 0.101,
+            "playbackRate": 0.832
+          },
+          {
+            "id": "idle",
+            "weight": 1.014,
+            "playbackRate": 1.32
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.015,
+            "playbackRate": 0.808
+          },
+          {
+            "id": "revDown",
+            "weight": 0.38,
+            "playbackRate": 0.82
+          }
+        ]
+      },
+      {
+        "time": 23,
+        "rpm": 2686,
+        "load": 5.642468962545443e-44,
+        "airborne": false,
+        "flightBlend": 1.0343884158809525e-14,
+        "state": "cruising",
+        "highRPMBlend": 1.7395317384673454e-10,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.056,
+            "playbackRate": 0.816
+          },
+          {
+            "id": "cruise",
+            "weight": 0.102,
+            "playbackRate": 0.832
+          },
+          {
+            "id": "idle",
+            "weight": 1.014,
+            "playbackRate": 1.32
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.015,
+            "playbackRate": 0.808
+          },
+          {
+            "id": "revDown",
+            "weight": 0.38,
+            "playbackRate": 0.82
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "mode": "wav",
+    "peak": 0.5346705913543701,
+    "rms": 0.1770435992535457,
+    "oneSecondRMS": [
+      0.1932194613039613,
+      0.2121353175952701,
+      0.2074062346395631,
+      0.1970379348717267,
+      0.17551448995049765,
+      0.165669957653873,
+      0.15897763204306575,
+      0.16049981774174846,
+      0.16876749092158416,
+      0.153250036997788,
+      0.18160713340662535,
+      0.16611515622387635,
+      0.16526168395192586,
+      0.17348759575497488,
+      0.17496273759839298,
+      0.16944986367836598,
+      0.1707221584005604,
+      0.19212598137655817,
+      0.14788724383620563,
+      0.17415042611325088,
+      0.17750847705470624,
+      0.18409582328468913,
+      0.1848464858026239,
+      0.18123173475801366
+    ],
+    "maxStep": 0.13664960209280252,
+    "oscillators": 0,
+    "activeRoles": [
+      "idle",
+      "rev",
+      "cruise",
+      "cruiseTwo",
+      "cruiseOne",
+      "revDown",
+      "highRev",
+      "revOut",
+      "jump"
+    ],
+    "final": {
+      "backend": "Multi-sample V8 / Web Audio",
+      "engineGain": 0.49440720677375793,
+      "engineMuted": false,
+      "sampleTest": false,
+      "rpm": 1962,
+      "rpmRate": 0,
+      "throttle": 0,
+      "load": 1.4460823451853573e-36,
+      "state": "cruising",
+      "airborne": false,
+      "flightBlend": 2.6653066262545294e-28,
+      "highRPMBlend": 0.000001178330987156976,
+      "highRPMActive": false,
+      "cruiseTwoShare": 0.16097458842721155,
+      "landing": 2.4891212533276127e-39,
+      "context": "running",
+      "samples": {
+        "idle": "Loaded WAV compatibility copy (M4A: Unable to decode audio data)",
+        "rev": "Loaded WAV compatibility copy (M4A: Unable to decode audio data)",
+        "revDown": "Loaded WAV compatibility copy (M4A: Unable to decode audio data)",
+        "cruise": "Loaded WAV compatibility copy (M4A: Unable to decode audio data)",
+        "cruiseOne": "Loaded WAV compatibility copy (M4A: Unable to decode audio data)",
+        "jump": "Loaded WAV compatibility copy (M4A: Unable to decode audio data)",
+        "cruiseTwo": "Loaded WAV compatibility copy (M4A: Unable to decode audio data)",
+        "highRev": "Loaded WAV compatibility copy (M4A: Unable to decode audio data)",
+        "revOut": "Loaded WAV compatibility copy (M4A: Unable to decode audio data)"
+      },
+      "layers": [
+        {
+          "id": "idle",
+          "weight": 0.638,
+          "gain": 0.6378946900367737,
+          "playbackRate": 1.162
+        },
+        {
+          "id": "highRev",
+          "weight": 0,
+          "gain": 0.0004053752345498651,
+          "playbackRate": 0.794
+        },
+        {
+          "id": "cruiseTwo",
+          "weight": 0.059,
+          "gain": 0.05927043780684471,
+          "playbackRate": 0.852
+        },
+        {
+          "id": "cruiseOne",
+          "weight": 0.059,
+          "gain": 0.05902227386832237,
+          "playbackRate": 0.856
+        },
+        {
+          "id": "revOut",
+          "weight": 0,
+          "gain": 1.0319136832850369e-24,
+          "playbackRate": 0.785
+        },
+        {
+          "id": "jump",
+          "weight": 0,
+          "gain": 3.1897538933614707e-25,
+          "playbackRate": 0.796
+        },
+        {
+          "id": "cruise",
+          "weight": 0.344,
+          "gain": 0.34391364455223083,
+          "playbackRate": 0.864
+        }
+      ],
+      "crossfade": "idle + cruiseTwo + cruiseOne + cruise",
+      "acceleration": false,
+      "revDown": false,
+      "accelerationCount": 2,
+      "revDownCount": 2,
+      "loopSources": 7,
+      "activeSources": 7,
+      "sourcesCreated": 11,
+      "warning": ""
+    },
+    "frames": [
+      {
+        "time": 0,
+        "rpm": 900,
+        "load": 0,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "idle",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "idle",
+            "weight": 0.914,
+            "playbackRate": 1
+          }
+        ]
+      },
+      {
+        "time": 1,
+        "rpm": 900,
+        "load": 0,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "idle",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "idle",
+            "weight": 0.914,
+            "playbackRate": 1
+          }
+        ]
+      },
+      {
+        "time": 2,
+        "rpm": 900,
+        "load": 0,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "idle",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "idle",
+            "weight": 0.914,
+            "playbackRate": 1
+          }
+        ]
+      },
+      {
+        "time": 3,
+        "rpm": 965,
+        "load": 0.08791681140925729,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "accelerating",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "idle",
+            "weight": 0.749,
+            "playbackRate": 1.014
+          },
+          {
+            "id": "rev",
+            "weight": 0.1039845705457388,
+            "playbackRate": 0.82
+          }
+        ]
+      },
+      {
+        "time": 4,
+        "rpm": 4990,
+        "load": 0.4323529394817366,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "accelerating",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseTwo",
+            "weight": 0.275,
+            "playbackRate": 1.02
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.156,
+            "playbackRate": 1.025
+          },
+          {
+            "id": "cruise",
+            "weight": 0.507,
+            "playbackRate": 1.034
+          },
+          {
+            "id": "rev",
+            "weight": 0.22106486045715484,
+            "playbackRate": 1.0074921005278363
+          }
+        ]
+      },
+      {
+        "time": 5,
+        "rpm": 5034,
+        "load": 0.42881734999951465,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "cruising",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseTwo",
+            "weight": 0.308,
+            "playbackRate": 1.022
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.154,
+            "playbackRate": 1.026
+          },
+          {
+            "id": "cruise",
+            "weight": 0.46,
+            "playbackRate": 1.036
+          },
+          {
+            "id": "rev",
+            "weight": 0.22106499999983364,
+            "playbackRate": 1.0092233757308695
+          }
+        ]
+      },
+      {
+        "time": 6,
+        "rpm": 5025,
+        "load": 0.4288173499999998,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "cruising",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseTwo",
+            "weight": 0.312,
+            "playbackRate": 1.021
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.153,
+            "playbackRate": 1.026
+          },
+          {
+            "id": "cruise",
+            "weight": 0.454,
+            "playbackRate": 1.035
+          },
+          {
+            "id": "rev",
+            "weight": 0.22106499999999996,
+            "playbackRate": 1.008847674334701
+          }
+        ]
+      },
+      {
+        "time": 7,
+        "rpm": 5072,
+        "load": 0.45338004678838983,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "decelerating",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseTwo",
+            "weight": 0.314,
+            "playbackRate": 1.023
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.153,
+            "playbackRate": 1.028
+          },
+          {
+            "id": "cruise",
+            "weight": 0.451,
+            "playbackRate": 1.037
+          },
+          {
+            "id": "rev",
+            "weight": 0.21579125225663426,
+            "playbackRate": 1.0106541260177964
+          }
+        ]
+      },
+      {
+        "time": 8,
+        "rpm": 5113,
+        "load": 0.3872687787951109,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "cruising",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseTwo",
+            "weight": 0.315,
+            "playbackRate": 1.025
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.15,
+            "playbackRate": 1.029
+          },
+          {
+            "id": "cruise",
+            "weight": 0.451,
+            "playbackRate": 1.039
+          },
+          {
+            "id": "rev",
+            "weight": 0.19513002462520793,
+            "playbackRate": 1.0122279739424007
+          }
+        ]
+      },
+      {
+        "time": 9,
+        "rpm": 5076,
+        "load": 0.28133376011349204,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "decelerating",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "cruiseTwo",
+            "weight": 0.314,
+            "playbackRate": 1.023
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.15,
+            "playbackRate": 1.028
+          },
+          {
+            "id": "cruise",
+            "weight": 0.453,
+            "playbackRate": 1.037
+          },
+          {
+            "id": "revDown",
+            "weight": 0.15655220581006613,
+            "playbackRate": 1.0108279753895169
+          }
+        ]
+      },
+      {
+        "time": 10,
+        "rpm": 2208,
+        "load": 3.353089282893976e-7,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "decelerating",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "idle",
+            "weight": 0.529,
+            "playbackRate": 1.189
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.143,
+            "playbackRate": 0.872
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.091,
+            "playbackRate": 0.876
+          },
+          {
+            "id": "cruise",
+            "weight": 0.422,
+            "playbackRate": 0.884
+          },
+          {
+            "id": "revDown",
+            "weight": 0.2089999374898567,
+            "playbackRate": 0.8611822851952045
+          }
+        ]
+      },
+      {
+        "time": 10.2,
+        "rpm": 2161,
+        "load": 0.08719780606039755,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "accelerating",
+        "highRPMBlend": 0,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "idle",
+            "weight": 0.553,
+            "playbackRate": 1.184
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.127,
+            "playbackRate": 0.868
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.085,
+            "playbackRate": 0.872
+          },
+          {
+            "id": "cruise",
+            "weight": 0.411,
+            "playbackRate": 0.88
+          },
+          {
+            "id": "rev",
+            "weight": 0.10398457805559015,
+            "playbackRate": 0.8575678979269439
+          }
+        ]
+      },
+      {
+        "time": 11,
+        "rpm": 5677,
+        "load": 0.42881111952264284,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "accelerating",
+        "highRPMBlend": 0.028664859847180677,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "highRev",
+            "weight": 0.097,
+            "playbackRate": 0.974
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.293,
+            "playbackRate": 1.046
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.149,
+            "playbackRate": 1.05
+          },
+          {
+            "id": "cruise",
+            "weight": 0.472,
+            "playbackRate": 1.06
+          },
+          {
+            "id": "rev",
+            "weight": 0.22106286468037079,
+            "playbackRate": 1.032847269304476
+          }
+        ]
+      },
+      {
+        "time": 12,
+        "rpm": 5784,
+        "load": 0.4288173499925741,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "cruising",
+        "highRPMBlend": 0.1776288125423213,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "highRev",
+            "weight": 0.242,
+            "playbackRate": 0.978
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.302,
+            "playbackRate": 1.05
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.134,
+            "playbackRate": 1.054
+          },
+          {
+            "id": "cruise",
+            "weight": 0.382,
+            "playbackRate": 1.064
+          },
+          {
+            "id": "rev",
+            "weight": 0.22106499999745496,
+            "playbackRate": 1.0365592306542644
+          }
+        ]
+      },
+      {
+        "time": 12.2,
+        "rpm": 5836,
+        "load": 0.1190015526011959,
+        "airborne": true,
+        "flightBlend": 0.77686983985157,
+        "state": "airborne",
+        "highRPMBlend": 0.19256128617649224,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "highRev",
+            "weight": 0.146,
+            "playbackRate": 0.979
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.172,
+            "playbackRate": 1.051
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.076,
+            "playbackRate": 1.056
+          },
+          {
+            "id": "revOut",
+            "weight": 0.445,
+            "playbackRate": 0.968
+          },
+          {
+            "id": "jump",
+            "weight": 0.138,
+            "playbackRate": 0.982
+          },
+          {
+            "id": "cruise",
+            "weight": 0.223,
+            "playbackRate": 1.065
+          },
+          {
+            "id": "rev",
+            "weight": 0.22106499999983364,
+            "playbackRate": 1.0383261374926118
+          }
+        ]
+      },
+      {
+        "time": 13,
+        "rpm": 5903,
+        "load": 0.03004706541990161,
+        "airborne": true,
+        "flightBlend": 0.9999251481701122,
+        "state": "airborne",
+        "highRPMBlend": 0.27868639451275634,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "highRev",
+            "weight": 0.103,
+            "playbackRate": 0.982
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.09,
+            "playbackRate": 1.054
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.038,
+            "playbackRate": 1.058
+          },
+          {
+            "id": "revOut",
+            "weight": 0.474,
+            "playbackRate": 0.97
+          },
+          {
+            "id": "jump",
+            "weight": 0.147,
+            "playbackRate": 0.985
+          },
+          {
+            "id": "cruise",
+            "weight": 0.134,
+            "playbackRate": 1.068
+          },
+          {
+            "id": "rev",
+            "weight": 0.22106499999999996,
+            "playbackRate": 1.0406177571894508
+          }
+        ]
+      },
+      {
+        "time": 14,
+        "rpm": 5909,
+        "load": 0.20199456134252494,
+        "airborne": false,
+        "flightBlend": 0.8995864602783304,
+        "state": "landing",
+        "highRPMBlend": 0.29831239697103057,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "highRev",
+            "weight": 0.142,
+            "playbackRate": 0.982
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.117,
+            "playbackRate": 1.054
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.049,
+            "playbackRate": 1.058
+          },
+          {
+            "id": "revOut",
+            "weight": 0.468,
+            "playbackRate": 0.971
+          },
+          {
+            "id": "jump",
+            "weight": 0.145,
+            "playbackRate": 0.985
+          },
+          {
+            "id": "cruise",
+            "weight": 0.179,
+            "playbackRate": 1.068
+          },
+          {
+            "id": "rev",
+            "weight": 0.24759279999999995,
+            "playbackRate": 1.04082324855342
+          }
+        ]
+      },
+      {
+        "time": 15,
+        "rpm": 5985,
+        "load": 0.4282083930052976,
+        "airborne": false,
+        "flightBlend": 0.0015725976715564199,
+        "state": "cruising",
+        "highRPMBlend": 0.36205708525038083,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "highRev",
+            "weight": 0.345,
+            "playbackRate": 0.984
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.266,
+            "playbackRate": 1.056
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.116,
+            "playbackRate": 1.061
+          },
+          {
+            "id": "cruise",
+            "weight": 0.338,
+            "playbackRate": 1.071
+          },
+          {
+            "id": "rev",
+            "weight": 0.24759279999999995,
+            "playbackRate": 1.0434025490689358
+          }
+        ]
+      },
+      {
+        "time": 16,
+        "rpm": 6017,
+        "load": 0.4451925895993351,
+        "airborne": false,
+        "flightBlend": 0.000002749111448186437,
+        "state": "accelerating",
+        "highRPMBlend": 0.3746598310587934,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "highRev",
+            "weight": 0.351,
+            "playbackRate": 0.985
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.264,
+            "playbackRate": 1.058
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.117,
+            "playbackRate": 1.062
+          },
+          {
+            "id": "cruise",
+            "weight": 0.332,
+            "playbackRate": 1.072
+          },
+          {
+            "id": "rev",
+            "weight": 0.2538788433714683,
+            "playbackRate": 1.044457355151261
+          }
+        ]
+      },
+      {
+        "time": 17,
+        "rpm": 6793,
+        "load": 0.5044909715373901,
+        "airborne": false,
+        "flightBlend": 4.805815175263401e-9,
+        "state": "cruising",
+        "highRPMBlend": 0.9140558139023163,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "highRev",
+            "weight": 0.549,
+            "playbackRate": 1.009
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.104,
+            "playbackRate": 1.083
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.042,
+            "playbackRate": 1.087
+          },
+          {
+            "id": "cruise",
+            "weight": 0.11,
+            "playbackRate": 1.097
+          },
+          {
+            "id": "rev",
+            "weight": 0.2766399899400119,
+            "playbackRate": 1.0691413855293301
+          }
+        ]
+      },
+      {
+        "time": 18,
+        "rpm": 6745,
+        "load": 0.4019053715874288,
+        "airborne": false,
+        "flightBlend": 8.401208875699863e-12,
+        "state": "decelerating",
+        "highRPMBlend": 0.9862742504366939,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "highRev",
+            "weight": 0.57,
+            "playbackRate": 1.007
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.042,
+            "playbackRate": 1.081
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.017,
+            "playbackRate": 1.086
+          },
+          {
+            "id": "cruise",
+            "weight": 0.044,
+            "playbackRate": 1.095
+          },
+          {
+            "id": "revDown",
+            "weight": 0.13407457972869088,
+            "playbackRate": 1.0676692518679167
+          }
+        ]
+      },
+      {
+        "time": 19,
+        "rpm": 2336,
+        "load": 4.790127546989728e-7,
+        "airborne": false,
+        "flightBlend": 1.4686438824453905e-14,
+        "state": "decelerating",
+        "highRPMBlend": 0.11194530538796231,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "idle",
+            "weight": 0.46,
+            "playbackRate": 1.202
+          },
+          {
+            "id": "highRev",
+            "weight": 0.152,
+            "playbackRate": 0.821
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.148,
+            "playbackRate": 0.881
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.097,
+            "playbackRate": 0.885
+          },
+          {
+            "id": "cruise",
+            "weight": 0.445,
+            "playbackRate": 0.893
+          },
+          {
+            "id": "revDown",
+            "weight": 0.2089999106997953,
+            "playbackRate": 0.8705756074462379
+          }
+        ]
+      },
+      {
+        "time": 20,
+        "rpm": 1987,
+        "load": 5.709135418027068e-13,
+        "airborne": false,
+        "flightBlend": 2.56738629565925e-17,
+        "state": "cruising",
+        "highRPMBlend": 0.011223506878393283,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "idle",
+            "weight": 0.629,
+            "playbackRate": 1.165
+          },
+          {
+            "id": "highRev",
+            "weight": 0.033,
+            "playbackRate": 0.796
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.072,
+            "playbackRate": 0.854
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.063,
+            "playbackRate": 0.858
+          },
+          {
+            "id": "cruise",
+            "weight": 0.349,
+            "playbackRate": 0.866
+          },
+          {
+            "id": "revDown",
+            "weight": 0.20899999999989358,
+            "playbackRate": 0.8438610983578403
+          }
+        ]
+      },
+      {
+        "time": 21,
+        "rpm": 1964,
+        "load": 6.80445915095809e-19,
+        "airborne": false,
+        "flightBlend": 4.4881352586058395e-20,
+        "state": "cruising",
+        "highRPMBlend": 0.0011252558221426484,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "idle",
+            "weight": 0.637,
+            "playbackRate": 1.162
+          },
+          {
+            "id": "highRev",
+            "weight": 0.01,
+            "playbackRate": 0.794
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.063,
+            "playbackRate": 0.852
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.06,
+            "playbackRate": 0.856
+          },
+          {
+            "id": "cruise",
+            "weight": 0.343,
+            "playbackRate": 0.864
+          },
+          {
+            "id": "revDown",
+            "weight": 0.209,
+            "playbackRate": 0.8419332169423035
+          }
+        ]
+      },
+      {
+        "time": 22,
+        "rpm": 1962,
+        "load": 8.109925750028467e-25,
+        "airborne": false,
+        "flightBlend": 7.845861814249702e-23,
+        "state": "cruising",
+        "highRPMBlend": 0.0001128168476203751,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "idle",
+            "weight": 0.638,
+            "playbackRate": 1.162
+          },
+          {
+            "id": "highRev",
+            "weight": 0.003,
+            "playbackRate": 0.794
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.061,
+            "playbackRate": 0.852
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.059,
+            "playbackRate": 0.856
+          },
+          {
+            "id": "cruise",
+            "weight": 0.343,
+            "playbackRate": 0.864
+          },
+          {
+            "id": "revDown",
+            "weight": 0.209,
+            "playbackRate": 0.8418029866639425
+          }
+        ]
+      },
+      {
+        "time": 23,
+        "rpm": 1962,
+        "load": 9.665852084910239e-31,
+        "airborne": false,
+        "flightBlend": 1.371561774798725e-25,
+        "state": "cruising",
+        "highRPMBlend": 0.000011310886694870589,
+        "loopSources": 7,
+        "layers": [
+          {
+            "id": "idle",
+            "weight": 0.638,
+            "playbackRate": 1.162
+          },
+          {
+            "id": "cruiseTwo",
+            "weight": 0.06,
+            "playbackRate": 0.852
+          },
+          {
+            "id": "cruiseOne",
+            "weight": 0.059,
+            "playbackRate": 0.856
+          },
+          {
+            "id": "cruise",
+            "weight": 0.344,
+            "playbackRate": 0.864
+          },
+          {
+            "id": "revDown",
+            "weight": 0.209,
+            "playbackRate": 0.8417942314399761
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "mode": "missing-new",
+    "peak": 0.5351331830024719,
+    "rms": 0.18422332870240074,
+    "oneSecondRMS": [
+      0.19299018188579373,
+      0.21189398667950649,
+      0.2071659861949324,
+      0.2026974928794672,
+      0.19021536285124566,
+      0.18189476687381828,
+      0.18642336526594602,
+      0.18053580902028638,
+      0.18581096913521103,
+      0.167455114673071,
+      0.18948177392547988,
+      0.18832501898948384,
+      0.14292130838230194,
+      0.1263258818810846,
+      0.17973568509336665,
+      0.18716144995065553,
+      0.19143470734667825,
+      0.19613686142909945,
+      0.17140571595541265,
+      0.17526203488366257,
+      0.1779859569155758,
+      0.18407169154084407,
+      0.1849959713672379,
+      0.18156305471760073
+    ],
+    "maxStep": 0.1339959381148219,
+    "oscillators": 0,
+    "activeRoles": [
+      "idle",
+      "rev",
+      "cruise",
+      "cruiseOne",
+      "revDown",
+      "jump"
+    ],
+    "final": {
+      "backend": "Multi-sample V8 / Web Audio",
+      "engineGain": 0.49440720677375793,
+      "engineMuted": false,
+      "sampleTest": false,
+      "rpm": 1962,
+      "rpmRate": 0,
+      "throttle": 0,
+      "load": 1.4460823451853573e-36,
+      "state": "cruising",
+      "airborne": false,
+      "flightBlend": 2.6653066262545294e-28,
+      "highRPMBlend": 0.000001178330987156976,
+      "highRPMActive": false,
+      "cruiseTwoShare": 0.16097458842721155,
+      "landing": 2.4891212533276127e-39,
+      "context": "running",
+      "samples": {
+        "idle": "Loaded M4A",
+        "rev": "Loaded M4A",
+        "revDown": "Loaded M4A",
+        "cruise": "Loaded M4A",
+        "cruiseOne": "Loaded M4A",
+        "jump": "Loaded M4A",
+        "cruiseTwo": "FAILED: audio/Engine/EngineCruiseLayerTwo.m4a (HTTP 404; WAV: HTTP 404)",
+        "highRev": "FAILED: audio/Engine/EngineHighRev.m4a (HTTP 404; WAV: HTTP 404)",
+        "revOut": "FAILED: audio/Engine/EngineRevOut.m4a (HTTP 404; WAV: HTTP 404)"
+      },
+      "layers": [
+        {
+          "id": "cruiseOne",
+          "weight": 0.061,
+          "gain": 0.06096693500876427,
+          "playbackRate": 0.856
+        },
+        {
+          "id": "jump",
+          "weight": 0,
+          "gain": 7.02603402577686e-25,
+          "playbackRate": 0.796
+        },
+        {
+          "id": "idle",
+          "weight": 0.638,
+          "gain": 0.6378946900367737,
+          "playbackRate": 1.162
+        },
+        {
+          "id": "cruise",
+          "weight": 0.355,
+          "gain": 0.35520902276039124,
+          "playbackRate": 0.864
+        }
+      ],
+      "crossfade": "cruiseOne + idle + cruise",
+      "acceleration": false,
+      "revDown": false,
+      "accelerationCount": 2,
+      "revDownCount": 2,
+      "loopSources": 4,
+      "activeSources": 4,
+      "sourcesCreated": 8,
+      "warning": "One or more engine layers unavailable. See sample diagnostics; no synthetic fallback."
+    },
+    "frames": [
+      {
+        "time": 0,
+        "rpm": 900,
+        "load": 0,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "idle",
+        "highRPMBlend": 0,
+        "loopSources": 4,
+        "layers": [
+          {
+            "id": "idle",
+            "weight": 0.914,
+            "playbackRate": 1
+          }
+        ]
+      },
+      {
+        "time": 1,
+        "rpm": 900,
+        "load": 0,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "idle",
+        "highRPMBlend": 0,
+        "loopSources": 4,
+        "layers": [
+          {
+            "id": "idle",
+            "weight": 0.914,
+            "playbackRate": 1
+          }
+        ]
+      },
+      {
+        "time": 2,
+        "rpm": 900,
+        "load": 0,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "idle",
+        "highRPMBlend": 0,
+        "loopSources": 4,
+        "layers": [
+          {
+            "id": "idle",
+            "weight": 0.914,
+            "playbackRate": 1
+          }
+        ]
+      },
+      {
+        "time": 3,
+        "rpm": 965,
+        "load": 0.08791681140925729,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "accelerating",
+        "highRPMBlend": 0,
+        "loopSources": 4,
+        "layers": [
+          {
+            "id": "idle",
+            "weight": 0.749,
+            "playbackRate": 1.014
+          },
+          {
+            "id": "rev",
+            "weight": 0.1039845705457388,
+            "playbackRate": 0.82
+          }
+        ]
+      },
+      {
+        "time": 4,
+        "rpm": 4990,
+        "load": 0.4323529394817366,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "accelerating",
+        "highRPMBlend": 0,
+        "loopSources": 4,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.196,
+            "playbackRate": 1.025
+          },
+          {
+            "id": "cruise",
+            "weight": 0.639,
+            "playbackRate": 1.034
+          },
+          {
+            "id": "rev",
+            "weight": 0.22106486045715484,
+            "playbackRate": 1.0074921005278363
+          }
+        ]
+      },
+      {
+        "time": 5,
+        "rpm": 5034,
+        "load": 0.42881734999951465,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "cruising",
+        "highRPMBlend": 0,
+        "loopSources": 4,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.211,
+            "playbackRate": 1.026
+          },
+          {
+            "id": "cruise",
+            "weight": 0.63,
+            "playbackRate": 1.036
+          },
+          {
+            "id": "rev",
+            "weight": 0.22106499999983364,
+            "playbackRate": 1.0092233757308695
+          }
+        ]
+      },
+      {
+        "time": 6,
+        "rpm": 5025,
+        "load": 0.4288173499999998,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "cruising",
+        "highRPMBlend": 0,
+        "loopSources": 4,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.212,
+            "playbackRate": 1.026
+          },
+          {
+            "id": "cruise",
+            "weight": 0.629,
+            "playbackRate": 1.035
+          },
+          {
+            "id": "rev",
+            "weight": 0.22106499999999996,
+            "playbackRate": 1.008847674334701
+          }
+        ]
+      },
+      {
+        "time": 7,
+        "rpm": 5072,
+        "load": 0.45338004678838983,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "decelerating",
+        "highRPMBlend": 0,
+        "loopSources": 4,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.213,
+            "playbackRate": 1.028
+          },
+          {
+            "id": "cruise",
+            "weight": 0.628,
+            "playbackRate": 1.037
+          },
+          {
+            "id": "rev",
+            "weight": 0.21579125225663426,
+            "playbackRate": 1.0106541260177964
+          }
+        ]
+      },
+      {
+        "time": 8,
+        "rpm": 5113,
+        "load": 0.3872687787951109,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "cruising",
+        "highRPMBlend": 0,
+        "loopSources": 4,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.21,
+            "playbackRate": 1.029
+          },
+          {
+            "id": "cruise",
+            "weight": 0.63,
+            "playbackRate": 1.039
+          },
+          {
+            "id": "rev",
+            "weight": 0.19513002462520793,
+            "playbackRate": 1.0122279739424007
+          }
+        ]
+      },
+      {
+        "time": 9,
+        "rpm": 5076,
+        "load": 0.28133376011349204,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "decelerating",
+        "highRPMBlend": 0,
+        "loopSources": 4,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.209,
+            "playbackRate": 1.028
+          },
+          {
+            "id": "cruise",
+            "weight": 0.631,
+            "playbackRate": 1.037
+          },
+          {
+            "id": "revDown",
+            "weight": 0.15655220581006613,
+            "playbackRate": 1.0108279753895169
+          }
+        ]
+      },
+      {
+        "time": 10,
+        "rpm": 2208,
+        "load": 3.353089282893976e-7,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "decelerating",
+        "highRPMBlend": 0,
+        "loopSources": 4,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.101,
+            "playbackRate": 0.876
+          },
+          {
+            "id": "idle",
+            "weight": 0.529,
+            "playbackRate": 1.189
+          },
+          {
+            "id": "cruise",
+            "weight": 0.472,
+            "playbackRate": 0.884
+          },
+          {
+            "id": "revDown",
+            "weight": 0.2089999374898567,
+            "playbackRate": 0.8611822851952045
+          }
+        ]
+      },
+      {
+        "time": 10.2,
+        "rpm": 2161,
+        "load": 0.08719780606039755,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "accelerating",
+        "highRPMBlend": 0,
+        "loopSources": 4,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.093,
+            "playbackRate": 0.872
+          },
+          {
+            "id": "idle",
+            "weight": 0.553,
+            "playbackRate": 1.184
+          },
+          {
+            "id": "cruise",
+            "weight": 0.452,
+            "playbackRate": 0.88
+          },
+          {
+            "id": "rev",
+            "weight": 0.10398457805559015,
+            "playbackRate": 0.8575678979269439
+          }
+        ]
+      },
+      {
+        "time": 11,
+        "rpm": 5677,
+        "load": 0.42881111952264284,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "accelerating",
+        "highRPMBlend": 0.028664859847180677,
+        "loopSources": 4,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.201,
+            "playbackRate": 1.05
+          },
+          {
+            "id": "cruise",
+            "weight": 0.636,
+            "playbackRate": 1.06
+          },
+          {
+            "id": "rev",
+            "weight": 0.22106286468037079,
+            "playbackRate": 1.032847269304476
+          }
+        ]
+      },
+      {
+        "time": 12,
+        "rpm": 5784,
+        "load": 0.4288173499925741,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "cruising",
+        "highRPMBlend": 0.1776288125423213,
+        "loopSources": 4,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.219,
+            "playbackRate": 1.054
+          },
+          {
+            "id": "cruise",
+            "weight": 0.624,
+            "playbackRate": 1.064
+          },
+          {
+            "id": "rev",
+            "weight": 0.22106499999745496,
+            "playbackRate": 1.0365592306542644
+          }
+        ]
+      },
+      {
+        "time": 12.2,
+        "rpm": 5836,
+        "load": 0.1190015526011959,
+        "airborne": true,
+        "flightBlend": 0.77686983985157,
+        "state": "airborne",
+        "highRPMBlend": 0.19256128617649224,
+        "loopSources": 4,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.123,
+            "playbackRate": 1.056
+          },
+          {
+            "id": "jump",
+            "weight": 0.303,
+            "playbackRate": 0.982
+          },
+          {
+            "id": "cruise",
+            "weight": 0.365,
+            "playbackRate": 1.065
+          },
+          {
+            "id": "rev",
+            "weight": 0.22106499999983364,
+            "playbackRate": 1.0383261374926118
+          }
+        ]
+      },
+      {
+        "time": 13,
+        "rpm": 5903,
+        "load": 0.03004706541990161,
+        "airborne": true,
+        "flightBlend": 0.9999251481701122,
+        "state": "airborne",
+        "highRPMBlend": 0.27868639451275634,
+        "loopSources": 4,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.062,
+            "playbackRate": 1.058
+          },
+          {
+            "id": "jump",
+            "weight": 0.323,
+            "playbackRate": 0.985
+          },
+          {
+            "id": "cruise",
+            "weight": 0.219,
+            "playbackRate": 1.068
+          },
+          {
+            "id": "rev",
+            "weight": 0.22106499999999996,
+            "playbackRate": 1.0406177571894508
+          }
+        ]
+      },
+      {
+        "time": 14,
+        "rpm": 5909,
+        "load": 0.20199456134252494,
+        "airborne": false,
+        "flightBlend": 0.8995864602783304,
+        "state": "landing",
+        "highRPMBlend": 0.29831239697103057,
+        "loopSources": 4,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.08,
+            "playbackRate": 1.058
+          },
+          {
+            "id": "jump",
+            "weight": 0.319,
+            "playbackRate": 0.985
+          },
+          {
+            "id": "cruise",
+            "weight": 0.294,
+            "playbackRate": 1.068
+          },
+          {
+            "id": "rev",
+            "weight": 0.24759279999999995,
+            "playbackRate": 1.04082324855342
+          }
+        ]
+      },
+      {
+        "time": 15,
+        "rpm": 5985,
+        "load": 0.4282083930052976,
+        "airborne": false,
+        "flightBlend": 0.0015725976715564199,
+        "state": "cruising",
+        "highRPMBlend": 0.36205708525038083,
+        "loopSources": 4,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.215,
+            "playbackRate": 1.061
+          },
+          {
+            "id": "cruise",
+            "weight": 0.627,
+            "playbackRate": 1.071
+          },
+          {
+            "id": "rev",
+            "weight": 0.24759279999999995,
+            "playbackRate": 1.0434025490689358
+          }
+        ]
+      },
+      {
+        "time": 16,
+        "rpm": 6017,
+        "load": 0.4451925895993351,
+        "airborne": false,
+        "flightBlend": 0.000002749111448186437,
+        "state": "accelerating",
+        "highRPMBlend": 0.3746598310587934,
+        "loopSources": 4,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.22,
+            "playbackRate": 1.062
+          },
+          {
+            "id": "cruise",
+            "weight": 0.623,
+            "playbackRate": 1.072
+          },
+          {
+            "id": "rev",
+            "weight": 0.2538788433714683,
+            "playbackRate": 1.044457355151261
+          }
+        ]
+      },
+      {
+        "time": 17,
+        "rpm": 6793,
+        "load": 0.5044909715373901,
+        "airborne": false,
+        "flightBlend": 4.805815175263401e-9,
+        "state": "cruising",
+        "highRPMBlend": 0.9140558139023163,
+        "loopSources": 4,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.235,
+            "playbackRate": 1.087
+          },
+          {
+            "id": "cruise",
+            "weight": 0.613,
+            "playbackRate": 1.097
+          },
+          {
+            "id": "rev",
+            "weight": 0.2766399899400119,
+            "playbackRate": 1.0691413855293301
+          }
+        ]
+      },
+      {
+        "time": 18,
+        "rpm": 6745,
+        "load": 0.4019053715874288,
+        "airborne": false,
+        "flightBlend": 8.401208875699863e-12,
+        "state": "decelerating",
+        "highRPMBlend": 0.9862742504366939,
+        "loopSources": 4,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.236,
+            "playbackRate": 1.086
+          },
+          {
+            "id": "cruise",
+            "weight": 0.612,
+            "playbackRate": 1.095
+          },
+          {
+            "id": "revDown",
+            "weight": 0.13407457972869088,
+            "playbackRate": 1.0676692518679167
+          }
+        ]
+      },
+      {
+        "time": 19,
+        "rpm": 2336,
+        "load": 4.790127546989728e-7,
+        "airborne": false,
+        "flightBlend": 1.4686438824453905e-14,
+        "state": "decelerating",
+        "highRPMBlend": 0.11194530538796231,
+        "loopSources": 4,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.114,
+            "playbackRate": 0.885
+          },
+          {
+            "id": "idle",
+            "weight": 0.46,
+            "playbackRate": 1.202
+          },
+          {
+            "id": "cruise",
+            "weight": 0.526,
+            "playbackRate": 0.893
+          },
+          {
+            "id": "revDown",
+            "weight": 0.2089999106997953,
+            "playbackRate": 0.8705756074462379
+          }
+        ]
+      },
+      {
+        "time": 20,
+        "rpm": 1987,
+        "load": 5.709135418027068e-13,
+        "airborne": false,
+        "flightBlend": 2.56738629565925e-17,
+        "state": "cruising",
+        "highRPMBlend": 0.011223506878393283,
+        "loopSources": 4,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.066,
+            "playbackRate": 0.858
+          },
+          {
+            "id": "idle",
+            "weight": 0.629,
+            "playbackRate": 1.165
+          },
+          {
+            "id": "cruise",
+            "weight": 0.368,
+            "playbackRate": 0.866
+          },
+          {
+            "id": "revDown",
+            "weight": 0.20899999999989358,
+            "playbackRate": 0.8438610983578403
+          }
+        ]
+      },
+      {
+        "time": 21,
+        "rpm": 1964,
+        "load": 6.80445915095809e-19,
+        "airborne": false,
+        "flightBlend": 4.4881352586058395e-20,
+        "state": "cruising",
+        "highRPMBlend": 0.0011252558221426484,
+        "loopSources": 4,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.062,
+            "playbackRate": 0.856
+          },
+          {
+            "id": "idle",
+            "weight": 0.637,
+            "playbackRate": 1.162
+          },
+          {
+            "id": "cruise",
+            "weight": 0.356,
+            "playbackRate": 0.864
+          },
+          {
+            "id": "revDown",
+            "weight": 0.209,
+            "playbackRate": 0.8419332169423035
+          }
+        ]
+      },
+      {
+        "time": 22,
+        "rpm": 1962,
+        "load": 8.109925750028467e-25,
+        "airborne": false,
+        "flightBlend": 7.845861814249702e-23,
+        "state": "cruising",
+        "highRPMBlend": 0.0001128168476203751,
+        "loopSources": 4,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.061,
+            "playbackRate": 0.856
+          },
+          {
+            "id": "idle",
+            "weight": 0.638,
+            "playbackRate": 1.162
+          },
+          {
+            "id": "cruise",
+            "weight": 0.355,
+            "playbackRate": 0.864
+          },
+          {
+            "id": "revDown",
+            "weight": 0.209,
+            "playbackRate": 0.8418029866639425
+          }
+        ]
+      },
+      {
+        "time": 23,
+        "rpm": 1962,
+        "load": 9.665852084910239e-31,
+        "airborne": false,
+        "flightBlend": 1.371561774798725e-25,
+        "state": "cruising",
+        "highRPMBlend": 0.000011310886694870589,
+        "loopSources": 4,
+        "layers": [
+          {
+            "id": "cruiseOne",
+            "weight": 0.061,
+            "playbackRate": 0.856
+          },
+          {
+            "id": "idle",
+            "weight": 0.638,
+            "playbackRate": 1.162
+          },
+          {
+            "id": "cruise",
+            "weight": 0.355,
+            "playbackRate": 0.864
+          },
+          {
+            "id": "revDown",
+            "weight": 0.209,
+            "playbackRate": 0.8417942314399761
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "mode": "missing",
+    "peak": 0,
+    "rms": 0,
+    "oneSecondRMS": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "maxStep": 0,
+    "oscillators": 0,
+    "activeRoles": [],
+    "final": {
+      "backend": "Multi-sample V8 / Web Audio",
+      "engineGain": 0.49440720677375793,
+      "engineMuted": false,
+      "sampleTest": false,
+      "rpm": 1962,
+      "rpmRate": 0,
+      "throttle": 0,
+      "load": 1.4460823451853573e-36,
+      "state": "cruising",
+      "airborne": false,
+      "flightBlend": 2.6653066262545294e-28,
+      "highRPMBlend": 0.000001178330987156976,
+      "highRPMActive": false,
+      "cruiseTwoShare": 0.16097458842721155,
+      "landing": 2.4891212533276127e-39,
+      "context": "running",
+      "samples": {
+        "idle": "FAILED: audio/Engine/EngineIdle.m4a (forced unavailable; WAV: forced unavailable)",
+        "rev": "FAILED: audio/Engine/EngineRev.m4a (forced unavailable; WAV: forced unavailable)",
+        "revDown": "FAILED: audio/Engine/EngineRevDown.m4a (forced unavailable; WAV: forced unavailable)",
+        "cruise": "FAILED: audio/Engine/EngineCruise.m4a (forced unavailable; WAV: forced unavailable)",
+        "cruiseOne": "FAILED: audio/Engine/EngineCruiseLayerOne.m4a (forced unavailable; WAV: forced unavailable)",
+        "jump": "FAILED: audio/Engine/EngineJump.m4a (forced unavailable; WAV: forced unavailable)",
+        "cruiseTwo": "FAILED: audio/Engine/EngineCruiseLayerTwo.m4a (forced unavailable; WAV: forced unavailable)",
+        "highRev": "FAILED: audio/Engine/EngineHighRev.m4a (forced unavailable; WAV: forced unavailable)",
+        "revOut": "FAILED: audio/Engine/EngineRevOut.m4a (forced unavailable; WAV: forced unavailable)"
+      },
+      "layers": [],
+      "crossfade": "silent",
+      "acceleration": false,
+      "revDown": false,
+      "accelerationCount": 0,
+      "revDownCount": 0,
+      "loopSources": 0,
+      "activeSources": 0,
+      "sourcesCreated": 0,
+      "warning": "One or more engine layers unavailable. See sample diagnostics; no synthetic fallback."
+    },
+    "frames": [
+      {
+        "time": 0,
+        "rpm": 900,
+        "load": 0,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "idle",
+        "highRPMBlend": 0,
+        "loopSources": 0,
+        "layers": []
+      },
+      {
+        "time": 1,
+        "rpm": 900,
+        "load": 0,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "idle",
+        "highRPMBlend": 0,
+        "loopSources": 0,
+        "layers": []
+      },
+      {
+        "time": 2,
+        "rpm": 900,
+        "load": 0,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "idle",
+        "highRPMBlend": 0,
+        "loopSources": 0,
+        "layers": []
+      },
+      {
+        "time": 3,
+        "rpm": 965,
+        "load": 0.08791681140925729,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "accelerating",
+        "highRPMBlend": 0,
+        "loopSources": 0,
+        "layers": []
+      },
+      {
+        "time": 4,
+        "rpm": 4990,
+        "load": 0.4323529394817366,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "accelerating",
+        "highRPMBlend": 0,
+        "loopSources": 0,
+        "layers": []
+      },
+      {
+        "time": 5,
+        "rpm": 5034,
+        "load": 0.42881734999951465,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "cruising",
+        "highRPMBlend": 0,
+        "loopSources": 0,
+        "layers": []
+      },
+      {
+        "time": 6,
+        "rpm": 5025,
+        "load": 0.4288173499999998,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "cruising",
+        "highRPMBlend": 0,
+        "loopSources": 0,
+        "layers": []
+      },
+      {
+        "time": 7,
+        "rpm": 5072,
+        "load": 0.45338004678838983,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "decelerating",
+        "highRPMBlend": 0,
+        "loopSources": 0,
+        "layers": []
+      },
+      {
+        "time": 8,
+        "rpm": 5113,
+        "load": 0.3872687787951109,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "cruising",
+        "highRPMBlend": 0,
+        "loopSources": 0,
+        "layers": []
+      },
+      {
+        "time": 9,
+        "rpm": 5076,
+        "load": 0.28133376011349204,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "decelerating",
+        "highRPMBlend": 0,
+        "loopSources": 0,
+        "layers": []
+      },
+      {
+        "time": 10,
+        "rpm": 2208,
+        "load": 3.353089282893976e-7,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "decelerating",
+        "highRPMBlend": 0,
+        "loopSources": 0,
+        "layers": []
+      },
+      {
+        "time": 10.2,
+        "rpm": 2161,
+        "load": 0.08719780606039755,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "accelerating",
+        "highRPMBlend": 0,
+        "loopSources": 0,
+        "layers": []
+      },
+      {
+        "time": 11,
+        "rpm": 5677,
+        "load": 0.42881111952264284,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "accelerating",
+        "highRPMBlend": 0.028664859847180677,
+        "loopSources": 0,
+        "layers": []
+      },
+      {
+        "time": 12,
+        "rpm": 5784,
+        "load": 0.4288173499925741,
+        "airborne": false,
+        "flightBlend": 0,
+        "state": "cruising",
+        "highRPMBlend": 0.1776288125423213,
+        "loopSources": 0,
+        "layers": []
+      },
+      {
+        "time": 12.2,
+        "rpm": 5836,
+        "load": 0.1190015526011959,
+        "airborne": true,
+        "flightBlend": 0.77686983985157,
+        "state": "airborne",
+        "highRPMBlend": 0.19256128617649224,
+        "loopSources": 0,
+        "layers": []
+      },
+      {
+        "time": 13,
+        "rpm": 5903,
+        "load": 0.03004706541990161,
+        "airborne": true,
+        "flightBlend": 0.9999251481701122,
+        "state": "airborne",
+        "highRPMBlend": 0.27868639451275634,
+        "loopSources": 0,
+        "layers": []
+      },
+      {
+        "time": 14,
+        "rpm": 5909,
+        "load": 0.20199456134252494,
+        "airborne": false,
+        "flightBlend": 0.8995864602783304,
+        "state": "landing",
+        "highRPMBlend": 0.29831239697103057,
+        "loopSources": 0,
+        "layers": []
+      },
+      {
+        "time": 15,
+        "rpm": 5985,
+        "load": 0.4282083930052976,
+        "airborne": false,
+        "flightBlend": 0.0015725976715564199,
+        "state": "cruising",
+        "highRPMBlend": 0.36205708525038083,
+        "loopSources": 0,
+        "layers": []
+      },
+      {
+        "time": 16,
+        "rpm": 6017,
+        "load": 0.4451925895993351,
+        "airborne": false,
+        "flightBlend": 0.000002749111448186437,
+        "state": "accelerating",
+        "highRPMBlend": 0.3746598310587934,
+        "loopSources": 0,
+        "layers": []
+      },
+      {
+        "time": 17,
+        "rpm": 6793,
+        "load": 0.5044909715373901,
+        "airborne": false,
+        "flightBlend": 4.805815175263401e-9,
+        "state": "cruising",
+        "highRPMBlend": 0.9140558139023163,
+        "loopSources": 0,
+        "layers": []
+      },
+      {
+        "time": 18,
+        "rpm": 6745,
+        "load": 0.4019053715874288,
+        "airborne": false,
+        "flightBlend": 8.401208875699863e-12,
+        "state": "decelerating",
+        "highRPMBlend": 0.9862742504366939,
+        "loopSources": 0,
+        "layers": []
+      },
+      {
+        "time": 19,
+        "rpm": 2336,
+        "load": 4.790127546989728e-7,
+        "airborne": false,
+        "flightBlend": 1.4686438824453905e-14,
+        "state": "decelerating",
+        "highRPMBlend": 0.11194530538796231,
+        "loopSources": 0,
+        "layers": []
+      },
+      {
+        "time": 20,
+        "rpm": 1987,
+        "load": 5.709135418027068e-13,
+        "airborne": false,
+        "flightBlend": 2.56738629565925e-17,
+        "state": "cruising",
+        "highRPMBlend": 0.011223506878393283,
+        "loopSources": 0,
+        "layers": []
+      },
+      {
+        "time": 21,
+        "rpm": 1964,
+        "load": 6.80445915095809e-19,
+        "airborne": false,
+        "flightBlend": 4.4881352586058395e-20,
+        "state": "cruising",
+        "highRPMBlend": 0.0011252558221426484,
+        "loopSources": 0,
+        "layers": []
+      },
+      {
+        "time": 22,
+        "rpm": 1962,
+        "load": 8.109925750028467e-25,
+        "airborne": false,
+        "flightBlend": 7.845861814249702e-23,
+        "state": "cruising",
+        "highRPMBlend": 0.0001128168476203751,
+        "loopSources": 0,
+        "layers": []
+      },
+      {
+        "time": 23,
+        "rpm": 1962,
+        "load": 9.665852084910239e-31,
+        "airborne": false,
+        "flightBlend": 1.371561774798725e-25,
+        "state": "cruising",
+        "highRPMBlend": 0.000011310886694870589,
+        "loopSources": 0,
+        "layers": []
+      }
+    ]
+  }
+]

@@ -7,6 +7,9 @@ export const engineRecordings = {
   cruise: "audio/Engine/EngineCruise.m4a",
   cruiseOne: "audio/Engine/EngineCruiseLayerOne.m4a",
   jump: "audio/Engine/EngineJump.m4a",
+  cruiseTwo: "audio/Engine/EngineCruiseLayerTwo.m4a",
+  highRev: "audio/Engine/EngineHighRev.m4a",
+  revOut: "audio/Engine/EngineRevOut.m4a",
 };
 export const engineRegions = [
   {
@@ -40,6 +43,30 @@ export const engineRegions = [
     end: 0.8,
     referenceRPM: 6400,
     overlap: 0.06,
+  },
+  {
+    id: "cruiseTwo",
+    recording: "cruiseTwo",
+    start: 0.65,
+    end: 5.25,
+    referenceRPM: 4500,
+    overlap: 0.12,
+  },
+  {
+    id: "highRev",
+    recording: "highRev",
+    start: 0.55,
+    end: 2.02,
+    referenceRPM: 6500,
+    overlap: 0.09,
+  },
+  {
+    id: "revOut",
+    recording: "revOut",
+    start: 0.72,
+    end: 1.54,
+    referenceRPM: 6900,
+    overlap: 0.075,
   },
 ];
 export const transientRegions = {

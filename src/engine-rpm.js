@@ -35,6 +35,9 @@ export class EngineRPMModel {
       reapplied: false,
       state: "idle",
       cruiseShare: 0,
+      cruiseTwoShare: 0,
+      highRPMBlend: 0,
+      highRPMActive: false,
       previousBoost: 0,
     });
   }
@@ -77,7 +80,9 @@ export class EngineRPMModel {
     if (physicalAir) {
       this.airTime += dt;
       this.waterTime = 0;
-      if (this.airTime >= s.airborneDelay / 1000) this.airborne = true;
+      const delay =
+        (s.airborneDelay / 1000) * (1.5 - s.revOutSensitivity / 100);
+      if (this.airTime >= delay) this.airborne = true;
     } else {
       this.airTime = 0;
       this.waterTime += dt;
@@ -97,7 +102,7 @@ export class EngineRPMModel {
     this.flightBlend = approach(
       this.flightBlend,
       Number(this.airborne),
-      1 / flightTau,
+      (0.5 + s.airborneTransitionSpeed / 100) / flightTau,
       dt,
     );
     const ratio = clamp(speed / Math.max(1, maxSpeed)),
@@ -196,20 +201,34 @@ export class EngineRPMModel {
             : p < 0.06
               ? "idle"
               : "cruising";
+    const variation =
+      (Math.sin(this.elapsed * 0.19) * s.cruiseVariationIntensity) / 100;
     const targetShare = clamp(
       (s.cruiseBlend / 100) *
-        (0.35 +
-          0.4 * this.load +
-          0.25 * p +
-          0.025 * Math.sin(this.elapsed * 0.23)),
+        (0.35 + 0.4 * this.load + 0.25 * p + 0.08 * variation),
       0,
       0.75,
     );
-    this.cruiseShare = approach(this.cruiseShare, targetShare, 1.4, dt);
+    const blendRate = 0.5 + s.cruiseCrossfadeSpeed * 0.04;
+    this.cruiseShare = approach(this.cruiseShare, targetShare, blendRate, dt);
+    this.cruiseTwoShare = approach(
+      this.cruiseTwoShare,
+      clamp(0.12 + 0.4 * p + 0.14 * this.load + variation * 0.16, 0.08, 0.72),
+      blendRate,
+      dt,
+    );
+    const rpmRatio = this.rpm / s.maxRPM,
+      threshold = s.highRPMThreshold / 100;
+    if (rpmRatio >= threshold) this.highRPMActive = true;
+    else if (rpmRatio <= threshold - 0.035) this.highRPMActive = false;
+    const highTarget = this.highRPMActive
+      ? smooth(threshold - 0.035, 1, rpmRatio) * (0.35 + 0.65 * this.throttle)
+      : 0;
+    this.highRPMBlend = approach(this.highRPMBlend, highTarget, blendRate, dt);
   }
 }
 // Unit-power bed before independent user layer levels. Never stack duplicate WAVs.
-export function engineBedMix(model, s) {
+export function engineBedMix(model, s, out = [], available = null) {
   const p = clamp((model.rpm - s.idleRPM) / (s.maxRPM - s.idleRPM));
   const operating = clamp(
     (s.operatingRPM - s.idleRPM) / (s.maxRPM - s.idleRPM),
@@ -221,20 +240,44 @@ export function engineBedMix(model, s) {
     Math.min(0.9, operating * (0.45 + s.idleRevCrossfade * 0.009)),
     p,
   );
+  const has = (id) => !available || available[id];
+  const highShare = has("highRev") ? model.highRPMBlend || 0 : 0;
+  let share = has("cruiseOne") ? model.cruiseShare : 0,
+    shareTwo = has("cruiseTwo") ? model.cruiseTwoShare || 0 : 0;
+  if (!has("cruise")) {
+    if (has("cruiseOne")) share = 1;
+    else if (has("cruiseTwo")) shareTwo = 1;
+  }
+  const flight = has("jump") || has("revOut") ? model.flightBlend : 0;
+  const wet = Math.cos((flight * 0.78 * Math.PI) / 2),
+    air = Math.sin((flight * Math.PI) / 2) * (0.1 + 0.9 * model.throttle),
+    airShare = !has("revOut") ? 0 : !has("jump") ? 1 : 0.7;
   const idle = Math.cos((progress * Math.PI) / 2),
-    cruise = Math.sin((progress * Math.PI) / 2),
-    share = model.cruiseShare;
-  const wet = Math.cos((model.flightBlend * 0.72 * Math.PI) / 2),
-    jump =
-      Math.sin((model.flightBlend * Math.PI) / 2) *
-      (0.18 + 0.82 * model.throttle);
-  const main = cruise * Math.cos((share * Math.PI) / 2) * wet,
-    secondary = cruise * Math.sin((share * Math.PI) / 2) * wet;
-  const normal = 1 / Math.max(1, Math.hypot(idle, main, secondary, jump));
-  return [
-    ((idle * normal * s.idleSampleVolume) / 100) * (0.75 + s.rumble * 0.005),
-    (main * normal * s.cruiseLayer) / 100,
-    (secondary * normal * s.cruiseLayerOneVolume) / 100,
-    (((jump * normal * s.jumpSampleVolume) / 100) * s.jumpBlend) / 100,
-  ];
+    cruise = Math.sin((progress * Math.PI) / 2) * Math.sqrt(1 - highShare),
+    main =
+      cruise *
+      Math.cos((share * Math.PI) / 2) *
+      Math.cos((shareTwo * Math.PI) / 2) *
+      wet,
+    secondary =
+      cruise *
+      Math.sin((share * Math.PI) / 2) *
+      Math.cos((shareTwo * Math.PI) / 2) *
+      wet,
+    third = cruise * Math.sin((shareTwo * Math.PI) / 2) * wet,
+    high = Math.sin((progress * Math.PI) / 2) * Math.sqrt(highShare) * wet,
+    jump = air * Math.cos((airShare * Math.PI) / 2),
+    revOut = air * Math.sin((airShare * Math.PI) / 2);
+  const normal =
+    1 /
+    Math.max(1, Math.hypot(idle, main, secondary, third, high, jump, revOut));
+  out[0] =
+    ((idle * normal * s.idleSampleVolume) / 100) * (0.75 + s.rumble * 0.005);
+  out[1] = (main * normal * s.cruiseLayer) / 100;
+  out[2] = (secondary * normal * s.cruiseLayerOneVolume) / 100;
+  out[3] = (((jump * normal * s.jumpSampleVolume) / 100) * s.jumpBlend) / 100;
+  out[4] = (third * normal * s.cruiseLayerTwoVolume) / 100;
+  out[5] = (high * normal * s.highRPMLayerVolume) / 100;
+  out[6] = (revOut * normal * s.revOutVolume) / 100;
+  return out;
 }

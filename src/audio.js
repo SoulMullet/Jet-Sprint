@@ -25,6 +25,8 @@ export class Engine {
     this.muted = false;
     this.volume = 1;
     this.layers = [];
+    this.availableLayers = {};
+    this.bedWeights = new Array(engineRegions.length).fill(0);
     this.recordings = {};
     this.sampleStatus = Object.fromEntries(
       Object.keys(engineRecordings).map((id) => [id, "Not loaded"]),
@@ -144,13 +146,14 @@ export class Engine {
     );
     this.warning =
       this.layers.length < engineRegions.length ||
-      Object.keys(this.recordings).length < 6
+      Object.keys(this.recordings).length < Object.keys(engineRecordings).length
         ? "One or more engine layers unavailable. See sample diagnostics; no synthetic fallback."
         : "";
     return this.layers.length > 0;
   }
   installLoops(id) {
-    for (const region of engineRegions.filter((r) => r.recording === id)) {
+    for (const [index, region] of engineRegions.entries()) {
+      if (region.recording !== id) continue;
       if (this.layers.some((l) => l.id === region.id)) continue;
       const recording = this.recordings[region.recording];
       if (!recording) continue;
@@ -169,16 +172,25 @@ export class Engine {
         gain.gain.value = 0;
         source.connect(gain);
         gain.connect(this.engineInput);
-        source.start(0, region.id === "cruiseOne" ? buffer.duration * 0.37 : 0);
+        source.start(
+          0,
+          region.id === "cruiseOne"
+            ? buffer.duration * 0.37
+            : region.id === "cruiseTwo"
+              ? buffer.duration * 0.61
+              : 0,
+        );
         this.sourcesCreated++;
         this.layers.push({
           ...region,
+          index,
           source,
           gain,
           buffer,
           weight: 0,
           rate: 1,
         });
+        this.availableLayers[region.id] = true;
       } catch (e) {
         this.sampleStatus[region.recording] = "FAILED loop: " + e.message;
       }
@@ -367,28 +379,36 @@ export class Engine {
         this.triggerTransient("revDown");
       }
     }
-    const weights = engineBedMix(m, s),
+    const weights = engineBedMix(m, s, this.bedWeights, this.availableLayers),
       tau = 0.025 + (100 - s.crossfadeSpeed) * 0.003;
     // Missing assets leave a continuous remaining bed, with explicit diagnostics.
     if (
       this.layers.length < engineRegions.length &&
       this.layers.length &&
-      this.layers.every(
-        (l) => weights[engineRegions.findIndex((r) => r.id === l.id)] < 0.001,
-      )
+      this.layers.every((l) => weights[l.index] < 0.001)
     ) {
       const fallback =
         this.layers.find((l) => l.id === "idle") ||
         this.layers.find((l) => l.id === "cruise") ||
+        this.layers.find(
+          (l) =>
+            l.id === "cruiseOne" || l.id === "cruiseTwo" || l.id === "highRev",
+        ) ||
         this.layers[0];
-      const id = engineRegions.findIndex((r) => r.id === fallback.id);
+      const id = fallback.index;
       const volume = {
         idle: s.idleSampleVolume,
         cruise: s.cruiseLayer,
         cruiseOne: s.cruiseLayerOneVolume,
         jump: s.jumpSampleVolume,
+        cruiseTwo: s.cruiseLayerTwoVolume,
+        highRev: s.highRPMLayerVolume,
+        revOut: s.revOutVolume,
       }[fallback.id];
-      weights[id] = fallback.id === "jump" && !m.airborne ? 0 : volume * 0.006;
+      weights[id] =
+        (fallback.id === "jump" || fallback.id === "revOut") && !m.airborne
+          ? 0
+          : volume * 0.006;
     }
     const foreground = Object.entries(this.transients).some(
         ([role, v]) =>
@@ -396,17 +416,16 @@ export class Engine {
       ),
       bedDuck = foreground ? 0.82 : 1;
     for (const layer of this.layers) {
-      const i = engineRegions.findIndex((r) => r.id === layer.id);
+      const i = layer.index;
       layer.weight = weights[i] * bedDuck;
       layer.rate = enginePlaybackRate(m.rpm, layer.referenceRPM, s.pitchRange);
-      if (layer.id === "cruiseOne")
-        layer.rate = clamp(
-          layer.rate * (1 + 0.0025 * Math.sin(m.elapsed * 0.31)),
-          0.72,
-          1.32,
-        );
       set(layer.gain.gain, layer.weight, t, tau);
-      set(layer.source.playbackRate, layer.rate, t, 0.08);
+      set(
+        layer.source.playbackRate,
+        layer.rate,
+        t,
+        0.03 + (100 - s.rpmPitchResponse) * 0.0025,
+      );
     }
     const p = clamp((m.rpm - s.idleRPM) / (s.maxRPM - s.idleRPM)),
       idleAmount = 1 - p;
@@ -657,6 +676,9 @@ export class Engine {
       state: m.state,
       airborne: m.airborne,
       flightBlend: m.flightBlend,
+      highRPMBlend: m.highRPMBlend,
+      highRPMActive: m.highRPMActive,
+      cruiseTwoShare: m.cruiseTwoShare,
       landing: m.landing,
       context: this.ctx?.state || "not started",
       samples: { ...this.sampleStatus },

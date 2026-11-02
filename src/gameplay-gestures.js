@@ -1,12 +1,9 @@
-/** Safari fallback belongs on gameplay elements, never the document or settings. */
+/** CSS touch-action owns touch/scroll/zoom; never cancel a whole touch sequence. */
 export function protectGameplayGestures(surface) {
   const cancel = (event) => {
     if (event.cancelable) event.preventDefault();
   };
   const events = [
-    "touchstart",
-    "touchmove",
-    "touchend",
     "gesturestart",
     "gesturechange",
     "gestureend",

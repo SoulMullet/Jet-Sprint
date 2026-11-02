@@ -73,7 +73,8 @@ test("airborne delay and contact hysteresis reject jitter; genuine flight unload
   assert.equal(air.airborne, true);
   assert.ok(air.load < wet.load * 0.2);
   assert.ok(air.rpm > wet.rpm + 100);
-  assert.ok(engineBedMix(air, s)[3] > 0.2);
+  assert.ok(engineBedMix(air, s)[3] > 0.1); // Original jump recording is retained.
+  assert.ok(engineBedMix(air, s)[6] > 0.4); // New rev-out owns the free-rev tone.
   advance(air, 0.02, 1, { airborne: false });
   assert.equal(air.airborne, true);
   air.update(s, 12, 1, 1 / 120, 24, false, 0.7, null, {
@@ -142,7 +143,7 @@ test("every added and existing control round-trips in the existing settings stor
   store.load("Six recordings");
   store.flush();
   assert.deepEqual(new AudioSettings(storage).values, values);
-  assert.equal(Object.keys(values).length, 56);
+  assert.equal(Object.keys(values).length, 65);
 });
 test("all nine real campaign jumps drive the audio model from takeoff through landing without boat mutation", () => {
   const world = createCampaignAdventure(),

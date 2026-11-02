@@ -116,7 +116,7 @@ export function mountSoundLab(store, engine, { onTestChange = () => {} } = {}) {
   );
   const tip = node(
     "p",
-    "Six real recordings / source RPM is uncalibrated. Recorded idle and cruise beds remain continuous through rev, release, flight and landing.",
+    "Nine real recordings / source RPM is uncalibrated. Three cruise beds crossfade with RPM/load; high rev blends near redline, and rev-out follows debounced physical flight. All loops remain continuous.",
     body,
   );
   tip.className = "idle-tip";

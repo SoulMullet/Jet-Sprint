@@ -1,5 +1,6 @@
 import { protectGameplayGestures } from "./gameplay-gestures.js";
 import { NitrousGesture } from "./nitrous-gesture.js";
+import { ArcadePointers } from "./arcade-pointers.js";
 /** Steering pointer sets and one captured throttle thumb share the existing input pipeline. */
 export function mountArcadeTouch({
   set,
@@ -14,10 +15,11 @@ export function mountArcadeTouch({
   root.innerHTML =
     '<div class="arcade-steering"><button id="steerLeft" aria-label="Steer left" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 3 6 12 18 21Z" fill="currentColor"/></svg>LEFT</button><button id="steerRight" aria-label="Steer right" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3 18 12 6 21Z" fill="currentColor"/></svg>RIGHT</button></div><button id="arcadeThrottle" aria-label="Slide upward for throttle, continue upward for nitrous" aria-pressed="false"><span id="touchNitroZone"><b>NITRO</b><small id="touchNitroText">NO KIT</small><i id="touchNitroGauge"></i></span><span>JET</span><output id="touchThrottleValue">0%</output><small>SLIDE UP</small></button>';
   document.body.append(root);
-  protectGameplayGestures(root);
-  const held = { left: new Set(), right: new Set(), throttle: new Set() },
+  const pointers = new ArcadePointers(),
+    held = pointers.held,
     gesture = new NitrousGesture();
-  let throttlePointer = null;
+  let throttlePointer = null,
+    throttleRect = null;
   const paint = () => {
     for (const [name, id] of [
       ["left", "steerLeft"],
@@ -39,9 +41,22 @@ export function mountArcadeTouch({
     );
   };
   const clear = () => {
-    for (const s of Object.values(held)) s.clear();
+    const captures = [...pointers.owners];
+    pointers.clear();
     throttlePointer = null;
+    throttleRect = null;
     gesture.clear();
+    for (const [id, name] of captures) {
+      if (typeof id !== "number") continue;
+      const el = document.getElementById(
+        name === "throttle"
+          ? "arcadeThrottle"
+          : name === "left"
+            ? "steerLeft"
+            : "steerRight",
+      );
+      if (el.hasPointerCapture(id)) el.releasePointerCapture(id);
+    }
     paint();
   };
   for (const [name, id] of [
@@ -50,60 +65,85 @@ export function mountArcadeTouch({
     ["throttle", "arcadeThrottle"],
   ]) {
     const el = document.getElementById(id);
+    protectGameplayGestures(el);
+    const end = (e) => {
+      if (!pointers.release(name, e.pointerId)) return;
+      if (name === "throttle" && e.pointerId === throttlePointer) {
+        throttlePointer = null;
+        throttleRect = null;
+        gesture.clear();
+      }
+      if (el.hasPointerCapture(e.pointerId))
+        el.releasePointerCapture(e.pointerId);
+      paint();
+    };
     el.addEventListener("pointerdown", (e) => {
-      e.preventDefault();
       if (
         !canDrive() ||
         (e.pointerType === "mouse" && e.button !== 0) ||
-        (name === "throttle" && throttlePointer !== null)
+        !pointers.press(name, e.pointerId)
       )
         return;
-      held[name].add(e.pointerId);
-      el.setPointerCapture(e.pointerId);
+      // CSS owns browser gestures. Do not cancel the legacy touch sequence:
+      // WebKit must deliver secondary fingers to their own controls.
+      try {
+        el.setPointerCapture(e.pointerId);
+      } catch {
+        pointers.release(name, e.pointerId);
+        return;
+      }
       if (name === "throttle") {
         throttlePointer = e.pointerId;
-        gesture.move(e.clientY, el.getBoundingClientRect(), getNitrous());
+        // Freeze geometry before the pressed-state transform, for this finger.
+        throttleRect = el.getBoundingClientRect();
+        gesture.move(e.clientY, throttleRect, getNitrous());
       }
       onPress(name);
       paint();
     });
     el.addEventListener("pointermove", (e) => {
+      if (!pointers.owns(name, e.pointerId)) return;
+      // Capture can be interrupted before the browser delivers its first
+      // gotpointercapture event. That pending-capture loss may emit no lost event.
+      if (!el.hasPointerCapture(e.pointerId)) {
+        end(e);
+        return;
+      }
       if (name === "throttle" && e.pointerId === throttlePointer) {
-        e.preventDefault();
-        gesture.move(e.clientY, el.getBoundingClientRect(), getNitrous());
+        gesture.move(e.clientY, throttleRect, getNitrous());
         paint();
       }
     });
     for (const type of ["pointerup", "pointercancel", "lostpointercapture"])
-      el.addEventListener(type, (e) => {
-        e.preventDefault();
-        held[name].delete(e.pointerId);
-        if (name === "throttle" && e.pointerId === throttlePointer) {
-          throttlePointer = null;
-          gesture.clear();
-        }
-        paint();
-      });
+      el.addEventListener(type, end);
+    el.addEventListener("pointerleave", (e) => {
+      // Captured drags deliberately continue outside the throttle/NITRO bounds.
+      // If capture was interrupted, release only that control, not its neighbour.
+      if (!el.hasPointerCapture(e.pointerId)) end(e);
+    });
     el.addEventListener("contextmenu", (e) => e.preventDefault());
     el.addEventListener("keydown", (e) => {
+      // Space + Shift stays one keyboard source even when this button has focus.
+      if (name === "throttle" && e.key === " ") return;
       if ([" ", "Enter"].includes(e.key) && canDrive()) {
         e.preventDefault();
         e.stopPropagation();
-        held[name].add("key");
+        pointers.press(name, "key-" + name);
         if (name === "throttle") gesture.throttle = 1;
         paint();
       }
     });
     el.addEventListener("keyup", (e) => {
+      if (name === "throttle" && e.key === " ") return;
       if ([" ", "Enter"].includes(e.key)) {
         e.stopPropagation();
-        held[name].delete("key");
+        pointers.release(name, "key-" + name);
         if (name === "throttle") gesture.clear();
         paint();
       }
     });
     el.addEventListener("blur", () => {
-      held[name].delete("key");
+      pointers.release(name, "key-" + name);
       if (name === "throttle" && throttlePointer === null) gesture.clear();
       paint();
     });

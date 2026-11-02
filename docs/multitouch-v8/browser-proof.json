@@ -1,0 +1,22 @@
+{
+  "browser": "Chromium 844×390 native CDP multi-touch emulation, actual production game, controlled render clock. Not physical iPhone Safari.",
+  "fixture": "Legacy schema-1 QA profile; kit purchased through real garage. Existing audio levels seeded for migration check.",
+  "A": "Throttle finger dragged to 100%, then a second finger repeatedly added/released on LEFT/RIGHT: throttle stayed 100%.",
+  "B": "Continuous steering held while throttle dragged from partial to full.",
+  "C": "Same throttle capture entered nitrous then returned to full normal throttle while the second finger steered.",
+  "D": "Established and pending steering capture loss preserved throttle; throttle release preserved steering; touchcancel cleared both. Page scale 1 and scroll 0; legacy touch events never cancelled.",
+  "keyboard": "Space + Left Shift works with the throttle button focused.",
+  "audio": "All nine M4A files decoded; seven persistent loops; nine real Audio Lab controls saved/restored with old volumes intact.",
+  "edits": {
+    "cruiseLayerTwoVolume": 41,
+    "cruiseCrossfadeSpeed": 60,
+    "cruiseVariationIntensity": 15,
+    "rpmPitchResponse": 80,
+    "highRPMLayerVolume": 82,
+    "highRPMThreshold": 88,
+    "revOutVolume": 67,
+    "revOutSensitivity": 70,
+    "airborneTransitionSpeed": 60
+  },
+  "errors": []
+}

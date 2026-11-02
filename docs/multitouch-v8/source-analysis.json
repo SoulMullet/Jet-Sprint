@@ -1,0 +1,86 @@
+{
+  "method": "ffprobe plus stereo float PCM at 32 kHz. Loop regions avoid recording edges. RPM anchors are approximate timbre references, not measured source RPM. No physical listening claim. Original M4As unchanged; WAVs are compatibility conversions.",
+  "recordings": [
+    {
+      "path": "public/audio/Engine/EngineCruiseLayerTwo.m4a",
+      "sha256": "644c969e4e957e38a759c3f6a44e9456576130116c64eca972a6bc133a8dfc87",
+      "bytes": 96541,
+      "metadata": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "aac",
+            "sample_rate": "44100",
+            "channels": 2
+          }
+        ],
+        "format": {
+          "duration": "5.874649"
+        }
+      },
+      "decodedSecondsAt32k": 5.82678125,
+      "rms": 0.20011983811855316,
+      "peak": 0.6260032653808594,
+      "loopSeconds": [
+        0.65,
+        5.25
+      ],
+      "approximateTimbreRPM": 4500
+    },
+    {
+      "path": "public/audio/Engine/EngineHighRev.m4a",
+      "sha256": "92e774f44216760544de28a3898b9ec0cdc80e44041cd424d2aa5605e19402db",
+      "bytes": 33935,
+      "metadata": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "aac",
+            "sample_rate": "44100",
+            "channels": 2
+          }
+        ],
+        "format": {
+          "duration": "2.205896"
+        }
+      },
+      "decodedSecondsAt32k": 2.15803125,
+      "rms": 0.13517576456069946,
+      "peak": 0.5127847194671631,
+      "loopSeconds": [
+        0.55,
+        2.02
+      ],
+      "approximateTimbreRPM": 6500
+    },
+    {
+      "path": "public/audio/Engine/EngineRevOut.m4a",
+      "sha256": "0953fece9c1934adf1c2114e8839ded10a6b02ac68e9007267e59e8d8a9095ea",
+      "bytes": 28422,
+      "metadata": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "aac",
+            "sample_rate": "44100",
+            "channels": 2
+          }
+        ],
+        "format": {
+          "duration": "1.695057"
+        }
+      },
+      "decodedSecondsAt32k": 1.6471875,
+      "rms": 0.17018897831439972,
+      "peak": 0.5850791931152344,
+      "loopSeconds": [
+        0.72,
+        1.54
+      ],
+      "approximateTimbreRPM": 6900
+    }
+  ]
+}
