@@ -97,8 +97,9 @@ export function riverEnvironmentData(world) {
     seals,
   };
 }
-export function resolveLogContacts(b, logs) {
+export function resolveLogContacts(b, logs, flightHeight = 0) {
   for (const log of logs) {
+    if(flightHeight>log.radius+.4)continue;
     if (Math.abs(b.x - log.x) > 6 || Math.abs(b.z - log.z) > 6) continue;
     const dx = log.b.x - log.a.x,
       dz = log.b.z - log.a.z,

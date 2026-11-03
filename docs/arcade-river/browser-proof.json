@@ -1,0 +1,85 @@
+{
+  "method": "Production build in Chromium 844×390 touch emulation; native CDP steering and standard Gamepad API test driver. Most GPU draws suppressed during accelerated runs; screenshots use real rendering. No boat poses, physics, gates, results or timers injected. Not physical device/FPS/subjective-feel testing.",
+  "runs": [
+    {
+      "mode": "arcade-river",
+      "cash": 150,
+      "time": 62.45899999999777,
+      "condition": 88.44830453469297,
+      "jumps": 2,
+      "collisions": 1,
+      "shortcut": false,
+      "rating": "HOT RIVER RUN",
+      "state": "FINISHED",
+      "progress": 2037.7001301021392,
+      "settings": {
+        "cruiseSpeed": 78,
+        "steeringResponse": 1.2,
+        "impactRecovery": 0.6,
+        "landingStability": 0.7,
+        "distance": 24,
+        "height": 16,
+        "smoothing": 6,
+        "fov": 60,
+        "pullback": 0.25,
+        "anticipation": 0.25
+      }
+    },
+    {
+      "mode": "arcade-river",
+      "cash": 300,
+      "time": 62.306866666665506,
+      "condition": 58.985561970490195,
+      "jumps": 2,
+      "collisions": 2,
+      "shortcut": true,
+      "rating": "RIVER ACE",
+      "state": "FINISHED",
+      "progress": 2037.6380379395282,
+      "settings": {
+        "cruiseSpeed": 78,
+        "steeringResponse": 1.2,
+        "impactRecovery": 0.6,
+        "landingStability": 0.7,
+        "distance": 24,
+        "height": 16,
+        "smoothing": 6,
+        "fov": 60,
+        "pullback": 0.25,
+        "anticipation": 0.25
+      }
+    }
+  ],
+  "failure": {
+    "mode": "arcade-river",
+    "cash": 0,
+    "time": 125,
+    "condition": 100,
+    "jumps": 0,
+    "collisions": 0,
+    "shortcut": false,
+    "rating": "BACK IN THE WATER",
+    "state": "FAILED",
+    "progress": 20.155533976692425,
+    "settings": {
+      "cruiseSpeed": 78,
+      "steeringResponse": 1.2,
+      "impactRecovery": 0.6,
+      "landingStability": 0.7,
+      "distance": 24,
+      "height": 16,
+      "smoothing": 6,
+      "fov": 60,
+      "pullback": 0.25,
+      "anticipation": 0.25
+    }
+  },
+  "autoThrottleAndTouch": true,
+  "retryUnderOneLogicalSecond": true,
+  "persistence": true,
+  "careerUntouchedInArcade": true,
+  "originalRacingManualThrottle": true,
+  "firstArcadeVisitPreservesRacingUnlocks": true,
+  "shortLandscapeResults": true,
+  "errors": []
+}

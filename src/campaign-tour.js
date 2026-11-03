@@ -113,8 +113,9 @@ export class CampaignTour {
     return true;
   }
   contact(b) {
-    resolveLogContacts(b, this.world.debris || []);
+    resolveLogContacts(b, this.world.debris || [], this.world.arcade && this.airborne ? this.height : 0);
     for (const rock of this.world.rocks) {
+      if(this.world.arcade && this.airborne && this.height>rock.radius*1.18+.35)continue;
       const dx = b.x - rock.x,
         dz = b.z - rock.z,
         r = rock.radius + 1.2,

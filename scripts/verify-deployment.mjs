@@ -53,6 +53,7 @@ export async function verifyDeployment(
         throw Error("Wrong live garage/career build.");
       if (info.gameplay !== "river-runs-v1")
         throw Error("Wrong active river-run gameplay build.");
+      if(info.arcade!=="sunset-river-v1")throw Error("Missing Arcade River mode.");
       if (
         info.replays !== "recorded-world-poses-v1" ||
         info.foundation !== "portable-data-v1"

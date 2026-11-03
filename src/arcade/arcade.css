@@ -1,0 +1,234 @@
+.mode-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 12px 0;
+}
+.mode-selector a {
+  padding: 12px 8px;
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  background: var(--navy);
+  color: var(--cream);
+  font: 700 12px var(--font-label);
+  text-align: center;
+  text-decoration: none;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+}
+.mode-selector a[aria-current="page"] {
+  background: var(--gold);
+  color: var(--deep);
+  border-color: var(--cream);
+}
+.mode-selector a:focus-visible {
+  outline: 3px solid var(--orange);
+  outline-offset: 2px;
+}
+.mode-selector a:hover {
+  border-color: var(--cream);
+}
+.mode-selector a:active {
+  transform: translateY(2px);
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  .intro-card .intro-tagline {
+    display: none;
+  }
+  .intro-card .mode-selector {
+    grid-column: 2;
+    grid-row: 3;
+    margin: 3px 0 7px;
+  }
+  .intro-card .mode-selector a {
+    padding: 6px;
+    font-size: 10px;
+    min-height: 44px;
+  }
+}
+body.arcade-river #arcadeThrottle,
+body.arcade-river .timing,
+body.arcade-river #journeyHUD,
+body.arcade-river #journeyResults,
+body.arcade-river #cameraSwitch,
+body.arcade-river .campaign-start-label,
+body.arcade-river #campaignSummary,
+body.arcade-river #navigator,
+body.arcade-river #inputOverlay,
+body.arcade-river #notice,
+body.arcade-river #courseOverview,
+body.arcade-river #garage,
+body.arcade-river #nitroStreaks,
+body.arcade-river #racingCameraLab {
+  display: none !important;
+}
+body.arcade-river #openReplayLibrary {
+  display: none;
+}
+body.arcade-river #arcadeControls .arcade-steering {
+  display: contents;
+}
+body.arcade-river #steerLeft,
+body.arcade-river #steerRight {
+  position: absolute;
+  bottom: max(18px, env(safe-area-inset-bottom));
+  width: 110px;
+  height: 84px;
+}
+body.arcade-river #steerLeft {
+  left: max(16px, env(safe-area-inset-left));
+}
+body.arcade-river #steerRight {
+  right: max(16px, env(safe-area-inset-right));
+}
+body.arcade-river.racing .speed {
+  right: max(18px, env(safe-area-inset-right));
+  bottom: 116px !important;
+  width: 104px !important;
+}
+body.arcade-river #cameraSettings > :not(.arcade-tuning):not(summary) {
+  display: none;
+}
+#arcadeHUD {
+  position: fixed;
+  top: max(76px, env(safe-area-inset-top));
+  left: max(16px, env(safe-area-inset-left));
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  background: var(--navy);
+  border: 2px solid var(--line);
+  border-radius: 17px;
+  padding: 10px 13px;
+  max-width: calc(100vw - 32px);
+  pointer-events: none;
+  box-shadow: var(--bevel);
+  z-index: 8;
+}
+#arcadeHUD span,
+#arcadeHUD label {
+  display: block;
+  font: 600 10px var(--font-label);
+  color: var(--cream);
+  letter-spacing: 0.4px;
+}
+#arcadeHUD strong {
+  font: 22px var(--font-display);
+  color: var(--gold);
+}
+.arcade-progress {
+  width: 110px;
+}
+.arcade-progress output {
+  float: right;
+}
+.arcade-progress > div {
+  height: 7px;
+  background: var(--deep);
+  margin-top: 8px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.arcade-progress i {
+  display: block;
+  height: 100%;
+  background: var(--teal);
+}
+#arcadeHUD.cash-hit {
+  border-color: var(--gold);
+}
+body.arcade-river:not(.racing) #arcadeHUD {
+  display: none;
+}
+body.arcade-river #results {
+  padding: 12px 22px;
+  overflow: auto;
+}
+body.arcade-river .result-card {
+  padding: 16px 20px;
+  width: min(500px, 100%);
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+  border-radius: 24px;
+}
+body.arcade-river .result-card .finish-strap {
+  padding: 6px 10px;
+  font-size: 9px;
+}
+body.arcade-river .result-card .eyebrow {
+  margin: 6px 0;
+  font-size: 8px;
+}
+body.arcade-river #resultTitle {
+  font-size: 25px;
+  margin: 6px 0 10px;
+}
+body.arcade-river #resultStats p {
+  display: block;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  min-height: 0;
+  padding: 0;
+  margin: 7px 0;
+  color: var(--cream);
+  font: 600 13px/1.35 var(--font-label);
+}
+body.arcade-river #resultStats p:first-child {
+  font: 18px/1.35 var(--font-display);
+  color: var(--gold);
+}
+body.arcade-river #raceRestart {
+  width: 100%;
+  min-height: 48px;
+  margin: 8px 0 4px;
+}
+body.arcade-river #arcadeMenu {
+  min-height: 44px;
+  margin: 0;
+}
+body.arcade-river #pit-tab-replays {
+  display: none;
+}
+@media (max-height: 360px) {
+  body.arcade-river .result-card {
+    padding: 10px 14px;
+  }
+  body.arcade-river .result-card .finish-strap {
+    display: none;
+  }
+  body.arcade-river #resultTitle {
+    font-size: 21px;
+    margin: 4px 0 6px;
+  }
+  body.arcade-river #resultStats p {
+    font-size: 11px;
+    margin: 5px 0;
+  }
+  body.arcade-river #resultStats p:first-child {
+    font-size: 17px;
+  }
+  #arcadeHUD {
+    top: 64px;
+    padding: 6px 10px;
+    gap: 10px;
+  }
+  #arcadeHUD strong {
+    font-size: 18px;
+  }
+  body.arcade-river #steerLeft,
+  body.arcade-river #steerRight {
+    height: 70px;
+    width: 96px;
+  }
+  .arcade-progress {
+    width: 90px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #arcadeHUD {
+    transition: none;
+  }
+}

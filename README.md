@@ -1,6 +1,8 @@
-# JET SPRINT v0.30.0 — Independent Multi-Touch / Nine-Recording V8
+# JET SPRINT v0.31.0 — Arcade River V1 / Racing
 
 A mobile-first, single-player 3D jetboat game built with JavaScript, Vite, Three.js and Web Audio. Geometry is procedural; the V8 mixes supplied recordings through Web Audio. Engine recordings, two supplied MP3 songs and licensed interface fonts are bundled locally. No paid assets, account, API keys or backend are required.
+
+**New: ARCADE RIVER.** Choose it on the title screen, or open [`?mode=arcade-river`](https://soulmullet.github.io/Jet-Sprint/?mode=arcade-river). Sunset River is a handcrafted 2.04 km run: automatic acceleration, hold-left/right steering, two wide automatic ramps, rocks/logs, a narrower cash-rich shortcut, a chase camera, run cash, local best times and immediate Retry. Default Arcade speed is **78 MPH**; automated reference runs take about **62 seconds**. Finish within 2:05; a damaged hull can also end the run. Racing retains manual throttle, nitrous, its career/garage and saved settings. Arcade cash is run score, not career money. [Launch, tuning, exact changed files, evidence and limits](docs/arcade-river/README.md).
 
 Race at a **93 MPH stock target** and improve one boat through **ENGINE / JET PUMP / NITROUS** purchases in the existing garage. Engine stages target **101 / 109 / 118 / 128 MPH** with a stock pump; a fully upgraded boat reaches approximately **143.5 MPH under sustained nitrous** in the reference benchmark. A 100-unit tank lasts 20 seconds, persists between runs, and refills with race money. On touch, continue the same throttle finger upward into the marked NITRO zone; keyboard **Left Shift**, controller **RB + RT**. [Implementation, prices, migration, exact files and verification](docs/career-upgrades/README.md).
 
@@ -141,7 +143,7 @@ Node tests cover all three primary rivers driven from rest through the real inpu
 
 The included **Deploy GitHub Pages** workflow tests and builds on pushes to `main`. Repository **Settings → Pages → Source** must be **GitHub Actions**. The workflow uploads `dist/` and deploys using official Pages actions. Relative Vite paths support `/Jet-Sprint/`; no paid service or secret is needed.
 
-Every production build writes `build-info.json` with its version/commit, active gameplay **`river-runs-v1`**, garage **`persistent-career-v1`**, replay/foundation markers, retained architecture markers, and SHA-256 hashes of all served files. After deployment, **Verify actual published build and font files** fetches the actual Pages manifest and hashes the HTML, JavaScript/worker, CSS, fonts and licences. A stale publication fails that step. Check the deploy job, rather than only its build job.
+Every production build writes `build-info.json` with its version/commit, Racing gameplay **`river-runs-v1`**, Arcade **`sunset-river-v1`**, garage **`career-upgrades-v2`**, replay/foundation markers, retained architecture markers, and SHA-256 hashes of all served files. After deployment, **Verify actual published build and font files** fetches the actual Pages manifest and hashes the HTML, JavaScript/worker, CSS, fonts and licences. A stale publication fails that step. Check the deploy job, rather than only its build job.
 
 ```sh
 node scripts/verify-deployment.mjs https://soulmullet.github.io/Jet-Sprint/ FULL_COMMIT_SHA

@@ -30,6 +30,7 @@ await writeFile(
       simulation: "world-space-fixed-step",
       campaign: "four-track-1987",
       gameplay: "river-runs-v1",
+      arcade: "sunset-river-v1",
       garage: "career-upgrades-v2",
       progression:"engine-pump-nitrous-v1",
       speedUnits:"mph-v1",

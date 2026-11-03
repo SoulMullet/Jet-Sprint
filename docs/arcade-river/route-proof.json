@@ -1,0 +1,56 @@
+{
+  "method": "Actual stepBoat integrator at 120 Hz, default Arcade assists, proportional steering driver, no pose changes/teleports. Not a human playtest or mobile FPS measurement.",
+  "course": {
+    "metres": 2040.5562629504,
+    "gates": 20,
+    "ramps": 2,
+    "rocks": 5,
+    "logs": 3,
+    "pickups": 25,
+    "totalCash": 625,
+    "timeLimit": 125
+  },
+  "water": {
+    "vertices": 5184,
+    "triangles": 6728,
+    "drawCalls": 1
+  },
+  "runs": [
+    {
+      "route": "safe",
+      "seconds": 62.02499999999712,
+      "done": true,
+      "failure": "",
+      "checkpoints": 20,
+      "required": 20,
+      "cash": 150,
+      "time": 62.02499999999712,
+      "condition": 89.17554631721376,
+      "jumps": 2,
+      "collisions": 1,
+      "shortcut": false,
+      "rating": "HOT RIVER RUN",
+      "airFrames": 370,
+      "maxHeight": 3.164944444444438,
+      "length": 2040.5562629504
+    },
+    {
+      "route": "shortcut",
+      "seconds": 61.44166666666382,
+      "done": true,
+      "failure": "",
+      "checkpoints": 20,
+      "required": 20,
+      "cash": 275,
+      "time": 61.44166666666382,
+      "condition": 71.06169012510671,
+      "jumps": 2,
+      "collisions": 2,
+      "shortcut": true,
+      "rating": "RIVER ACE",
+      "airFrames": 370,
+      "maxHeight": 3.164944444444438,
+      "length": 2040.5562629504
+    }
+  ]
+}

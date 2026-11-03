@@ -85,8 +85,8 @@ export class CampaignScenery {
     this.lamp.position.set(0, 2, river1.waterWidth);
     this.gate.add(this.lamp);
     this.sign(
-      "RIVER EXIT",
-      "THREE LAPS TO OPEN",
+      world.arcade ? "SUNSET RIVER" : "RIVER EXIT",
+      world.arcade ? "HOLD LEFT / RIGHT" : "THREE LAPS TO OPEN",
       gate.x - gate.tz * 9,
       3,
       gate.z + gate.tx * 9,
@@ -123,15 +123,15 @@ export class CampaignScenery {
       const deck = this.mesh(
         this.box,
         this.materials.wood,
-        -1,
-        0.16,
+        j.deckLength ? -j.deckLength/2 : -1,
+        j.deckRise ? j.deckRise/2 : 0.16,
         0,
-        3,
+        j.deckLength??3,
         0.12,
         j.halfWidth * 2,
         ramp,
       );
-      deck.rotation.z = 0.14;
+      deck.rotation.z = j.deckLength ? 0.07 : 0.14;
       for (const side of [-1, 1])
         this.mesh(
           this.box,
@@ -145,8 +145,8 @@ export class CampaignScenery {
           ramp,
         ).rotation.z = 0.14;
       this.sign(
-        "OPTIONAL JUMP",
-        "CENTRE CHANNEL = BYPASS",
+        world.arcade ? "JUMP / CLEAR THE LOG" : "OPTIONAL JUMP",
+        world.arcade ? "GOLD STRIPE = TAKEOFF" : "CENTRE CHANNEL = BYPASS",
         p.x - p.tz * j.side * (river1.waterWidth + 2),
         2.4,
         p.z + p.tx * j.side * (river1.waterWidth + 2),

@@ -8,7 +8,7 @@ export class TourPresentation {
     const dark = new THREE.MeshStandardMaterial({ color: "#183237" }),
       cream = new THREE.MeshStandardMaterial({ color: "#e8d9b5" }),
       gold = new THREE.MeshStandardMaterial({ color: "#d9ac46" });
-    for (const course of world.courses.slice(1)) {
+    for (const course of world.circuitDecorations===false ? [] : world.courses.slice(1)) {
       const p = course.sample(0),
         group = new THREE.Group();
       group.position.set(p.x, 0.035, p.z);
@@ -35,7 +35,7 @@ export class TourPresentation {
     const markerGeometry = new THREE.CylinderGeometry(0.21, 0.29, 0.65, 6),
       markerMatrix = new THREE.Matrix4(),
       markerColor = new THREE.Color();
-    for (const course of world.courses.slice(1)) {
+    for (const course of world.circuitDecorations===false ? [] : world.courses.slice(1)) {
       const positions = [],
         width = world.definition.tracks.find(
           (t) => t.id === course.id,

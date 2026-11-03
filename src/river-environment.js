@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { riverEnvironmentData } from "./river-environment-data.js";
 export class RiverEnvironment {
   constructor(scene, world) {
-    this.data = riverEnvironmentData(world);
+    this.data = world.environmentData ?? riverEnvironmentData(world);
     world.debris = this.data.logs;
     for (const rock of this.data.boulders)
       if (!world.rocks.some((r) => r.id === rock.id))

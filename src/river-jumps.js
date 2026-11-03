@@ -20,7 +20,7 @@ export function flightPitch(velocity, speed, airborne) {
 }
 export function safeJumpFlight(world, b, launch, gravity) {
   const duration =
-    (launch + Math.sqrt(launch * launch + 2 * gravity * 0.02)) / gravity;
+    (launch + Math.sqrt(launch * launch + 2 * gravity * (world.arcade ? .55 : .02))) / gravity;
   for (let i = 1; i <= 16; i++) {
     const t = (duration * i) / 16,
       x = b.x + b.vx * t,
@@ -29,7 +29,8 @@ export function safeJumpFlight(world, b, launch, gravity) {
     if (Math.hypot(x - n.x, z - n.z) > (n.hullLimit ?? 6.5) - 0.25)
       return false;
     for (const rock of world.rocks || [])
-      if (Math.hypot(x - rock.x, z - rock.z) < rock.radius + 1.45) return false;
+      if (Math.hypot(x - rock.x, z - rock.z) < rock.radius + 1.45 &&
+        (!world.arcade || .55+launch*t-.5*gravity*t*t<=rock.radius*1.18+.35)) return false;
   }
   return true;
 }

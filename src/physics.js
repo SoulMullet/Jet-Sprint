@@ -27,7 +27,7 @@ function integrate(b,input,dt,nearest,service=null){
  const response=(throttle>b.pump?settings.pumpResponse:settings.pumpDecay)/(service?.responseScale??1);
  b.pump+=(throttle-b.pump)*(1-Math.exp(-dt/response));
  const maxNozzle=settings.nozzleAuthority*Math.PI/180;
- b.nozzle+=(steering*maxNozzle-b.nozzle)*(1-Math.exp(-dt*settings.jetSteeringResponse*settings.steer/75));
+ b.nozzle+=(steering*maxNozzle-b.nozzle)*(1-Math.exp(-dt*settings.jetSteeringResponse*settings.steer/75*(service?.steeringResponseScale??1)));
  b.nozzle=clamp(b.nozzle,-maxNozzle,maxNozzle);
  // Acceleration tuning changes effective mass/inertia, not the reported jet-force ceiling.
  const peak=settings.maxThrust,gain=(settings.acceleration/21)*(service?.gainScale??Math.max(1,settings.top/120)),thrust=peak*b.pump*(service?.thrustScale??1);
@@ -38,7 +38,7 @@ function integrate(b,input,dt,nearest,service=null){
  // Stern reaction force produces yaw; optional slip instability is disabled by default.
  const spin=settings.spinoutSensitivity*smooth(Math.abs(slipAngle),.45,1.1)*Math.min(1,speed/max);
  const torque=(thrust+assistedThrust)*Math.sin(b.nozzle)*1.85/REFERENCE_YAW_INERTIA*gain*authority*moving*(settings.steer/75)-Math.sign(lateralBefore)*spin*2;
- const damping=(settings.yawDamping*(.9+.2*Math.min(1,speed/max))+.12*Math.abs(b.yawRate))*(1-spin*.6);
+ const damping=(settings.yawDamping*(.9+.2*Math.min(1,speed/max))+.12*Math.abs(b.yawRate))*(1-spin*.6)*(service?.steeringDampingScale??1);
  b.yawRate=clamp((b.yawRate+torque/settings.yawInertia*dt)*Math.exp(-damping/settings.yawInertia*dt),-4,4);
  b.angle+=b.yawRate*dt;
  const fx=Math.cos(b.angle),fz=Math.sin(b.angle),accel=thrust/BOAT_MASS*gain*clamp(powerScale,.5,1);
