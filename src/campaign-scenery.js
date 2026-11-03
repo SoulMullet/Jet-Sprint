@@ -2,6 +2,7 @@ import { riverJumpSites } from "./river-jumps.js";
 import * as THREE from "three";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import { displayFont, interfaceFont, repaintAfterFonts } from "./typography.js";
+import { arcadeRampGeometry } from "./arcade/ramps.js";
 
 export class CampaignScenery {
   constructor(scene, world) {
@@ -86,7 +87,7 @@ export class CampaignScenery {
     this.gate.add(this.lamp);
     this.sign(
       world.arcade ? "SUNSET RIVER" : "RIVER EXIT",
-      world.arcade ? "HOLD LEFT / RIGHT" : "THREE LAPS TO OPEN",
+      world.arcade ? "TOUCH / DRAG TO STEER" : "THREE LAPS TO OPEN",
       gate.x - gate.tz * 9,
       3,
       gate.z + gate.tx * 9,
@@ -111,39 +112,67 @@ export class CampaignScenery {
       }
     scene.add(this.posts, this.flags);
     this.lastCheckpoint = -1;
+    this.ramps = [];
     for (const j of riverJumpSites(world)) {
       const p = world.river.sample(j.distance),
         x = p.x - p.tz * j.side * j.offset,
         z = p.z + p.tx * j.side * j.offset;
       const ramp = new THREE.Group();
-      ramp.position.set(x, 0.04, z);
+      ramp.name = j.id;
+      ramp.userData.launchHalfWidth = j.halfWidth;
+      ramp.position.set(x, world.arcade ? 0 : 0.04, z);
       ramp.rotation.y = -Math.atan2(p.tz, p.tx);
       scene.add(ramp);
-      // A small side ramp leaves the central channel unobstructed.
-      const deck = this.mesh(
-        this.box,
-        this.materials.wood,
-        j.deckLength ? -j.deckLength/2 : -1,
-        j.deckRise ? j.deckRise/2 : 0.16,
-        0,
-        j.deckLength??3,
-        0.12,
-        j.halfWidth * 2,
-        ramp,
-      );
-      deck.rotation.z = j.deckLength ? 0.07 : 0.14;
+      // Arcade's continuous wedge uses exactly the same halfWidth as takeoff.
+      const deck = world.arcade
+        ? this.mesh(
+            arcadeRampGeometry(j),
+            this.materials.wood,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            ramp,
+          )
+        : this.mesh(
+            this.box,
+            this.materials.wood,
+            j.deckLength ? -j.deckLength / 2 : -1,
+            j.deckRise ? j.deckRise / 2 : 0.16,
+            0,
+            j.deckLength ?? 3,
+            0.12,
+            j.halfWidth * 2,
+            ramp,
+          );
+      deck.name = "ramp-deck";
+      if (world.arcade) {
+        deck.geometry.computeBoundingBox();
+        const bounds = deck.geometry.boundingBox;
+        this.ramps.push({
+          id: j.id,
+          visibleWidth: bounds.max.z - bounds.min.z,
+          collisionWidth: j.halfWidth * 2,
+          angle: ramp.rotation.y,
+        });
+      }
+      deck.rotation.z = world.arcade ? 0 : j.deckLength ? 0.07 : 0.14;
       for (const side of [-1, 1])
         this.mesh(
           this.box,
           this.materials.gold,
-          -1,
-          0.26,
+          world.arcade ? -j.deckLength / 2 : -1,
+          world.arcade ? j.deckRise / 2 + 0.015 : 0.26,
           side * j.halfWidth,
-          3,
-          0.07,
+          world.arcade ? j.deckLength : 3,
+          world.arcade ? 0.025 : 0.07,
           0.08,
           ramp,
-        ).rotation.z = 0.14;
+        ).rotation.z = world.arcade
+          ? Math.atan2(j.deckRise, j.deckLength)
+          : 0.14;
       this.sign(
         world.arcade ? "JUMP / CLEAR THE LOG" : "OPTIONAL JUMP",
         world.arcade ? "GOLD STRIPE = TAKEOFF" : "CENTRE CHANNEL = BYPASS",

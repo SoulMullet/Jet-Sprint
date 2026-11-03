@@ -1,5 +1,7 @@
 # Arcade River Prototype V1 — v0.31.0
 
+Historical foundation report. **v0.31.1 replaces hold buttons with default relative drag steering and widens/repositions the two ramps.** See the [corrective build report](../arcade-drag-wide/README.md) for current controls, measurements and evidence.
+
 Choose **ARCADE RIVER → RUN THE RIVER** on the title, or open [the Arcade URL](https://soulmullet.github.io/Jet-Sprint/?mode=arcade-river). Locally append `?mode=arcade-river` to Vite/preview's URL. The base URL and **JET SPRINT / RACING** choice retain the existing three River Rush races, manual throttle, nitrous gesture, career/garage, replay library and original tuning.
 
 ## Play

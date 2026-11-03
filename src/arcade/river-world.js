@@ -6,6 +6,7 @@ import { campaignDefinition } from "../campaign-data.js";
 import { createRiverLevels } from "../river-levels.js";
 import { createShoreContact } from "../shore-contact.js";
 import { nearestOnTrack } from "../track.js";
+import { arcadeRamp } from "./ramps.js";
 
 export const ARCADE_COURSE_VERSION = "sunset-river-v1";
 // Metres, Y-up. The two round basins are connected launch/finish water, not levels.
@@ -48,10 +49,10 @@ const river = {
   rapids: { strength: 0.12, spacing: 140 },
   rockSpacing: 0,
   jump: {
-    distance: 330,
+    distance: 210,
     offset: 0,
     side: 1,
-    halfWidth: 8,
+    halfWidth: 16.575,
     launch: 7.2,
     minSpeed: 9,
     bonus: 0,
@@ -147,13 +148,10 @@ export function createArcadeWorld() {
       g.distance > world.shortcut.end + 25,
   );
   leg.arcade = true;
-  leg.jumpSites = [330, path.length - 165].map((distance, i) => ({
-    ...river.jump,
-    id: "sunset-ramp-" + i,
-    distance,
-    deckLength: 8,
-    deckRise: 0.55,
-  }));
+  // Keep the tutorial launch on the preceding straight so the full wider deck
+  // has a clear ballistic landing corridor. Later jumps retain the same route.
+  leg.jumpSites = [210, path.length - 70].map((distance, i) =>
+    arcadeRamp(world, distance, i === 0 ? .85 : .75, "sunset-ramp-" + i));
   const rocks = [
     { d: 190, o: 9 },
     { d: 550, o: -10 },

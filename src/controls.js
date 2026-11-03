@@ -1,6 +1,7 @@
 import { ControlInput, clamp, returnInput } from "./control-input.js";
 import { mountArcadeTouch } from "./arcade-touch.js";
 import { GamepadSource } from "./control-gamepad.js";
+import { mountRiverDrag } from "./arcade/drag-steering.js";
 
 const keyMap = {
   ArrowLeft: "left",
@@ -23,6 +24,7 @@ export function bindControls(
   store,
   {
     arcade = false,
+    riverDrag = null,
     onPress = () => {},
     onAction = () => {},
     canDrive = () => true,
@@ -60,7 +62,8 @@ export function bindControls(
       store.values.padRightAxis,
       store.values.padTriggerRest,
     ].join("/");
-  let buttons = null;
+  let buttons = null,
+    drag = null;
   pipeline.arcadeTouch = arcade;
   let monitoring = false;
   const gamepad = new GamepadSource(store, {
@@ -79,6 +82,7 @@ export function bindControls(
       }
   }
   function release() {
+    drag?.clear();
     buttons?.clear();
     for (const name of Object.keys(pointers)) {
       const id = pointers[name];
@@ -365,6 +369,18 @@ export function bindControls(
     } else {
       enabled = true;
       const v = store.values;
+      if (drag) {
+        const s = drag.state;
+        touch.steering = drag.update(dt);
+        pipeline.set(
+          "touch",
+          touch.steering,
+          0,
+          s.pointer !== null || s.value !== 0,
+          s.intent,
+        );
+        s.intent = false;
+      }
       for (const name of axes)
         if (!arcade && pointers[name] === null) {
           released[name] += dt;
@@ -401,6 +417,7 @@ export function bindControls(
       lastPadThrottle = pad.throttle;
       pipeline.update(dt, speedRatio);
     }
+    drag?.paint(input.steering);
     if (clock - lastPaint >= 1 / 30) {
       paint();
       lastPaint = clock;
@@ -447,18 +464,27 @@ export function bindControls(
   window.visualViewport?.addEventListener("resize", layout);
   if (arcade) {
     elements.steering.parentElement.hidden = true;
-    buttons = mountArcadeTouch({
-      canDrive,
-      onPress,
-      getNitrous,
-      release,
-      set: (steer, throttle, engaged, nitrous = false) => {
-        pipeline.set("touch", steer, throttle, engaged, true, nitrous);
-        touch.steering = steer;
-        touch.throttle = throttle;
-        pipeline.update(0);
-      },
-    });
+    if (riverDrag)
+      drag = mountRiverDrag({
+        ...riverDrag,
+        store,
+        canDrive,
+        onPress,
+        onInterrupt: release,
+      });
+    else
+      buttons = mountArcadeTouch({
+        canDrive,
+        onPress,
+        getNitrous,
+        release,
+        set: (steer, throttle, engaged, nitrous = false) => {
+          pipeline.set("touch", steer, throttle, engaged, true, nitrous);
+          touch.steering = steer;
+          touch.throttle = throttle;
+          pipeline.update(0);
+        },
+      });
   }
   layout();
   paint();
@@ -473,6 +499,14 @@ export function bindControls(
       preview: monitoring ? preview.inspect() : null,
       controller: gamepad.inspect(),
       touch: { ...touch },
+      drag: drag
+        ? {
+            pointer: drag.state.pointer,
+            target: drag.state.target,
+            steering: drag.state.value,
+            scheme: "relative-drag-v1",
+          }
+        : null,
       steeringMode: store.values.steerReturn,
       throttleMode: store.values.throttleReturn,
       smoothing: {

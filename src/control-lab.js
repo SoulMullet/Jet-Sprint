@@ -6,7 +6,7 @@ import {
   confirmDialog,
 } from "./ui-components.js";
 
-export function mountControlLab(store, controls) {
+export function mountControlLab(store, controls, { arcadeRiver = false } = {}) {
   const node = (tag, text, parent) => {
     const el = document.createElement(tag);
     if (text) el.textContent = text;
@@ -36,7 +36,7 @@ export function mountControlLab(store, controls) {
   const status = node(
     "p",
     store.warning ||
-      "Arcade response ready. Drag each rail; use two fingers to steer and accelerate.",
+      (arcadeRiver ? "Relative drag ready. Touch the water view; drag horizontally to steer. Throttle is automatic." : "Arcade response ready. Drag each rail; use two fingers to steer and accelerate."),
     root,
   );
   status.id = "controlStatus";
@@ -57,12 +57,13 @@ export function mountControlLab(store, controls) {
     return b;
   };
   for (const [id, spec] of Object.entries(controlSpecs)) {
+    if (spec.group === "Arcade River drag" && !arcadeRiver) continue;
     let group = groups[spec.group];
     if (!group) {
       group = groups[spec.group] = node("details", null, root);
       group.className = "settings-section";
       node("summary", spec.group, group);
-      group.open = spec.group === "Steering";
+      group.open = spec.group === (arcadeRiver ? "Arcade River drag" : "Steering");
     }
     const label = node("label", spec.label + " ", group),
       input = node(spec.type === "enum" ? "select" : "input", null, label);

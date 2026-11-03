@@ -1,0 +1,74 @@
+{
+  "arcade": {
+    "mode": "arcade-river",
+    "build": "0.31.1/local/DRAG-WIDE-V1",
+    "cash": 0,
+    "time": 6.519000000000176,
+    "condition": 100,
+    "jumps": 0,
+    "collisions": 0,
+    "shortcut": false,
+    "rating": "HOT RIVER RUN",
+    "state": "RACING",
+    "progress": 183.0784200369388,
+    "ramps": [
+      {
+        "id": "sunset-ramp-0",
+        "distance": 210,
+        "width": 33.15,
+        "usableWidth": 39,
+        "coverage": 0.85,
+        "visibleWidth": 33.150001525878906,
+        "collisionWidth": 33.15,
+        "angle": 0.8983268722161802
+      },
+      {
+        "id": "sunset-ramp-1",
+        "distance": 1970.5562629504,
+        "width": 29.25,
+        "usableWidth": 39,
+        "coverage": 0.75,
+        "visibleWidth": 29.25,
+        "collisionWidth": 29.25,
+        "angle": 1.5693763362726958
+      }
+    ],
+    "settings": {
+      "cruiseSpeed": 78,
+      "steeringResponse": 1.2,
+      "impactRecovery": 0.6,
+      "landingStability": 0.7,
+      "distance": 24,
+      "height": 16,
+      "smoothing": 6,
+      "fov": 60,
+      "pullback": 0.25,
+      "anticipation": 0.25
+    }
+  },
+  "boat": {
+    "x": 27.94864787750253,
+    "z": -178.42080266884392,
+    "angle": -1.0552103311499055,
+    "vx": 16.19214951763319,
+    "vz": -30.476204446437194,
+    "pump": 0.9999999999999992,
+    "nozzle": 0.06125025022784314,
+    "yawRate": 0.16270886287954348,
+    "nitrous": 0,
+    "engineStage": 0,
+    "collisionImpulse": 0,
+    "planing": 1,
+    "bankDepth": 0,
+    "throttle": 1,
+    "steering": 0.12046677880701953,
+    "thrust": 13649.999999999989,
+    "jetPower": 0.9999999999999992,
+    "forwardSpeed": 34.49787258388713,
+    "lateralSpeed": -0.9388986358044882,
+    "slipAngle": -0.02720941463411688,
+    "forwardAcceleration": 0.3154922770228862,
+    "lateralAcceleration": 4.779601063142435,
+    "engineLoad": 0.5521293764575235
+  }
+}

@@ -70,7 +70,8 @@ export class ArcadeScenery {
       const p = world.river.sample(jump.distance);
       this.q.setFromEuler(this.euler.set(0, -Math.atan2(p.tz, p.tx), 0.07));
       this.scale.setScalar(1.6);
-      for (const side of [-5, 0, 5]) {
+      for (const fraction of [-.7, 0, .7]) {
+        const side = fraction * jump.halfWidth;
         this.position.set(
           p.x - p.tx * 4 - p.tz * side,
           0.37,

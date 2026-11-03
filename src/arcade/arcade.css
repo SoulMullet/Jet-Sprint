@@ -87,6 +87,23 @@ body.arcade-river.racing .speed {
   bottom: 116px !important;
   width: 104px !important;
 }
+/* The canvas is the drag surface; the normal HUD remains free of input tools. */
+#arcadeSteeringDebug {
+  position: fixed;
+  z-index: 12;
+  left: max(16px, env(safe-area-inset-left));
+  bottom: max(14px, env(safe-area-inset-bottom));
+  padding: 6px 9px;
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  background: var(--navy);
+  color: var(--cream);
+  font: 600 11px var(--font-label);
+  pointer-events: none;
+}
+body:not(.racing) #arcadeSteeringDebug,
+.paused #arcadeSteeringDebug,
+.pit-open #arcadeSteeringDebug { display: none; }
 body.arcade-river #cameraSettings > :not(.arcade-tuning):not(summary) {
   display: none;
 }

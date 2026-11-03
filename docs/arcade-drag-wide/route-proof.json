@@ -1,0 +1,38 @@
+[
+  {
+    "route": "safe",
+    "seconds": 61.074999999997175,
+    "done": true,
+    "failure": "",
+    "checkpoints": 20,
+    "required": 20,
+    "cash": 75,
+    "time": 61.074999999997175,
+    "condition": 100,
+    "jumps": 2,
+    "collisions": 0,
+    "shortcut": false,
+    "rating": "HOT RIVER RUN",
+    "airFrames": 370,
+    "maxHeight": 3.164944444444438,
+    "length": 2040.5562629504
+  },
+  {
+    "route": "shortcut",
+    "seconds": 60.49999999999721,
+    "done": true,
+    "failure": "",
+    "checkpoints": 20,
+    "required": 20,
+    "cash": 200,
+    "time": 60.49999999999721,
+    "condition": 81.84838660844476,
+    "jumps": 2,
+    "collisions": 1,
+    "shortcut": true,
+    "rating": "HOT RIVER RUN",
+    "airFrames": 370,
+    "maxHeight": 3.164944444444438,
+    "length": 2040.5562629504
+  }
+]

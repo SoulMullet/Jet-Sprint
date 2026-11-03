@@ -12,10 +12,12 @@ import {
 } from "../src/arcade/run.js";
 import { ArcadeCamera } from "../src/arcade/camera.js";
 import { arcadeWaterGeometry } from "../src/arcade/water.js";
+import { arcadeRamp, arcadeRampGeometry } from "../src/arcade/ramps.js";
 import { driveArcade } from "../scripts/verify-arcade-route.mjs";
 import { campaignDefinition } from "../src/campaign-data.js";
 import { resolveLogContacts } from "../src/river-environment-data.js";
-import { settings } from "../src/physics.js";
+import { settings, stepBoat, PHYSICS_STEP } from "../src/physics.js";
+import { handlingDefaults } from "../src/handling.js";
 const memory = () => {
   const values = new Map();
   return {
@@ -58,7 +60,28 @@ test("new river has continuous water, an actual dry fork island, two wide ramps 
     "A real island separates the safe bend and cut.",
   );
   assert.equal(world.legs[0].jumpSites.length, 2);
-  assert.ok(world.legs[0].jumpSites.every((j) => j.halfWidth >= 8));
+  for (const [i, j] of world.legs[0].jumpSites.entries()) {
+    assert.equal(j.usableWidth, 39);
+    assert.ok(
+      Math.abs((j.halfWidth * 2) / j.usableWidth - (i === 0 ? 0.85 : 0.75)) <
+        1e-10,
+    );
+    const g = arcadeRampGeometry(j);
+    g.computeBoundingBox();
+    assert.ok(Math.abs(g.boundingBox.max.z - j.halfWidth) < 0.00001);
+    assert.ok(Math.abs(g.boundingBox.min.z + j.halfWidth) < 0.00001);
+    assert.equal(g.boundingBox.min.x, -j.deckLength);
+    assert.equal(g.boundingBox.max.x, 0);
+    assert.ok(Math.abs(g.boundingBox.max.y - j.deckRise) < 0.00001);
+    g.dispose();
+  }
+  const originalWidth = world.nearest;
+  world.nearest = () => ({ waterWidth: 16, hullLimit: 13.5 });
+  assert.equal(
+    arcadeRamp(world, 210, 0.85, "narrower").halfWidth * 2,
+    27 * 0.85,
+  );
+  world.nearest = originalWidth;
   assert.ok(
     world.debris.length >= 2 &&
       world.rocks.length >= 4 &&
@@ -69,6 +92,80 @@ test("new river has continuous water, an actual dry fork island, two wide ramps 
       (g) => g.distance < branch.start - 12 || g.distance > branch.end + 25,
     ),
   );
+});
+test("both live Arcade ramp definitions launch and land from left/centre/right 90%-width lanes with no log/bank snag", () => {
+  Object.assign(settings, handlingDefaults);
+  const proof = [];
+  for (const rampIndex of [0, 1])
+    for (const fraction of [-0.9, 0, 0.9]) {
+      const { world, levels } = createArcadeWorld(),
+        m = memory(),
+        tuning = new ArcadeTuning(m),
+        tour = new ArcadeRiverTour(
+          world,
+          levels,
+          new ArcadeRecords(m, levels),
+          tuning,
+        ),
+        service = new ArcadeService(tuning),
+        jump = tour.leaf.jumpSites[rampIndex],
+        p = jump.point,
+        offset = fraction * jump.halfWidth,
+        b = {
+          x: p.x - p.tx * 14 - p.tz * offset,
+          z: p.z - p.tz * 14 + p.tx * offset,
+          angle: Math.atan2(p.tz, p.tx),
+          vx: p.tx * 32,
+          vz: p.tz * 32,
+          pump: 1,
+          nozzle: 0,
+          yawRate: 0,
+        };
+      let launched = false,
+        landed = false,
+        impact = 0,
+        minLandingSpeed = Infinity;
+      for (let i = 0; i < 270; i++) {
+        const before = { x: b.x, z: b.z };
+        if (tour.beforePhysics(b, PHYSICS_STEP))
+          stepBoat(
+            b,
+            { throttle: 1, steering: 0 },
+            PHYSICS_STEP,
+            world.collisionNearest,
+            service.framing(),
+          );
+        tour.step(before, b, PHYSICS_STEP, settings, i * PHYSICS_STEP, {
+          state: "RACING",
+          startAt: 0,
+        });
+        launched ||= tour.airborne;
+        landed ||= tour.landed;
+        impact = Math.max(impact, b.collisionImpulse || 0);
+        if (landed)
+          minLandingSpeed = Math.min(minLandingSpeed, Math.hypot(b.vx, b.vz));
+      }
+      assert.equal(launched, true, `${rampIndex}/${fraction} launches`);
+      assert.equal(landed, true, `${rampIndex}/${fraction} lands`);
+      assert.equal(
+        impact,
+        0,
+        `${rampIndex}/${fraction} no physical obstacle/bank contact`,
+      );
+      assert.ok(
+        minLandingSpeed > 30,
+        "Horizontal momentum survives water recontact",
+      );
+      proof.push({
+        ramp: rampIndex,
+        offset,
+        launched,
+        landed,
+        impact,
+        minLandingSpeed,
+      });
+    }
+  assert.equal(proof.length, 6);
 });
 test("safe and shortcut finish through actual force/contact/jump simulation in 60–90 seconds; shortcut pays more pickup cash", () => {
   const safe = driveArcade(),

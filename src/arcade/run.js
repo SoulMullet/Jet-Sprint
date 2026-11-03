@@ -2,9 +2,9 @@ import { RiverRunTour } from "../river-run.js";
 import { boatPerformance, standardUpgradeBalance } from "../garage/upgrades.js";
 export const ARCADE_RECORD_KEY = "jet-sprint-arcade-river-records-v1";
 export const arcadeControlPreset = Object.freeze({
-  id: "arcade-auto-v1",
+  id: "arcade-drag-auto-v1",
   throttle: "automatic",
-  steering: "hold",
+  steering: "relative-drag",
   jump: "ramps",
 });
 export function applyArcadeControls(input, allowed, racing, done) {
@@ -133,8 +133,8 @@ export class ArcadeRiverTour extends RiverRunTour {
         const p = j.point,
           along = (b.x - p.x) * p.tx + (b.z - p.z) * p.tz,
           lateral = -(b.x - p.x) * p.tz + (b.z - p.z) * p.tx;
-        if (along >= -8 && along < 0 && Math.abs(lateral) < j.halfWidth)
-          this.rampLift = 0.55 * (1 + along / 8);
+        if (along >= -j.deckLength && along < 0 && Math.abs(lateral) < j.halfWidth)
+          this.rampLift = j.deckRise * (1 + along / j.deckLength);
       }
     return super.beforePhysics(b, dt);
   }

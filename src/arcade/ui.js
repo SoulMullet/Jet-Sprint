@@ -35,7 +35,7 @@ export function mountArcadeUI(
   document.querySelector(".intro-tagline").innerHTML =
     "OPEN RIVER.<br>FULL SEND.";
   document.querySelector(".intro-description").textContent =
-    "Automatic throttle. Hold LEFT or RIGHT. Hit ramps, dodge hazards and grab cash. Reach FINISH before 2:05.";
+    "Automatic throttle. Touch the water view and drag left or right to steer. Hit wide ramps, dodge hazards and grab cash. Reach FINISH before 2:05.";
   document.querySelector(".entry-strap>span").textContent =
     "SUNSET RIVER / ARCADE INVITATIONAL";
   document.querySelector(".entry-course>strong").textContent = "SUNSET RIVER";
@@ -66,7 +66,7 @@ export function mountArcadeUI(
   pauseMenu.onclick = onMenu;
   document.querySelector(".pause-card").append(pauseMenu);
   document.querySelector("#intro footer").innerHTML =
-    '<span>TOUCH</span> HOLD LEFT / RIGHT · AUTOMATIC THROTTLE<br><span>KEYS</span> A / D OR ARROWS · R RETRY · P PAUSE<br><span id="controllerEntryStatus">PAD</span> LEFT STICK · A START';
+    '<span>TOUCH</span> DRAG ANYWHERE TO STEER · AUTOMATIC THROTTLE<br><span>KEYS</span> A / D OR ARROWS · R RETRY · P PAUSE<br><span id="controllerEntryStatus">PAD</span> LEFT STICK · A START';
   const points = tour.level.route.points,
     xs = points.map((p) => p.x),
     zs = points.map((p) => p.z),
@@ -109,7 +109,7 @@ export function mountArcadeUI(
         records.warning ||
           (tour.reward?.personalBest && !tour.failed
             ? "NEW PERSONAL BEST"
-            : "HOLD LEFT / RIGHT. THE BOAT DOES THE REST."),
+            : "TOUCH AND DRAG TO STEER. THE BOAT DOES THE REST."),
       ]) {
         const p = document.createElement("p");
         p.textContent = text;

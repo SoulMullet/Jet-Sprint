@@ -1,0 +1,51 @@
+{
+  "arcade": {
+    "mode": "arcade-river",
+    "cash": 0,
+    "time": 9.977099999997902,
+    "condition": 100,
+    "jumps": 0,
+    "collisions": 0,
+    "shortcut": false,
+    "rating": "HOT RIVER RUN",
+    "state": "RACING",
+    "progress": 301.14375228965673,
+    "settings": {
+      "cruiseSpeed": 78,
+      "steeringResponse": 1.2,
+      "impactRecovery": 0.6,
+      "landingStability": 0.7,
+      "distance": 24,
+      "height": 16,
+      "smoothing": 6,
+      "fov": 60,
+      "pullback": 0.25,
+      "anticipation": 0.25
+    }
+  },
+  "boat": {
+    "x": 99.24796024560882,
+    "z": -272.81048001370254,
+    "angle": -1.1832588396748445,
+    "vx": 14.565749938259394,
+    "vz": -31.0195227256624,
+    "pump": 0.9999999999999992,
+    "nozzle": -0.0796292298614439,
+    "yawRate": -0.2601295651516057,
+    "nitrous": 0,
+    "engineStage": 0,
+    "collisionImpulse": 0,
+    "planing": 1,
+    "bankDepth": 0,
+    "throttle": 1,
+    "steering": -0.14804101862113125,
+    "thrust": 13649.999999999989,
+    "jetPower": 0.9999999999999992,
+    "forwardSpeed": 34.223729314615746,
+    "lateralSpeed": 1.7630125330525281,
+    "slipAngle": 0.05146883548793518,
+    "forwardAcceleration": 0.708616957023614,
+    "lateralAcceleration": -9.618712152647367,
+    "engineLoad": 0.5537017893504865
+  }
+}
