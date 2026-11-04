@@ -1,8 +1,8 @@
 import {speedSetting,displaySetting} from './speed-units.js';
 import {sprayControls,sprayDefaults} from './spray-settings.js';
-import {handlingDefaults,physicsControls,handlingKeys,handlingProfiles,identifyHandling} from './handling.js';
+import {handlingDefaults,physicsControls,handlingKeys,handlingProfiles,identifyHandling,HANDLING_REVISION,upgradeFactoryHandling} from './handling.js';
 export const SETTINGS_SCHEMA=3;
-export const GAME_VERSION='0.31.1';
+export const GAME_VERSION='0.32.0';
 export const settingsKey='jet-sprint-settings';
 export const presetsKey='jet-sprint-presets';
 const number=(category,label,defaultValue,min,max,step=1,unit='')=>({category,label,type:'number',default:defaultValue,min,max,step,unit});
@@ -13,7 +13,7 @@ export const registry={
  jumpLaunchScale:number('River Jumps','Jump launch scale',1,.6,1.6,.05,'×'),jumpGravityScale:number('River Jumps','Jump gravity scale',1,.6,1.5,.05,'×'),landingSplash:number('River Jumps','Landing splash intensity',1,0,2,.1,'×'),
  ...Object.fromEntries(Object.entries(sprayControls).map(([id,s])=>[id,{...number('Spray Effects',s.label,s.value,s.min,s.max,s.step,s.unit),description:s.description}])),
  ...Object.fromEntries(Object.entries(physicsControls).map(([id,s])=>[id,{...number('Boat Handling',s.label,s.value,s.min,s.max,s.step,s.unit),description:s.description}])),
- invertBank:bool('Boat Handling','Invert banking direction',false),physicsPreset:choice('Boat Handling','Physics preset','balanced',['balanced','arcade','simulation','custom']),physicsTelemetry:bool('Boat Handling','Show live physics telemetry',false),
+ invertBank:bool('Boat Handling','Invert banking direction',false),physicsPreset:choice('Boat Handling','Physics preset','arcade',['balanced','arcade','simulation','custom']),physicsTelemetry:bool('Boat Handling','Show live physics telemetry',false),
  cameraResponse:number('Boat Handling','Camera response',8,3,12),effects:number('Spray Effects','Speed effects',1,.5,1.5,.1),sprayDistance:number('Spray Effects','Spray distance',100,0,200,1,'%'),waterVolume:number('Spray Effects','Water volume',100,0,200,1,'%'),
  waterMode:choice('Water Physics','Water mode','legacy',['simulated','legacy']),fluidResolution:choice('Water Physics','Simulation grid','auto',['auto','64','96','128','192']),fluidDebug:choice('Water Physics','Water debug','0',['0','1','2','3']),waveScale:number('Water Physics','Visual wave height',240,0,300,1,'%'),repeatWaves:bool('Water Physics','Repeat diagnostic waves',false),
  graphics:choice('Graphics','Graphics quality','auto',['auto','low','medium','high','ultra']),mute:bool('Audio','Mute all sound',false),masterVolume:number('Audio','Master volume',100,0,100,1,'%'),
@@ -45,7 +45,7 @@ export function parsePreset(text){if(typeof text!=='string'||text.length>200000)
 export class SettingsStore {
  constructor(storage){this.storage=storage;this.values=defaultSettings();this.legacy={};this.listeners=new Set();this.warnings=[];this.timer=null;this.restored=false;
   let savedText=null;
-  try{const text=savedText=storage.getItem(settingsKey);if(text){const migrated=parsePreset(text);this.values=migrated.values;this.legacy=migrated.legacy;this.warnings.push(...migrated.notes);this.restored=true;this.schedule();return;}}catch(error){if(savedText)this.legacy.unreadableSavedSettings=savedText.slice(0,200000);this.warnings.push(`Saved settings could not be restored: ${error.message}`);}
+  try{const text=savedText=storage.getItem(settingsKey);if(text){const migrated=parsePreset(text);this.values=migrated.values;this.legacy=migrated.legacy;this.warnings.push(...migrated.notes);const factoryNote=upgradeFactoryHandling(this.values,JSON.parse(text));if(factoryNote)this.warnings.push(factoryNote);this.restored=true;this.schedule();return;}}catch(error){if(savedText)this.legacy.unreadableSavedSettings=savedText.slice(0,200000);this.warnings.push(`Saved settings could not be restored: ${error.message}`);}
   // Migrate the two historical keys, without deleting them or touching race data.
   try{const water=JSON.parse(storage.getItem('jet-sprint-water')||'null');if(plain(water))for(const [id,value] of Object.entries(water)){try{if(Object.hasOwn(registry,id))this.values[id]=valueFor(id,value,this.warnings);else if(safeKey(id))this.legacy[id]=value;}catch(error){this.legacy[id]=value;this.warnings.push(error.message);}}}catch(error){this.warnings.push(`Legacy water settings unavailable: ${error.message}`);}
   try{const graphics=storage.getItem('jet-sprint-graphics');if(graphics)this.values.graphics=valueFor('graphics',graphics,this.warnings);}catch(error){this.warnings.push(`Legacy graphics setting unavailable: ${error.message}`);}
@@ -61,7 +61,7 @@ export class SettingsStore {
  emit(ids,notes=[]){for(const callback of this.listeners)callback(ids,notes);}
  schedule(){clearTimeout(this.timer);this.timer=setTimeout(()=>this.flush(),250);}
  flush(){clearTimeout(this.timer);this.timer=null;try{this.storage.setItem(settingsKey,this.exportText());return true;}catch(error){this.emit([],['Settings are active, but storage is unavailable. Export a backup to keep them.']);return false;}}
- exportText(){return JSON.stringify({schemaVersion:SETTINGS_SCHEMA,gameVersion:GAME_VERSION,exportedAt:new Date().toISOString(),settings:this.values,legacy:this.legacy},null,2);}
+ exportText(){return JSON.stringify({schemaVersion:SETTINGS_SCHEMA,gameVersion:GAME_VERSION,handlingRevision:HANDLING_REVISION,exportedAt:new Date().toISOString(),settings:this.values,legacy:this.legacy},null,2);}
  importText(text){const next=parsePreset(text);this.values=next.values;this.legacy=next.legacy;this.emit(Object.keys(registry),next.notes);this.schedule();return next.notes;}
  reset(){this.values=defaultSettings();this.emit(Object.keys(registry));this.schedule();}
 }

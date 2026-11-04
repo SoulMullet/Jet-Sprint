@@ -1,0 +1,10 @@
+{
+  "version": "0.32.0",
+  "titleHidesGameplayControls": true,
+  "controlsVisibleDuringPlay": true,
+  "heldTouchThrustVerified": true,
+  "releaseThrust": 0,
+  "releaseSpeed": 7.93300357078545,
+  "pauseAndLabsHideGameplayControls": true,
+  "liveRangesWork": true
+}

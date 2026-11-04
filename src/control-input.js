@@ -182,15 +182,20 @@ export class ControlInput {
       v.steerRamp,
       dt,
     );
-    this.input.throttle = filterInput(
-      this.input.throttle,
-      this.targetThrottle,
-      v.throttleSmoothing,
-      this.targetThrottle > this.input.throttle
-        ? v.throttleRampUp
-        : v.throttleRampDown,
-      dt,
-    );
+    // Release is a safety edge, never a smoothed/latched throttle request.
+    this.input.throttle =
+      this.targetThrottle > 0
+        ? filterInput(
+            this.input.throttle,
+            this.targetThrottle,
+            v.throttleSmoothing,
+            this.targetThrottle > this.input.throttle
+              ? v.throttleRampUp
+              : v.throttleRampDown,
+            dt,
+          )
+        : 0;
+    if (this.targetThrottle === 0) this.input.nitrous = false;
     this.input.left = this.input.steering < -0.02;
     this.input.right = this.input.steering > 0.02;
     return this.input;

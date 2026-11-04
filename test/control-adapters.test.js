@@ -131,7 +131,7 @@ test("actual pointer adapters capture independent axes, drag proportionally and 
     store.values.throttleReturn = "hold";
     event(elements.throttle, "pointerup", { pointerId: 2 });
     advance();
-    assert.equal(controls.inspect().touch.throttle, 0.6);
+    assert.equal(controls.inspect().touch.throttle, 0);
     // Existing double-tap gameplay depends on this fresh edge even above idle.
     down(elements.throttle, 4, 302, 235);
     assert.equal(presses.filter((p) => p === "throttle").length, 2);

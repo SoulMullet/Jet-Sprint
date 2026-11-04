@@ -35,7 +35,7 @@ export function mountArcadeUI(
   document.querySelector(".intro-tagline").innerHTML =
     "OPEN RIVER.<br>FULL SEND.";
   document.querySelector(".intro-description").textContent =
-    "Automatic throttle. Touch the water view and drag left or right to steer. Hit wide ramps, dodge hazards and grab cash. Reach FINISH before 2:05.";
+    "Hold THROTTLE to accelerate; release to coast. Touch the water view and drag left or right to steer. Hit wide ramps, dodge hazards and grab cash. Reach FINISH before 2:05.";
   document.querySelector(".entry-strap>span").textContent =
     "SUNSET RIVER / ARCADE INVITATIONAL";
   document.querySelector(".entry-course>strong").textContent = "SUNSET RIVER";
@@ -44,7 +44,7 @@ export function mountArcadeUI(
   document.querySelector(".entry-course>span:last-child").textContent =
     "TWO RAMPS / TWO ROUTES / ONE MORE RUN";
   const specs = document.querySelectorAll(".entry-specs>div");
-  specs[1].querySelector("b").textContent = "AUTO";
+  specs[1].querySelector("b").textContent = "HOLD";
   specs[1].querySelector("span").textContent = "THROTTLE";
   specs[2].querySelector("b").textContent = tour.tuning.values.cruiseSpeed;
   specs[2].querySelector("span").textContent = "MPH / ARCADE PRESET";
@@ -66,7 +66,7 @@ export function mountArcadeUI(
   pauseMenu.onclick = onMenu;
   document.querySelector(".pause-card").append(pauseMenu);
   document.querySelector("#intro footer").innerHTML =
-    '<span>TOUCH</span> DRAG ANYWHERE TO STEER · AUTOMATIC THROTTLE<br><span>KEYS</span> A / D OR ARROWS · R RETRY · P PAUSE<br><span id="controllerEntryStatus">PAD</span> LEFT STICK · A START';
+    '<span>TOUCH</span> DRAG TO STEER · HOLD THROTTLE TO GO<br><span>KEYS</span> A / D OR ARROWS · SPACE / W THROTTLE · R RETRY · P PAUSE<br><span id="controllerEntryStatus">PAD</span> LEFT STICK + RT · A START';
   const points = tour.level.route.points,
     xs = points.map((p) => p.x),
     zs = points.map((p) => p.z),
@@ -109,7 +109,7 @@ export function mountArcadeUI(
         records.warning ||
           (tour.reward?.personalBest && !tour.failed
             ? "NEW PERSONAL BEST"
-            : "TOUCH AND DRAG TO STEER. THE BOAT DOES THE REST."),
+            : "DRAG TO STEER. HOLD THROTTLE TO GO."),
       ]) {
         const p = document.createElement("p");
         p.textContent = text;

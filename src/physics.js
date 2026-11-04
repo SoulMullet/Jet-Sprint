@@ -30,7 +30,8 @@ function integrate(b,input,dt,nearest,service=null){
  b.nozzle+=(steering*maxNozzle-b.nozzle)*(1-Math.exp(-dt*settings.jetSteeringResponse*settings.steer/75*(service?.steeringResponseScale??1)));
  b.nozzle=clamp(b.nozzle,-maxNozzle,maxNozzle);
  // Acceleration tuning changes effective mass/inertia, not the reported jet-force ceiling.
- const peak=settings.maxThrust,gain=(settings.acceleration/21)*(service?.gainScale??Math.max(1,settings.top/120)),thrust=peak*b.pump*(service?.thrustScale??1);
+ // Pressure may decay for presentation, but a released command never propels.
+ const peak=settings.maxThrust,gain=(settings.acceleration/21)*(service?.gainScale??Math.max(1,settings.top/120)),thrust=throttle>0?peak*b.pump*(service?.thrustScale??1):0;
  const assistedThrust=peak*settings.throttleOffSteering*Math.min(1,speed/max)*(1-throttle);
  const authority=settings.lowSpeedSteering+(settings.highSpeedSteering-settings.lowSpeedSteering)*Math.min(1,speed/max);
  const moving=smooth(speed+thrust/BOAT_MASS*gain*dt,.15,2);
@@ -39,7 +40,13 @@ function integrate(b,input,dt,nearest,service=null){
  const spin=settings.spinoutSensitivity*smooth(Math.abs(slipAngle),.45,1.1)*Math.min(1,speed/max);
  const torque=(thrust+assistedThrust)*Math.sin(b.nozzle)*1.85/REFERENCE_YAW_INERTIA*gain*authority*moving*(settings.steer/75)-Math.sign(lateralBefore)*spin*2;
  const damping=(settings.yawDamping*(.9+.2*Math.min(1,speed/max))+.12*Math.abs(b.yawRate))*(1-spin*.6)*(service?.steeringDampingScale??1);
- b.yawRate=clamp((b.yawRate+torque/settings.yawInertia*dt)*Math.exp(-damping/settings.yawInertia*dt),-4,4);
+ // Bounded assistance changes yaw only; the existing jet/velocity integrator
+ // still owns propulsion, grip and collisions. No rotation at a standstill.
+ const maxYaw=settings.maxTurnRate*Math.PI/180,
+  assist=settings.lowSpeedAssist*smooth(speed,.25,2.5)*(1-smooth(speed,4,12)),
+  assistTorque=assist*10*(steering*maxYaw*Math.min(1,speed/6)-b.yawRate),
+  yawLimit=maxYaw*moving;
+ b.yawRate=clamp((b.yawRate+(torque+assistTorque)/settings.yawInertia*dt)*Math.exp(-damping/settings.yawInertia*dt),-yawLimit,yawLimit);
  b.angle+=b.yawRate*dt;
  const fx=Math.cos(b.angle),fz=Math.sin(b.angle),accel=thrust/BOAT_MASS*gain*clamp(powerScale,.5,1);
  // Propulsion is the jet vector, without aligning velocity to the hull heading.
@@ -52,7 +59,7 @@ function integrate(b,input,dt,nearest,service=null){
  b.planing=planingFactor(Math.max(0,forward),settings);
  const nominal=peak/BOAT_MASS*gain*(service?.dragCalibrationScale??1),quadratic=Math.max(0,(nominal-.12*max)/(max*max*max));
  const corner=settings.corneringLoss*Math.min(1,Math.abs(lateral)/Math.max(2,speed))*Math.min(3,Math.abs(b.yawRate))*.35;
- const drag=(.12+forward*forward*quadratic*(service?.boostDragScale??1)+.1*(1-b.planing))*settings.forwardDrag+corner;
+ const drag=(.12+forward*forward*quadratic*(service?.boostDragScale??1)+.1*(1-b.planing))*settings.forwardDrag+corner+settings.offThrottleDrag*(1-throttle);
  forward*=Math.exp(-Math.min(30,drag)*dt);
  b.vx=fx*forward-fz*lateral;b.vz=fz*forward+fx*lateral;
  const magnitude=Math.hypot(b.vx,b.vz),limit=max*1.6;
@@ -69,6 +76,6 @@ function integrate(b,input,dt,nearest,service=null){
  b.forwardAcceleration=((b.vx-oldX)*fx+(b.vz-oldZ)*fz)/dt;
  b.lateralAcceleration=(-(b.vx-oldX)*fz+(b.vz-oldZ)*fx)/dt;
  b.engineStage=service?.engineStage??0;b.nitrous=service?.nitrous??0;
- b.engineLoad=clamp(b.pump*(.55+.25*(1-b.planing)+.2*(1-Math.min(1,Math.max(0,b.forwardSpeed)/max))),0,1);
+ b.engineLoad=throttle>0?clamp(b.pump*(.55+.25*(1-b.planing)+.2*(1-Math.min(1,Math.max(0,b.forwardSpeed)/max))),0,1):0;
  return p;
 }

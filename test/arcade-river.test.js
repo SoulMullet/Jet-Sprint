@@ -167,7 +167,7 @@ test("both live Arcade ramp definitions launch and land from left/centre/right 9
     }
   assert.equal(proof.length, 6);
 });
-test("safe and shortcut finish through actual force/contact/jump simulation in 60–90 seconds; shortcut pays more pickup cash", () => {
+test("safe and shortcut finish through actual force/contact/jump simulation in 55–90 seconds; shortcut pays more pickup cash", () => {
   const safe = driveArcade(),
     cut = driveArcade(true);
   for (const r of [safe, cut]) {
@@ -175,7 +175,7 @@ test("safe and shortcut finish through actual force/contact/jump simulation in 6
     assert.equal(r.done, true);
     assert.equal(r.checkpoints, r.required);
     assert.equal(r.jumps, 2);
-    assert.ok(r.seconds >= 60 && r.seconds <= 90);
+    assert.ok(r.seconds >= 55 && r.seconds <= 90);
     assert.ok(r.condition > 0);
     assert.ok(r.maxHeight > 2 && r.maxHeight < 4);
   }
@@ -184,10 +184,11 @@ test("safe and shortcut finish through actual force/contact/jump simulation in 6
   assert.ok(cut.cash > safe.cash);
   assert.ok(cut.seconds < safe.seconds);
 });
-test("automatic control preset preserves steering, disables nitrous, and releases propulsion outside active racing", () => {
+test("held control preset preserves commanded throttle and steering; never auto-accelerates; disables nitrous and gates race state", () => {
   const input = { steering: -0.6, throttle: 0, nitrous: true };
   applyArcadeControls(input, true, true, false);
-  assert.equal(input.throttle, 1);
+  assert.equal(input.throttle, 0);
+  input.throttle=1;applyArcadeControls(input,true,true,false);assert.equal(input.throttle,1);
   assert.equal(input.steering, -0.6);
   assert.equal(input.nitrous, false);
   for (const args of [

@@ -53,6 +53,7 @@ export async function verifyDeployment(
         throw Error("Wrong live garage/career build.");
       if (info.gameplay !== "river-runs-v1")
         throw Error("Wrong active river-run gameplay build.");
+      if(info.handling!=="held-throttle-arcade-v1")throw Error("Missing active held-throttle / responsive arcade handling build.");
       if(info.arcade!=="sunset-river-v1" || info.arcadeInput!=="relative-drag-wide-v1")throw Error("Missing active Arcade relative drag / wide ramps build.");
       if (
         info.replays !== "recorded-world-poses-v1" ||

@@ -1,5 +1,7 @@
 # Arcade drag steering and wide jumps — v0.31.1
 
+Historical report. **v0.32.0 replaces automatic throttle with hold-to-accelerate and makes responsive Arcade handling the factory default.** See the [current handling report](../arcade-handling/README.md).
+
 Open [Arcade River](https://soulmullet.github.io/Jet-Sprint/?mode=arcade-river), select **RUN THE RIVER**, touch the unobstructed water view and drag horizontally. Acceleration is automatic. Release to centre steering. Keyboard/gamepad steering and the original Racing mode remain available. Add `&dev=1` for the temporary lower-left live steering/build indicator; normal gameplay has no new diagnostic overlay.
 
 ## Root cause and active implementation

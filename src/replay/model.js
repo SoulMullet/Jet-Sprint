@@ -367,7 +367,7 @@ export function compatibility(
   course,
   {
     boatConfig = "sprint-boat-1987-v1",
-    physicsVersion = "waterjet-forces-v1",
+    physicsVersion = "waterjet-forces-v2",
     tuneId,
   } = {},
 ) {

@@ -20,7 +20,7 @@ test('all force controls measurably change the active waterjet calculation',()=>
    for(const value of [spec.min,spec.max]){
     Object.assign(settings,handlingDefaults,{[key]:value});const b={...fresh(),vx:6,vz:4,pump:.6,yawRate:.35};let input={throttle:.8,right:true};
     if(key==='pumpDecay')input={right:true};if(key==='throttleOffSteering'){b.pump=0;b.vx=15;input={right:true};}if(key==='driftRecovery')input={throttle:.8};if(key==='spinoutSensitivity'){b.vx=5;b.vz=12;}
-    run(b,input,.3);outputs.push([b.x,b.z,b.vx,b.vz,b.angle,b.yawRate,b.thrust,b.planing]);
+    if(key==='pumpDecay'){run(b,input,.15);input={throttle:1,right:true};run(b,input,.05);}else run(b,input,.3);outputs.push([b.x,b.z,b.vx,b.vz,b.angle,b.yawRate,b.thrust,b.planing]);
    }
    assert.ok(outputs[0].some((v,i)=>Math.abs(v-outputs[1][i])>1e-7),key);
   }
@@ -33,7 +33,7 @@ test('every visual slider changes a measured hull-motion trace, without steering
  const h=new HullMotion();for(let i=0;i<120;i++)h.update({...fresh(),steering:1,throttle:1},1/120,i/120);assert.equal(h.roll,0);assert.equal(h.pitch,0);assert.equal(h.heave,0);
 });
 test('banking is force driven, symmetric, invertible, bounded, and settles after a turn',()=>{
- const traces=[];for(const sign of [-1,1]){const h=new HullMotion(),b={...fresh(),vx:12,forwardSpeed:12,lateralAcceleration:sign*6,yawRate:sign*.6};for(let i=0;i<180;i++)h.update(b,1/120,i/120);traces.push(h.roll);assert.ok(Math.abs(h.roll)<=9*Math.PI/180+1e-10);b.lateralAcceleration=b.yawRate=0;for(let i=0;i<600;i++)h.update(b,1/120,i/120);assert.ok(Math.abs(h.roll)<1e-6);}
+ const traces=[];for(const sign of [-1,1]){const h=new HullMotion(),b={...fresh(),vx:12,forwardSpeed:12,lateralAcceleration:sign*6,yawRate:sign*.6};for(let i=0;i<180;i++)h.update(b,1/120,i/120);traces.push(h.roll);assert.ok(Math.abs(h.roll)<=11*Math.PI/180+1e-10);b.lateralAcceleration=b.yawRate=0;for(let i=0;i<600;i++)h.update(b,1/120,i/120);assert.ok(Math.abs(h.roll)<1e-6);}
  assert.ok(traces[0]<0&&traces[1]>0);assert.ok(Math.abs(traces[0]+traces[1])<1e-10);
  const h=new HullMotion({...handlingDefaults,invertBank:true});h.update({...fresh(),vx:10,lateralAcceleration:5,yawRate:.4},.1,1);assert.ok(h.roll<0);
 });
@@ -60,14 +60,14 @@ test('CPU water sampling follows wind controls and wake history, with no random 
 });
 test('schema-2 migration retains every old tune and unrelated stores; physics-only operations remain isolated',()=>{
  const prior={top:100,steer:85,drift:72,acceleration:25,graphics:'low',masterVolume:37,waveScale:275},storage=memory({[settingsKey]:JSON.stringify({schemaVersion:2,settings:prior}),sound:'SOUND',camera:'CAMERA','jet-sprint-races-v1':'OLD RACES'}),s=new SettingsStore(storage);
- for(const [k,v] of Object.entries(prior))assert.equal(s.values[k],v);assert.equal(s.values.maxBankAngle,9);assert.equal(s.values.physicsPreset,'custom');
+ for(const [k,v] of Object.entries(prior))assert.equal(s.values[k],v);assert.equal(s.values.maxBankAngle,11);assert.equal(s.values.physicsPreset,'custom');
  for(const preset of ['balanced','arcade','simulation']){s.set('physicsPreset',preset);s.flush();assert.equal(new SettingsStore(storage).values.physicsPreset,preset);assert.equal(s.values.graphics,'low');assert.equal(s.values.masterVolume,37);}
- s.set('maxBankAngle',15);const text=s.exportPhysicsText();s.resetPhysics('Banking & Roll');assert.equal(s.values.maxBankAngle,9);s.importPhysicsText(text);assert.equal(s.values.maxBankAngle,15);s.flush();assert.equal(JSON.parse(storage.getItem(settingsKey)).schemaVersion,SETTINGS_SCHEMA);assert.equal(storage.getItem('sound'),'SOUND');assert.equal(storage.getItem('camera'),'CAMERA');assert.equal(storage.getItem('jet-sprint-races-v1'),'OLD RACES');assert.equal(s.values.waveScale,275);
+ s.set('maxBankAngle',15);const text=s.exportPhysicsText();s.resetPhysics('Banking & Roll');assert.equal(s.values.maxBankAngle,11);s.importPhysicsText(text);assert.equal(s.values.maxBankAngle,15);s.flush();assert.equal(JSON.parse(storage.getItem(settingsKey)).schemaVersion,SETTINGS_SCHEMA);assert.equal(storage.getItem('sound'),'SOUND');assert.equal(storage.getItem('camera'),'CAMERA');assert.equal(storage.getItem('jet-sprint-races-v1'),'OLD RACES');assert.equal(s.values.waveScale,275);
  const before=s.exportPhysicsText();assert.throws(()=>s.importPhysicsText('{"schemaVersion":3,"settings":{"maxThrust":"bad"}}'));assert.equal(s.exportPhysicsText(),before);
  const names=new NamedPresets(storage,'jet-sprint-physics-presets-v1'),id=names.save('My boat',text);names.rename(id,'Lake tune');assert.equal(new NamedPresets(storage,'jet-sprint-physics-presets-v1').get(id).name,'Lake tune');names.delete(id);assert.equal(names.records.length,0);s.flush();
 });
 test('visual-only tuning does not mark a race modified; physics presets and force tuning do',()=>{
- assert.equal(modified({...handlingDefaults,maxBankAngle:25,bounceIntensity:0}),false);assert.equal(modified({...handlingDefaults,maxThrust:18000}),true);assert.equal(modified(handlingProfiles.arcade),true);
+ assert.equal(modified({...handlingDefaults,maxBankAngle:25,bounceIntensity:0}),false);assert.equal(modified({...handlingDefaults,maxThrust:18000}),true);assert.equal(modified(handlingProfiles.arcade),false);assert.equal(modified(handlingProfiles.balanced),true);
 });
 test('existing V8 tuning stays intact while propulsion load affects live engine load',()=>{
  const a=new Engine(),b=new Engine(),before=JSON.stringify(a.settings);for(let i=0;i<120;i++){a.update(12,true,1/120,85/3.6,false,.1);b.update(12,true,1/120,85/3.6,false,1);}assert.ok(b.load>a.load);assert.equal(JSON.stringify(a.settings),before);assert.equal(JSON.stringify(b.settings),before);
@@ -82,7 +82,7 @@ test('Arcade, Balanced and Simulation-Inspired each complete three ordered laps 
   for(let i=0;i<120*600&&!race.done;i++){
    const targetSpeed=name==='simulation'?7:9,lookAhead=name==='simulation'?5:8;
    const prev=c.gates[(race.next+c.gates.length-1)%c.gates.length],end=race.next===0?c.length:c.gates[race.next].distance,d=c.project(b,prev.distance-8,end+25).distance,cue=nav.update(b,race,1/120),target=cue.wrong?{x:cue.targetX,z:cue.targetZ}:c.sample(d+lookAhead),error=Math.atan2(Math.sin(Math.atan2(target.z-b.z,target.x-b.x)-b.angle),Math.cos(Math.atan2(target.z-b.z,target.x-b.x)-b.angle)),speed=Math.hypot(b.vx,b.vz);before.x=b.x;before.z=b.z;
-   stepBoat(b,{throttle:speed<targetSpeed||Math.abs(error)>.35&&speed<targetSpeed+3,left:error-(b.yawRate||0)*.3<-.08,right:error-(b.yawRate||0)*.3>.08},1/120,nearest);race.step(before,b,1/120,defaults);
+   stepBoat(b,{throttle:speed<targetSpeed||Math.abs(error)>.35&&speed<targetSpeed+3,steering:Math.max(-1,Math.min(1,error*1.8-(b.yawRate||0)*.5))},1/120,nearest);race.step(before,b,1/120,defaults);
   }
   assert.equal(race.done,true,name+' gate '+race.next);assert.equal(race.laps.length,3);
  }}finally{Object.assign(settings,saved);}

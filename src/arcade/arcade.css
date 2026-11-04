@@ -47,7 +47,6 @@
     min-height: 44px;
   }
 }
-body.arcade-river #arcadeThrottle,
 body.arcade-river .timing,
 body.arcade-river #journeyHUD,
 body.arcade-river #journeyResults,
@@ -84,7 +83,7 @@ body.arcade-river #steerRight {
 }
 body.arcade-river.racing .speed {
   right: max(18px, env(safe-area-inset-right));
-  bottom: 116px !important;
+  bottom: 145px !important;
   width: 104px !important;
 }
 /* The canvas is the drag surface; the normal HUD remains free of input tools. */
@@ -249,3 +248,11 @@ body.arcade-river #pit-tab-replays {
     transition: none;
   }
 }
+
+body.arcade-river #arcadeThrottle #touchNitroZone { display: none; }
+body.arcade-river #arcadeControls #arcadeThrottle { height: 100px; min-height: 100px; }
+
+#arcadeControls #arcadeThrottle > span:not(#touchNitroZone) { font-size: 16px; }
+body:not(.racing) #arcadeControls,
+body.paused #arcadeControls,
+body.pit-open #arcadeControls { display: none; }

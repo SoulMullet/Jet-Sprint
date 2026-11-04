@@ -51,6 +51,7 @@ export function bindControls(
     nitrous: new Set(),
   };
   let touchIntent = false,
+    touchNitrous = false,
     enabled = false,
     clock = 0,
     lastHaptic = -1,
@@ -104,6 +105,7 @@ export function bindControls(
     gamepad.release();
     touchIntent = false;
     lastPadThrottle = 0;
+    touchNitrous = false;
     paint();
   }
   function setKey(name, key, down) {
@@ -118,6 +120,7 @@ export function bindControls(
       keys.nitrous.size > 0,
     );
     if (down && !wasHeld) onPress(name);
+    pipeline.update(0);
   }
   function setTouch(name, value) {
     touch[name] = value;
@@ -165,7 +168,7 @@ export function bindControls(
         released[name] = 0;
         el.classList.remove("active");
         // Cancellation is a safety stop, never a request to latch a held axis.
-        if (type !== "pointerup") {
+        if (type !== "pointerup" || name === "throttle") {
           touch[name] = 0;
           pipeline.input[name] = 0;
         }
@@ -292,6 +295,12 @@ export function bindControls(
     );
   }
   function paint() {
+    const throttleReadout = document.getElementById("touchThrottleValue");
+    if (throttleReadout) {
+      const value = Math.round(input.throttle * 100) + "%";
+      if (throttleReadout.textContent !== value)
+        throttleReadout.textContent = value;
+    }
     for (const [name, el] of entries) {
       const value = touch[name],
         percent = Math.round(value * 100);
@@ -368,6 +377,7 @@ export function bindControls(
       touch.steering = touch.throttle = 0;
     } else {
       enabled = true;
+      buttons?.update();
       const v = store.values;
       if (drag) {
         const s = drag.state;
@@ -375,14 +385,19 @@ export function bindControls(
         pipeline.set(
           "touch",
           touch.steering,
-          0,
-          s.pointer !== null || s.value !== 0,
-          s.intent,
+          touch.throttle,
+          s.pointer !== null || s.value !== 0 || touch.throttle > 0,
+          s.intent || touchIntent,
+          touchNitrous,
         );
         s.intent = false;
       }
       for (const name of axes)
         if (!arcade && pointers[name] === null) {
+          if (name === "throttle") {
+            touch.throttle = 0;
+            continue;
+          }
           released[name] += dt;
           touch[name] = returnInput(
             touch[name],
@@ -472,19 +487,29 @@ export function bindControls(
         onPress,
         onInterrupt: release,
       });
-    else
-      buttons = mountArcadeTouch({
-        canDrive,
-        onPress,
-        getNitrous,
-        release,
-        set: (steer, throttle, engaged, nitrous = false) => {
-          pipeline.set("touch", steer, throttle, engaged, true, nitrous);
-          touch.steering = steer;
-          touch.throttle = throttle;
-          pipeline.update(0);
-        },
-      });
+    buttons = mountArcadeTouch({
+      steering: !riverDrag,
+      canDrive,
+      onPress,
+      getNitrous,
+      release,
+      set: (steer, throttle, engaged, nitrous = false) => {
+        touch.steering = drag?.state.value ?? steer;
+        touch.throttle = throttle;
+        touchNitrous = nitrous;
+        touchIntent = true;
+        pipeline.set(
+          "touch",
+          touch.steering,
+          throttle,
+          engaged ||
+            (!!drag && (drag.state.pointer !== null || drag.state.value !== 0)),
+          true,
+          nitrous,
+        );
+        pipeline.update(0);
+      },
+    });
   }
   layout();
   paint();

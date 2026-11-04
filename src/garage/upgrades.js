@@ -130,7 +130,6 @@ export function nitrousQuote(profile) {
 export const careerPropulsionKeys = Object.freeze([
   "top",
   "maxThrust",
-  "acceleration",
   "forwardDrag",
   "pumpResponse",
   "pumpDecay",

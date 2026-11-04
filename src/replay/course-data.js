@@ -2,7 +2,7 @@ import { flightPitch, jumpDefaults } from "../river-jumps.js";
 import { forceKeys, handlingKeys } from "../handling.js";
 import { S, wrapAngle } from "./model.js";
 export const BOAT_CONFIG = "sprint-boat-1987-v1",
-  PHYSICS_VERSION = "waterjet-forces-v1";
+  PHYSICS_VERSION = "waterjet-forces-v2";
 export function fingerprint(value) {
   const text = JSON.stringify(value);
   let h = 2166136261;

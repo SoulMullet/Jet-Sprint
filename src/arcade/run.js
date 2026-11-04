@@ -2,13 +2,13 @@ import { RiverRunTour } from "../river-run.js";
 import { boatPerformance, standardUpgradeBalance } from "../garage/upgrades.js";
 export const ARCADE_RECORD_KEY = "jet-sprint-arcade-river-records-v1";
 export const arcadeControlPreset = Object.freeze({
-  id: "arcade-drag-auto-v1",
-  throttle: "automatic",
+  id: "arcade-drag-held-v2",
+  throttle: "hold-to-accelerate",
   steering: "relative-drag",
   jump: "ramps",
 });
 export function applyArcadeControls(input, allowed, racing, done) {
-  input.throttle = allowed && racing && !done ? 1 : 0;
+  if (!allowed || !racing || done) input.throttle = 0;
   input.nitrous = false;
   return input;
 }

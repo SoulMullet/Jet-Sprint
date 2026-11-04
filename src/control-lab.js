@@ -36,7 +36,7 @@ export function mountControlLab(store, controls, { arcadeRiver = false } = {}) {
   const status = node(
     "p",
     store.warning ||
-      (arcadeRiver ? "Relative drag ready. Touch the water view; drag horizontally to steer. Throttle is automatic." : "Arcade response ready. Drag each rail; use two fingers to steer and accelerate."),
+      (arcadeRiver ? "Drag the water view while holding THROTTLE. Release throttle to coast." : "Hold steering and THROTTLE with separate fingers. Release throttle to coast."),
     root,
   );
   status.id = "controlStatus";
@@ -106,6 +106,11 @@ export function mountControlLab(store, controls, { arcadeRiver = false } = {}) {
       );
       status.textContent = "Control setup saved automatically.";
     });
+    if (["throttleReturn","throttleReturnSpeed"].includes(id)) {
+      input.disabled=true;
+      input.title="Archived preference retained for compatibility. Live throttle always releases to zero.";
+    }
+    if (id === "throttleReturn") node("small", "Live throttle is hold-to-run: release always cuts to zero. Legacy return preferences are retained for old presets only.", group).className="control-help";
     if (spec.note) {
       const note = node("small", spec.note, group);
       note.className = "control-help";

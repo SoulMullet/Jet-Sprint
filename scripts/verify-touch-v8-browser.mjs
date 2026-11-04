@@ -5,7 +5,9 @@ import { fileURLToPath } from "node:url";
 const { chromium } = await import(
   process.env.PLAYWRIGHT_MODULE || "playwright"
 );
-const dir = fileURLToPath(new URL("../docs/multitouch-v8", import.meta.url)),
+const dir =
+    process.env.TOUCH_QA_OUTPUT ||
+    fileURLToPath(new URL("../docs/multitouch-v8", import.meta.url)),
   profile = JSON.parse(
     await fs.readFile(
       new URL("../docs/multitouch-v8/qa-profile-v1.json", import.meta.url),
@@ -168,12 +170,14 @@ try {
   throttle.y = rect.throttle.bottom - 30;
   await send("touchMove", [throttle, left]);
   let d = await p.evaluate(() => __JET_SPRINT_INPUT__.inspect());
-  assert.ok(d.throttle > 0 && d.throttle < 0.4);
+  assert.equal(d.throttle, 1);
   assert.equal(d.steering, -1);
   throttle.y = rect.throttle.top + 12;
   await send("touchMove", [throttle, left]);
   await state(1, -1, false);
-  console.log("B / DRAG WITH STEERING HELD");
+  console.log(
+    "B / HELD THROTTLE STAYS FULL THROUGH NITRO APPROACH WITH STEERING",
+  );
   throttle.y = rect.throttle.top - 20;
   await send("touchMove", [throttle, left]);
   await state(1, -1, true);
@@ -182,7 +186,9 @@ try {
     true,
   );
   await p.waitForTimeout(250);
-  await p.evaluate(() => { for(let i=0;i<4;i++) advance(); });
+  await p.evaluate(() => {
+    for (let i = 0; i < 4; i++) advance();
+  });
   await p.screenshot({ path: dir + "/multitouch-nitro.png" });
   throttle.y = rect.throttle.top + 5;
   await send("touchMove", [throttle, left]);
@@ -192,6 +198,25 @@ try {
     false,
   );
   console.log("C / NITRO UP AND DOWN WITH STEERING");
+  throttle.y = rect.throttle.top - 20;
+  await send("touchMove", [throttle, left]);
+  await state(1, -1, true);
+  await send("touchEnd", [throttle]);
+  await state(0, -1, false);
+  assert.equal(
+    await p.evaluate(() => __JET_SPRINT_PHYSICS__.inspect().nitrousActive),
+    false,
+  );
+  assert.equal(
+    await p.evaluate(() => __JET_SPRINT_PHYSICS__.inspect().boat.thrust),
+    0,
+  );
+  await send("touchEnd", [left]);
+  throttle.y = rect.throttle.top + 12;
+  await send("touchStart", [throttle, left]);
+  await state(1, -1, false);
+  console.log("C2 / RELEASING ACTIVE NITRO CUTS BOTH BOOST AND THRUST");
+
   left.x += 2;
   await send("touchMove", [throttle, left]);
   await p.evaluate(() =>
@@ -228,7 +253,11 @@ try {
   // A capture interrupted before gotpointercapture may produce no lost event.
   await send("touchStart", [throttle]);
   await send("touchStart", [throttle, left]);
-  await p.evaluate(() => document.querySelector("#steerLeft").releasePointerCapture(captures.steerLeft));
+  await p.evaluate(() =>
+    document
+      .querySelector("#steerLeft")
+      .releasePointerCapture(captures.steerLeft),
+  );
   left.x += 2;
   await send("touchMove", [throttle, left]);
   await state(1, 0, false);
@@ -242,8 +271,16 @@ try {
     await p.evaluate(() => __JET_SPRINT_INPUT__.inspect().nitrous),
     true,
   );
-  await p.keyboard.up("ShiftLeft");
   await p.keyboard.up("Space");
+  assert.equal(
+    await p.evaluate(() => __JET_SPRINT_INPUT__.inspect().throttle),
+    0,
+  );
+  assert.equal(
+    await p.evaluate(() => __JET_SPRINT_INPUT__.inspect().nitrous),
+    false,
+  );
+  await p.keyboard.up("ShiftLeft");
   await p.evaluate(() => advance());
   const edits = {
     cruiseLayerTwoVolume: 41,
@@ -290,10 +327,11 @@ try {
         fixture:
           "Legacy schema-1 QA profile; kit purchased through real garage. Existing audio levels seeded for migration check.",
         A: "Throttle finger dragged to 100%, then a second finger repeatedly added/released on LEFT/RIGHT: throttle stayed 100%.",
-        B: "Continuous steering held while throttle dragged from partial to full.",
-        C: "Same throttle capture entered nitrous then returned to full normal throttle while the second finger steered.",
+        B: "Continuous steering held while the throttle finger moves; held throttle remains full.",
+        C: "Same held throttle capture enters/exits nitrous while steering; releasing active nitrous cuts throttle, boost and thrust.",
         D: "Established and pending steering capture loss preserved throttle; throttle release preserved steering; touchcancel cleared both. Page scale 1 and scroll 0; legacy touch events never cancelled.",
-        keyboard: "Space + Left Shift works with the throttle button focused.",
+        keyboard:
+          "Space + Left Shift works with the throttle button focused; releasing Space also disengages boost while Shift is still held.",
         audio:
           "All nine M4A files decoded; seven persistent loops; nine real Audio Lab controls saved/restored with old volumes intact.",
         edits,

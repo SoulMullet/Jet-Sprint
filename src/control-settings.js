@@ -48,7 +48,7 @@ export const controlSpecs = {
   arcadeDragSmoothing: number(
     "Arcade River drag",
     "Drag response smoothing",
-    0.035,
+    0.01,
     0,
     0.12,
     0.005,
@@ -57,7 +57,7 @@ export const controlSpecs = {
   arcadeDragReturn: number(
     "Arcade River drag",
     "Release to centre",
-    0.2,
+    0.15,
     0.15,
     0.25,
     0.01,
@@ -87,7 +87,7 @@ export const controlSpecs = {
   steerSmoothing: number(
     "Steering",
     "Steering smoothing",
-    0.025,
+    0.01,
     0,
     0.3,
     0.005,
@@ -96,7 +96,7 @@ export const controlSpecs = {
   steerRamp: number(
     "Steering",
     "Steering ramp limit",
-    18,
+    30,
     0.5,
     60,
     0.5,
@@ -138,7 +138,7 @@ export const controlSpecs = {
   speedSteering: number(
     "Steering",
     "Steering reduction at top speed",
-    10,
+    5,
     0,
     65,
     1,
@@ -471,6 +471,22 @@ export class ControlSettings {
       const saved = storage.getItem(controlStorageKey);
       if (saved) {
         const next = decodeControls(saved, false);
+        const data = JSON.parse(saved);
+        if (
+          data.responseRevision !== "hold-arcade-v1" &&
+          next.preset === "arcade"
+        ) {
+          const former = {
+            arcadeDragSmoothing: 0.035,
+            arcadeDragReturn: 0.2,
+            steerSmoothing: 0.025,
+            steerRamp: 18,
+            speedSteering: 10,
+          };
+          for (const [key, value] of Object.entries(former))
+            if (next.values[key] === value)
+              next.values[key] = controlSpecs[key].value;
+        }
         this.values = next.values;
         this.preset = next.preset;
         this.warning = next.warnings.join(" ");
@@ -526,6 +542,7 @@ export class ControlSettings {
       {
         type: "jet-sprint-controls",
         schemaVersion: CONTROL_SCHEMA,
+        responseRevision: "hold-arcade-v1",
         preset: this.preset,
         settings: this.values,
       },

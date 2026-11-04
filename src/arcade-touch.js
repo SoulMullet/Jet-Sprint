@@ -7,25 +7,33 @@ export function mountArcadeTouch({
   release,
   onPress,
   canDrive,
+  steering = true,
   getNitrous = () => ({ installed: false, fill: 0 }),
 }) {
   const root = document.createElement("nav");
   root.id = "arcadeControls";
   root.setAttribute("aria-label", "Arcade boat controls");
   root.innerHTML =
-    '<div class="arcade-steering"><button id="steerLeft" aria-label="Steer left" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 3 6 12 18 21Z" fill="currentColor"/></svg>LEFT</button><button id="steerRight" aria-label="Steer right" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3 18 12 6 21Z" fill="currentColor"/></svg>RIGHT</button></div><button id="arcadeThrottle" aria-label="Slide upward for throttle, continue upward for nitrous" aria-pressed="false"><span id="touchNitroZone"><b>NITRO</b><small id="touchNitroText">NO KIT</small><i id="touchNitroGauge"></i></span><span>JET</span><output id="touchThrottleValue">0%</output><small>SLIDE UP</small></button>';
+    (steering
+      ? '<div class="arcade-steering"><button id="steerLeft" aria-label="Steer left" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 3 6 12 18 21Z" fill="currentColor"/></svg>LEFT</button><button id="steerRight" aria-label="Steer right" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3 18 12 6 21Z" fill="currentColor"/></svg>RIGHT</button></div>'
+      : "") +
+    '<button id="arcadeThrottle" aria-label="Hold to accelerate; slide upward beyond the button for nitrous" aria-pressed="false"><span id="touchNitroZone"><b>NITRO</b><small id="touchNitroText">NO KIT</small><i id="touchNitroGauge"></i></span><span>THROTTLE</span><output id="touchThrottleValue">0%</output><small>HOLD TO GO</small></button>';
   document.body.append(root);
   const pointers = new ArcadePointers(),
     held = pointers.held,
     gesture = new NitrousGesture();
   let throttlePointer = null,
     throttleRect = null;
+  const controls = steering
+    ? [
+        ["left", "steerLeft"],
+        ["right", "steerRight"],
+        ["throttle", "arcadeThrottle"],
+      ]
+    : [["throttle", "arcadeThrottle"]];
+  const endPointer = {};
   const paint = () => {
-    for (const [name, id] of [
-      ["left", "steerLeft"],
-      ["right", "steerRight"],
-      ["throttle", "arcadeThrottle"],
-    ]) {
+    for (const [name, id] of controls) {
       const e = document.getElementById(id),
         down = held[name].size > 0;
       e.classList.toggle("active", down);
@@ -59,11 +67,7 @@ export function mountArcadeTouch({
     }
     paint();
   };
-  for (const [name, id] of [
-    ["left", "steerLeft"],
-    ["right", "steerRight"],
-    ["throttle", "arcadeThrottle"],
-  ]) {
+  for (const [name, id] of controls) {
     const el = document.getElementById(id);
     protectGameplayGestures(el);
     const end = (e) => {
@@ -77,6 +81,7 @@ export function mountArcadeTouch({
         el.releasePointerCapture(e.pointerId);
       paint();
     };
+    endPointer[name] = end;
     el.addEventListener("pointerdown", (e) => {
       if (
         !canDrive() ||
@@ -97,6 +102,7 @@ export function mountArcadeTouch({
         // Freeze geometry before the pressed-state transform, for this finger.
         throttleRect = el.getBoundingClientRect();
         gesture.move(e.clientY, throttleRect, getNitrous());
+        gesture.throttle = 1;
       }
       onPress(name);
       paint();
@@ -105,12 +111,16 @@ export function mountArcadeTouch({
       if (!pointers.owns(name, e.pointerId)) return;
       // Capture can be interrupted before the browser delivers its first
       // gotpointercapture event. That pending-capture loss may emit no lost event.
-      if (!el.hasPointerCapture(e.pointerId)) {
+      if (
+        !el.hasPointerCapture(e.pointerId) ||
+        (e.pointerType === "mouse" && e.buttons === 0)
+      ) {
         end(e);
         return;
       }
       if (name === "throttle" && e.pointerId === throttlePointer) {
         gesture.move(e.clientY, throttleRect, getNitrous());
+        gesture.throttle = 1;
         paint();
       }
     });
@@ -128,7 +138,7 @@ export function mountArcadeTouch({
       if ([" ", "Enter"].includes(e.key) && canDrive()) {
         e.preventDefault();
         e.stopPropagation();
-        pointers.press(name, "key-" + name);
+        if (!pointers.press(name, "key-" + name)) return;
         if (name === "throttle") gesture.throttle = 1;
         paint();
       }
@@ -137,7 +147,7 @@ export function mountArcadeTouch({
       if (name === "throttle" && e.key === " ") return;
       if ([" ", "Enter"].includes(e.key)) {
         e.stopPropagation();
-        pointers.release(name, "key-" + name);
+        if (!pointers.release(name, "key-" + name)) return;
         if (name === "throttle") gesture.clear();
         paint();
       }
@@ -158,5 +168,22 @@ export function mountArcadeTouch({
       release();
     }
   });
-  return { clear, root };
+  return {
+    clear,
+    root,
+    update() {
+      // Pending capture loss can emit no lost event until the finger moves again.
+      for (const [id, name] of pointers.owners) {
+        if (typeof id !== "number") continue;
+        const el = document.getElementById(
+          name === "throttle"
+            ? "arcadeThrottle"
+            : name === "left"
+              ? "steerLeft"
+              : "steerRight",
+        );
+        if (!el.hasPointerCapture(id)) endPointer[name]({ pointerId: id });
+      }
+    },
+  };
 }

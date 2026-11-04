@@ -30,7 +30,7 @@ test("relative CSS-pixel drag is signed, proportional, dead-zoned and clamped at
   assert.equal(s.pointer, 10);
 });
 
-test("drag response and 200 ms return are frame-rate independent, hold displacement and recenter at each new contact", () => {
+test("drag response and 150 ms return are frame-rate independent, hold displacement and recenter at each new contact", () => {
   const simulate = (hz) => {
     const s = new RelativeDragSteering(controlDefaults());
     s.down(1, 100);
@@ -60,12 +60,22 @@ class Surface extends EventTarget {
     this.parentElement = parent;
     this.captures = new Set();
     this.style = { setProperty() {} };
-    this.classList = { add() {}, remove() {} };
+    this.classList = { add() {}, remove() {}, toggle() {} };
   }
   querySelector() {
     return { textContent: "" };
   }
   setAttribute() {}
+  getBoundingClientRect() {
+    return {
+      top: 200,
+      bottom: 300,
+      left: 600,
+      right: 725,
+      width: 125,
+      height: 100,
+    };
+  }
   setPointerCapture(id) {
     this.captures.add(id);
   }
@@ -89,10 +99,20 @@ function fixture(run) {
     );
   const win = new EventTarget(),
     doc = new EventTarget();
+  const nodes = new Map(
+    [
+      "arcadeThrottle",
+      "touchThrottleValue",
+      "touchNitroZone",
+      "touchNitroText",
+      "touchNitroGauge",
+    ].map((id) => [id, new Surface({})]),
+  );
   Object.assign(doc, {
     hidden: false,
-    body: { classList: { contains: () => false } },
-    getElementById: () => null,
+    body: { classList: { contains: () => false }, append() {} },
+    createElement: () => new Surface({}),
+    getElementById: (id) => nodes.get(id) ?? null,
   });
   for (const [k, value] of Object.entries({
     window: win,
@@ -111,7 +131,12 @@ function fixture(run) {
   const controls = bindControls(
     { steering: new Surface(root), throttle: new Surface(root) },
     store,
-    { arcade: true, riverDrag: { surface }, canDrive: () => allowed },
+    {
+      arcade: true,
+      riverDrag: { surface },
+      canDrive: () => allowed,
+      getNitrous: () => ({ installed: true, fill: 100 }),
+    },
   );
   const tick = (n = 24) => {
     for (let i = 0; i < n; i++) controls.update(1 / 120, 0);
@@ -126,6 +151,7 @@ function fixture(run) {
   try {
     run({
       controls,
+      nodes,
       pointer,
       tick,
       surface,
@@ -169,7 +195,7 @@ test("actual control adapter delivers drag to the boat input, ignores vertical/s
     tick();
     assert.ok(controls.input.steering > 0.99);
     pointer("pointerup", 7);
-    tick(12);
+    tick(9);
     assert.ok(controls.input.steering > 0.45 && controls.input.steering < 0.55);
     tick(13);
     assert.equal(controls.input.steering, 0);
@@ -238,4 +264,65 @@ test("old control saves inherit Arcade drag defaults without changing existing r
     assert.equal(restored.values.padCurve, 1.7);
     assert.equal(restored.values.steerReturn, "hold");
     assert.ok(values.has(controlStorageKey));
+  }));
+
+test("held throttle and drag steering own independent pointers; throttle release, cancellation and stationary capture loss cut only propulsion", () =>
+  fixture(({ controls, pointer, tick, nodes }) => {
+    const throttle = nodes.get("arcadeThrottle"),
+      touch = (type, id, y = 250) =>
+        send(throttle, type, {
+          pointerId: id,
+          pointerType: "touch",
+          clientY: y,
+          clientX: 660,
+        });
+    pointer("pointerdown", 7);
+    pointer("pointermove", 7, 390);
+    tick();
+    assert.equal(controls.input.throttle, 0);
+    touch("pointerdown", 10);
+    tick();
+    assert.equal(controls.input.throttle, 1);
+    send(throttle, "keydown", { key: "Enter" });
+    send(throttle, "keyup", { key: "Enter" });
+    assert.equal(
+      controls.input.throttle,
+      1,
+      "another input cannot release a held pointer it does not own",
+    );
+    assert.ok(controls.input.steering > 0.99);
+    touch("pointermove", 10, 180);
+    tick();
+    assert.equal(controls.input.nitrous, true);
+    touch("pointermove", 10, 250);
+    tick();
+    assert.equal(controls.input.nitrous, false);
+    assert.equal(controls.input.throttle, 1);
+    touch("pointerup", 10);
+    assert.equal(controls.input.throttle, 0);
+    assert.equal(controls.input.nitrous, false);
+    assert.ok(controls.input.steering > 0.99);
+    for (const event of ["pointercancel", "lostpointercapture"]) {
+      touch("pointerdown", 11);
+      tick();
+      assert.equal(controls.input.throttle, 1);
+      touch(event, 11);
+      assert.equal(controls.input.throttle, 0);
+    }
+    touch("pointerdown", 12);
+    tick();
+    throttle.releasePointerCapture(12);
+    tick(1);
+    assert.equal(controls.input.throttle, 0);
+    assert.ok(controls.input.steering > 0.99);
+    touch("pointerdown", 13);
+    tick();
+    pointer("pointerup", 7);
+    tick();
+    assert.equal(controls.input.throttle, 1);
+    assert.equal(controls.input.steering, 0);
+    controls.release();
+    assert.equal(controls.input.throttle, 0);
+    tick();
+    assert.equal(controls.input.throttle, 0);
   }));

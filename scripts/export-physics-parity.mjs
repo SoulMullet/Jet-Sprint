@@ -83,6 +83,7 @@ export function createParityPack() {
   return {
     type: "jet-sprint-physics-parity",
     version: 1,
+    physicsVersion: "waterjet-forces-v2",
     coordinates: "RH_Y_UP_X_FORWARD",
     units: {
       position: "metres",

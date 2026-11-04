@@ -1,4 +1,4 @@
-/** Relative CSS-pixel input only. Hull forces and automatic throttle stay elsewhere. */
+/** Relative CSS-pixel input only. Hull forces and the independently held throttle stay elsewhere. */
 export class RelativeDragSteering {
   constructor(values) {
     this.values = values;

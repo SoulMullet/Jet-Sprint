@@ -1,0 +1,325 @@
+{
+  "method": "Production build in Chromium 844×390 touch emulation. Full safe/shortcut races use native CDP drag and standard Gamepad API inputs without pose, physics, gate, result or timer injection. Six separate practice approach checks seed initial boat pose/velocity at left/centre/right via DevTools live scope, then run the actual unmodified launch/contact/landing simulation. Most GPU draws suppressed during accelerated checks; screenshots render normally. Not physical device/FPS/subjective-feel testing.",
+  "runs": [
+    {
+      "mode": "arcade-river",
+      "build": "0.32.0/local/HOLD-ARCADE-V1",
+      "cash": 150,
+      "time": 60.465233333329934,
+      "condition": 100,
+      "jumps": 2,
+      "collisions": 0,
+      "shortcut": false,
+      "rating": "HOT RIVER RUN",
+      "state": "FINISHED",
+      "progress": 2037.8015220477253,
+      "ramps": [
+        {
+          "id": "sunset-ramp-0",
+          "distance": 210,
+          "width": 33.15,
+          "usableWidth": 39,
+          "coverage": 0.85,
+          "visibleWidth": 33.150001525878906,
+          "collisionWidth": 33.15,
+          "angle": 0.8983268722161802
+        },
+        {
+          "id": "sunset-ramp-1",
+          "distance": 1970.5562629504,
+          "width": 29.25,
+          "usableWidth": 39,
+          "coverage": 0.75,
+          "visibleWidth": 29.25,
+          "collisionWidth": 29.25,
+          "angle": 1.5693763362726958
+        }
+      ],
+      "settings": {
+        "cruiseSpeed": 78,
+        "steeringResponse": 1.2,
+        "impactRecovery": 0.6,
+        "landingStability": 0.7,
+        "distance": 24,
+        "height": 16,
+        "smoothing": 6,
+        "fov": 60,
+        "pullback": 0.25,
+        "anticipation": 0.25
+      },
+      "lanes": [
+        {
+          "ramp": "sunset-ramp-0",
+          "offset": -0.738209529423296,
+          "fraction": -0.0445375281703346,
+          "takeoffSpeed": 34.53800465700208,
+          "maxHeight": 3.1643749999999935,
+          "landed": true,
+          "landingSpeed": 34.50810176464555
+        },
+        {
+          "ramp": "sunset-ramp-1",
+          "offset": 2.455611051475878,
+          "fraction": 0.1679050291607438,
+          "takeoffSpeed": 34.33048309625109,
+          "maxHeight": 3.16404166666666,
+          "landed": true,
+          "landingSpeed": 34.06499517362192
+        }
+      ]
+    },
+    {
+      "mode": "arcade-river",
+      "build": "0.32.0/local/HOLD-ARCADE-V1",
+      "cash": 300,
+      "time": 59.15746666666114,
+      "condition": 100,
+      "jumps": 2,
+      "collisions": 0,
+      "shortcut": true,
+      "rating": "RIVER ACE",
+      "state": "FINISHED",
+      "progress": 2037.8613440463937,
+      "ramps": [
+        {
+          "id": "sunset-ramp-0",
+          "distance": 210,
+          "width": 33.15,
+          "usableWidth": 39,
+          "coverage": 0.85,
+          "visibleWidth": 33.150001525878906,
+          "collisionWidth": 33.15,
+          "angle": 0.8983268722161802
+        },
+        {
+          "id": "sunset-ramp-1",
+          "distance": 1970.5562629504,
+          "width": 29.25,
+          "usableWidth": 39,
+          "coverage": 0.75,
+          "visibleWidth": 29.25,
+          "collisionWidth": 29.25,
+          "angle": 1.5693763362726958
+        }
+      ],
+      "settings": {
+        "cruiseSpeed": 78,
+        "steeringResponse": 1.2,
+        "impactRecovery": 0.6,
+        "landingStability": 0.7,
+        "distance": 24,
+        "height": 16,
+        "smoothing": 6,
+        "fov": 60,
+        "pullback": 0.25,
+        "anticipation": 0.25
+      },
+      "lanes": [
+        {
+          "ramp": "sunset-ramp-0",
+          "offset": -0.738209529423296,
+          "fraction": -0.0445375281703346,
+          "takeoffSpeed": 34.53800465700208,
+          "maxHeight": 3.1643749999999935,
+          "landed": true,
+          "landingSpeed": 34.50810176464555
+        },
+        {
+          "ramp": "sunset-ramp-1",
+          "offset": 2.4788520087082406,
+          "fraction": 0.1694941544415891,
+          "takeoffSpeed": 34.330786723589604,
+          "maxHeight": 3.164944444444438,
+          "landed": true,
+          "landingSpeed": 34.00438661439669
+        }
+      ]
+    }
+  ],
+  "seededRampRuns": [
+    {
+      "ramp": "sunset-ramp-0",
+      "lane": -0.9,
+      "offset": -14.9175,
+      "launched": true,
+      "landed": true,
+      "maxHeight": 3.1690055555555428,
+      "minAfterLanding": 32.653463377991024,
+      "impact": 0,
+      "throttle": 1
+    },
+    {
+      "ramp": "sunset-ramp-0",
+      "lane": 0,
+      "offset": 0,
+      "launched": true,
+      "landed": true,
+      "maxHeight": 3.1690055555555428,
+      "minAfterLanding": 32.65348911609044,
+      "impact": 0,
+      "throttle": 1
+    },
+    {
+      "ramp": "sunset-ramp-0",
+      "lane": 0.9,
+      "offset": 14.9175,
+      "launched": true,
+      "landed": true,
+      "maxHeight": 3.1690055555555428,
+      "minAfterLanding": 32.65352404788518,
+      "impact": 0,
+      "throttle": 1
+    },
+    {
+      "ramp": "sunset-ramp-1",
+      "lane": -0.9,
+      "offset": -13.1625,
+      "launched": true,
+      "landed": true,
+      "maxHeight": 3.1690055555555428,
+      "minAfterLanding": 32.652115772436616,
+      "impact": 0,
+      "throttle": 1
+    },
+    {
+      "ramp": "sunset-ramp-1",
+      "lane": 0,
+      "offset": 0,
+      "launched": true,
+      "landed": true,
+      "maxHeight": 3.1690055555555428,
+      "minAfterLanding": 32.65172416390002,
+      "impact": 0,
+      "throttle": 1
+    },
+    {
+      "ramp": "sunset-ramp-1",
+      "lane": 0.9,
+      "offset": 13.1625,
+      "launched": true,
+      "landed": true,
+      "maxHeight": 3.1690055555555428,
+      "minAfterLanding": 32.65209110956978,
+      "impact": 0,
+      "throttle": 1
+    }
+  ],
+  "failure": {
+    "mode": "arcade-river",
+    "build": "0.32.0/local/HOLD-ARCADE-V1",
+    "cash": 0,
+    "time": 125,
+    "condition": 100,
+    "jumps": 0,
+    "collisions": 0,
+    "shortcut": false,
+    "rating": "BACK IN THE WATER",
+    "state": "FAILED",
+    "progress": 11,
+    "ramps": [
+      {
+        "id": "sunset-ramp-0",
+        "distance": 210,
+        "width": 33.15,
+        "usableWidth": 39,
+        "coverage": 0.85,
+        "visibleWidth": 33.150001525878906,
+        "collisionWidth": 33.15,
+        "angle": 0.8983268722161802
+      },
+      {
+        "id": "sunset-ramp-1",
+        "distance": 1970.5562629504,
+        "width": 29.25,
+        "usableWidth": 39,
+        "coverage": 0.75,
+        "visibleWidth": 29.25,
+        "collisionWidth": 29.25,
+        "angle": 1.5693763362726958
+      }
+    ],
+    "settings": {
+      "cruiseSpeed": 78,
+      "steeringResponse": 1.2,
+      "impactRecovery": 0.6,
+      "landingStability": 0.7,
+      "distance": 24,
+      "height": 16,
+      "smoothing": 6,
+      "fov": 60,
+      "pullback": 0.25,
+      "anticipation": 0.25
+    }
+  },
+  "heldThrottleAndTouch": true,
+  "drag": {
+    "left": -1,
+    "right": 1,
+    "releaseAt100ms": 0.33333333333333337,
+    "releaseAt160ms": 0,
+    "noAutoAcceleration": true,
+    "heldThrottle": true,
+    "releaseThrust": 0,
+    "coastingSpeed": 13.732934385294197,
+    "verticalNeutral": true,
+    "secondaryIgnored": true,
+    "cancelCleared": true,
+    "stationaryThrottleCaptureLoss": true,
+    "pauseButton": true,
+    "rapidTransitions": true,
+    "maxYawDegrees": 33.55360263850522
+  },
+  "heldDevices": {
+    "gamepadRTReleaseCuts": true,
+    "keyboardReleaseCuts": true,
+    "deviceHandoverNoLatch": true
+  },
+  "handlingLabReload": {
+    "maxTurnRate": 145,
+    "lowSpeedAssist": 0.5,
+    "offThrottleDrag": 0.32,
+    "acceleration": 24.5
+  },
+  "developer": {
+    "indicatorOnlyWithDevFlag": true,
+    "nativeCaptureLossClears": true,
+    "touchAction": "none",
+    "scale": 1,
+    "scrollX": 0,
+    "scrollY": 0,
+    "selection": ""
+  },
+  "ramps": [
+    {
+      "id": "sunset-ramp-0",
+      "distance": 210,
+      "width": 33.15,
+      "usableWidth": 39,
+      "coverage": 0.85,
+      "visibleWidth": 33.150001525878906,
+      "collisionWidth": 33.15,
+      "angle": 0.8983268722161802
+    },
+    {
+      "id": "sunset-ramp-1",
+      "distance": 1970.5562629504,
+      "width": 29.25,
+      "usableWidth": 39,
+      "coverage": 0.75,
+      "visibleWidth": 29.25,
+      "collisionWidth": 29.25,
+      "angle": 1.5693763362726958
+    }
+  ],
+  "controlLabReload": {
+    "distance": 110,
+    "return": 0.23
+  },
+  "retryUnderOneLogicalSecond": true,
+  "persistence": true,
+  "careerUntouchedInArcade": true,
+  "originalRacingManualThrottle": true,
+  "firstArcadeVisitPreservesRacingUnlocks": true,
+  "shortLandscapeResults": true,
+  "errors": []
+}

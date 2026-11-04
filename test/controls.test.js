@@ -122,7 +122,7 @@ test("one shared command interface produces precise analog steering/throttle and
   assert.equal(input.input.steering, 0.4);
   assert.equal(settings.top, handlingDefaults.top);
 });
-test("keyboard ramps up and down through the same pipeline without latching keys", () => {
+test("keyboard ramps up while held and cuts immediately on release without latching keys", () => {
   const { store, input } = setup();
   Object.assign(store.values, {
     throttleSmoothing: 0,
@@ -134,7 +134,7 @@ test("keyboard ramps up and down through the same pipeline without latching keys
   assert.ok(Math.abs(input.input.throttle - 0.2) < 1e-12);
   input.set("keyboard", 0, 0, false, false);
   tick(input, 12);
-  assert.ok(Math.abs(input.input.throttle - 0.1) < 1e-12);
+  assert.equal(input.input.throttle, 0);
   tick(input, 120);
   assert.equal(input.input.throttle, 0);
   assert.equal(input.input.steering, 0);
@@ -449,7 +449,7 @@ test("analog adapter exactly preserves legacy full-lock forces and proportional 
   for (const value of [NaN, Infinity])
     assert.equal(turn({ steering: value, throttle: 1 }).nozzle, 0);
 });
-test("processed analog steering with no waterjet thrust cannot rotate a stationary or coasting boat", () => {
+test("processed analog steering cannot spin a stationary hull; moving coasting hull retains arcade authority", () => {
   const { input } = setup();
   input.set("gamepad", 0.7, 0, true);
   tick(input);
@@ -459,7 +459,7 @@ test("processed analog steering with no waterjet thrust cannot rotate a stationa
   const b = { x: 0, z: 0, vx: 15, vz: 0, angle: 0 };
   for (let i = 0; i < 240; i++)
     stepBoat(b, input.input, 1 / 120, (x, z) => ({ x, z, index: 0 }));
-  assert.equal(b.angle, 0);
+  assert.ok(b.angle > 0.1);
 });
 
 // Centre trim retains both full-lock endpoints and never steers an idle axis.

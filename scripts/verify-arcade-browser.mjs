@@ -56,6 +56,7 @@ async function verifyRampApproaches(p, url) {
           advance(1000);
           advance();
         });
+        await p.keyboard.down("Space");
         const at = world.river.sample(ramp.distance),
           offset = (lane * ramp.width) / 2,
           initial = {
@@ -149,6 +150,7 @@ async function verifyRampApproaches(p, url) {
         assert.equal(result.impact, 0);
         assert.ok(result.minAfterLanding > 25);
         results.push({ ramp: ramp.id, lane, offset, ...result });
+        await p.keyboard.up("Space");
       }
   } finally {
     await cd.detach();
@@ -198,7 +200,7 @@ async function verifyDeveloperDrag(p, url) {
   assert.ok(await p.locator("#arcadeSteeringDebug").isVisible());
   assert.match(
     await p.locator("#arcadeSteeringDebug").innerText(),
-    /0\.31\.1.*STEER 1\.000/,
+    /HOLD-ARCADE-V1.*STEER 1\.000/,
   );
   await p.screenshot({ path: output + "/drag-debug.png" });
   await p.evaluate(() =>
@@ -292,6 +294,12 @@ try {
                 if (!window.skipDraws) return original.apply(this, args);
               };
           }
+      window.controlCaptures = {};
+      const capture = Element.prototype.setPointerCapture;
+      Element.prototype.setPointerCapture = function (id) {
+        controlCaptures[this.id || "canvas"] = id;
+        return capture.call(this, id);
+      };
       window.pads = [];
       Object.defineProperty(navigator, "getGamepads", { value: () => pads });
       if (!localStorage.getItem("jet-sprint-player-profile-v1")) {
@@ -378,9 +386,7 @@ try {
             distance = project(line, b);
           }
           const target = sample(line, distance + 12 + speed * 0.5);
-          const nearRamp = status.ramps.find(
-            (r) => d > r.distance - 130 && d < r.distance + 70,
-          );
+
           if (line === qa.branch) {
             target.x += target.tz * 3;
             target.z -= target.tx * 3;
@@ -413,6 +419,7 @@ try {
             (clamp(inner / v.padSensitivity, 0, 1) ** (1 / v.padCurve) *
               (1 - v.padDeadzone) +
               v.padDeadzone);
+          pads[0].buttons[7].value = 1;
           pads[0].axes[0] = raw;
           advance();
           qa.frames++;
@@ -486,6 +493,7 @@ try {
     const r = await a.boundingBox();
     assert.ok(r.y >= 0 && r.y + r.height <= 390);
   }
+  assert.equal(await p.locator("#arcadeThrottle").isVisible(),false);
   await p.screenshot({ path: output + "/title-landscape.png" });
   await p.locator("#start").click();
   await p.evaluate(() => {
@@ -494,13 +502,14 @@ try {
     advance(1000);
     advance();
   });
-  assert.equal(await p.locator("#arcadeControls").count(), 0);
+  assert.equal(await p.locator("#arcadeThrottle").isVisible(), true);
+  assert.equal(await p.locator("#steerLeft").count(), 0);
   const cd = await p.context().newCDPSession(p),
-    finger = { id: 1, x: 410, y: 275 };
+    finger = { id: 1, x: 410, y: 275 },
+    rect = await p.locator("#arcadeThrottle").boundingBox(),
+    gas = { id: 4, x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
   const touch = async (type, points) => {
     await cd.send("Input.dispatchTouchEvent", { type, touchPoints: points });
-    // Chromium coalesces pointermove to its next native display frame. Let that
-    // event reach the real canvas adapter before advancing the QA clock.
     await p.evaluate(
       () => new Promise((resolve) => requestAnimationFrame(resolve)),
     );
@@ -514,64 +523,104 @@ try {
     p.evaluate((n) => {
       for (let i = 0; i < n; i++) window.advance(10);
     }, n);
-  await touch("touchStart", [finger]);
+  await advance(30);
+  assert.equal((await live()).input.throttle, 0);
+  assert.equal((await live()).boat.thrust, 0);
+  await touch("touchStart", [gas]);
+  await advance(20);
+  assert.equal((await live()).input.throttle, 1);
+  await touch("touchStart", [gas, finger]);
   await advance(5);
   assert.equal((await live()).input.steering, 0);
   finger.y = 220;
-  await touch("touchMove", [finger]);
+  await touch("touchMove", [gas, finger]);
   await advance(5);
   assert.equal((await live()).input.steering, 0);
   finger.x = 320;
-  await touch("touchMove", [finger]);
+  await touch("touchMove", [gas, finger]);
   await advance(20);
   const left = await live();
-  assert.ok(left.input.steering < -0.99, JSON.stringify(left));
+  assert.ok(left.input.steering < -0.99);
   assert.equal(left.boat.throttle, 1);
   const second = { id: 2, x: 550, y: 270 };
-  await touch("touchStart", [finger, second]);
+  await touch("touchStart", [gas, finger, second]);
   second.x = 650;
-  await touch("touchMove", [finger, second]);
+  await touch("touchMove", [gas, finger, second]);
   await advance(5);
   assert.ok((await live()).input.steering < -0.99);
   await touch("touchEnd", [second]);
   await advance(5);
   assert.ok((await live()).input.steering < -0.99);
   finger.x = 500;
-  await touch("touchMove", [finger]);
-  await advance(30);
+  await touch("touchMove", [gas, finger]);
+  await advance(20);
   const right = await live();
   assert.ok(right.input.steering > 0.99);
   assert.equal(right.boat.throttle, 1);
-  await advance(20);
+  await touch("touchEnd", [gas]);
+  assert.equal((await live()).input.throttle, 0);
   assert.ok((await live()).input.steering > 0.99);
-  await touch("touchEnd", []);
+  await advance(1);
+  const released = await live();
+  assert.equal(released.boat.thrust, 0);
+  assert.equal(released.boat.throttle, 0);
+  assert.ok(Math.hypot(released.boat.vx, released.boat.vz) > 0.5);
+  await touch("touchEnd", [finger]);
   await advance(10);
-  const halfway = await live();
-  assert.ok(halfway.input.steering > 0.45 && halfway.input.steering < 0.55);
-  await advance(11);
+  const at100 = await live();
+  assert.ok(at100.input.steering > 0.3 && at100.input.steering < 0.35);
+  await advance(6);
   assert.equal((await live()).input.steering, 0);
-  assert.equal((await live()).boat.throttle, 1);
-  // Same actual pointer path through cancellation and the real pause button.
+  assert.equal((await live()).input.throttle, 0);
+  // Start with steering, then add throttle; alternate quickly through the real input/physics loop.
   finger.x = 410;
   finger.y = 275;
   await touch("touchStart", [finger]);
   finger.x = 320;
   await touch("touchMove", [finger]);
-  await advance(20);
+  await advance(10);
+  assert.equal((await live()).input.throttle, 0);
+  await touch("touchStart", [finger, gas]);
+  await advance(10);
+  assert.equal((await live()).input.throttle, 1);
+  let maxYaw = 0;
+  for (const x of [500, 320, 500, 320, 500, 320]) {
+    finger.x = x;
+    await touch("touchMove", [finger, gas]);
+    await advance(8);
+    const state = await live();
+    assert.ok(state.input.steering * (x > 410 ? 1 : -1) > 0.9);
+    assert.equal(state.boat.throttle, 1);
+    maxYaw = Math.max(maxYaw, Math.abs(state.boat.yawRate));
+  }
+  assert.ok(maxYaw <= (150 * Math.PI) / 180 + 1e-8);
   await touch("touchCancel", []);
   await advance(1);
+  assert.equal((await live()).input.throttle, 0);
   assert.equal((await live()).input.steering, 0);
-  finger.x = 410;
-  await touch("touchStart", [finger]);
-  finger.x = 500;
-  await touch("touchMove", [finger]);
-  await advance(20);
+  await touch("touchStart", [gas]);
+  await advance(10);
+  await p.evaluate(() =>
+    document
+      .getElementById("arcadeThrottle")
+      .releasePointerCapture(controlCaptures.arcadeThrottle),
+  );
+  await advance(1);
+  assert.equal((await live()).input.throttle, 0);
+  assert.equal((await live()).boat.thrust, 0);
+  await touch("touchEnd", []);
+  await touch("touchStart", [gas]);
+  await advance(10);
   await p.locator("#pauseToggle").click();
   await advance(1);
-  assert.equal((await live()).input.steering, 0);
+  assert.equal(await p.locator("#arcadeThrottle").isVisible(),false);
+  assert.equal((await live()).input.throttle, 0);
   assert.equal((await live()).input.drag.pointer, null);
   await touch("touchEnd", []);
   await p.locator("#resumeRace").click();
+  await p.evaluate(() => syncClock());
+  await advance(10);
+  assert.equal((await live()).input.throttle, 0);
   assert.equal(await p.locator("#arcadeSteeringDebug").count(), 0);
   const rampDefinitions = await p.evaluate(
     () => __JET_SPRINT_ARCADE__.inspect().ramps,
@@ -585,13 +634,19 @@ try {
   const dragProof = {
     left: left.input.steering,
     right: right.input.steering,
-    releaseAt100ms: halfway.input.steering,
-    releaseAt210ms: 0,
-    autoThrottle: 1,
+    releaseAt100ms: at100.input.steering,
+    releaseAt160ms: 0,
+    noAutoAcceleration: true,
+    heldThrottle: true,
+    releaseThrust: released.boat.thrust,
+    coastingSpeed: Math.hypot(released.boat.vx, released.boat.vz),
     verticalNeutral: true,
     secondaryIgnored: true,
     cancelCleared: true,
+    stationaryThrottleCaptureLoss: true,
     pauseButton: true,
+    rapidTransitions: true,
+    maxYawDegrees: (maxYaw * 180) / Math.PI,
   };
   console.log("DRAG", JSON.stringify(dragProof));
   await p.keyboard.press("r");
@@ -612,6 +667,39 @@ try {
     advance();
     skipDraws = true;
   });
+  await p.evaluate(() => {
+    pads[0].buttons[7].value = 1;
+    for (let i = 0; i < 30; i++) advance(10);
+  });
+  assert.ok((await live()).input.throttle > 0.99);
+  await p.evaluate(() => {
+    pads[0].buttons[7].value = 0;
+    advance(10);
+  });
+  assert.equal((await live()).input.throttle, 0);
+  assert.equal((await live()).input.nitrous, false);
+  assert.equal((await live()).boat.thrust, 0);
+  await p.keyboard.down("Space");
+  await advance(30);
+  assert.ok((await live()).input.throttle > 0.99);
+  await p.keyboard.up("Space");
+  assert.equal((await live()).input.throttle, 0);
+  await advance(1);
+  assert.equal((await live()).boat.thrust, 0);
+  await p.keyboard.press("r");
+  await p.evaluate(() => {
+    syncClock();
+    pads[0].axes[0] = 0;
+    pads[0].buttons[7].value = 0;
+    advance(1000);
+    advance();
+    advance();
+  });
+  const heldDeviceProof = {
+    gamepadRTReleaseCuts: true,
+    keyboardReleaseCuts: true,
+    deviceHandoverNoLatch: true,
+  };
   const runs = [];
   for (const cut of [false, true]) {
     if (cut) {
@@ -622,6 +710,7 @@ try {
         qa.jumpSeen = true;
         qa.laneProof = [];
         qa.flightSeen = false;
+        pads[0].buttons[7].value = 0;
         pads[0].axes[0] = 0;
         advance(1000);
         advance();
@@ -771,6 +860,29 @@ try {
   assert.equal(await dragDistance.inputValue(), "110");
   await p.screenshot({ path: output + "/control-lab.png" });
   await p.locator("#pit-tab-physics").click();
+  const maxYawSlider = p.locator("#maxTurnRate");
+  await maxYawSlider.evaluate((el) => {
+    el.closest("details").open = true;
+  });
+  await maxYawSlider.scrollIntoViewIfNeeded();
+  await maxYawSlider.focus();
+  await maxYawSlider.press("ArrowLeft");
+  assert.equal(await maxYawSlider.inputValue(), "145");
+  for (const [id, value] of [
+    ["lowSpeedAssist", 0.5],
+    ["offThrottleDrag", 0.32],
+  ])
+    await p.locator("#" + id).evaluate((el, value) => {
+      el.value = value;
+      el.dispatchEvent(new Event("input", { bubbles: true }));
+    }, value);
+  assert.equal(await p.locator("#acceleration").isDisabled(), false);
+  await p.locator("#acceleration").evaluate((el) => {
+    el.value = 24.5;
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+  await p.screenshot({ path: output + "/handling-lab.png" });
+
   await p.locator(".arcade-tuning>summary").first().click();
   await p.locator("#arcade-impactRecovery").evaluate((el) => {
     el.value = 0.75;
@@ -791,6 +903,13 @@ try {
   );
   assert.equal(restoredControls.arcadeDragDistance, 110);
   assert.equal(restoredControls.arcadeDragReturn, 0.23);
+  const restoredHandling = await p.evaluate(
+    () => __JET_SPRINT_PHYSICS__.inspect().settings,
+  );
+  assert.equal(restoredHandling.maxTurnRate, 145);
+  assert.equal(restoredHandling.lowSpeedAssist, 0.5);
+  assert.equal(restoredHandling.offThrottleDrag, 0.32);
+  assert.equal(restoredHandling.acceleration, 24.5);
   assert.equal(restored.settings.distance, 27);
   assert.equal(restored.settings.impactRecovery, 0.75);
   assert.equal(
@@ -860,8 +979,15 @@ try {
         runs,
         seededRampRuns,
         failure: failed,
-        autoThrottleAndTouch: true,
+        heldThrottleAndTouch: true,
         drag: dragProof,
+        heldDevices: heldDeviceProof,
+        handlingLabReload: {
+          maxTurnRate: restoredHandling.maxTurnRate,
+          lowSpeedAssist: restoredHandling.lowSpeedAssist,
+          offThrottleDrag: restoredHandling.offThrottleDrag,
+          acceleration: restoredHandling.acceleration,
+        },
         developer,
         ramps: rampDefinitions,
         controlLabReload: {
